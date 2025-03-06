@@ -11,6 +11,23 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+    images: {
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'crafthead.net',
+                port: '',
+                pathname: '/avatar/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'minotar.net',
+                port: '',
+                pathname: '/helm/**',
+            }
+        ],
+    },
+
 };
 
 export default nextConfig;

@@ -45,3 +45,11 @@ next-env.d.ts
 .dev.vars
 
 .vscode
+
+## Panda
+styled-system
+styled-system-studio
+
+.env
+
+.idea

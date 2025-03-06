@@ -1,0 +1,23 @@
+import { css } from "@/styled-system/css";
+import { Logo } from "~/components/logo/logo";
+import { LoginButton } from "./login-button";
+
+export const MobileHeader = async () => {
+    return (
+        <div
+            className={css({
+                display: "flex",
+                maxWidth: "400px",
+                height: "56px",
+                margin: "0 auto",
+                padding: "64px 16px",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexShrink: 0,
+            })}
+        >
+            <Logo />
+            <LoginButton />
+        </div>
+    );
+};
