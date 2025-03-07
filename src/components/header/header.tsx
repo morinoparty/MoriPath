@@ -7,9 +7,9 @@ export const Header = () => {
             {/*for smartphone*/}
             <div
                 className={css({
-                    md: {
-                        display: "none",
-                    },
+                    // md: {
+                    //     display: "none",
+                    // },
                 })}
             >
                 <MobileHeader />
@@ -19,9 +19,9 @@ export const Header = () => {
             <div
                 className={css({
                     display: "none",
-                    md: {
-                        display: "block",
-                    },
+                    // md: {
+                    //     display: "block",
+                    // },
                 })}
             >
                 WIP

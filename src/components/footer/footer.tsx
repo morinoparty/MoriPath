@@ -3,17 +3,18 @@ import { MobileFooter } from "./mobile-footer";
 
 export const Footer = () => {
     return (
-        <div>
+        <>
             {/*for smartphone*/}
             <div
                 className={css({
-                    md: {
-                        display: "none",
-                    },
+                    width: "100%",
+                    // md: {
+                    //     display: "none",
+                    // },
                 })}
             >
-                <MobileFooter />
+
             </div>
-        </div>
+        </>
     );
 };

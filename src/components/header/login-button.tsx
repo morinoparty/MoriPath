@@ -59,7 +59,7 @@ const PlayerHead = async () => {
                         width: "48px",
                         height: "48px",
                         flexShrink: 0,
-                        borderRadius: "sm",
+                        borderRadius: "lg",
                     })}
                     src={
                         sessionData.user?.image ??

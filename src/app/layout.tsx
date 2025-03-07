@@ -4,6 +4,7 @@ import { css, cx } from "@/styled-system/css";
 import { Footer } from "~/components/footer/footer";
 import { Header } from "~/components/header/header";
 import { fonts } from "~/lib/fonts";
+import {MobileFooter} from "~/components/footer/mobile-footer";
 
 export const metadata: Metadata = {
     title: "MoriPath - もりのパーティ ポータルアプリ",
@@ -25,7 +26,7 @@ export default function RootLayout({
                         textStyle: "body",
                         maxWidth: "1600px",
                         margin: "0 auto",
-                        bgColor: "#EAF2EF",
+                        // bgColor: "#EAF2EF",
                     }),
                     fonts,
                 )}
@@ -38,9 +39,17 @@ export default function RootLayout({
                 {/*        dark: "dark",*/}
                 {/*    }}*/}
                 {/*>*/}
-                <Header />
-                {children}
-                <Footer />
+                <div className={css({
+                    maxWidth: "lg",
+                    margin: "0 auto",
+                    height: "max(100vh, 100%)",
+                    padding: "0 32px",
+                    bgColor: "var(--colors-bg-base)",
+                })}>
+                    <Header />
+                    {children}
+                    <MobileFooter />
+                </div>
                 {/*</ThemeProvider>*/}
             </body>
         </html>

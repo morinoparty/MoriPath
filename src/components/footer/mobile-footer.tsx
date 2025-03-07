@@ -1,73 +1,80 @@
-import { css } from "@/styled-system/css";
-import { Bell, Hammer, SquareKanban } from "lucide-react";
+import {css} from "@/styled-system/css";
+import {Bell, Hammer, SquareKanban} from "lucide-react";
 import Link from "next/link";
 
 const items = [
-    { icon: <Bell />, label: "おしらせ", link: "/notification", active: true },
-    { icon: <SquareKanban />, label: "やること", link: "/todo", active: true },
-    { icon: <Hammer />, label: "実装予定", link: "/message", active: false },
+    {icon: <Bell/>, label: "おしらせ", link: "/notification", active: true},
+    {icon: <SquareKanban/>, label: "やること", link: "/todo", active: true},
+    {icon: <Hammer/>, label: "実装予定", link: "/message", active: false},
 ];
 
 export const MobileFooter = () => {
     return (
-        <div
-            className={css({
-                display: "flex",
-                width: "100%",
-                height: "48px",
-                padding: "0px var(--spacings-radii-10, 40px)",
-                justifyContent: "space-between",
-                alignItems: "center",
-                position: "absolute",
-                bottom: 0,
-                marginBottom: "8px",
-            })}
-        >
-            {items.map((item, index) => (
-                <Link
-                    href={item.active ? item.link : "#"}
-                    key={item.link}
-                    className={css({
-                        display: "flex",
-                        height: "48px",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        gap: "4px",
-                        color: item.active
-                            ? "inherit"
-                            : "var(--colors-fg-disabled)",
-                        pointerEvents: item.active ? "auto" : "none",
-                    })}
-                >
-                    <div
-                        className={css({
-                            width: "var(--spacings-radii-6, 24px)",
-                            height: "var(--spacings-radii-6, 24px)",
-                            flexShrink: 0,
-                        })}
-                    >
-                        {item.icon}
-                    </div>
-                    <div
-                        className={css({
-                            display: "flex",
-                            width: "48px",
-                            height: "28px",
-                            flexDirection: "column",
-                            justifyContent: "flex-end",
-                            flexShrink: 0,
-                            textAlign: "right",
-                            fontSize: "12px",
-                            fontStyle: "normal",
-                            fontWeight: 400,
-                            lineHeight: "44px /* 366.667% */",
-                            letterSpacing: "-0.72px",
-                        })}
-                    >
-                        {item.label}
-                    </div>
-                </Link>
-            ))}
-        </div>
+       <>
+           <div
+               className={css({
+                   display: "flex",
+                   width: "100%",
+                   maxWidth: "lg",
+                   margin: "0 auto",
+                   justifyContent: "space-between",
+                   alignItems: "center",
+                   position: "fixed", // Changed to fixed
+                   bottom: 0,
+                   left: "50%",
+                   transform: "translateX(-50%)",
+                   padding: "8px",
+                   zIndex: 1000, // Ensure it stays on top
+                   bgColor: "var(--colors-bg-base)",
+                   borderTop: "1px solid var(--colors-border-default)",
+               })}
+           >
+               {items.map((item) => (
+                   <Link
+                       href={item.active ? item.link : "#"}
+                       key={item.link}
+                       className={css({
+                           display: "flex",
+                           height: "48px",
+                           width: "100%",
+                           flexDirection: "column",
+                           alignItems: "center",
+                           gap: "4px",
+                           color: item.active
+                               ? "inherit"
+                               : "var(--colors-fg-disabled)",
+                           pointerEvents: item.active ? "auto" : "none",
+                       })}
+                   >
+                       <div
+                           className={css({
+                               width: "var(--spacings-radii-6, 24px)",
+                               height: "var(--spacings-radii-6, 24px)",
+                               flexShrink: 0,
+                           })}
+                       >
+                           {item.icon}
+                       </div>
+                       <div
+                           className={css({
+                               display: "flex",
+                               width: "48px",
+                               height: "28px",
+                               flexDirection: "column",
+                               justifyContent: "flex-end",
+                               flexShrink: 0,
+                               textAlign: "right",
+                               fontSize: "12px",
+                               fontStyle: "normal",
+                               fontWeight: 400,
+                               lineHeight: "44px /* 366.667% */",
+                               letterSpacing: "-0.72px",
+                           })}
+                       >
+                           {item.label}
+                       </div>
+                   </Link>
+               ))}
+           </div></>
     );
 };
