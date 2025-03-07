@@ -18,6 +18,7 @@ export interface ExtendedSession extends Session {
 // @ts-ignore
 export const { handlers, signIn, signOut, auth } = NextAuth({
     debug: false,
+    trustHost: true,
     providers: [
         {
             id: "MineAuth",
