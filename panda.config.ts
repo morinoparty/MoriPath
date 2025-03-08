@@ -31,7 +31,9 @@ const globalCss = defineGlobalStyles({
     "*::selection": {
         bg: "var(--colors-color-palette-6)/80",
     },
-    "button:focus": {
+    "*:focus-visible": {
+        border: "2px solid var(--colors-primary)",
+        borderRadius: "md",
         outline: "none",
     },
 });
