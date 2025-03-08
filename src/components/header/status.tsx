@@ -42,7 +42,7 @@ const PlayerHead = async () => {
                     className={css({
                         width: "var(--sizes-header-height)",
                         height: "var(--sizes-header-height)",
-                        borderRadius: "md",
+                        borderRadius: "xl",
                     })}
                     src={
                         sessionData.user?.image ??

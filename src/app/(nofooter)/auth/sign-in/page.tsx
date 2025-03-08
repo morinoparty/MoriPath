@@ -3,7 +3,6 @@ import { flex } from "@/styled-system/patterns";
 import { LoginButton } from "~/components/login-button";
 
 export default function SignInPage() {
-
     return (
         <div
             className={flex({
@@ -18,7 +17,8 @@ export default function SignInPage() {
                 </h1>
 
                 <p className={css({ fontSize: "lg" })}>
-                    サービスを利用するには、Moripa APIにログインする必要があります。
+                    サービスを利用するには、Moripa
+                    APIにログインする必要があります。
                 </p>
             </div>
             <LoginButton />
@@ -29,14 +29,15 @@ export default function SignInPage() {
                 </h2>
 
                 <p className={css({ fontSize: "lg" })}>
-                    お手数ですが、サーバー内で<code>/mineauth register</code>コマンドを実行してアカウントを作成してください。
+                    お手数ですが、サーバー内で<code>/mineauth register</code>
+                    コマンドを実行してアカウントを作成してください。
                 </p>
             </div>
         </div>
     );
 }
 
-let boxStyle = flex({
+const boxStyle = flex({
     padding: "5rem 0",
     direction: "column",
     align: "center",

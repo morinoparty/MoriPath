@@ -45,7 +45,7 @@ export default defineConfig({
         createPreset({
             accentColor: grass,
             grayColor: neutral,
-            radius: "md",
+            radius: "xl",
         }),
     ],
 
@@ -65,6 +65,7 @@ export default defineConfig({
                     primary10: { value: "rgba(83, 150, 118, 0.1)" },
                     primary5: { value: "rgba(83, 150, 118, 0.05)" },
                     text: { value: "#41765D" },
+                    border: { value: "rgba(198,204,203,0.5)" },
                     highlight: { value: "#EFF6F2" },
                     background: { value: "#EAF2EF" },
                     background50: { value: "rgba(234, 242, 239, 0.5)" },

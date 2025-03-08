@@ -1,21 +1,9 @@
-import { css } from "@/styled-system/css";
+import { TopList } from "~/components/top-list";
 
-export default function Home() {
+export default async function Home() {
     return (
-        <div
-            className={css({
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-            })}
-        >
-            {/*    1から200まで*/}
-
-            <div>
-                {Array.from({ length: 200 }, (_, i) => i + 1).map((i) => (
-                    <div key={i}>i: {i}</div>
-                ))}
-            </div>
+        <div>
+            <TopList />
         </div>
     );
 }

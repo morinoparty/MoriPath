@@ -2,7 +2,9 @@
 
 interface CloudflareEnv {
     AUTH_SECRET: string;
+    MAIN_SERVER_URL: string;
     SERVER_URL: string;
+    SERVERS: string;
     CLIENT_ID: string;
     SELF_URL: string;
     ASSETS: Fetcher;

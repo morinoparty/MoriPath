@@ -27,7 +27,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (_) => {
                 name: "MineAuth",
                 type: "oauth",
                 authorization: {
-                    url: `${process.env.SERVER_URL}/oauth2/authorize`,
+                    url: `${process.env.MAIN_SERVER_URL}/oauth2/authorize`,
                     params: {
                         response_type: "code",
                         scope: "openid profile email",
@@ -35,10 +35,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (_) => {
                 },
                 // ...他のプロバイダ設定...
                 token: {
-                    url: `${process.env.SERVER_URL}/oauth2/token`,
+                    url: `${process.env.MAIN_SERVER_URL}/oauth2/token`,
                 },
                 userinfo: {
-                    url: `${process.env.SERVER_URL}/oauth2/userinfo`,
+                    url: `${process.env.MAIN_SERVER_URL}/oauth2/userinfo`,
                 },
                 checks: ["pkce", "state"],
                 profile: (profile: { id: string; username: string }) => {
@@ -53,7 +53,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (_) => {
                 client: {
                     token_endpoint_auth_method: "none",
                 },
-            
             },
         ],
         callbacks: {
@@ -103,7 +102,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (_) => {
                     // at their `/.well-known/openid-configuration` endpoint.
                     // i.e. https://accounts.google.com/.well-known/openid-configuration
                     const response = await fetch(
-                        `${process.env.SERVER_URL}/oauth2/token`,
+                        `${process.env.MAIN_SERVER_URL}/oauth2/token`,
                         {
                             headers: {
                                 "Content-Type":

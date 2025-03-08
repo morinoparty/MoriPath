@@ -9,7 +9,7 @@ async function checkApiHealth() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000); // 5秒でタイムアウト
 
-        const response = await fetch(`${process.env.SERVER_URL}`, {
+        const response = await fetch(`${process.env.MAIN_SERVER_URL}`, {
             signal: controller.signal,
         });
         clearTimeout(timeoutId);

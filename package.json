@@ -32,6 +32,7 @@
     "devDependencies": {
         "@biomejs/biome": "1.9.4",
         "@cloudflare/workers-types": "^4.20250303.0",
+        "@faker-js/faker": "^9.6.0",
         "@opennextjs/cloudflare": "^0.5.8",
         "@pandacss/dev": "^0.53.1",
         "@park-ui/panda-preset": "^0.43.1",

@@ -3,8 +3,8 @@ import { Bell, Hammer, SquareKanban } from "lucide-react";
 import Link from "next/link";
 
 const items = [
-    { icon: <Bell />, label: "Notice", link: "/notification", active: true },
-    { icon: <SquareKanban />, label: "Todos", link: "/todo", active: true },
+    { icon: <Bell />, label: "おしらせ", link: "/notification", active: true },
+    { icon: <SquareKanban />, label: "やること", link: "/todo", active: true },
     { icon: <Hammer />, label: "WIP", link: "/message", active: false },
 ];
 

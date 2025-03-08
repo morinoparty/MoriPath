@@ -48,6 +48,9 @@ importers:
       '@cloudflare/workers-types':
         specifier: ^4.20250303.0
         version: 4.20250303.0
+      '@faker-js/faker':
+        specifier: ^9.6.0
+        version: 9.6.0
       '@opennextjs/cloudflare':
         specifier: ^0.5.8
         version: 0.5.8(wrangler@3.113.0(@cloudflare/workers-types@4.20250303.0))
@@ -1065,6 +1068,10 @@ packages:
     engines: {node: '>=12'}
     cpu: [x64]
     os: [win32]
+
+  '@faker-js/faker@9.6.0':
+    resolution: {integrity: sha512-3vm4by+B5lvsFPSyep3ELWmZfE3kicDtmemVpuwl1yH7tqtnHdsA6hG8fbXedMVdkzgtvzWoRgjSB4Q+FHnZiw==}
+    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
 
   '@fastify/busboy@2.1.1':
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
@@ -6670,6 +6677,8 @@ snapshots:
 
   '@esbuild/win32-x64@0.20.2':
     optional: true
+
+  '@faker-js/faker@9.6.0': {}
 
   '@fastify/busboy@2.1.1': {}
 
