@@ -32,8 +32,6 @@ const globalCss = defineGlobalStyles({
         bg: "var(--colors-color-palette-6)/80",
     },
     "*:focus-visible": {
-        border: "2px solid var(--colors-primary)",
-        borderRadius: "md",
         outline: "none",
     },
 });
