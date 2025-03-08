@@ -15,16 +15,19 @@ export const PlayerMap = async ({ uuid }: props) => {
                 alignItems: "center",
                 gap: "4px",
                 borderRadius: "md",
+                // maxWidth: "256px" を削除
                 border: "0.5px solid var(--colors-border)",
-                boxSizing: "border-box",
-                minWidth: 0, // 追加: flexアイテムが小さくなるのを許可
+                minWidth: 0,
+                flexShrink: 0,
+                overflow: "hidden",
+                width: "100%", // コンテンツに合わせて幅を調整
             })}
         >
             <img
                 className={css({
                     width: "28px",
                     height: "28px",
-                    flexShrink: 0, // 追加: 画像サイズ固定
+                    flexShrink: 0,
                     borderRadius: "md",
                 })}
                 src={`https://crafthead.net/avatar/${uuid}`}
@@ -36,6 +39,9 @@ export const PlayerMap = async ({ uuid }: props) => {
                     fontSize: "14px",
                     fontStyle: "normal",
                     lineHeight: "normal",
+                    flexShrink: 0,
+                    // whiteSpace: "nowrap" を削除
+                    // textOverflow: "ellipsis" を削除
                 })}
             >
                 {await uuidToName(uuid)}

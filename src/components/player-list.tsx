@@ -22,6 +22,7 @@ export const PlayerList = async () => {
                 justifyContent: "space-between",
                 alignItems: "flex-start",
                 flexShrink: 0,
+                gap: "16px",
                 border: "0.5px solid var(--colors-border)",
                 borderRadius: "2xl",
                 background: "#ffffff",
@@ -41,51 +42,69 @@ export const PlayerList = async () => {
                         alignItems: "center",
                         fontStyle: "normal",
                         fontWeight: 500,
+                        fontSize: "1.2rem",
                         lineHeight: "normal",
                         gap: "10px",
                     })}
                 >
                     もりのパーティ
                 </div>
-                <div
-                    className={css({
-                        display: "flex",
-                        alignItems: "baseline",
-                    })}
-                >
-                    <div
-                        className={css({
-                            fontSize: "36px",
-                            fontStyle: "normal",
-                            fontWeight: 500,
-                            lineHeight: "100% /* 36px */",
-                        })}
-                    >
-                        {players.length}
-                    </div>
-                    <div
-                        className={css({
-                            fontSize: "14px",
-                            fontStyle: "normal",
-                            fontWeight: 900,
-                            lineHeight: "normal",
-                        })}
-                    >
-                        人
-                    </div>
-                </div>
+                <PlayerCount count={players.length} />
             </div>
             <div
                 className={css({
                     display: "flex",
                     overflowX: "auto",
-                    alignItems: "flex-end",
                     gap: "12px",
+                    maxWidth: "100%",
+                    height: "64px",
+                    whiteSpace: "nowrap",
+                    alignItems: "center"
                 })}
             >
-                {players.slice(0, 2).map((player) => (
-                    <PlayerMap uuid={player.id} key={player.id} />
+                {players.map((player) => (
+                    <div
+                        key={player.id}
+                        className={css({
+                            display: "inline-block",
+                            flexShrink: 0,
+                        })}
+                    >
+                        <PlayerMap uuid={player.id} />
+                    </div>
                 ))}
+            </div>
+        </div>
+    );
+};
+
+const PlayerCount = ({ count }: { count: number }) => {
+    return (
+        <div
+            className={css({
+                display: "flex",
+                alignItems: "baseline",
+            })}
+        >
+            <div
+                className={css({
+                    fontSize: "36px",
+                    fontStyle: "normal",
+                    fontWeight: 500,
+                    lineHeight: "100% /* 36px */",
+                })}
+            >
+                {count}
+            </div>
+            <div
+                className={css({
+                    fontSize: "14px",
+                    fontStyle: "normal",
+                    fontWeight: 900,
+                    lineHeight: "normal",
+                })}
+            >
+                人
             </div>
         </div>
     );
