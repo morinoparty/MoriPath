@@ -14,7 +14,7 @@ export const PlayerMap = async ({ uuid }: props) => {
                 padding: "4px 10px 4px 4px",
                 alignItems: "center",
                 gap: "4px",
-                borderRadius: "md",
+                borderRadius: "lg",
                 // maxWidth: "256px" を削除
                 border: "0.5px solid var(--colors-border)",
                 minWidth: 0,

@@ -12,6 +12,15 @@ export const PlayerList = async () => {
         ),
     ).then((results) => results.flat());
 
+     players.sort((a, b) => {
+        const aFirstCharacter = a.username.toLowerCase().charAt(0);
+        const bFirstCharacter = b.username.toLowerCase().charAt(0);
+        if (aFirstCharacter === bFirstCharacter) {
+            return 0;
+        }
+        return aFirstCharacter < bFirstCharacter ? -1 : 1;
+    });
+
     return (
         <div
             className={css({
