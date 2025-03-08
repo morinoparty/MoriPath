@@ -19,7 +19,7 @@ export interface ExtendedSession extends Session {
 
 // @ts-ignore
 export const { handlers, signIn, signOut, auth } = NextAuth(async _=> {
-    let { env } = await getCloudflareContext({async: true})
+    // let { env } = await getCloudflareContext({async: true})
     return {
         debug: false,
         trustHost: true,
@@ -29,7 +29,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async _=> {
                 name: "mineauth",
                 type: "oauth",
                 authorization: {
-                    url: `${env.SERVER_URL}/oauth2/authorize`,
+                    url: `${process.env.SERVER_URL}/oauth2/authorize`,
                     params: {
                         response_type: "code",
                         scope: "openid profile email",
