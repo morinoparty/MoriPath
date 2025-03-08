@@ -56,8 +56,8 @@ const PlayerHead = async () => {
             <Menu.Trigger>
                 <Image
                     className={css({
-                        width: "48px",
-                        height: "48px",
+                        width: "var(--sizes-header-height)",
+                        height: "var(--sizes-header-height)",
                         flexShrink: 0,
                         borderRadius: "lg",
                     })}
@@ -133,11 +133,10 @@ const loginBoxStyle = css({
     display: "flex",
     fontSize: "1rem",
     width: {
-        base: "120px",
-        md: "160px",
+        base: "var(--sizes-header-width)",
     },
-    height: "48px",
-    minWidth: "var(--spacings-radii-10, 40px)",
+    fontWeight: "normal",
+    height: "var(--sizes-header-height)",
     padding: "var(--spacings-radii-0, 0px) var(--spacings-radii-4, 16px)",
     justifyContent: "center",
     alignItems: "center",

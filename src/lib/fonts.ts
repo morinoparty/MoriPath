@@ -7,7 +7,7 @@ import {
 
 const notoSansJp = Noto_Sans_JP({
     subsets: ["latin"],
-    weight: ["500", "700"],
+    weight: ["400", "700"],
     preload: false,
     variable: "--font-noto-sans-jp",
     display: "swap",
@@ -15,21 +15,21 @@ const notoSansJp = Noto_Sans_JP({
 });
 
 const poppins = Poppins({
-    weight: "500",
+    weight: "400",
     variable: "--font-poppins",
     display: "swap",
     subsets: ["latin"],
 });
 
 const montserratAlternates = Montserrat_Alternates({
-    weight: "500",
+    weight: "400",
     variable: "--font-montserrat-alternates",
     display: "swap",
     subsets: ["latin"],
 });
 
 const montserrat = Montserrat({
-    weight: "500",
+    weight: "400",
     variable: "--font-montserrat",
     display: "swap",
     subsets: ["latin"],

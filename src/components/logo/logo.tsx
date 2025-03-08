@@ -10,7 +10,17 @@ export const Logo = () => {
                 gap: "16px",
             })}
         >
-            <Image src="/moripa.svg" alt="MoriPath" width={48} height={48} />
+            <Image
+                className={css({
+                    height: "var(--sizes-header-height)",
+                    width: "var(--sizes-header-height)",
+                    aspectRatio: 1,
+                })}
+                src="/moripa.svg"
+                alt="MoriPath"
+                width={200}
+                height={200}
+            />
         </div>
     );
 };

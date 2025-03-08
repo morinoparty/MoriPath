@@ -71,7 +71,13 @@ export default defineConfig({
                     white20: { value: "rgba(255, 255, 255, 0.2)" },
                     white40: { value: "rgba(255, 255, 255, 0.4)" },
                     white60: { value: "rgba(255, 255, 255, 0.6)" },
-                    bg: { base: { value: "#EAF2EF"} },
+                    bg: { base: { value: "#EAF2EF" } },
+                },
+                sizes: {
+                    header: {
+                        height: { value: "48px" },
+                        width: { value: "96px" },
+                    },
                 },
             },
             textStyles,
