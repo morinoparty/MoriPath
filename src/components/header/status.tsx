@@ -3,11 +3,10 @@ import { HStack } from "@/styled-system/jsx";
 import { LogOutIcon, Settings, UserIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "~/components/ui/button";
-import { type ExtendedSession, auth, signIn, signOut } from "~/lib/auth";
+import { type ExtendedSession, auth, signOut } from "~/lib/auth";
 import { Menu } from "../ui/menu";
 
-export const LoginButton = async () => {
+export const Status = async () => {
     const session = await auth();
 
     return (
@@ -26,24 +25,9 @@ export const LoginButton = async () => {
                     gap: "var(--spacings-radii-2, 8px)",
                 })}
             >
-                {session ? <PlayerHead /> : <LoginForm />}
+                {session ? <PlayerHead /> : null}
             </div>
         </div>
-    );
-};
-
-const LoginForm = () => {
-    return (
-        <form
-            action={async () => {
-                "use server";
-                await signIn("MineAuth");
-            }}
-        >
-            <Button className={loginBoxStyle} type="submit">
-                <span>ログイン</span>
-            </Button>
-        </form>
     );
 };
 
@@ -58,8 +42,7 @@ const PlayerHead = async () => {
                     className={css({
                         width: "var(--sizes-header-height)",
                         height: "var(--sizes-header-height)",
-                        flexShrink: 0,
-                        borderRadius: "lg",
+                        borderRadius: "md",
                     })}
                     src={
                         sessionData.user?.image ??
@@ -128,19 +111,3 @@ const PlayerHead = async () => {
         </Menu.Root>
     );
 };
-
-const loginBoxStyle = css({
-    display: "flex",
-    fontSize: "1rem",
-    width: {
-        base: "var(--sizes-header-width)",
-    },
-    fontWeight: "normal",
-    height: "var(--sizes-header-height)",
-    padding: "var(--spacings-radii-0, 0px) var(--spacings-radii-4, 16px)",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: "var(--spacings-radii-2, 8px)",
-    flexShrink: 0,
-    borderRadius: "lg",
-});

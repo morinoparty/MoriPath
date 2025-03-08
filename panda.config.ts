@@ -22,7 +22,7 @@ export const textStyles = defineTextStyles({
                 color: "var(--colors-text)",
             },
             lineHeight: "1.8",
-            fontWeight: "500",
+            fontWeight: "400",
         },
     },
 });
@@ -47,7 +47,7 @@ export default defineConfig({
         createPreset({
             accentColor: grass,
             grayColor: neutral,
-            radius: "xl",
+            radius: "md",
         }),
     ],
 
@@ -79,6 +79,9 @@ export default defineConfig({
                     header: {
                         height: { value: "48px" },
                         width: { value: "96px" },
+                    },
+                    footer: {
+                        height: { value: "64px" },
                     },
                 },
             },

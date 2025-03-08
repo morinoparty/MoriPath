@@ -24,7 +24,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (_) => {
         providers: [
             {
                 id: "MineAuth",
-                name: "mineauth",
+                name: "MineAuth",
                 type: "oauth",
                 authorization: {
                     url: `${process.env.SERVER_URL}/oauth2/authorize`,
@@ -53,6 +53,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (_) => {
                 client: {
                     token_endpoint_auth_method: "none",
                 },
+            
             },
         ],
         callbacks: {
@@ -158,6 +159,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (_) => {
 
                 return session;
             },
+        },
+        pages: {
+            signIn: "/auth/sign-in",
         },
         secret: process.env.AUTH_SECRET,
         // jwt: {

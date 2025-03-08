@@ -3,9 +3,9 @@ import { Bell, Hammer, SquareKanban } from "lucide-react";
 import Link from "next/link";
 
 const items = [
-    { icon: <Bell />, label: "おしらせ", link: "/notification", active: true },
-    { icon: <SquareKanban />, label: "やること", link: "/todo", active: true },
-    { icon: <Hammer />, label: "実装予定", link: "/message", active: false },
+    { icon: <Bell />, label: "Notice", link: "/notification", active: true },
+    { icon: <SquareKanban />, label: "Todos", link: "/todo", active: true },
+    { icon: <Hammer />, label: "WIP", link: "/message", active: false },
 ];
 
 export const MobileFooter = () => {
@@ -15,6 +15,7 @@ export const MobileFooter = () => {
                 className={css({
                     display: "flex",
                     width: "100%",
+                    height: "var(--sizes-footer-height, 2.5rem)",
                     maxWidth: "lg",
                     margin: "0 auto",
                     justifyContent: "space-between",
@@ -58,17 +59,16 @@ export const MobileFooter = () => {
                         <div
                             className={css({
                                 display: "flex",
-                                width: "48px",
+                                width: "100%",
                                 height: "28px",
                                 flexDirection: "column",
                                 justifyContent: "flex-end",
                                 flexShrink: 0,
-                                textAlign: "right",
+                                textAlign: "center",
                                 fontSize: "12px",
                                 fontStyle: "normal",
                                 fontWeight: 400,
                                 lineHeight: "44px /* 366.667% */",
-                                letterSpacing: "-0.72px",
                             })}
                         >
                             {item.label}

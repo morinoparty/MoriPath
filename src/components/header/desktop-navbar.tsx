@@ -1,9 +1,9 @@
-import { LoginButton } from "./login-button";
+import { Status } from "./status";
 
 export const DesktopNavbar = async () => {
     return (
         <>
-            <LoginButton />
+            <Status />
         </>
     );
 };
