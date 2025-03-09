@@ -7,7 +7,7 @@ export const Layout: React.FC<{
         base: {
             maxWidth: "lg",
             margin: "0 auto",
-            padding: "0 32px",
+            padding: "0 24px",
             bgColor: "var(--colors-bg-base)",
         },
     });

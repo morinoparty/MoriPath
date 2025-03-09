@@ -4,45 +4,44 @@ import { uuidToName } from "~/utils/player-helpers";
 
 type props = {
     uuid: string;
+    size?: number;
 };
 
-export const PlayerMap = async ({ uuid }: props) => {
+export const PlayerMap = async ({ uuid, size = 28 }: props) => {
     return (
         <div
             className={css({
-                display: "flex",
+                display: "inline-flex",
                 padding: "4px 10px 4px 4px",
                 alignItems: "center",
-                gap: "4px",
                 borderRadius: "lg",
-                // maxWidth: "256px" を削除
-                border: "0.5px solid var(--colors-border)",
+                border: "0.5px solid var(--colors-border-default)",
+                bgColor: "#ffffff",
+                flexShrink: "0",
                 minWidth: 0,
-                flexShrink: 0,
                 overflow: "hidden",
-                width: "100%", // コンテンツに合わせて幅を調整
             })}
+            style={{ gap: `${size / 4}px` }}
         >
             <img
                 className={css({
-                    width: "28px",
-                    height: "28px",
                     flexShrink: 0,
                     borderRadius: "md",
                 })}
+                style={{ width: `${size}px`, height: `${size}px` }}
                 src={`https://crafthead.net/avatar/${uuid}`}
                 alt={uuid}
             />
 
             <Text
                 className={css({
-                    fontSize: "14px",
                     fontStyle: "normal",
                     lineHeight: "normal",
                     flexShrink: 0,
-                    // whiteSpace: "nowrap" を削除
-                    // textOverflow: "ellipsis" を削除
                 })}
+                style={{
+                    fontSize: `${size / 2}px`,
+                }}
             >
                 {await uuidToName(uuid)}
             </Text>

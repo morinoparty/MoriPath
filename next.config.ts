@@ -11,15 +11,19 @@ const nextConfig: NextConfig = {
                 hostname: "crafthead.net",
                 port: "",
                 pathname: "/avatar/**",
-            },
-            {
-                protocol: "https",
-                hostname: "minotar.net",
-                port: "",
-                pathname: "/helm/**",
-            },
+            }
         ],
+
     },
+    rewrites: async () => {
+        return [
+            {
+                source: "/main/:path*",
+                destination: process.env.MAIN_SERVER_URL + "/:path*",
+            },
+
+        ];
+    }
 };
 
 export default nextConfig;
