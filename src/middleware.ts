@@ -37,9 +37,7 @@ export async function middleware(request: NextRequest) {
 
     if (!isApiHealthy) {
         // APIが応答しない場合は503エラーページにリダイレクト
-        return NextResponse.redirect(
-            new URL("/service-unavailable", request.url),
-        );
+        return NextResponse.redirect(new URL("/service-unavailable", request.url));
     }
 
     // 通常の認証処理を実行

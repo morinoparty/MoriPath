@@ -1,9 +1,4 @@
-import {
-    Montserrat,
-    Montserrat_Alternates,
-    Noto_Sans_JP,
-    Poppins,
-} from "next/font/google";
+import { Montserrat, Montserrat_Alternates, Noto_Sans_JP, Poppins } from "next/font/google";
 
 const notoSansJp = Noto_Sans_JP({
     subsets: ["latin"],

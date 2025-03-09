@@ -14,15 +14,9 @@ export default function ServiceUnavailable() {
                 minH: "calc(100vh - 80px)",
             })}
         >
-            <h1 className={css({ fontSize: "3xl", fontWeight: "bold" })}>
-                サービス利用不可
-            </h1>
-            <p className={css({ fontSize: "lg" })}>
-                申し訳ありませんが、現在サーバーが応答していません。
-            </p>
-            <p className={css({ fontSize: "md", color: "gray.600" })}>
-                しばらく経ってから再度お試しください。
-            </p>
+            <h1 className={css({ fontSize: "3xl", fontWeight: "bold" })}>サービス利用不可</h1>
+            <p className={css({ fontSize: "lg" })}>申し訳ありませんが、現在サーバーが応答していません。</p>
+            <p className={css({ fontSize: "md", color: "gray.600" })}>しばらく経ってから再度お試しください。</p>
             <button
                 type="button"
                 onClick={() => router.push("/")}

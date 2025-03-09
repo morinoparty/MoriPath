@@ -44,10 +44,7 @@ const PlayerHead = async () => {
                         height: "var(--sizes-header-height)",
                         borderRadius: "xl",
                     })}
-                    src={
-                        sessionData.user?.image ??
-                        "https://crafthead.net/avatar/Steave" + "/128.png"
-                    }
+                    src={sessionData.user?.image ?? "https://crafthead.net/avatar/Steave" + "/128.png"}
                     width="50"
                     height="50"
                     alt="logo"
@@ -63,11 +60,7 @@ const PlayerHead = async () => {
                         {/*/my-pageに異動*/}
                         <Menu.Item value="profile">
                             <Link href={"/my-page"}>
-                                <HStack
-                                    gap="6"
-                                    justify="space-between"
-                                    flex="1"
-                                >
+                                <HStack gap="6" justify="space-between" flex="1">
                                     <HStack gap="2">
                                         <UserIcon />
                                         Profile
@@ -77,11 +70,7 @@ const PlayerHead = async () => {
                         </Menu.Item>
                         <Menu.Item value="settings">
                             <Link href={"/my-page"}>
-                                <HStack
-                                    gap="6"
-                                    justify="space-between"
-                                    flex="1"
-                                >
+                                <HStack gap="6" justify="space-between" flex="1">
                                     <HStack gap="2">
                                         <Settings /> Settings
                                     </HStack>

@@ -95,28 +95,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (_) => {
                     return token;
                 }
                 // Subsequent logins, if the `access_token` has expired, try to refresh it
-                if (!token.refresh_token)
-                    throw new Error("Missing refresh token");
+                if (!token.refresh_token) throw new Error("Missing refresh token");
                 try {
                     // The `token_endpoint` can be found in the provider's documentation. Or if they support OIDC,
                     // at their `/.well-known/openid-configuration` endpoint.
                     // i.e. https://accounts.google.com/.well-known/openid-configuration
-                    const response = await fetch(
-                        `${process.env.MAIN_SERVER_URL}/oauth2/token`,
-                        {
-                            headers: {
-                                "Content-Type":
-                                    "application/x-www-form-urlencoded",
-                            },
-                            body: new URLSearchParams({
-                                grant_type: "refresh_token",
-                                client_id: process.env.CLIENT_ID as string,
-                                redirect_uri: process.env.SELF_URL as string,
-                                refresh_token: token.refresh_token as string, // 型アサーションを使用してstring型として扱う
-                            }),
-                            method: "POST",
+                    const response = await fetch(`${process.env.MAIN_SERVER_URL}/oauth2/token`, {
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
                         },
-                    );
+                        body: new URLSearchParams({
+                            grant_type: "refresh_token",
+                            client_id: process.env.CLIENT_ID as string,
+                            redirect_uri: process.env.SELF_URL as string,
+                            refresh_token: token.refresh_token as string, // 型アサーションを使用してstring型として扱う
+                        }),
+                        method: "POST",
+                    });
 
                     const responseTokens = await response.json<{
                         access_token: string;
@@ -130,14 +125,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (_) => {
                         // Keep the previous token properties
                         ...token,
                         access_token: responseTokens.access_token,
-                        expires_at: Math.floor(
-                            Date.now() / 1000 +
-                                (responseTokens.expires_in as number),
-                        ),
+                        expires_at: Math.floor(Date.now() / 1000 + (responseTokens.expires_in as number)),
                         // Fall back to old refresh token, but note that
                         // many providers may only allow using a refresh token once.
-                        refresh_token:
-                            responseTokens.refresh_token ?? token.refresh_token,
+                        refresh_token: responseTokens.refresh_token ?? token.refresh_token,
                     };
                 } catch (error) {
                     // The error property can be used client-side to handle the refresh token error
@@ -147,10 +138,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (_) => {
                     };
                 }
             },
-            async session({
-                session,
-                token,
-            }: { session: ExtendedSession; token: MyToken }) {
+            async session({ session, token }: { session: ExtendedSession; token: MyToken }) {
                 if (token.user) {
                     session.user = token.user as User;
                     session.accessToken = token.access_token as string;

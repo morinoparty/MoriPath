@@ -1,9 +1,8 @@
 import { css } from "@/styled-system/css";
 import { PlayerMap } from "~/components/minecraft/player/player-map";
+import type { ServerPlayerData } from "~/lib/types";
 
-export const PlayerList = ({
-    players,
-}: { players: { id: string; username: string }[] }) => {
+export const PlayerList = ({ players }: { players: ServerPlayerData[] }) => {
     return (
         <div
             className={css({

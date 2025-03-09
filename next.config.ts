@@ -11,19 +11,17 @@ const nextConfig: NextConfig = {
                 hostname: "crafthead.net",
                 port: "",
                 pathname: "/avatar/**",
-            }
+            },
         ],
-
     },
     rewrites: async () => {
         return [
             {
                 source: "/main/:path*",
-                destination: process.env.MAIN_SERVER_URL + "/:path*",
+                destination: `${process.env.MAIN_SERVER_URL}/:path*`,
             },
-
         ];
-    }
+    },
 };
 
 export default nextConfig;

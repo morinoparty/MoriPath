@@ -1,5 +1,5 @@
-import { Greeting } from "~/components/greeting";
-import { JoinPlayerInfo } from "~/components/join-player-info";
+import { Greeting } from "~/components/top/greeting";
+import { JoinPlayerInfo } from "~/components/top/join-player-info";
 export const TopList = () => {
     return (
         <div>

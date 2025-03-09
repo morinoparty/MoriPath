@@ -1,14 +1,14 @@
 import { css } from "@/styled-system/css";
-import { PlayerList } from "~/components/player-list";
+import { PlayerList } from "~/components/top/player-list";
+import type { ServerPlayerData } from "~/lib/types";
 
 export const JoinPlayerInfo = async () => {
     const servers = (process.env.SERVERS as string).split(",");
     const players = await Promise.all(
         servers.map((server) =>
-            fetch(
-                `${process.env.SERVER_URL}${server}/api/v1/commons/server/players`,
-                {},
-            ).then((res) => res.json<{ id: string; username: string }[]>()),
+            fetch(`${process.env.SERVER_URL}${server}/api/v1/commons/server/players`, {}).then((res) =>
+                res.json<ServerPlayerData[]>(),
+            ),
         ),
     ).then((results) => results.flat());
 
@@ -32,7 +32,7 @@ export const JoinPlayerInfo = async () => {
                 alignItems: "flex-start",
                 flexShrink: 0,
                 gap: "16px",
-                border: "0.5px solid var(--colors-border-default)",
+                border: "1px solid var(--colors-border-default)",
                 borderRadius: "2xl",
                 background: "#ffffff",
             })}

@@ -1,8 +1,4 @@
-import {
-    defineConfig,
-    defineGlobalStyles,
-    defineTextStyles,
-} from "@pandacss/dev";
+import { defineConfig, defineGlobalStyles, defineTextStyles } from "@pandacss/dev";
 import { createPreset } from "@park-ui/panda-preset";
 import grass from "@park-ui/panda-preset/colors/grass";
 import neutral from "@park-ui/panda-preset/colors/neutral";
@@ -11,8 +7,7 @@ export const textStyles = defineTextStyles({
     body: {
         description: "The body text style - used in paragraphs",
         value: {
-            fontFamily:
-                "var(--font-poppins), var(--font-noto-sans-jp), Fluent Emoji Color",
+            fontFamily: "var(--font-poppins), var(--font-noto-sans-jp), Fluent Emoji Color",
             fontSize: {
                 base: "sm",
                 md: "md",
@@ -49,10 +44,7 @@ export default defineConfig({
         }),
     ],
 
-    include: [
-        "./src/components/**/*.{ts,tsx,js,jsx}",
-        "./src/app/**/*.{ts,tsx,js,jsx}",
-    ],
+    include: ["./src/components/**/*.{ts,tsx,js,jsx}", "./src/app/**/*.{ts,tsx,js,jsx}"],
 
     theme: {
         extend: {

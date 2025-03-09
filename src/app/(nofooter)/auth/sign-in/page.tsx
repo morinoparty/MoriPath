@@ -12,21 +12,16 @@ export default function SignInPage() {
             })}
         >
             <div className={boxStyle}>
-                <h1 className={css({ fontSize: "2xl", fontWeight: "bold" })}>
-                    認証が必要です
-                </h1>
+                <h1 className={css({ fontSize: "2xl", fontWeight: "bold" })}>認証が必要です</h1>
 
                 <p className={css({ fontSize: "lg" })}>
-                    サービスを利用するには、Moripa
-                    APIにログインする必要があります。
+                    サービスを利用するには、Moripa APIにログインする必要があります。
                 </p>
             </div>
             <LoginButton />
 
             <div className={boxStyle}>
-                <h2 className={css({ fontSize: "2xl", fontWeight: "bold" })}>
-                    アカウントをお持ちでない場合
-                </h2>
+                <h2 className={css({ fontSize: "2xl", fontWeight: "bold" })}>アカウントをお持ちでない場合</h2>
 
                 <p className={css({ fontSize: "lg" })}>
                     お手数ですが、サーバー内で<code>/mineauth register</code>

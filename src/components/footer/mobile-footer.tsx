@@ -1,13 +1,12 @@
 "use client";
-import { usePathname } from "next/navigation";
 import { css } from "@/styled-system/css";
-import {Bell, ClipboardCheck, Home} from "lucide-react";
+import { Bell, ClipboardCheck, Home } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const items = [
     { icon: <Home />, label: "ホーム", link: "/", active: true },
     { icon: <ClipboardCheck />, label: "やること", link: "/todo", active: true },
-
     { icon: <Bell />, label: "おしらせ", link: "/notification", active: true },
     // { icon: <Hammer />, label: "WIP", link: "/message", active: false },
 ];
@@ -46,9 +45,7 @@ export const MobileFooter = () => {
                             flexDirection: "column",
                             alignItems: "center",
                             gap: "4px",
-                            color: item.link === currentPath
-                                ? "inherit"
-                                : "var(--colors-fg-disabled)",
+                            color: item.link === currentPath ? "inherit" : "var(--colors-fg-disabled)",
                             pointerEvents: item.active ? "auto" : "none",
                         })}
                     >

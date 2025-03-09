@@ -13,7 +13,14 @@ export default function Template({ children }: { children: React.ReactNode }) {
                     })}
                 >
                     <Header />
-                    {children}
+                    <div
+                        className={css({
+                            minH: "calc(100vh - 80px - var(--sizes-footer-height))",
+                        })}
+                    >
+                        {children}
+                    </div>
+
                     <Footer />
                 </div>{" "}
             </Layout>
