@@ -1,27 +1,27 @@
 import { css } from "@/styled-system/css";
-import { ArrowLeftRight, PiggyBank, Send } from "lucide-react";
+import { ArrowLeftRight, Search, Wrench } from "lucide-react";
 import { MenuButton } from "~/components/menu-button";
 import { Text } from "~/components/ui/text";
 import type { MenuData } from "~/lib/types";
 
-export const Money = () => {
+export const Shops = () => {
     const data: MenuData[] = [
         {
-            icon: <Send />,
-            label: "お金を送る",
-            link: "/money/send",
+            icon: <Wrench />,
+            label: "お店の設定",
+            link: "/shops/manage",
         },
         {
-            icon: <PiggyBank />,
-            label: "お金を貯める",
-            link: "/money/history",
+            icon: <Search />,
+            label: "お店を探す",
+            link: "/shops/search", // 修正: 正しいリンクに変更
             isActive: false,
         },
         {
-            icon: <ArrowLeftRight />,
-            label: "お金の記録",
-            link: "/money/history",
-            isActive: false,
+            icon: <ArrowLeftRight />, // 新しいメニューアイコン
+            label: "お店の履歴", // 新しいメニューラベル
+            link: "/shops/history", // 新しいリンク
+            isActive: false, // 新しいメニューのアクティブ状態
         },
     ];
     return (
@@ -47,7 +47,7 @@ export const Money = () => {
                     lineHeight: "32px /* 133.333% */",
                 })}
             >
-                おかね
+                おみせ
             </Text>
             <div
                 className={css({
@@ -58,7 +58,16 @@ export const Money = () => {
                     alignSelf: "stretch",
                 })}
             >
-                <MenuButton data={data[0]} />
+                <div
+                    className={css({
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: "8px",
+                        alignSelf: "stretch",
+                    })}
+                >
+                    <MenuButton data={data[0]} />
+                </div>
                 <div
                     className={css({
                         display: "flex",
@@ -68,7 +77,6 @@ export const Money = () => {
                     })}
                 >
                     <MenuButton data={data[1]} />
-                    <MenuButton data={data[2]} />
                 </div>
             </div>
         </div>

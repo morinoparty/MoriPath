@@ -1,4 +1,5 @@
 import { Money } from "~/components/money/money";
+import { Shops } from "~/components/shops/shops";
 import { TopList } from "~/components/top/top-list";
 
 export default async function Home() {
@@ -6,6 +7,7 @@ export default async function Home() {
         <div>
             <TopList />
             <Money />
+            <Shops />
         </div>
     );
 }
