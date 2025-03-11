@@ -78,7 +78,7 @@ const PlayerCount = ({ count }: { count: number }) => {
                 className={css({
                     fontSize: "36px",
                     fontStyle: "normal",
-                    fontWeight: 500,
+                    fontWeight: 400,
                     lineHeight: "100% /* 36px */",
                 })}
             >

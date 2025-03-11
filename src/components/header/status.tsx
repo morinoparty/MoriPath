@@ -42,7 +42,7 @@ const PlayerHead = async () => {
                     className={css({
                         width: "var(--sizes-header-height)",
                         height: "var(--sizes-header-height)",
-                        borderRadius: "xl",
+                        borderRadius: "lg",
                     })}
                     src={sessionData.user?.image ?? "https://crafthead.net/avatar/Steave" + "/128.png"}
                     width="50"
@@ -63,7 +63,7 @@ const PlayerHead = async () => {
                                 <HStack gap="6" justify="space-between" flex="1">
                                     <HStack gap="2">
                                         <UserIcon />
-                                        Profile
+                                        プロフィール
                                     </HStack>
                                 </HStack>
                             </Link>
@@ -72,7 +72,7 @@ const PlayerHead = async () => {
                             <Link href={"/my-page"}>
                                 <HStack gap="6" justify="space-between" flex="1">
                                     <HStack gap="2">
-                                        <Settings /> Settings
+                                        <Settings /> 設定
                                     </HStack>
                                 </HStack>
                             </Link>
@@ -89,7 +89,7 @@ const PlayerHead = async () => {
                                 <button type="submit">
                                     <HStack gap="2">
                                         <LogOutIcon />
-                                        <div>Sign out</div>
+                                        <div>ログアウト</div>
                                     </HStack>
                                 </button>
                             </form>

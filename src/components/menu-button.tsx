@@ -28,8 +28,8 @@ export const MenuButton = ({ data }: props) => {
     });
     data = {
         isActive: isActive,
-        ...data
-    }
+        ...data,
+    };
     // 条件分岐で適切なコンポーネントを返します
     return isActive ? (
         <Link href={data.link} className={buttonStyle}>

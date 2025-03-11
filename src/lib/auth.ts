@@ -128,7 +128,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (_) => {
                         expires_at: Math.floor(Date.now() / 1000 + (responseTokens.expires_in as number)),
                         // Fall back to old refresh token, but note that
                         // many providers may only allow using a refresh token once.
-                        refresh_token: responseTokens.refresh_token ?? token.refresh_token,
+                        refresh_token: responseTokens.refresh_token,
                     };
                 } catch (error) {
                     // The error property can be used client-side to handle the refresh token error

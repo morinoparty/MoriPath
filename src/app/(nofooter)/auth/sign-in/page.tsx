@@ -20,14 +20,14 @@ export default function SignInPage() {
             </div>
             <LoginButton />
 
-            <div className={boxStyle}>
+            {/* <div className={boxStyle}>
                 <h2 className={css({ fontSize: "2xl", fontWeight: "bold" })}>アカウントをお持ちでない場合</h2>
 
                 <p className={css({ fontSize: "lg" })}>
                     お手数ですが、サーバー内で<code>/mineauth register</code>
                     コマンドを実行してアカウントを作成してください。
                 </p>
-            </div>
+            </div> */}
         </div>
     );
 }

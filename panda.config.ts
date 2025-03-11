@@ -64,6 +64,16 @@ export default defineConfig({
                     white40: { value: "rgba(255, 255, 255, 0.4)" },
                     white60: { value: "rgba(255, 255, 255, 0.6)" },
                     bg: { base: { value: "#EAF2EF" } },
+                    color: {
+                        palette: {
+                            default: {
+                                value: "var(--colors-primary)",
+                            },
+                            emphasized: {
+                                value: "var(--colors-primary90)",
+                            },
+                        },
+                    },
                 },
                 sizes: {
                     header: {

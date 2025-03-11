@@ -23,7 +23,7 @@ async function checkApiHealth() {
 
 export async function middleware(request: NextRequest) {
     // 認証関連のパスはスキップ
-    if (request.nextUrl.pathname.startsWith("/api/auth")) {
+    if (request.nextUrl.pathname.startsWith("/api/auth/*")) {
         return auth();
     }
 

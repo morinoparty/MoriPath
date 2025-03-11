@@ -20,6 +20,9 @@ importers:
       '@types/three':
         specifier: ^0.174.0
         version: 0.174.0
+      jotai:
+        specifier: ^2.12.2
+        version: 2.12.2(@types/react@19.0.10)(react@19.0.0)
       lucide-react:
         specifier: ^0.477.0
         version: 0.477.0(react@19.0.0)
@@ -3580,6 +3583,18 @@ packages:
 
   jose@5.9.6:
     resolution: {integrity: sha512-AMlnetc9+CV9asI19zHmrgS/WYsWUwCn2R7RzlbJWD7F9eWYUTGyBmU9o6PxngtLGOiDGPRu+Uc4fhKzbpteZQ==}
+
+  jotai@2.12.2:
+    resolution: {integrity: sha512-oN8715y7MkjXlSrpyjlR887TOuc/NLZMs9gvgtfWH/JP47ChwO0lR2ijSwBvPMYyXRAPT+liIAhuBavluKGgtA==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=17.0.0'
+      react: '>=17.0.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      react:
+        optional: true
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -10255,6 +10270,11 @@ snapshots:
     optional: true
 
   jose@5.9.6: {}
+
+  jotai@2.12.2(@types/react@19.0.10)(react@19.0.0):
+    optionalDependencies:
+      '@types/react': 19.0.10
+      react: 19.0.0
 
   js-tokens@4.0.0: {}
 
