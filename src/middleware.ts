@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { auth } from "~/lib/auth";
+// export {auth as middleware} from "~/lib/auth";
 
 // APIヘルスチェック用の関数
 async function checkApiHealth() {
@@ -23,8 +24,8 @@ async function checkApiHealth() {
 
 export async function middleware(request: NextRequest) {
     // 認証関連のパスはスキップ
-    if (request.nextUrl.pathname.startsWith("/api/auth/*")) {
-        return auth();
+    if (request.nextUrl.pathname.startsWith("/api/auth") && request.nextUrl.pathname !== ("/api/auth/session") ) {
+        return auth()
     }
 
     // サービス利用不可ページへのアクセスはそのまま通す
