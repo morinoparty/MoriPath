@@ -37,12 +37,11 @@ export const TransactionSuccess = () => {
                                 }),
                             )}
                             onClick={() => {
-                                window.location.reload();
+                                window.location.href = window.location.href.split("?")[0];
                             }}
                         >
                             続けて送る
                         </Button>
-
                         <Button
                             className={cx(buttonStyles)}
                             onClick={() => {

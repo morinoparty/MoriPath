@@ -24,8 +24,8 @@ async function checkApiHealth() {
 
 export async function middleware(request: NextRequest) {
     // 認証関連のパスはスキップ
-    if (request.nextUrl.pathname.startsWith("/api/auth") && request.nextUrl.pathname !== ("/api/auth/session") ) {
-        return auth()
+    if (request.nextUrl.pathname.startsWith("/api/auth") && request.nextUrl.pathname !== "/api/auth/session") {
+        return auth();
     }
 
     // サービス利用不可ページへのアクセスはそのまま通す

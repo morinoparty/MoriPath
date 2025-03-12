@@ -2,7 +2,7 @@
 
 import { css } from "@/styled-system/css";
 import { atom, useAtom } from "jotai";
-import {useEffect, useState} from "react";
+import { useEffect, useRef, useState } from "react";
 
 // 数字の入力用のatomを定義します。
 export const amountAtom = atom<number | undefined>(undefined);
@@ -30,16 +30,16 @@ const formatAmount = (inputType: InputType, value: number | undefined) => {
 // AmountInputコンポーネントを定義します。
 export const AmountInput = ({ balance, height = 48 }: Props) => {
     const [amount, setAmount] = useAtom(amountAtom);
-    const [error, setError] = useAtom(errorAtom); // 外部で定義したatomを使用
+    const [error, setError] = useAtom(errorAtom);
     const [inputType, setInputType] = useState<InputType>("text");
-    let isFirst = true
+    const isFirst = useRef(true);
 
     useEffect(() => {
-        if (isFirst) {
+        if (isFirst.current) {
             setAmount(0);
-            isFirst = false;
+            isFirst.current = false;
         }
-    },[isFirst]);
+    }, [setAmount]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         // カンマを取り除いて数値に変換

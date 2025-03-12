@@ -2,7 +2,7 @@
 
 import { css } from "@/styled-system/css";
 import { atom, useAtom } from "jotai";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { validateUsername } from "~/utils/player-helpers";
 
 export const usernameAtom = atom<string>("");
@@ -26,12 +26,12 @@ export const UsernameInput = ({ initialValue, height = 48, currentUser }: Props)
     const [username, setUsername] = useAtom(usernameAtom);
     const [error, setError] = useAtom(errorAtom); // 外部で定義したatomを使用
     const [isValidating, setIsValidating] = useState(false);
-    let isFirst = true
+    const isFirst = useRef(true);
 
     useEffect(() => {
         if (initialValue || isFirst) {
             setUsername(initialValue ?? "");
-            isFirst = false;
+            isFirst.current = false;
         }
     }, [initialValue, setUsername]);
 
