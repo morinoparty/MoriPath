@@ -8,6 +8,8 @@ on:
 
 jobs:
   deploy:
+    env:
+      MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
     runs-on: ubuntu-latest
     name: Deploy
     steps:
