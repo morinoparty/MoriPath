@@ -9,7 +9,10 @@ on:
 jobs:
   deploy:
     env:
+      AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
       MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
+      SERVER_URL: ${{ secrets.SERVER_URL }}
+      SERVERS: ${{ secrets.SERVERS }}
     runs-on: ubuntu-latest
     name: Deploy
     steps:
