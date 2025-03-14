@@ -11,7 +11,7 @@ export interface ExtendedSession extends Session {
         name?: string | null;
         email?: string | null;
         image?: string | null;
-        uuid?: string | null;
+        id?: string;
     };
 }
 
@@ -46,7 +46,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (_) => {
                         id: profile.id,
                         name: profile.username,
                         image: `https://crafthead.net/avatar/${profile.id}`,
-                        uuid: profile.id,
                     };
                 },
                 clientId: process.env.CLIENT_ID as string,

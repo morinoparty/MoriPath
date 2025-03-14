@@ -9,7 +9,7 @@ export const Shops = () => {
         {
             icon: <Wrench />,
             label: "お店の設定",
-            link: "/shops/manage",
+            link: "/shops/management",
         },
         {
             icon: <Search />,

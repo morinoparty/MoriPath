@@ -35,3 +35,37 @@ export interface MenuData {
     isActive?: boolean;
     link: string;
 }
+
+export interface ShopData {
+    shopId: number;
+    owner: string;
+    mode: string;
+    stackingAmount: number;
+    remaining: number;
+    location: {
+        world: string;
+        x: number;
+        y: number;
+        z: number;
+        yaw: number;
+        pitch: number;
+    };
+    price: number;
+    item: {
+        type: {
+            name: string;
+            type: string;
+        };
+        amount: number;
+        lore: Array<{
+            text: string;
+        }>;
+        meta: {
+            displayName: {
+                text: string;
+            };
+            enchantment: Record<string, unknown>;
+            customModelData: number | null;
+        };
+    };
+}
