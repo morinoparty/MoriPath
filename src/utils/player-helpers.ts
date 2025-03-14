@@ -22,35 +22,28 @@ export const removeColorTags = (text: string): string => {
 
 // ユーザー名の検証を行う関数
 export const validateUsername = async (username: string, currentUser: string | undefined): Promise<string | null> => {
-    // 入力が空の場合
     if (!username.trim()) {
         return "Minecraft IDを入力してください";
     }
 
-    // カラータグを削除してから比較
-    const cleanUsername = removeColorTags(username);
-    const cleanCurrentUser = currentUser ? removeColorTags(currentUser) : undefined;
-
     // 自分自身への送金を防ぐ
-    if (cleanCurrentUser && cleanUsername.toLowerCase() === cleanCurrentUser.toLowerCase()) {
+    if (currentUser && username.toLowerCase() === currentUser.toLowerCase()) {
         return "自分自身には送金できません";
     }
 
     try {
         // ユーザーが存在するか確認するAPIを呼び出す
-        const response = await fetch(`/api/users/exists?username=${encodeURIComponent(cleanUsername)}`);
+        const response = await fetch(`https://api.ashcon.app/mojang/v2/user/${encodeURIComponent(username)}`);
 
-        if (!response.ok) {
-            throw new Error("APIリクエストに失敗しました");
-        }
-
-        const data = (await response.json()) as { exists: boolean };
-
-        if (!data.exists) {
+        if (response.status === 404) {
             return "指定されたMinecraft IDのユーザーが見つかりません";
         }
 
-        return null; // エラーなし
+        if (response.status === 200) {
+            return null;
+        }
+
+        return "ユーザーの検証中にエラーが発生しました";
     } catch (error) {
         console.error("ユーザー検証エラー:", error);
         return "ユーザーの検証中にエラーが発生しました";
