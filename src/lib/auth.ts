@@ -106,7 +106,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (_) => {
                         body: new URLSearchParams({
                             grant_type: "refresh_token",
                             client_id: process.env.CLIENT_ID as string,
-                            redirect_uri: process.env.AUTH_URL as string,
                             refresh_token: token.refresh_token as string, // 型アサーションを使用してstring型として扱う
                         }),
                         method: "POST",

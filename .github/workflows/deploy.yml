@@ -48,11 +48,9 @@ jobs:
             SERVER_URL
             SERVERS
             CLIENT_ID
-            AUTH_URL
         env:
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
           SERVER_URL: ${{ secrets.SERVER_URL }}
           SERVERS: ${{ secrets.SERVERS }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          AUTH_URL: ${{ secrets.AUTH_URL }}
