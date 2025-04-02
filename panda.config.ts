@@ -27,7 +27,9 @@ const globalCss = defineGlobalStyles({
         bg: "var(--colors-color-palette-6)/80",
     },
     "*:focus-visible": {
-        outline: "none",
+        outline: "2px solid var(--colors-primary)",
+        outlineOffset: "2px",
+        borderRadius: "var(--radii-md)",
     },
 });
 

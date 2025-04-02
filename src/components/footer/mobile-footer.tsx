@@ -20,7 +20,7 @@ export const MobileFooter = () => {
                     display: "flex",
                     width: "100%",
                     height: "var(--sizes-footer-height, 2.5rem)",
-                    maxWidth: "lg",
+                    maxWidth: "md",
                     margin: "0 auto",
                     justifyContent: "space-between",
                     alignItems: "center",

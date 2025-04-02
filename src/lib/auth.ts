@@ -1,6 +1,5 @@
 import NextAuth, { type Session, type User } from "next-auth";
 import type { JWT } from "next-auth/jwt";
-
 interface MyToken extends JWT {
     accessToken?: string;
 }
@@ -77,20 +76,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (_) => {
                 }
                 if (Date.now() < (token.expires_at as number) * 1000) {
                     // Subsequent logins, if the `access_token` is still valid, return the JWT
-                    // let format = "YYYY-MM-DD HH:mm:ss";
-                    // let currentTime = Date.now();
-                    // let tokenExp = token.expires_at! as number * 1_000;
-                    //
-                    // // Unix時間をDateオブジェクトに変換
-                    // let currentDate = new Date(currentTime);
-                    // let tokenExpDate = new Date(tokenExp);
-                    //
-                    // // Dateオブジェクトを指定した形式の文字列に変換
-                    // let currentDateString = currentDate.toLocaleString('ja-JP').replace(/\//g, '-');
-                    // let tokenExpDateString = tokenExpDate.toLocaleString('ja-JP').replace(/\//g, '-');
-                    //
-                    // console.log("current time is", currentDateString);
-                    // console.log("token exp    is", tokenExpDateString);
                     return token;
                 }
                 // Subsequent logins, if the `access_token` has expired, try to refresh it
@@ -106,6 +91,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (_) => {
                         body: new URLSearchParams({
                             grant_type: "refresh_token",
                             client_id: process.env.CLIENT_ID as string,
+                            redirect_uri: process.env.AUTH_URL as string,
                             refresh_token: token.refresh_token as string, // 型アサーションを使用してstring型として扱う
                         }),
                         method: "POST",
@@ -118,7 +104,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (_) => {
                     }>();
 
                     if (!response.ok) throw responseTokens;
-
                     return {
                         // Keep the previous token properties
                         ...token,
@@ -141,7 +126,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (_) => {
                     session.user = token.user as User;
                     session.accessToken = token.access_token as string;
                 }
-
                 return session;
             },
         },
@@ -149,9 +133,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (_) => {
             signIn: "/auth/sign-in",
         },
         secret: process.env.AUTH_SECRET,
-        // jwt: {
-        //     encode,
-        //     decode
-        // }
     };
 });

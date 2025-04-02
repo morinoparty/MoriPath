@@ -5,7 +5,7 @@ export const Layout: React.FC<{
 }> = ({ children }) => {
     const layoutStyle = cva({
         base: {
-            maxWidth: "lg",
+            maxWidth: "md",
             margin: "0 auto",
             padding: "0 24px",
             bgColor: "var(--colors-bg-base)",

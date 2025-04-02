@@ -1,4 +1,4 @@
-import type { PlayerData } from "~/lib/types";
+import type { PlayerData, PlayerServerData, ServerPlayerData } from "~/lib/types";
 
 export async function nameToUUID(name: string): Promise<string> {
     const requestUrl = `https://playerdb.co/api/player/minecraft/${name}`;
@@ -49,3 +49,30 @@ export const validateUsername = async (username: string, currentUser: string | u
         return "ユーザーの検証中にエラーが発生しました";
     }
 };
+
+export async function getPlayerData(uuid: string): Promise<PlayerServerData> {
+    const servers = (process.env.SERVERS as string).split(",");
+    for (const server of servers) {
+        const response = await fetch(`${process.env.SERVER_URL}${server}/api/v1/commons/server/players`, {});
+        const players = await response.json<ServerPlayerData[]>();
+        const player = players.find((player) => player.id === uuid);
+        if (player) {
+            const serverName = getServerName(server);
+            return { uuid, server: serverName };
+        }
+    }
+    return { uuid, server: "オフライン" };
+}
+
+function getServerName(server: string): string {
+    switch (server) {
+        case "lobby":
+            return "ロビーサーバー";
+        case "main":
+            return "生活サーバー";
+        case "res":
+            return "資源サーバー";
+        default:
+            return "オフライン";
+    }
+}

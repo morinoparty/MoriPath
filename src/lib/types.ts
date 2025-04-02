@@ -69,3 +69,8 @@ export interface ShopData {
         };
     };
 }
+
+export interface PlayerServerData {
+    uuid: string;
+    server: string;
+}
