@@ -3,7 +3,7 @@ import { css } from "@/styled-system/css";
 import { useAtom } from "jotai";
 import { Send } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { amountAtom } from "~/components/money/send/amount-input";
 import { TransactionError } from "~/components/money/send/dialog/transaction-error";
 import { TransactionInvalid } from "~/components/money/send/dialog/transaction-invalid";
@@ -27,13 +27,34 @@ export const SendButton = ({ balance, currentUser }: Props) => {
 
     const [isOpen, setIsOpen] = useState(false);
     const [status, setStatus] = useState<"success" | "invalid" | "error">("success");
+    const [isValid, setIsValid] = useState(false);
+
+    const validateTransaction = useCallback(async () => {
+        if ((await validateUsername(username, currentUser)) !== null) {
+            return false;
+        }
+
+        if (amount === 0 || amount === undefined || amount < 1 || amount > balance || !Number.isInteger(amount)) {
+            return false;
+        }
+
+        return true;
+    }, [username, amount, balance, currentUser]);
+
+    useEffect(() => {
+        const checkValidation = async () => {
+            const valid = await validateTransaction();
+            setIsValid(valid);
+        };
+        checkValidation();
+    }, [validateTransaction]);
 
     const onSubmit = async (event: React.FormEvent) => {
-        if ((await validateUsername(username, currentUser)) !== null) {
+        if (!isValid) {
             return;
         }
 
-        event.preventDefault(); // フォームのデフォルトの送信動作を防ぐ
+        event.preventDefault();
         const target = await nameToUUID(username);
 
         const res = await fetch("/main/api/v1/plugins/vault/send", {
@@ -96,6 +117,7 @@ export const SendButton = ({ balance, currentUser }: Props) => {
                         maxW: "xs",
                     })}
                     onClick={onSubmit}
+                    disabled={!isValid}
                 >
                     お金を送る
                     <Send />

@@ -1,3 +1,4 @@
+import nullAvatar from "@/public/null.png";
 import { getPlayerData, uuidToName } from "@/src/utils/player-helpers";
 import { randomPhrase } from "@/src/utils/random-phrase";
 import { css } from "@/styled-system/css";
@@ -96,7 +97,7 @@ export const PlayerDrawer: React.FC<{
                         >
                             <div
                                 className={css({
-                                    borderRadius: "xl",
+                                    borderRadius: "2xl",
                                     width: "var(--icon-size)",
                                     height: "var(--icon-size)",
                                     bgColor: "white",
@@ -108,10 +109,12 @@ export const PlayerDrawer: React.FC<{
                             >
                                 <Image
                                     className={css({
-                                        borderRadius: "lg",
+                                        borderRadius: "xl",
                                         zIndex: "3",
                                     })}
                                     src={`https://crafthead.net/avatar/${uuid}`}
+                                    placeholder="blur"
+                                    blurDataURL={nullAvatar.src}
                                     alt={uuid}
                                     width={iconSize}
                                     height={iconSize}
