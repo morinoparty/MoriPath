@@ -1,10 +1,10 @@
 import { MobileFooter } from "~/components/footer/mobile-footer";
 
 export const Footer = () => {
-    return (
-        <>
-            {/*for smartphone*/}
-            <MobileFooter />
-        </>
-    );
+  return (
+    <>
+      {/*for smartphone*/}
+      <MobileFooter />
+    </>
+  );
 };
