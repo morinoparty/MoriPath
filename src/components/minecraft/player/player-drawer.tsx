@@ -20,7 +20,6 @@ export const PlayerDrawer: React.FC<{
 
   return (
     <PlayerDrawerContent
-      children={children}
       uuid={uuid}
       playerName={playerName}
       playerServer={playerData.server}
@@ -28,6 +27,8 @@ export const PlayerDrawer: React.FC<{
       backgroundColor={backgroundColor}
       headerHeight={headerHeight}
       iconSize={iconSize}
-    />
+    >
+      {children}
+    </PlayerDrawerContent>
   );
 };
