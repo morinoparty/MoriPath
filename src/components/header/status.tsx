@@ -10,11 +10,7 @@ export const Status = async () => {
   const session = await auth();
 
   return (
-    <div
-      className={css({
-        height: "64px",
-      })}
-    >
+    <div className={css({})}>
       <div
         className={css({
           display: "flex",
@@ -40,13 +36,13 @@ const PlayerHead = async () => {
       <Menu.Trigger>
         <Image
           className={css({
-            width: "var(--sizes-header-height)",
-            height: "var(--sizes-header-height)",
             borderRadius: "lg",
+            width: "40px",
+            height: "40px",
           })}
           src={sessionData.user?.image ?? "https://crafthead.net/avatar/Steave" + "/128.png"}
-          width="50"
-          height="50"
+          width="40"
+          height="40"
           alt="logo"
         />
       </Menu.Trigger>
