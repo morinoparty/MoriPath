@@ -25,14 +25,13 @@ export const JoinPlayerInfo = async () => {
     <div
       className={css({
         display: "flex",
-        height: "128px",
-        padding: "16px",
+        px: "16px",
+        pt: "24px",
+        pb: "16px",
         flexDirection: "column",
         justifyContent: "space-between",
-        alignItems: "flex-start",
         flexShrink: 0,
-        gap: "16px",
-        border: "1px solid var(--colors-border-default)",
+        gap: "18px",
         borderRadius: "2xl",
         background: "#ffffff",
       })}
@@ -40,7 +39,7 @@ export const JoinPlayerInfo = async () => {
       <div
         className={css({
           display: "flex",
-          alignItems: "flex-end",
+          alignItems: "center",
           justifyContent: "space-between",
           alignSelf: "stretch",
         })}
@@ -61,7 +60,28 @@ export const JoinPlayerInfo = async () => {
         <PlayerCount count={players.length} />
       </div>
 
-      <PlayerList players={players} />
+      <div
+        className={css({
+          width: "calc(100% + 32px)",
+          marginLeft: "-16px",
+          position: "relative",
+          "& > div": {
+            px: "16px",
+            _before: {
+              position: "absolute",
+              content: '""',
+              right: "0",
+              top: "0",
+              width: "16px",
+              height: "100%",
+              background: "linear-gradient(-90deg, #ffffff 0%, rgba(255, 255, 255, 0) 100%)",
+              zIndex: 1,
+            },
+          },
+        })}
+      >
+        <PlayerList players={players} />
+      </div>
     </div>
   );
 };
