@@ -7,7 +7,9 @@ export const textStyles = defineTextStyles({
   body: {
     description: "The body text style - used in paragraphs",
     value: {
-      fontFamily: "var(--font-poppins), var(--font-noto-sans-jp), Fluent Emoji Color",
+      fontFamily:
+        "'Satoshi-Variable', BlinkMacSystemFont, 'GenJyuuGothicLP', -apple-system, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif",
+      fontVariationSettings: "'wght' 600",
       fontSize: {
         base: "sm",
         md: "md",
@@ -89,6 +91,23 @@ export default defineConfig({
       },
       textStyles,
     },
+  },
+
+  globalFontface: {
+    "Satoshi-Variable": [
+      {
+        src: 'url("/assets/fonts/Satoshi-Variable.woff2") format("woff2"), url("/assets/fonts/Satoshi-Variable.woff") format("woff"), url("/assets/fonts/Satoshi-Variable..ttf") format("truetype")',
+        fontWeight: "400",
+        fontDisplay: "swap",
+        fontStyle: "normal",
+      },
+      {
+        src: 'url("/assets/fonts/Satoshi-Variable.woff2") format("woff2"), url("/assets/fonts/Satoshi-Variable.woff") format("woff"), url("/assets/fonts/Satoshi-Variable..ttf") format("truetype")',
+        fontWeight: "900",
+        fontDisplay: "swap",
+        fontStyle: "normal",
+      },
+    ],
   },
 
   jsxFramework: "react",
