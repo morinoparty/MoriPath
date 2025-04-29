@@ -14,8 +14,8 @@ export const Logo = () => {
     >
       <Image
         className={css({
-          height: "var(--sizes-header-height)",
-          width: "var(--sizes-header-height)",
+          width: "44px",
+          height: "44px",
           fill: "red",
           aspectRatio: 1,
         })}

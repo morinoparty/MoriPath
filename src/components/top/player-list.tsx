@@ -12,7 +12,6 @@ export const PlayerList = ({ players }: { players: ServerPlayerData[] }) => {
         gap: "12px",
         flexShrink: 0,
         maxWidth: "100%",
-        minHeight: "48px",
         whiteSpace: "nowrap",
         alignItems: "center",
       })}

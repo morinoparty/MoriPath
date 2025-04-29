@@ -17,6 +17,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" suppressHydrationWarning>
+      <head>
+        <link
+          href="https://shogo82148.github.io/genjyuugothic-subsets/GenJyuuGothicL-P-Medium/GenJyuuGothicL-P-Medium.css"
+          type="text/css"
+          rel="stylesheet"
+        />
+        <link
+          href="https://shogo82148.github.io/genjyuugothic-subsets/GenJyuuGothicL-P-Bold/GenJyuuGothicL-P-Bold.css"
+          type="text/css"
+          rel="stylesheet"
+        />
+      </head>
       <body
         className={cx(
           css({

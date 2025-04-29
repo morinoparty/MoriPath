@@ -7,9 +7,9 @@ export const MobileHeader = async () => {
     <div
       className={css({
         display: "flex",
-        height: "var(--sizes-header-height)",
         margin: "0 auto",
-        padding: "40px 0px",
+        pt: "calc(env(safe-area-inset-top) + 24px)",
+        pb: "24px",
         justifyContent: "space-between",
         alignItems: "center",
         flexShrink: 0,

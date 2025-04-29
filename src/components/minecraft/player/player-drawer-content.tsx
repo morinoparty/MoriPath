@@ -43,7 +43,10 @@ const playerDrawer = sva({
   ],
   base: {
     root: {},
-    trigger: { flexShrink: 0 },
+    trigger: {
+      flexShrink: 0,
+      display: "flex",
+    },
     positioner: {},
     contentWrapper: {
       width: "100%",
