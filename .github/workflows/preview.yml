@@ -44,7 +44,7 @@ jobs:
       - name: print deployment-url
         env:
           DEPLOYMENT_URL: ${{ steps.deploy-pages-preview.outputs.deployment-url }}
-          GITHUB_SHORT_SHA: $("${{ github.sha }}".SubString(0, 8))
+          GITHUB_SHORT_SHA: $(git rev-parse --short HEAD)
         run: |
           echo $DEPLOYMENT_URL
           echo $GITHUB_SHORT_SHA
@@ -53,7 +53,7 @@ jobs:
         id: create-comment-file
         env:
           DEPLOYMENT_URL: ${{ steps.deploy-pages-preview.outputs.deployment-url }}
-          GITHUB_SHORT_SHA: $("${{ github.sha }}".SubString(0, 8))
+          GITHUB_SHORT_SHA: $(git rev-parse --short HEAD)
         run: |
           cat  << EOF > comment.md
           ## 🚀 Deploying color-palette with Cloudflare Pages and Cloudflare Storybook
@@ -68,9 +68,9 @@ jobs:
             </tr>
           </table>
           EOF
-          
+
       - name: Create PR comment
-        if: ${{ steps.deploy-pages-preview.outcome == 'success' && steps.deploy-storybook-preview.outcome == 'success' }}
+        if: ${{ steps.deploy-pages-preview.outcome == 'success' }}
         run: gh pr comment ${{ github.event.number }} --body-file comment.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
