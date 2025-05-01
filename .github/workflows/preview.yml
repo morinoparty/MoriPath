@@ -1,0 +1,77 @@
+name: Preview
+
+on:
+  pull_request:
+    types: [ opened, synchronize ]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  deploy:
+    env:
+      AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+      MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
+      SERVER_URL: ${{ secrets.SERVER_URL }}
+      SERVERS: ${{ secrets.SERVERS }}
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      AUTH_URL: ${{ secrets.AUTH_URL }}
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Install
+        run: pnpm install
+      - name: Build pages
+        run: pnpm run pages:build
+
+      - name: Deploy pages preview
+        id: deploy-pages-preview
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_KEY }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: versions upload --message "Deployed pages by GitHub Actions branch ${{ github.ref_name }}"
+          
+      - name: print deployment-url
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy-pages-preview.outputs.deployment-url }}
+          GITHUB_SHORT_SHA: $("${{ github.sha }}".SubString(0, 8))
+        run: |
+          echo $DEPLOYMENT_URL
+          echo $GITHUB_SHORT_SHA
+
+      - name: Create comment file
+        id: create-comment-file
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy-pages-preview.outputs.deployment-url }}
+          STORYBOOK_DEPLOYMENT_URL: ${{ steps.deploy-storybook-preview.outputs.deployment-url }}
+          STORYBOOK_BRANCH_URL: ${{ steps.deploy-storybook-preview.outputs.deployment-alias-url }}
+        run: |
+          cat  << EOF > comment.md
+          ## 🚀 Deploying color-palette with Cloudflare Pages and Cloudflare Storybook
+          <table>
+            <tr>
+              <th scope="row">Latest commit</th>
+              <td><code>$GITHUB_SHORT_SHA</code></td>
+            </tr>
+            <tr>
+              <th scope="row">Preview URL</th>
+              <td><a href="$DEPLOYMENT_URL" target="_blank" rel="noopener noreferrer">$DEPLOYMENT_URL</a></td>
+            </tr>
+          </table>
+          EOF
+      - name: Create PR comment
+        if: ${{ steps.deploy-pages-preview.outcome == 'success' && steps.deploy-storybook-preview.outcome == 'success' }}
+        run: gh pr comment ${{ github.event.number }} --body-file comment.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PREVIEW_URL: ${{ steps.deploy-pages-preview.outputs.deployment-url }}
