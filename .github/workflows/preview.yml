@@ -48,7 +48,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_KEY }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          command: versions upload -e preview --message "Deployed pages by GitHub Actions branch ${{ github.ref_name }}"
+          command: versions upload --env=preview --message "Deployed pages by GitHub Actions branch ${{ github.ref_name }}"
           secrets: |
             AUTH_SECRET
             MAIN_SERVER_URL
