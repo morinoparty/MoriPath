@@ -16,10 +16,11 @@
         "enabled": true
     },
     "env": {
-        "preview": {
+        "staging": {
+            "workers_dev": true,
             "vars": {
                 "CLIENT_ID": "a7a9ef40-e868-9acf-098b-b6fa96cc022e",
-                "REDIRECT_AUTH_URL": "http://pre000-moripath.nikomaru.workers.dev"
+                "REDIRECT_AUTH_URL": "http://pre000-moripath-preview.nikomaru.workers.dev"
             }
         },
         "production": {
