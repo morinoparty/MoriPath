@@ -58,5 +58,7 @@ export async function middleware(request: NextRequest) {
 
 // 設定：どのパスでミドルウェアを実行するか
 export const config = {
-    matcher: ["/((?!_next/static|_next/image|favicon.ico|moripa.svg|assets/).*)"],
+    matcher: [
+        "/((?!_next/static|_next/image|favicon.ico|moripa.svg|assets/).*)",
+    ],
 };

@@ -1,6 +1,7 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import NextAuth, { type Session, type User } from "next-auth";
 import type { JWT } from "next-auth/jwt";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
+
 interface MyToken extends JWT {
     accessToken: string;
 }
@@ -16,8 +17,8 @@ export interface ExtendedSession extends Session {
 }
 
 // @ts-expect-error
-export const { handlers, signIn, signOut, auth } = NextAuth(async (request: any) => {
-    let { env } = await getCloudflareContext({async: true}) 
+export const { handlers, signIn, signOut, auth } = NextAuth(async (_) => {
+    const { env } = await getCloudflareContext({ async: true });
     return {
         debug: false,
         trustHost: true,
@@ -60,7 +61,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (request: any)
                 if (account) {
                     // First login, save the `access_token`, `refresh_token`, and other
                     // details into the JWT
-                    
+
                     const userProfile: User = {
                         id: profile?.id as string,
                         name: profile?.username as string,
@@ -75,20 +76,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (request: any)
                         user: userProfile,
                     };
                 }
-                if (Date.now() < (token.expires_at as number) * 1000 - (270 * 1000)) {
+                if (
+                    Date.now() <
+                    (token.expires_at as number) * 1000 - 270 * 1000
+                ) {
                     // Subsequent logins, if the `access_token` is still valid, return the JWT
                     return token;
                 }
                 // Subsequent logins, if the `access_token` has expired, try to refresh it
                 if (!token.refresh_token)
                     throw new Error("Missing refresh token");
-                const host = env.CF_PREVIEW_DOMAIN
                 const response = await fetch(
                     `${process.env.MAIN_SERVER_URL}/oauth2/token`,
                     {
                         headers: {
-                            "Content-Type":
-                                "application/x-www-form-urlencoded",
+                            "Content-Type": "application/x-www-form-urlencoded",
                         },
                         body: new URLSearchParams({
                             grant_type: "refresh_token",
@@ -106,8 +108,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (request: any)
                     refresh_token: string;
                 }>();
 
-                console.log("responseTokens", responseTokens);
-
                 if (!response.ok) throw responseTokens;
                 return {
                     // Keep the previous token properties
@@ -115,7 +115,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth(async (request: any)
                     access_token: responseTokens.access_token,
                     expires_at: Math.floor(
                         Date.now() / 1000 +
-                        (responseTokens.expires_in as number),
+                            (responseTokens.expires_in as number),
                     ),
                     // Fall back to old refresh token, but note that
                     // many providers may only allow using a refresh token once.
