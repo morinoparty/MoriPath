@@ -1,24 +1,44 @@
-import { css } from "@/styled-system/css";
-import { flex } from "@/styled-system/patterns";
+import { sva } from "@/styled-system/css";
 import { LoginButton } from "~/components/login-button";
 
-export default function SignInPage() {
-    return (
-        <div
-            className={flex({
-                direction: "column",
-                align: "center",
-                minH: "calc(100vh - 80px)",
-            })}
-        >
-            <div className={boxStyle}>
-                <h1 className={css({ fontSize: "2xl", fontWeight: "bold" })}>
-                    認証が必要です
-                </h1>
+const signInStyle = sva({
+    slots: ["root", "box", "title", "description"],
+    base: {
+        root: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            minH: "calc(100vh - 80px)",
+        },
+        box: {
+            padding: "5rem 0",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        title: {
+            fontSize: "2xl",
+            fontWeight: "bold",
+        },
+        description: {
+            wordBreak: "keep-all",
+            overflowWrap: "break-word",
+            textAlign: "center",
+        },
+    },
+});
 
-                <p className={css({ fontSize: "lg" })}>
-                    サービスを利用するには、Moripa
-                    APIにログインする必要があります。
+export default function SignInPage() {
+    const style = signInStyle();
+    return (
+        <div className={style.root}>
+            <div className={style.box}>
+                <h1 className={style.title}>認証が必要です</h1>
+                <p className={style.description}>
+                    サービスを利用するには、Moripa APIに <wbr />
+                    ログインする必要があります。
                 </p>
             </div>
             <LoginButton />
@@ -34,10 +54,3 @@ export default function SignInPage() {
         </div>
     );
 }
-
-const boxStyle = flex({
-    padding: "5rem 0",
-    direction: "column",
-    align: "center",
-    justify: "center",
-});

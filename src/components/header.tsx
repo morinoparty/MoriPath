@@ -1,0 +1,59 @@
+import Image from "next/image";
+import Link from "next/link";
+import { sva } from "@/styled-system/css";
+import { LoginStatus } from "./login-status";
+import { Notification } from "./notification";
+
+export const headerStyle = sva({
+    slots: ["root", "logoLink", "logoImage", "indicator"],
+    base: {
+        root: {
+            display: "flex",
+            height: "120px",
+            margin: "0 auto",
+            padding: "16px 24px",
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+            bgColor: "var(--chakra-colors-color-palette-500)",
+            width: "100%",
+            flexShrink: 0,
+        },
+        logoLink: {
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "16px",
+        },
+        logoImage: {
+            width: "44px",
+            height: "44px",
+            fill: "red",
+            aspectRatio: 1,
+        },
+        indicator: {
+            display: "flex",
+            alignItems: "center",
+            gap: "24px",
+        },
+    },
+});
+
+export const Header = () => {
+    const style = headerStyle();
+    return (
+        <div className={style.root}>
+            <Link href={"/"} className={style.logoLink}>
+                <Image
+                    className={style.logoImage}
+                    src="/moripa.svg"
+                    alt="MoriPath"
+                    width={200}
+                    height={200}
+                />
+            </Link>
+            <div className={style.indicator}>
+                <Notification />
+                <LoginStatus />
+            </div>
+        </div>
+    );
+};

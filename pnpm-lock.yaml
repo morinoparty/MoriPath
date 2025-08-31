@@ -14,6 +14,9 @@ importers:
       '@emotion/react':
         specifier: ^11.14.0
         version: 11.14.0(@types/react@19.1.12)(react@19.1.0)
+      '@fontsource/zen-kaku-gothic-new':
+        specifier: ^5.2.6
+        version: 5.2.6
       '@opennextjs/cloudflare':
         specifier: ^1.6.5
         version: 1.6.5(wrangler@4.33.1)
@@ -807,6 +810,9 @@ packages:
 
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
+
+  '@fontsource/zen-kaku-gothic-new@5.2.6':
+    resolution: {integrity: sha512-8gh1SbAjzEtK36ZrzlR+U8SO+EdpgykyBviS/QIIgDNwUqERxyF0QSLvlLNtMtnFUC3AEPkOUGH0L+o7KGyMnA==}
 
   '@img/sharp-darwin-arm64@0.33.5':
     resolution: {integrity: sha512-UT4p+iz/2H4twwAoLCqfA9UH5pI6DggwKEGuaPy7nCVQ8ZsiY5PIcrRvD1DzuY3qYL07NtIQcWnBSY/heikIFQ==}
@@ -4833,6 +4839,8 @@ snapshots:
       '@floating-ui/utils': 0.2.10
 
   '@floating-ui/utils@0.2.10': {}
+
+  '@fontsource/zen-kaku-gothic-new@5.2.6': {}
 
   '@img/sharp-darwin-arm64@0.33.5':
     optionalDependencies:

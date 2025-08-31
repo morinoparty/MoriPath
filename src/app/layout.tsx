@@ -3,6 +3,8 @@ import "./globals.css";
 import { css, cx } from "@/styled-system/css";
 import { Layout } from "~/components/layout";
 import { Provider } from "~/components/ui/provider";
+import "@fontsource/zen-kaku-gothic-new/500.css";
+import "@fontsource/zen-kaku-gothic-new/700.css";
 export const metadata: Metadata = {
     title: "MoriPath - もりのパーティ ポータルアプリ",
     description: "もりのパーティ ポータルアプリ",
@@ -17,6 +19,19 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="ja" suppressHydrationWarning>
+            <head>
+                <link
+                    href="https://shogo82148.github.io/genjyuugothic-subsets/GenJyuuGothicL-P-Medium/GenJyuuGothicL-P-Medium.css"
+                    type="text/css"
+                    rel="stylesheet"
+                />
+
+                <link
+                    href="https://shogo82148.github.io/genjyuugothic-subsets/GenJyuuGothicL-P-Bold/GenJyuuGothicL-P-Bold.css"
+                    type="text/css"
+                    rel="stylesheet"
+                />
+            </head>
             <body
                 className={cx(
                     css({

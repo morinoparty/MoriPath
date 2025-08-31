@@ -1,6 +1,24 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+    images: {
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "crafthead.net",
+                port: "",
+                pathname: "/avatar/**",
+            },
+        ],
+    },
+    rewrites: async () => {
+        return [
+            {
+                source: "/main/:path*",
+                destination: `${process.env.MAIN_SERVER_URL}/:path*`,
+            },
+        ];
+    },
     experimental: {
         optimizePackageImports: ["@chakra-ui/react"],
     },

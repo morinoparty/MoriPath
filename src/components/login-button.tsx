@@ -9,7 +9,7 @@ export const LoginButton = () => {
                 await signIn("MineAuth", { redirectTo: "/" });
             }}
         >
-            <Button type="submit">
+            <Button type="submit" size="lg">
                 <span>Moripa APIにログイン</span>
             </Button>
         </form>

@@ -1,19 +1,17 @@
-import { cva } from "@/styled-system/css";
+import { css } from "@/styled-system/css";
 
 export const Layout: React.FC<{
     children: React.ReactNode;
 }> = ({ children }) => {
-    const layoutStyle = cva({
-        base: {
-            maxWidth: "md",
-            margin: "0 auto",
-            padding: "0 24px",
-            textStyle: "body",
-            bgColor: "var(--chakra-colors-bg-subtle)",
-        },
-    });
     return (
-        <div className={layoutStyle()}>
+        <div
+            className={css({
+                maxWidth: "md",
+                margin: "0 auto",
+                textStyle: "body",
+                bgColor: "var(--chakra-colors-bg-subtle)",
+            })}
+        >
             <main>{children}</main>
         </div>
     );
