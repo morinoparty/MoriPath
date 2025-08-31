@@ -57,16 +57,6 @@ jobs:
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           command: versions upload --env=staging --message "Deployed pages by GitHub Actions branch ${{ github.ref_name }}"
           ENVIRONMENT: staging
-          secrets: |
-            AUTH_SECRET
-            MAIN_SERVER_URL
-            SERVER_URL
-            SERVERS
-        env:
-          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-          MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
-          SERVER_URL: ${{ secrets.SERVER_URL }}
-          SERVERS: ${{ secrets.SERVERS }}
           
       - name: Create comment file
         id: create-comment-file
