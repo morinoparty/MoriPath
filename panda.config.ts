@@ -9,7 +9,7 @@ export const textStyles = defineTextStyles({
         description: "The body text style - used in paragraphs",
         value: {
             fontFamily:
-                "'Satoshi-Variable', 'Zen Kaku Gothic New', BlinkMacSystemFont, 'Noto Sans JP', -apple-system, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif",
+                "'Satoshi-Variable', 'GenJyuuGothicLP', BlinkMacSystemFont, 'Noto Sans JP', -apple-system, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif",
             fontVariationSettings: "'wght' 500",
             fontSize: {
                 base: "sm",
