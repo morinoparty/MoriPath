@@ -1,31 +1,74 @@
+import Link from "next/link";
+import castlePicture from "@/public/image.png";
 import { sva } from "@/styled-system/css";
-import { LoginButton } from "~/components/login-button";
+import { LoginButton } from "./_components/login-button";
 
 const signInStyle = sva({
-    slots: ["root", "box", "title", "description"],
+    slots: [
+        "root",
+        "castlePicture",
+        "box",
+        "contentBox",
+        "title",
+        "description",
+        "terms",
+        "termsBox",
+        "termsLink",
+    ],
     base: {
         root: {
             display: "flex",
+            height: "100vh",
             flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            minH: "calc(100vh - 80px)",
+            gap: "0",
+        },
+        castlePicture: {
+            width: "100%",
+            height: "100%", // 残った部分を全て画像が占めるようにする
+            objectFit: "cover",
+            objectPosition: "top",
         },
         box: {
-            padding: "5rem 0",
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
+            gap: "2rem",
+            width: "100%",
+            padding: "2rem",
+            paddingBottom: "5rem",
+            minHeight: "280px", // boxに固定の高さを設定
+            flexShrink: 0, // boxのサイズを固定
+        },
+        contentBox: {
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.75rem",
+            width: "100%",
         },
         title: {
             fontSize: "2xl",
             fontWeight: "bold",
         },
         description: {
-            wordBreak: "keep-all",
-            overflowWrap: "break-word",
+            fontSize: "md",
+        },
+        termsBox: {
+            display: "flex",
+            flexDirection: "column",
+            gap: "1rem",
+            width: "100%",
+        },
+        terms: {
+            color: "var(--chakra-colors-fg-subtle)",
+            fontSize: "sm",
             textAlign: "center",
+        },
+        termsLink: {
+            fontSize: "sm",
+            textAlign: "center",
+            textDecoration: "underline",
+            textUnderlineOffset: "3px",
+            textDecorationStyle: "dotted",
+            textDecorationColor: "var(--chakra-colors-fg-subtle)",
         },
     },
 });
@@ -34,23 +77,31 @@ export default function SignInPage() {
     const style = signInStyle();
     return (
         <div className={style.root}>
+            <img
+                src={castlePicture.src}
+                alt="That is a castle that is built by Itachi"
+                className={style.castlePicture}
+                width={1000}
+                height={600}
+            />
             <div className={style.box}>
-                <h1 className={style.title}>認証が必要です</h1>
-                <p className={style.description}>
-                    サービスを利用するには、Moripa APIに <wbr />
-                    ログインする必要があります。
-                </p>
+                <div className={style.contentBox}>
+                    <h1 className={style.title}>もりパスへようこそ</h1>
+                    <p className={style.description}>
+                        もりぱすを使うと、さまざまなもりのパーティの機能を使うことができます。
+                    </p>
+                </div>
+                <div className={style.termsBox}>
+                    <LoginButton />
+                    <p className={style.terms}>
+                        ログインすることで、
+                        <Link className={style.termsLink} href="/terms">
+                            利用規約
+                        </Link>
+                        に同意します
+                    </p>
+                </div>
             </div>
-            <LoginButton />
-
-            {/* <div className={boxStyle}>
-                <h2 className={css({ fontSize: "2xl", fontWeight: "bold" })}>アカウントをお持ちでない場合</h2>
-
-                <p className={css({ fontSize: "lg" })}>
-                    お手数ですが、サーバー内で<code>/mineauth register</code>
-                    コマンドを実行してアカウントを作成してください。
-                </p>
-            </div> */}
         </div>
     );
 }

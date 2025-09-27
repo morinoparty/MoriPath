@@ -32,8 +32,9 @@ export async function middleware(request: NextRequest) {
         return auth();
     }
 
-    // サービス利用不可ページへのアクセスはそのまま通す
-    if (request.nextUrl.pathname === "/service-unavailable") {
+    const notRequireAuthPaths = ["/service-unavailable", "/terms"];
+
+    if (notRequireAuthPaths.includes(request.nextUrl.pathname)) {
         return NextResponse.next();
     }
 
