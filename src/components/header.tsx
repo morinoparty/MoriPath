@@ -9,9 +9,9 @@ export const headerStyle = sva({
     base: {
         root: {
             display: "flex",
-            height: "120px",
+            height: "102px",
             margin: "0 auto",
-            padding: "16px 24px",
+            padding: "16px 24px 8px 24px",
             justifyContent: "space-between",
             alignItems: "flex-end",
             bgColor: "var(--chakra-colors-color-palette-500)",
@@ -24,10 +24,10 @@ export const headerStyle = sva({
             gap: "16px",
         },
         logoImage: {
-            width: "44px",
+            width: "100%",
             height: "44px",
             fill: "red",
-            aspectRatio: 1,
+            aspectRatio: 34 / 40,
         },
         indicator: {
             display: "flex",

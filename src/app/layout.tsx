@@ -3,8 +3,7 @@ import "./globals.css";
 import { css, cx } from "@/styled-system/css";
 import { Layout } from "~/components/layout";
 import { Provider } from "~/components/ui/provider";
-import "@fontsource/zen-kaku-gothic-new/500.css";
-import "@fontsource/zen-kaku-gothic-new/700.css";
+
 export const metadata: Metadata = {
     title: "MoriPath - もりのパーティ ポータルアプリ",
     description: "もりのパーティ ポータルアプリ",
