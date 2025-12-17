@@ -49,6 +49,8 @@ next-env.d.ts
 styled-system
 styled-system-studio
 
-.playwright-mcp/** */
+.playwright-mcp/
+.tmp/
+storybook-static/
 
 dist
