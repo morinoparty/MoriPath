@@ -41,16 +41,7 @@ export default defineConfig({
 
     preflight: true,
 
-    include: [
-        "./src/components/**/*.{ts,tsx,js,jsx}",
-        "./src/app/**/*.{ts,tsx,js,jsx}",
-    ],
-
-    theme: {
-        extend: {
-            textStyles,
-        },
-    },
+    include: ["./app/**/*.{ts,tsx,js,jsx}"],
 
     globalFontface: {
         "Satoshi-Variable": [

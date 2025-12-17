@@ -50,3 +50,5 @@ styled-system
 styled-system-studio
 
 .playwright-mcp/** */
+
+dist

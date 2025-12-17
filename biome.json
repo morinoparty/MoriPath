@@ -1,5 +1,5 @@
 {
-    "$schema": "https://biomejs.dev/schemas/2.2.2/schema.json",
+    "$schema": "https://biomejs.dev/schemas/2.3.9/schema.json",
     "vcs": {
         "enabled": true,
         "clientKind": "git",
@@ -15,7 +15,6 @@
         "indentWidth": 4,
         "includes": [
             "**",
-            "!**/.next",
             "!**/node_modules",
             "!**/public",
             "!**/styled-system",
@@ -23,7 +22,9 @@
             "!**/cloudflare-env.d.ts",
             "!worker-configuration.d.ts",
             "!**/theme/**",
-            "!**/.vscode/**"
+            "!**/.vscode/**",
+            "!**/dist/**",
+            "!**/routeTree.gen.ts"
         ],
         "lineWidth": 80
     },
@@ -32,7 +33,6 @@
         "enabled": true,
         "includes": [
             "**",
-            "!**/.next",
             "!**/node_modules",
             "!**/public",
             "!**/styled-system",
@@ -40,7 +40,9 @@
             "!**/cloudflare-env.d.ts",
             "!worker-configuration.d.ts",
             "!**/theme/**",
-            "!**/.vscode/**"
+            "!**/.vscode/**",
+            "!**/dist/**",
+            "!**/routeTree.gen.ts"
         ],
         "rules": {
             "recommended": true,

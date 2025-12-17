@@ -47,7 +47,7 @@ jobs:
         run: pnpm install
 
       - name: Build pages
-        run: pnpm run pages:build
+        run: pnpm run build
         
       - name: Deploy pages preview
         id: deploy-pages-preview
@@ -56,12 +56,22 @@ jobs:
           apiToken: ${{ secrets.CF_API_KEY }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           command: versions upload --env=staging --message "Deployed pages by GitHub Actions branch ${{ github.ref_name }}"
-          ENVIRONMENT: staging
+          environment: staging
+      
+      - name: Deploy storybook preview
+        id: deploy-storybook-preview
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_KEY }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: versions upload -c wrangler-storybook.jsonc --message "Deployed storybook by GitHub Actions branch ${{ github.ref_name }}"
+          environment: staging
           
       - name: Create comment file
         id: create-comment-file
         env:
           DEPLOYMENT_URL: ${{ steps.deploy-pages-preview.outputs.deployment-url }}
+          STORYBOOK_URL: ${{ steps.deploy-storybook-preview.outputs.deployment-url }}
         run: |
           cat  << EOF > comment.md
           ## 🚀 Deploying ${{ github.event.repository.name }} with Cloudflare Workers
@@ -69,6 +79,10 @@ jobs:
             <tr>
               <th scope="row">Preview URL</th>
               <td><a href="$DEPLOYMENT_URL">$DEPLOYMENT_URL</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Storybook URL</th>
+              <td><a href="$STORYBOOK_URL">$STORYBOOK_URL</a></td>
             </tr>
           </table>
           EOF
