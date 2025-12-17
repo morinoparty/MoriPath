@@ -47,7 +47,7 @@ jobs:
         run: pnpm install
 
       - name: Build pages
-        run: pnpm run build
+        run: pnpm run build:all
         
       - name: Deploy pages preview
         id: deploy-pages-preview

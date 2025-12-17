@@ -33,7 +33,7 @@ jobs:
 
       - name: Build
         run: |
-          pnpm run pages:build
+          pnpm run build
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
