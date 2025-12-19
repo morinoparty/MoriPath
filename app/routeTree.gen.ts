@@ -9,21 +9,32 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as Signed_inRouteImport } from './routes/_signed_in'
 import { Route as Signed_inIndexRouteImport } from './routes/_signed_in/index'
 import { Route as Signed_inSplatRouteImport } from './routes/_signed_in/$'
+import { Route as Signed_inMyPageIndexRouteImport } from './routes/_signed_in/my-page/index'
 import { Route as NofooterTermsIndexRouteImport } from './routes/_nofooter/terms/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as NofooterAuthSignInIndexRouteImport } from './routes/_nofooter/auth/sign-in/index'
 
-const Signed_inIndexRoute = Signed_inIndexRouteImport.update({
-  id: '/_signed_in/',
-  path: '/',
+const Signed_inRoute = Signed_inRouteImport.update({
+  id: '/_signed_in',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Signed_inIndexRoute = Signed_inIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => Signed_inRoute,
+} as any)
 const Signed_inSplatRoute = Signed_inSplatRouteImport.update({
-  id: '/_signed_in/$',
+  id: '/$',
   path: '/$',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => Signed_inRoute,
+} as any)
+const Signed_inMyPageIndexRoute = Signed_inMyPageIndexRouteImport.update({
+  id: '/my-page/',
+  path: '/my-page/',
+  getParentRoute: () => Signed_inRoute,
 } as any)
 const NofooterTermsIndexRoute = NofooterTermsIndexRouteImport.update({
   id: '/_nofooter/terms/',
@@ -46,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof Signed_inIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/terms': typeof NofooterTermsIndexRoute
+  '/my-page': typeof Signed_inMyPageIndexRoute
   '/auth/sign-in': typeof NofooterAuthSignInIndexRoute
 }
 export interface FileRoutesByTo {
@@ -53,33 +65,43 @@ export interface FileRoutesByTo {
   '/': typeof Signed_inIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/terms': typeof NofooterTermsIndexRoute
+  '/my-page': typeof Signed_inMyPageIndexRoute
   '/auth/sign-in': typeof NofooterAuthSignInIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/_signed_in': typeof Signed_inRouteWithChildren
   '/_signed_in/$': typeof Signed_inSplatRoute
   '/_signed_in/': typeof Signed_inIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_nofooter/terms/': typeof NofooterTermsIndexRoute
+  '/_signed_in/my-page/': typeof Signed_inMyPageIndexRoute
   '/_nofooter/auth/sign-in/': typeof NofooterAuthSignInIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/$' | '/' | '/api/auth/$' | '/terms' | '/auth/sign-in'
+  fullPaths:
+    | '/$'
+    | '/'
+    | '/api/auth/$'
+    | '/terms'
+    | '/my-page'
+    | '/auth/sign-in'
   fileRoutesByTo: FileRoutesByTo
-  to: '/$' | '/' | '/api/auth/$' | '/terms' | '/auth/sign-in'
+  to: '/$' | '/' | '/api/auth/$' | '/terms' | '/my-page' | '/auth/sign-in'
   id:
     | '__root__'
+    | '/_signed_in'
     | '/_signed_in/$'
     | '/_signed_in/'
     | '/api/auth/$'
     | '/_nofooter/terms/'
+    | '/_signed_in/my-page/'
     | '/_nofooter/auth/sign-in/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  Signed_inSplatRoute: typeof Signed_inSplatRoute
-  Signed_inIndexRoute: typeof Signed_inIndexRoute
+  Signed_inRoute: typeof Signed_inRouteWithChildren
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   NofooterTermsIndexRoute: typeof NofooterTermsIndexRoute
   NofooterAuthSignInIndexRoute: typeof NofooterAuthSignInIndexRoute
@@ -87,19 +109,33 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_signed_in': {
+      id: '/_signed_in'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof Signed_inRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_signed_in/': {
       id: '/_signed_in/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof Signed_inIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof Signed_inRoute
     }
     '/_signed_in/$': {
       id: '/_signed_in/$'
       path: '/$'
       fullPath: '/$'
       preLoaderRoute: typeof Signed_inSplatRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
+    '/_signed_in/my-page/': {
+      id: '/_signed_in/my-page/'
+      path: '/my-page'
+      fullPath: '/my-page'
+      preLoaderRoute: typeof Signed_inMyPageIndexRouteImport
+      parentRoute: typeof Signed_inRoute
     }
     '/_nofooter/terms/': {
       id: '/_nofooter/terms/'
@@ -125,9 +161,24 @@ declare module '@tanstack/react-router' {
   }
 }
 
-const rootRouteChildren: RootRouteChildren = {
+interface Signed_inRouteChildren {
+  Signed_inSplatRoute: typeof Signed_inSplatRoute
+  Signed_inIndexRoute: typeof Signed_inIndexRoute
+  Signed_inMyPageIndexRoute: typeof Signed_inMyPageIndexRoute
+}
+
+const Signed_inRouteChildren: Signed_inRouteChildren = {
   Signed_inSplatRoute: Signed_inSplatRoute,
   Signed_inIndexRoute: Signed_inIndexRoute,
+  Signed_inMyPageIndexRoute: Signed_inMyPageIndexRoute,
+}
+
+const Signed_inRouteWithChildren = Signed_inRoute._addFileChildren(
+  Signed_inRouteChildren,
+)
+
+const rootRouteChildren: RootRouteChildren = {
+  Signed_inRoute: Signed_inRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   NofooterTermsIndexRoute: NofooterTermsIndexRoute,
   NofooterAuthSignInIndexRoute: NofooterAuthSignInIndexRoute,

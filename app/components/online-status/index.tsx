@@ -1,35 +1,12 @@
-import { env } from "cloudflare:workers";
-import { useQuery } from "@tanstack/react-query";
-import { createServerFn } from "@tanstack/react-start";
 import { sva } from "../../../styled-system/css";
 import type { ServerPlayerData } from "../../types/player";
 import { PlayerMap } from "../player-map";
 
-const getOnlinePlayers = createServerFn().handler(async () => {
-    const servers = env.SERVERS.split(",");
+interface OnlineStatusProps {
+    players: ServerPlayerData[];
+}
 
-    const players = await Promise.all(
-        servers.map((server) =>
-            fetch(
-                `${env.SERVER_URL}${server}/api/v1/commons/server/players`,
-                {},
-            ).then((res) => res.json() as Promise<ServerPlayerData[]>),
-        ),
-    ).then((results) => results.flat());
-
-    players.sort((a, b) => {
-        const aFirstCharacter = a.username.toLowerCase().charAt(0);
-        const bFirstCharacter = b.username.toLowerCase().charAt(0);
-        if (aFirstCharacter === bFirstCharacter) {
-            return 0;
-        }
-        return aFirstCharacter < bFirstCharacter ? -1 : 1;
-    });
-
-    return players;
-});
-
-export const OnlineStatus = () => {
+export const OnlineStatus = ({ players }: OnlineStatusProps) => {
     const onlineStatusStyle = sva({
         slots: [
             "root",
@@ -88,19 +65,13 @@ export const OnlineStatus = () => {
         },
     });
     const style = onlineStatusStyle();
-    const { data: players = [], isLoading } = useQuery({
-        queryKey: ["online-status"],
-        queryFn: () => getOnlinePlayers(),
-    });
 
     return (
         <div className={style.root}>
             <div className={style.onlineCount}>
                 <div className={style.label}>オンライン</div>
                 <div className={style.countWrapper}>
-                    <div className={style.count}>
-                        {isLoading ? "..." : players.length}
-                    </div>
+                    <div className={style.count}>{players.length}</div>
                     <div className={style.unit}>人</div>
                 </div>
             </div>

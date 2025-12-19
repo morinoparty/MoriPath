@@ -3,16 +3,20 @@ import castlePicture from "/castle-width.png";
 import { css, sva } from "../../../styled-system/css";
 import { Header } from "../../components/header";
 import { OnlineStatus } from "../../components/online-status";
-import { authMiddleware } from "../../lib/auth-middleware";
+import { getOnlinePlayers } from "../../lib/server-functions";
 
 export const Route = createFileRoute("/_signed_in/")({
-    server: {
-        middleware: [authMiddleware],
+    loader: async () => {
+        const players = await getOnlinePlayers();
+        return { players };
     },
     component: Home,
 });
 
 function Home() {
+    const { players } = Route.useLoaderData();
+    const { session } = Route.useRouteContext() as any;
+
     const indexStyle = sva({
         slots: ["root", "title"],
         base: {
@@ -33,11 +37,11 @@ function Home() {
     const style = indexStyle();
     return (
         <div className={style.root}>
-            <Header />
+            <Header session={session} />
             <div className={style.title}>
                 <h1>もりのパーティ</h1>
             </div>
-            <OnlineStatus />
+            <OnlineStatus players={players} />
             <img
                 src={castlePicture}
                 alt="That is a castle that is built by Itachi"

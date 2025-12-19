@@ -1,7 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { sva } from "../../../styled-system/css";
+import type { SessionData } from "../../lib/server-functions";
 import { LoginStatus } from "../login-status";
 import { Notification } from "../notification";
+
+interface HeaderProps {
+    session: SessionData;
+}
 
 export const headerStyle = sva({
     slots: ["root", "logoLink", "logoImage", "indicator"],
@@ -36,7 +41,7 @@ export const headerStyle = sva({
     },
 });
 
-export const Header = () => {
+export const Header = ({ session }: HeaderProps) => {
     const style = headerStyle();
     return (
         <div className={style.root}>
@@ -51,7 +56,7 @@ export const Header = () => {
             </Link>
             <div className={style.indicator}>
                 <Notification />
-                <LoginStatus />
+                <LoginStatus session={session} />
             </div>
         </div>
     );

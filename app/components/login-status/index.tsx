@@ -1,10 +1,14 @@
 import { HStack, Menu } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { LogOutIcon, Settings, UserIcon } from "lucide-react";
 import { sva } from "../../../styled-system/css";
+import type { SessionData } from "../../lib/server-functions";
 import { auth } from "../../lib/auth";
+
+interface LoginStatusProps {
+    session: SessionData;
+}
 
 const loginStatusStyle = sva({
     slots: ["root", "avatar", "menu"],
@@ -28,20 +32,8 @@ const loginStatusStyle = sva({
     },
 });
 
-// Better Auth + TanStack Start 公式ドキュメントに倣い、request.headers を渡してセッションを取得する
-const getSession = createServerFn().handler(async ({ request }) => {
-    const session = await auth.api.getSession({
-        headers: request.headers,
-    });
-    return session;
-});
-
-export const LoginStatus = () => {
+export const LoginStatus = ({ session }: LoginStatusProps) => {
     const style = loginStatusStyle();
-    const { data: session } = useQuery({
-        queryKey: ["session"],
-        queryFn: () => getSession(),
-    });
 
     return (
         <div className={style.root}>
@@ -50,9 +42,7 @@ export const LoginStatus = () => {
     );
 };
 
-type SessionType = Awaited<ReturnType<typeof getSession>>;
-
-const PlayerHead = ({ session }: { session: SessionType }) => {
+const PlayerHead = ({ session }: { session: SessionData }) => {
     const style = loginStatusStyle();
 
     return (
@@ -73,7 +63,7 @@ const PlayerHead = ({ session }: { session: SessionType }) => {
                 <Menu.Content className={style.menu}>
                     <Menu.ItemGroup>
                         <Menu.ItemGroupLabel>
-                            <div>{session.user?.name}</div>
+                            <div>{session?.user?.name}</div>
                         </Menu.ItemGroupLabel>
                         <Menu.Separator />
                         <Menu.Item value="profile">

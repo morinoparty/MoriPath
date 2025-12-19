@@ -2,12 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { css } from "../../../styled-system/css";
 import { flex } from "../../../styled-system/patterns";
-import { authMiddleware } from "../../lib/auth-middleware";
 
 export const Route = createFileRoute("/_signed_in/$")({
-    server: {
-        middleware: [authMiddleware],
-    },
     component: NotFoundPage,
 });
 

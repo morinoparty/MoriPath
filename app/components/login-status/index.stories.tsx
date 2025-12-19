@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Header } from ".";
+import { LoginStatus } from ".";
 import type { SessionData } from "../../lib/server-functions";
 
 const mockSession: SessionData = {
@@ -24,15 +24,15 @@ const mockSession: SessionData = {
     },
 };
 
-const meta: Meta<typeof Header> = {
-    title: "Components/Header",
-    component: Header,
+const meta: Meta<typeof LoginStatus> = {
+    title: "Components/LoginStatus",
+    component: LoginStatus,
     tags: ["autodocs"],
 };
 
 export default meta;
 
-type Story = StoryObj<typeof Header>;
+type Story = StoryObj<typeof LoginStatus>;
 
 export const LoggedIn: Story = {
     args: {
