@@ -1,0 +1,92 @@
+name: Preview
+
+on:
+  pull_request:
+    types: [ opened, synchronize ]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  deploy:
+    env:
+      AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+      MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
+      SERVER_URL: ${{ secrets.SERVER_URL }}
+      SERVERS: ${{ secrets.SERVERS }}
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22]
+    timeout-minutes: 10
+
+    name: Deploy
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+        # Node.jsのインストール
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache-dependency-path: ./pnpm-lock.yaml
+          cache: 'pnpm'
+
+      - name: Install
+        run: pnpm install
+
+      - name: Build pages
+        run: pnpm run build:all
+        
+      - name: Deploy pages preview
+        id: deploy-pages-preview
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_KEY }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: versions upload --env=staging --message "Deployed pages by GitHub Actions branch ${{ github.ref_name }}"
+          environment: staging
+      
+      - name: Deploy storybook preview
+        id: deploy-storybook-preview
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_KEY }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: versions upload -c wrangler-storybook.jsonc --message "Deployed storybook by GitHub Actions branch ${{ github.ref_name }}"
+          
+      - name: Create comment file
+        id: create-comment-file
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy-pages-preview.outputs.deployment-url }}
+          STORYBOOK_URL: ${{ steps.deploy-storybook-preview.outputs.deployment-url }}
+        run: |
+          cat  << EOF > comment.md
+          ## 🚀 Deploying ${{ github.event.repository.name }} with Cloudflare Workers
+          <table>
+            <tr>
+              <th scope="row">Preview URL</th>
+              <td><a href="$DEPLOYMENT_URL">$DEPLOYMENT_URL</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Storybook URL</th>
+              <td><a href="$STORYBOOK_URL">$STORYBOOK_URL</a></td>
+            </tr>
+          </table>
+          EOF
+
+      - name: Create PR comment
+        run: gh pr comment ${{ github.event.number }} --body-file comment.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

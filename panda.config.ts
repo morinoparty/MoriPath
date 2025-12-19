@@ -1,96 +1,71 @@
-import { defineConfig, defineGlobalStyles, defineTextStyles } from "@pandacss/dev";
-import { createPreset } from "@park-ui/panda-preset";
-import grass from "@park-ui/panda-preset/colors/grass";
-import neutral from "@park-ui/panda-preset/colors/neutral";
+import {
+    defineConfig,
+    defineGlobalStyles,
+    defineTextStyles,
+} from "@pandacss/dev";
 
 export const textStyles = defineTextStyles({
-  body: {
-    description: "The body text style - used in paragraphs",
-    value: {
-      fontFamily: "var(--font-poppins), var(--font-noto-sans-jp), Fluent Emoji Color",
-      fontSize: {
-        base: "sm",
-        md: "md",
-        lg: "lg",
-      },
-      textDecoration: {
-        color: "var(--colors-text)",
-      },
-      lineHeight: "1.8",
-      fontWeight: "400",
+    body: {
+        description: "The body text style - used in paragraphs",
+        value: {
+            fontFamily:
+                "'Satoshi-Variable', 'GenJyuuGothicLP', BlinkMacSystemFont, 'Noto Sans JP', -apple-system, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif",
+            fontVariationSettings: "'wght' 500",
+            fontSize: {
+                base: "sm",
+                md: "md",
+                lg: "lg",
+            },
+            textDecoration: {
+                color: "var(--colors-text)",
+            },
+            lineHeight: "1.8",
+            fontWeight: "500",
+        },
     },
-  },
 });
 
 const globalCss = defineGlobalStyles({
-  "*::selection": {
-    bg: "var(--colors-color-palette-6)/80",
-  },
-  "*:focus-visible": {
-    outline: "2px solid var(--colors-primary)",
-    outlineOffset: "2px",
-    borderRadius: "var(--radii-md)",
-  },
+    "*::selection": {
+        bg: "var(--colors-color-palette-1)/80",
+    },
+    "*:focus-visible": {
+        outline: "2px solid var(--colors-primary)",
+        outlineOffset: "2px",
+        borderRadius: "var(--radii-md)",
+    },
 });
 
 export default defineConfig({
-  globalCss,
+    globalCss,
 
-  preflight: true,
+    preflight: true,
 
-  presets: [
-    createPreset({
-      accentColor: grass,
-      grayColor: neutral,
-      radius: "xl",
-    }),
-  ],
+    include: ["./app/**/*.{ts,tsx,js,jsx}"],
 
-  include: ["./src/components/**/*.{ts,tsx,js,jsx}", "./src/app/**/*.{ts,tsx,js,jsx}"],
-
-  theme: {
-    extend: {
-      tokens: {
-        colors: {
-          primary: { value: "#539676" },
-          primary90: { value: "rgba(83, 150, 118, 0.9)" },
-          primary70: { value: "rgba(83, 150, 118, 0.7)" },
-          primary50: { value: "rgba(83, 150, 118, 0.5)" },
-          primary10: { value: "rgba(83, 150, 118, 0.1)" },
-          primary5: { value: "rgba(83, 150, 118, 0.05)" },
-          text: { value: "#41765D" },
-          highlight: { value: "#EFF6F2" },
-          background: { value: "#EAF2EF" },
-          background50: { value: "rgba(234, 242, 239, 0.5)" },
-          white20: { value: "rgba(255, 255, 255, 0.2)" },
-          white40: { value: "rgba(255, 255, 255, 0.4)" },
-          white60: { value: "rgba(255, 255, 255, 0.6)" },
-          bg: { base: { value: "#EAF2EF" } },
-          color: {
-            palette: {
-              default: {
-                value: "var(--colors-primary)",
-              },
-              emphasized: {
-                value: "var(--colors-primary90)",
-              },
+    globalFontface: {
+        "Satoshi-Variable": [
+            {
+                src: 'url("/assets/fonts/Satoshi-Variable.woff2") format("woff2"), url("/assets/fonts/Satoshi-Variable.woff") format("woff"), url("/assets/fonts/Satoshi-Variable..ttf") format("truetype")',
+                fontWeight: "400",
+                fontDisplay: "swap",
+                fontStyle: "normal",
             },
-          },
-        },
-        sizes: {
-          header: {
-            height: { value: "48px" },
-            width: { value: "96px" },
-          },
-          footer: {
-            height: { value: "64px" },
-          },
-        },
-      },
-      textStyles,
+            {
+                src: 'url("/assets/fonts/Satoshi-Variable.woff2") format("woff2"), url("/assets/fonts/Satoshi-Variable.woff") format("woff"), url("/assets/fonts/Satoshi-Variable..ttf") format("truetype")',
+                fontWeight: "600",
+                fontDisplay: "swap",
+                fontStyle: "normal",
+            },
+            {
+                src: 'url("/assets/fonts/Satoshi-Variable.woff2") format("woff2"), url("/assets/fonts/Satoshi-Variable.woff") format("woff"), url("/assets/fonts/Satoshi-Variable..ttf") format("truetype")',
+                fontWeight: "800",
+                fontDisplay: "swap",
+                fontStyle: "normal",
+            },
+        ],
     },
-  },
 
-  jsxFramework: "react",
-  outdir: "styled-system",
+    jsxFramework: "react",
+    outdir: "styled-system",
 });
