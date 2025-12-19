@@ -1,16 +1,16 @@
 import { defineTokens } from "@pandacss/dev";
-import { blue } from "./blue";
-import { cyan } from "./cyan";
-import { gray } from "./gray";
-import { green } from "./green";
 import { mori } from "./mori";
-import { orange } from "./orange";
-import { pink } from "./pink";
-import { purple } from "./purple";
-import { red } from "./red";
-import { teal } from "./teal";
 import { umi } from "./umi";
+import { red } from "./red";
 import { yellow } from "./yellow";
+import { pink } from "./pink";
+import { cyan } from "./cyan";
+import { purple } from "./purple";
+import { blue } from "./blue";
+import { teal } from "./teal";
+import { green } from "./green";
+import { orange } from "./orange";
+import { gray } from "./gray";
 
 export const colors = defineTokens.colors({
     ...mori,
