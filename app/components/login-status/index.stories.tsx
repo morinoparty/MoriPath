@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { LoginStatus } from ".";
 import type { SessionData } from "../../lib/server-functions";
+import { LoginStatus } from ".";
 
 const mockSession: SessionData = {
     user: {

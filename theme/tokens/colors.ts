@@ -3,13 +3,13 @@ import { blue } from "./base/blue";
 import { cyan } from "./base/cyan";
 import { gray } from "./base/gray";
 import { green } from "./base/green";
-import { leaf } from "./base/leaf";
+import { mori } from "./base/mori";
 import { orange } from "./base/orange";
 import { pink } from "./base/pink";
 import { purple } from "./base/purple";
 import { red } from "./base/red";
-import { sea } from "./base/sea";
 import { teal } from "./base/teal";
+import { umi } from "./base/umi";
 import { yellow } from "./base/yellow";
 
 export const colors = defineTokens.colors({
@@ -95,8 +95,8 @@ export const colors = defineTokens.colors({
       value: "rgba(0, 0, 0, 0.95)",
     },
   },
-  ...leaf,
-  ...sea,
+  ...mori,
+  ...umi,
   ...red,
   ...yellow,
   ...pink,

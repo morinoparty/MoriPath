@@ -2,31 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import castlePicture from "/castle-tall.png";
 import { sva } from "../../../../../styled-system/css";
 import { LoginButton } from "./-components/login-button";
-import { createServerFn } from "@tanstack/react-start";
-import { auth } from "../../../../lib/auth";
+import { handleLogin } from "./-functions/handle-login";
 
 export const Route = createFileRoute("/_nofooter/auth/sign-in/")({
     component: SignInPage,
 });
-
-const signInAction = createServerFn().handler( async () => {
-    const result = await auth.api.signInWithOAuth2({
-        body: {
-            providerId: "MineAuth", 
-            callbackURL: "/",
-        },
-    });
-    const redirectUrl = typeof result === "string" ? result : result.url;
-    return { redirectUrl };
-});
-
-const handleLogin = async () => {
-    const result = await signInAction();
-    if (result.redirectUrl) {
-        window.location.href = result.redirectUrl;
-    }
-};
-
 const signInStyle = sva({
     slots: [
         "root",
@@ -82,7 +62,7 @@ const signInStyle = sva({
             width: "100%",
         },
         terms: {
-            color: "var(--chakra-colors-fg-subtle)",
+            color: "var(--chakra-colors-color-palette-fg-subtle)",
             fontSize: "sm",
             textAlign: "center",
         },
@@ -92,7 +72,7 @@ const signInStyle = sva({
             textDecoration: "underline",
             textUnderlineOffset: "3px",
             textDecorationStyle: "dotted",
-            textDecorationColor: "var(--chakra-colors-fg-subtle)",
+            textDecorationColor: "var(--chakra-colors-color-palette-fg-subtle)",
         },
     },
 });

@@ -10,7 +10,8 @@ export const Layout: React.FC<{
                 minHeight: "100vh",
                 margin: "0 auto",
                 textStyle: "body",
-                bgColor: "var(--chakra-colors-bg-subtle)",
+                bgColor: "var(--chakra-colors-color-palette-bg-subtle)",
+                color: "var(--chakra-colors-color-palette-fg)",
             })}
         >
             <main>{children}</main>

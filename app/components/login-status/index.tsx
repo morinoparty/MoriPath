@@ -3,8 +3,8 @@ import { Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { LogOutIcon, Settings, UserIcon } from "lucide-react";
 import { sva } from "../../../styled-system/css";
-import type { SessionData } from "../../lib/server-functions";
 import { auth } from "../../lib/auth";
+import type { SessionData } from "../../lib/server-functions";
 
 interface LoginStatusProps {
     session: SessionData;

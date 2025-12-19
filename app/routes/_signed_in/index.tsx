@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_signed_in/")({
 
 function Home() {
     const { players } = Route.useLoaderData();
-    const { session } = Route.useRouteContext() as any;
+    const { session } = Route.useRouteContext();
 
     const indexStyle = sva({
         slots: ["root", "title"],

@@ -1,7 +1,7 @@
 import { defineTokens } from "@pandacss/dev";
 
-export const leaf = defineTokens.colors({
-    leaf: {
+export const mori = defineTokens.colors({
+    mori: {
         50: { value: "oklch(0.95 0.0094 171.8 /1.00)" },
         100: { value: "oklch(0.909 0.0843643939939193 162.1356835193661 / 1)" },
         200: { value: "oklch(0.828 0.0843643939939193 162.1356835193661 / 1)" },

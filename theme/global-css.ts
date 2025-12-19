@@ -31,10 +31,9 @@ export const globalCss = defineGlobalStyles({
     "--global-color-border": "colors.border",
   },
   html: {
-    color: "fg",
-    bg: "bg",
+    color: "var(--chakra-colors-color-palette-fg)",
+    bg: "var(--chakra-colors-color-palette-bg)",
     lineHeight: "1.5",
-    colorPalette: "leaf",
   },
   "*::placeholder, *[data-placeholder]": {
     color: "fg.muted/80",

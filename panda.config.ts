@@ -16,8 +16,9 @@ export const textStyles = defineTextStyles({
                 md: "md",
                 lg: "lg",
             },
+            color: "var(--chakra-colors-color-palette-fg)",
             textDecoration: {
-                color: "var(--colors-text)",
+                color: "var(--chakra-colors-text)",
             },
             lineHeight: "1.8",
             fontWeight: "500",
@@ -27,10 +28,10 @@ export const textStyles = defineTextStyles({
 
 const globalCss = defineGlobalStyles({
     "*::selection": {
-        bg: "var(--colors-color-palette-1)/80",
+        bg: "var(--chakra-colors-color-palette-300)/80",
     },
     "*:focus-visible": {
-        outline: "2px solid var(--colors-primary)",
+        outline: "2px solid var(--chakra-colors-primary)",
         outlineOffset: "2px",
         borderRadius: "var(--radii-md)",
     },
