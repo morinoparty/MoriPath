@@ -3,6 +3,8 @@ import { sva } from "../../../styled-system/css";
 import type { SessionData } from "../../lib/server-functions";
 import { LoginStatus } from "../login-status";
 import { Notification } from "../notification";
+import { ColorModeButton } from "../ui/color-mode";
+import { PaletteButton } from "../ui/palette";
 
 interface HeaderProps {
     session: SessionData;
@@ -30,7 +32,6 @@ export const headerStyle = sva({
         logoImage: {
             width: "100%",
             height: "44px",
-            fill: "red",
             aspectRatio: 34 / 40,
         },
         indicator: {
@@ -55,6 +56,8 @@ export const Header = ({ session }: HeaderProps) => {
                 />
             </Link>
             <div className={style.indicator}>
+                <ColorModeButton />
+                <PaletteButton />
                 <Notification />
                 <LoginStatus session={session} />
             </div>

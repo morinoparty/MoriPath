@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { OnlineStatus } from ".";
 import type { ServerPlayerData } from "../../types/player";
+import { OnlineStatus } from ".";
 
 const mockPlayers: ServerPlayerData[] = [
     { id: "389b1a68-f647-4dd0-a421-61b6c22fdebe", username: "Chocolatt" },

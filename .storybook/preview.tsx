@@ -1,12 +1,37 @@
 import "../app/style/app.css";
-import { withThemeByClassName } from "@storybook/addon-themes";
-import type { Preview } from "@storybook/react-vite";
+import { Box, ChakraProvider } from "@chakra-ui/react";
+import type { Decorator, Preview } from "@storybook/react-vite";
+import { ThemeProvider } from "next-themes";
+import { useEffect } from "react";
 import { themes } from "storybook/theming";
-import { Provider } from "../app/components/ui/provider";
+import { PaletteProvider } from "../app/components/ui/palette";
+import { system } from "../theme";
 import { registerAPCACheck } from "./a11y";
 import { withDummyRouter } from "./dummy-router";
 
 const apca = registerAPCACheck("silver");
+
+const withTheme: Decorator = (Story, context) => {
+    const colorMode = context.globals.colorMode || "light";
+    const palette = context.globals.palette || "mori";
+    useEffect(() => {
+        const root = document.documentElement;
+
+        // Set color mode
+        if (colorMode === "dark") {
+            root.classList.add("dark");
+            root.setAttribute("data-theme", "dark");
+        } else {
+            root.classList.remove("dark");
+            root.setAttribute("data-theme", "light");
+        }
+
+        // Set palette
+        root.setAttribute("data-color-palette", palette);
+    }, [colorMode, palette]);
+
+    return <Story />;
+};
 
 export const parameters = {
     screenshot: {
@@ -17,6 +42,32 @@ export const parameters = {
 };
 
 const preview: Preview = {
+    globalTypes: {
+        colorMode: {
+            description: "Color mode",
+            defaultValue: "light",
+            toolbar: {
+                title: "Color Mode",
+                icon: "circlehollow",
+                items: [
+                    { value: "light", icon: "sun", title: "Light" },
+                    { value: "dark", icon: "moon", title: "Dark" },
+                ],
+            },
+        },
+        palette: {
+            description: "Color palette",
+            defaultValue: "mori",
+            toolbar: {
+                title: "Palette",
+                icon: "paintbrush",
+                items: [
+                    { value: "mori", title: "Mori" },
+                    { value: "umi", title: "Umi" },
+                ],
+            },
+        },
+    },
     parameters: {
         docs: {
             theme: themes.dark,
@@ -56,21 +107,22 @@ const preview: Preview = {
         },
     },
     decorators: [
-        (Story) => (
-            <Provider>
-                <div
-                    style={{
-                        backgroundColor: "var(--chakra-colors-bg)",
-                    }}
-                >
-                    <Story />
-                </div>
-            </Provider>
-        ),
-        withThemeByClassName({
-            defaultTheme: "light",
-            themes: { light: "", dark: "dark" },
-        }),
+        withTheme,
+        (Story, context) => {
+            const colorMode = context.globals.colorMode || "light";
+            const palette = context.globals.palette || "mori";
+            return (
+                <PaletteProvider>
+                    <ThemeProvider forcedTheme={colorMode} enableSystem={false}>
+                        <ChakraProvider value={system}>
+                            <Box colorPalette={palette} bg="bg">
+                                <Story />
+                            </Box>
+                        </ChakraProvider>
+                    </ThemeProvider>
+                </PaletteProvider>
+            );
+        },
         withDummyRouter("/"),
     ],
 };

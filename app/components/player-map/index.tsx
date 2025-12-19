@@ -15,7 +15,7 @@ const playerMapStyle = sva({
             alignItems: "center",
             borderRadius: "8px",
             boxSizing: "border-box",
-            bgColor: "var(--chakra-colors-bg-subtle)",
+            bgColor: "var(--chakra-colors-color-palette-bg-subtle)",
             border: "2px solid var(--chakra-colors-white)",
             flexShrink: "0",
             minWidth: 0,
@@ -31,7 +31,7 @@ const playerMapStyle = sva({
             fontVariationSettings: "'wght' 600",
             fontWeight: "600",
             fontSize: "sm",
-            color: "var(--chakra-colors-fg)",
+            color: "var(--chakra-colors-color-palette-fg)",
             flexShrink: 0,
             lineHeight: "1",
         },
@@ -111,5 +111,3 @@ export const PlayerMap = ({
         </div>
     );
 };
-
-

@@ -3,7 +3,7 @@ import castlePicture from "/castle-width.png";
 import { css, sva } from "../../../styled-system/css";
 import { Header } from "../../components/header";
 import { OnlineStatus } from "../../components/online-status";
-import { getOnlinePlayers } from "../../lib/server-functions";
+import { getOnlinePlayers } from "./-functions/get-online-players";
 
 export const Route = createFileRoute("/_signed_in/")({
     loader: async () => {
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_signed_in/")({
 
 function Home() {
     const { players } = Route.useLoaderData();
-    const { session } = Route.useRouteContext() as any;
+    const { session } = Route.useRouteContext();
 
     const indexStyle = sva({
         slots: ["root", "title"],

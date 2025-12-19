@@ -1,7 +1,7 @@
 import { defineTokens } from "@pandacss/dev";
 
-export const sea = defineTokens.colors({
-    sea: {
+export const umi = defineTokens.colors({
+    umi: {
         50: { value: "oklch(0.99 0.08467528311364761 201.33404721010848 / 1)" },
         100: { value: "oklch(0.909 0.08467528311364761 201.33404721010848 / 1)" },
         200: { value: "oklch(0.828 0.08467528311364761 201.33404721010848 / 1)" },

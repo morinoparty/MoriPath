@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
-import type { ServerPlayerData } from "../../types/player";
+import type { ServerPlayerData } from "../../../types/player";
 
 export const getOnlinePlayers = createServerFn().handler(async () => {
     const servers = env.SERVERS.split(",");

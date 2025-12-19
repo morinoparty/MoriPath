@@ -5,5 +5,3 @@
  * Storybook only renders isolated components, so a stub is sufficient.
  */
 export default {};
-
-
