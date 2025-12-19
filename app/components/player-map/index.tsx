@@ -4,7 +4,7 @@ import { sva } from "../../../styled-system/css";
 type Props = {
     uuid?: string;
     name?: string;
-    size?: "xl" | "md";
+    size?: "xl" | "lg" | "md";
 };
 
 const playerMapStyle = sva({
@@ -52,6 +52,21 @@ const playerMapStyle = sva({
                     fontSize: "xl",
                 },
             },
+            lg: {
+                root: {
+                    gap: "6px",
+                    height: "36px",
+                    padding: "0 8px 0 0",
+                },
+                avatar: {
+                    width: "36px",
+                    height: "36px",
+                },
+                name: {
+                    fontSize: "sm",
+                    fontWeight: "bold",
+                },
+            },
             md: {
                 root: {
                     gap: "6px",
@@ -77,7 +92,7 @@ const playerMapStyle = sva({
 // 名前の取得自体は親コンポーネント側（例: OnlineStatus）で行う
 export const PlayerMap = ({
     uuid = "389b1a68-f647-4dd0-a421-61b6c22fdebe",
-    name = "",
+    name = "Chocolatt",
     size = "md",
 }: Props) => {
     const style = playerMapStyle({ size });
@@ -96,3 +111,5 @@ export const PlayerMap = ({
         </div>
     );
 };
+
+

@@ -4,6 +4,7 @@ import { Notification } from ".";
 const meta: Meta<typeof Notification> = {
     title: "Components/Notification",
     component: Notification,
+    tags: ["autodocs"],
 };
 
 export default meta;

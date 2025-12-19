@@ -9,11 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as NofooterAuthSignInIndexRouteImport } from './routes/_nofooter/auth/sign-in/index'
-import { Route as NofooterTermsIndexRouteImport } from './routes/_nofooter/terms/index'
-import { Route as Signed_inSplatRouteImport } from './routes/_signed_in/$'
 import { Route as Signed_inIndexRouteImport } from './routes/_signed_in/index'
+import { Route as Signed_inSplatRouteImport } from './routes/_signed_in/$'
+import { Route as NofooterTermsIndexRouteImport } from './routes/_nofooter/terms/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as NofooterAuthSignInIndexRouteImport } from './routes/_nofooter/auth/sign-in/index'
 
 const Signed_inIndexRoute = Signed_inIndexRouteImport.update({
   id: '/_signed_in/',
@@ -136,9 +136,8 @@ export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 
-import type { createStart } from '@tanstack/react-start'
 import type { getRouter } from './router.ts'
-
+import type { createStart } from '@tanstack/react-start'
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true

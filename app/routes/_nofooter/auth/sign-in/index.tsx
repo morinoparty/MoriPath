@@ -2,10 +2,30 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import castlePicture from "/castle-tall.png";
 import { sva } from "../../../../../styled-system/css";
 import { LoginButton } from "./-components/login-button";
+import { createServerFn } from "@tanstack/react-start";
+import { auth } from "../../../../lib/auth";
 
 export const Route = createFileRoute("/_nofooter/auth/sign-in/")({
     component: SignInPage,
 });
+
+const signInAction = createServerFn().handler( async () => {
+    const result = await auth.api.signInWithOAuth2({
+        body: {
+            providerId: "MineAuth", 
+            callbackURL: "/",
+        },
+    });
+    const redirectUrl = typeof result === "string" ? result : result.url;
+    return { redirectUrl };
+});
+
+const handleLogin = async () => {
+    const result = await signInAction();
+    if (result.redirectUrl) {
+        window.location.href = result.redirectUrl;
+    }
+};
 
 const signInStyle = sva({
     slots: [
@@ -96,7 +116,7 @@ function SignInPage() {
                     </p>
                 </div>
                 <div className={style.termsBox}>
-                    <LoginButton />
+                    <LoginButton onClick={handleLogin} />
                     <p className={style.terms}>
                         ログインすることで、
                         <Link className={style.termsLink} to="/terms">

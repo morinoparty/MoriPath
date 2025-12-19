@@ -110,7 +110,7 @@ export const OnlineStatus = () => {
                         key={player.id}
                         uuid={player.id}
                         name={player.username}
-                        size="xl"
+                        size="md"
                     />
                 ))}
             </div>
