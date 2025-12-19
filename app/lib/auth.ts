@@ -18,6 +18,7 @@ export const auth = betterAuth({
                     authorizationUrl: `${env.MAIN_SERVER_URL}/oauth2/authorize`,
                     tokenUrl: `${env.MAIN_SERVER_URL}/oauth2/token`,
                     userInfoUrl: `${env.MAIN_SERVER_URL}/oauth2/userinfo`,
+                    redirectURI: `${env.REDIRECT_AUTH_URL}/auth/callback/MineAuth`,
                     // biome-ignore lint/style/noNonNullAssertion: if not set, it will throw an error
                     clientId: env.CLIENT_ID!,
                     pkce: true,
