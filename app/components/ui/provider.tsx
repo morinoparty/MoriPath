@@ -9,7 +9,7 @@ function PaletteWrapper(props: ColorModeProviderProps) {
     const { palette } = usePalette();
     return (
         <Span display="contents" colorPalette={palette}>
-            <ColorModeProvider {...props} />
+            <ColorModeProvider enableSystem={false} {...props} />
         </Span>
     );
 }
