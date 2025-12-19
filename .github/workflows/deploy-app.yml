@@ -41,7 +41,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_KEY }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          command: deploy --env=production
+          environment: production
           secrets: |
             AUTH_SECRET
             MAIN_SERVER_URL
