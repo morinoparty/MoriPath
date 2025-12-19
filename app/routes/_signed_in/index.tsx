@@ -3,7 +3,7 @@ import castlePicture from "/castle-width.png";
 import { css, sva } from "../../../styled-system/css";
 import { Header } from "../../components/header";
 import { OnlineStatus } from "../../components/online-status";
-import { getOnlinePlayers } from "./-functions/get-online-players";
+import { getOnlinePlayers } from "../../lib/server-functions";
 
 export const Route = createFileRoute("/_signed_in/")({
     loader: async () => {

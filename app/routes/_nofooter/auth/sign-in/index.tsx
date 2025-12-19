@@ -7,7 +7,6 @@ import { handleLogin } from "./-functions/handle-login";
 export const Route = createFileRoute("/_nofooter/auth/sign-in/")({
     component: SignInPage,
 });
-
 const signInStyle = sva({
     slots: [
         "root",

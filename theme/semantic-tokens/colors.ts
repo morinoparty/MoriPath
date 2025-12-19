@@ -1,7 +1,7 @@
 import { defineSemanticTokens } from "@chakra-ui/react";
 
 export const colors = defineSemanticTokens.colors({
-  
+
   border: {
     DEFAULT: {
       value: {
@@ -307,6 +307,26 @@ export const colors = defineSemanticTokens.colors({
       value: {
         _light: "{colors.umi.500}",
         _dark: "{colors.umi.200}",
+      },
+    },
+    contrast: {
+      value: {
+        _light: "white",
+        _dark: "black",
+      },
+    },
+  },
+  sea: {
+    subtle: {
+      value: {
+        _light: "{colors.sea.100}",
+        _dark: "{colors.sea.700}",
+      },
+    },
+    solid: {
+      value: {
+        _light: "{colors.sea.500}",
+        _dark: "{colors.sea.200}",
       },
     },
     contrast: {

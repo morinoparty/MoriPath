@@ -27,6 +27,9 @@ export const textStyles = defineTextStyles({
 });
 
 const globalCss = defineGlobalStyles({
+    "*::selection": {
+        bg: "var(--chakra-colors-color-palette-300)/80",
+    },
     "*:focus-visible": {
         outline: "2px solid var(--chakra-colors-primary)",
         outlineOffset: "2px",
