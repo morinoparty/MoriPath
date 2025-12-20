@@ -2,7 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import castlePicture from "/castle-width.png";
 import { css, sva } from "../../../styled-system/css";
 import { Header } from "../../components/header";
+import { LoginStatus } from "../../components/login-status";
+import { Notification } from "../../components/notification";
 import { OnlineStatus } from "../../components/online-status";
+import { ColorModeButton } from "../../components/ui/color-mode";
+import { PaletteButton } from "../../components/ui/palette";
 import { getOnlinePlayers } from "../../lib/server-functions";
 
 export const Route = createFileRoute("/_signed_in/")({
@@ -37,11 +41,14 @@ function Home() {
     const style = indexStyle();
     return (
         <div className={style.root}>
-            <Header session={session} />
+            <Header.Builted session={session} />
             <div className={style.title}>
                 <h1>もりのパーティ</h1>
             </div>
-            <OnlineStatus players={players} />
+            <OnlineStatus.Root players={players}>
+                <OnlineStatus.Count />
+                <OnlineStatus.PlayerList />
+            </OnlineStatus.Root>
             <img
                 src={castlePicture}
                 alt="That is a castle that is built by Itachi"

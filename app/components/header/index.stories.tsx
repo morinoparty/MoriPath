@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { SessionData } from "../../lib/server-functions";
-import { ColorModeButton } from "../ui/color-mode";
-import { PaletteButton } from "../ui/palette";
 import { LoginStatus } from "../login-status";
 import { Notification } from "../notification";
+import { ColorModeButton } from "../ui/color-mode";
+import { PaletteButton } from "../ui/palette";
 import { Header } from ".";
 
 const mockSession: SessionData = {
@@ -30,7 +30,6 @@ const mockSession: SessionData = {
 
 const meta: Meta<typeof Header> = {
     title: "Components/Header",
-    component: Header,
     tags: ["autodocs"],
     parameters: {
         layout: "fullwidth",
@@ -42,15 +41,11 @@ export default meta;
 type Story = StoryObj<typeof Header>;
 
 export const LoggedIn: Story = {
-    args: {
-        session: mockSession,
-    },
+    render: () => <Header.Builted session={mockSession} />,
 };
 
 export const LoggedOut: Story = {
-    args: {
-        session: null,
-    },
+    render: () => <Header.Builted session={null} />,
 };
 
 // Compound Component stories
@@ -104,11 +99,7 @@ export const CompoundMinimalActions: Story = {
 export const CompoundCustomLogo: Story = {
     render: () => (
         <Header.Root>
-            <Header.Logo
-                to="/"
-                src="/moripa.svg"
-                alt="Custom MoriPath Logo"
-            />
+            <Header.Logo to="/" src="/moripa.svg" alt="Custom MoriPath Logo" />
             <Header.Actions>
                 <ColorModeButton />
                 <PaletteButton />

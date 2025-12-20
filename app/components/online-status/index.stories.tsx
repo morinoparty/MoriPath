@@ -17,7 +17,6 @@ const manyMockPlayers: ServerPlayerData[] = [
 
 const meta: Meta<typeof OnlineStatus> = {
     title: "Components/OnlineStatus",
-    component: OnlineStatus,
     tags: ["autodocs"],
     parameters: {
         layout: "fullwidth",
@@ -28,32 +27,8 @@ export default meta;
 
 type Story = StoryObj<typeof OnlineStatus>;
 
-export const Default: Story = {
-    args: {
-        players: mockPlayers,
-    },
-};
-
-export const Empty: Story = {
-    args: {
-        players: [],
-    },
-};
-
-export const SinglePlayer: Story = {
-    args: {
-        players: [mockPlayers[0]],
-    },
-};
-
-export const ManyPlayers: Story = {
-    args: {
-        players: manyMockPlayers,
-    },
-};
-
 // Compound Component stories
-export const CompoundDefault: Story = {
+export const Default: Story = {
     render: () => (
         <OnlineStatus.Root players={mockPlayers}>
             <OnlineStatus.Count />
@@ -62,6 +37,32 @@ export const CompoundDefault: Story = {
     ),
 };
 
+export const Empty: Story = {
+    render: () => (
+        <OnlineStatus.Root players={[]}>
+            <OnlineStatus.Count />
+            <OnlineStatus.PlayerList />
+        </OnlineStatus.Root>
+    ),
+};
+
+export const SinglePlayer: Story = {
+    render: () => (
+        <OnlineStatus.Root players={[mockPlayers[0]]}>
+            <OnlineStatus.Count />
+            <OnlineStatus.PlayerList />
+        </OnlineStatus.Root>
+    ),
+};
+
+export const ManyPlayers: Story = {
+    render: () => (
+        <OnlineStatus.Root players={manyMockPlayers}>
+            <OnlineStatus.Count />
+            <OnlineStatus.PlayerList />
+        </OnlineStatus.Root>
+    ),
+};
 export const CustomLabels: Story = {
     render: () => (
         <OnlineStatus.Root players={mockPlayers}>

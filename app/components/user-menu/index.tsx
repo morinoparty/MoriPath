@@ -57,9 +57,11 @@ const Content = ({ children }: ContentProps) => {
 
     return (
         <Menu.Positioner>
-            <Menu.Content minW="200px">
+            <Menu.Content minW="160px">
                 <Menu.ItemGroup>
-                    <Menu.ItemGroupLabel>{session?.user?.name}</Menu.ItemGroupLabel>
+                    <Menu.ItemGroupLabel>
+                        {session?.user?.name}
+                    </Menu.ItemGroupLabel>
                     <Menu.Separator />
                     {children}
                 </Menu.ItemGroup>
@@ -95,7 +97,8 @@ const SettingsItem = () => {
 };
 
 // サーバー関数としてサインアウトを実行
-const signOutAction = createServerFn().handler(async ({ request }) => {
+// biome-ignore lint/suspicious/noExplicitAny: request is not typed
+const signOutAction = createServerFn().handler(async ({ request }: any) => {
     await auth.api.signOut({
         headers: request.headers,
     });
@@ -117,7 +120,6 @@ const LogoutItem = () => {
                     width: "100%",
                     background: "none",
                     border: "none",
-                    padding: 0,
                     cursor: "pointer",
                 })}
             >

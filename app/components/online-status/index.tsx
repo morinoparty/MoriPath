@@ -76,6 +76,7 @@ const onlineStatusStyle = sva({
             display: "flex",
             overflowX: "auto",
             gap: "12px",
+            paddingRight: "24px",
             flexShrink: 1,
             maxWidth: "100%",
             minHeight: "48px",
@@ -139,36 +140,8 @@ const PlayerList = ({ size = "md", children }: PlayerListProps) => {
     );
 };
 
-// Legacy default export for backward compatibility
-export const OnlineStatus = ({ players }: OnlineStatusProps) => {
-    const style = onlineStatusStyle();
-
-    return (
-        <div className={style.root}>
-            <OnlineStatusContext.Provider value={{ players }}>
-                <div className={style.onlineCount}>
-                    <div className={style.label}>オンライン</div>
-                    <div className={style.countWrapper}>
-                        <div className={style.count}>{players.length}</div>
-                        <div className={style.unit}>人</div>
-                    </div>
-                </div>
-                <div className={style.playerList}>
-                    {players.map((player) => (
-                        <PlayerMap
-                            key={player.id}
-                            uuid={player.id}
-                            name={player.username}
-                            size="md"
-                        />
-                    ))}
-                </div>
-            </OnlineStatusContext.Provider>
-        </div>
-    );
+export const OnlineStatus = {
+    Root,
+    Count,
+    PlayerList,
 };
-
-// Compound Component exports
-OnlineStatus.Root = Root;
-OnlineStatus.Count = Count;
-OnlineStatus.PlayerList = PlayerList;

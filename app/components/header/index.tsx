@@ -59,7 +59,11 @@ interface LogoProps {
     alt?: string;
 }
 
-const Logo = ({ to = "/", src = "/moripa.svg", alt = "MoriPath" }: LogoProps) => {
+const Logo = ({
+    to = "/",
+    src = "/moripa.svg",
+    alt = "MoriPath",
+}: LogoProps) => {
     const style = headerStyle();
     return (
         <Link to={to} className={style.logoLink}>
@@ -84,21 +88,13 @@ const Actions = ({ children }: ActionsProps) => {
 };
 
 // Legacy default export for backward compatibility
-export const Header = ({ session }: HeaderProps) => {
+const Builted = ({ session }: HeaderProps) => {
     const style = headerStyle();
     return (
         <div className={style.root}>
-            <Link to="/" className={style.logoLink}>
-                <img
-                    className={style.logoImage}
-                    src="/moripa.svg"
-                    alt="MoriPath"
-                    width={200}
-                    height={200}
-                />
-            </Link>
+            <Logo />
             <div className={style.actions}>
-                <ColorModeButton />
+                {/* <ColorModeButton /> */}
                 <PaletteButton />
                 <Notification />
                 <LoginStatus.Root session={session}>
@@ -119,7 +115,9 @@ export const Header = ({ session }: HeaderProps) => {
     );
 };
 
-// Compound Component exports
-Header.Root = Root;
-Header.Logo = Logo;
-Header.Actions = Actions;
+export const Header = {
+    Root,
+    Logo,
+    Actions,
+    Builted,
+};
