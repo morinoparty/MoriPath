@@ -1,5 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { SessionData } from "../../lib/server-functions";
+import { ColorModeButton } from "../ui/color-mode";
+import { PaletteButton } from "../ui/palette";
+import { LoginStatus } from "../login-status";
+import { Notification } from "../notification";
 import { Header } from ".";
 
 const mockSession: SessionData = {
@@ -28,6 +32,9 @@ const meta: Meta<typeof Header> = {
     title: "Components/Header",
     component: Header,
     tags: ["autodocs"],
+    parameters: {
+        layout: "fullwidth",
+    },
 };
 
 export default meta;
@@ -44,4 +51,69 @@ export const LoggedOut: Story = {
     args: {
         session: null,
     },
+};
+
+// Compound Component stories
+export const CompoundDefault: Story = {
+    render: () => (
+        <Header.Root>
+            <Header.Logo />
+            <Header.Actions>
+                <ColorModeButton />
+                <PaletteButton />
+                <Notification />
+                <LoginStatus.Root session={mockSession}>
+                    <LoginStatus.Menu.Root session={mockSession}>
+                        <LoginStatus.Menu.Trigger>
+                            <LoginStatus.Avatar />
+                        </LoginStatus.Menu.Trigger>
+                        <LoginStatus.Menu.Content>
+                            <LoginStatus.Menu.ProfileItem />
+                            <LoginStatus.Menu.SettingsItem />
+                            <LoginStatus.Menu.Separator />
+                            <LoginStatus.Menu.LogoutItem />
+                        </LoginStatus.Menu.Content>
+                    </LoginStatus.Menu.Root>
+                </LoginStatus.Root>
+            </Header.Actions>
+        </Header.Root>
+    ),
+};
+
+export const CompoundMinimalActions: Story = {
+    render: () => (
+        <Header.Root>
+            <Header.Logo />
+            <Header.Actions>
+                <ColorModeButton />
+                <LoginStatus.Root session={mockSession}>
+                    <LoginStatus.Menu.Root session={mockSession}>
+                        <LoginStatus.Menu.Trigger>
+                            <LoginStatus.Avatar />
+                        </LoginStatus.Menu.Trigger>
+                        <LoginStatus.Menu.Content>
+                            <LoginStatus.Menu.LogoutItem />
+                        </LoginStatus.Menu.Content>
+                    </LoginStatus.Menu.Root>
+                </LoginStatus.Root>
+            </Header.Actions>
+        </Header.Root>
+    ),
+};
+
+export const CompoundCustomLogo: Story = {
+    render: () => (
+        <Header.Root>
+            <Header.Logo
+                to="/"
+                src="/moripa.svg"
+                alt="Custom MoriPath Logo"
+            />
+            <Header.Actions>
+                <ColorModeButton />
+                <PaletteButton />
+                <Notification />
+            </Header.Actions>
+        </Header.Root>
+    ),
 };

@@ -24,24 +24,68 @@ const mockSession: SessionData = {
     },
 };
 
-const meta: Meta<typeof LoginStatus> = {
+const meta: Meta = {
     title: "Components/LoginStatus",
-    component: LoginStatus,
     tags: ["autodocs"],
+    parameters: {
+        layout: "centered",
+    },
 };
 
 export default meta;
 
-type Story = StoryObj<typeof LoginStatus>;
+type Story = StoryObj;
 
-export const LoggedIn: Story = {
-    args: {
-        session: mockSession,
-    },
+export const Default: Story = {
+    render: () => (
+        <LoginStatus.Root session={mockSession}>
+            <LoginStatus.Menu.Root session={mockSession}>
+                <LoginStatus.Menu.Trigger>
+                    <LoginStatus.Avatar />
+                </LoginStatus.Menu.Trigger>
+                <LoginStatus.Menu.Content>
+                    <LoginStatus.Menu.ProfileItem />
+                    <LoginStatus.Menu.SettingsItem />
+                    <LoginStatus.Menu.Separator />
+                    <LoginStatus.Menu.LogoutItem />
+                </LoginStatus.Menu.Content>
+            </LoginStatus.Menu.Root>
+        </LoginStatus.Root>
+    ),
+};
+
+export const WithoutSettings: Story = {
+    render: () => (
+        <LoginStatus.Root session={mockSession}>
+            <LoginStatus.Menu.Root session={mockSession}>
+                <LoginStatus.Menu.Trigger>
+                    <LoginStatus.Avatar />
+                </LoginStatus.Menu.Trigger>
+                <LoginStatus.Menu.Content>
+                    <LoginStatus.Menu.ProfileItem />
+                    <LoginStatus.Menu.Separator />
+                    <LoginStatus.Menu.LogoutItem />
+                </LoginStatus.Menu.Content>
+            </LoginStatus.Menu.Root>
+        </LoginStatus.Root>
+    ),
+};
+
+export const MinimalMenu: Story = {
+    render: () => (
+        <LoginStatus.Root session={mockSession}>
+            <LoginStatus.Menu.Root session={mockSession}>
+                <LoginStatus.Menu.Trigger>
+                    <LoginStatus.Avatar />
+                </LoginStatus.Menu.Trigger>
+                <LoginStatus.Menu.Content>
+                    <LoginStatus.Menu.LogoutItem />
+                </LoginStatus.Menu.Content>
+            </LoginStatus.Menu.Root>
+        </LoginStatus.Root>
+    ),
 };
 
 export const LoggedOut: Story = {
-    args: {
-        session: null,
-    },
+    render: () => <LoginStatus.Root session={null}>Content</LoginStatus.Root>,
 };

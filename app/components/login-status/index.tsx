@@ -1,17 +1,31 @@
-import { HStack, Menu } from "@chakra-ui/react";
-import { Link } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
-import { LogOutIcon, Settings, UserIcon } from "lucide-react";
+import type { PropsWithChildren } from "react";
+import { createContext, useContext } from "react";
 import { sva } from "../../../styled-system/css";
-import { auth } from "../../lib/auth";
 import type { SessionData } from "../../lib/server-functions";
+import { UserMenu } from "../user-menu";
 
 interface LoginStatusProps {
     session: SessionData;
 }
 
+interface LoginStatusContextValue {
+    session: SessionData;
+}
+
+const LoginStatusContext = createContext<LoginStatusContextValue | null>(null);
+
+const useLoginStatusContext = () => {
+    const context = useContext(LoginStatusContext);
+    if (!context) {
+        throw new Error(
+            "LoginStatus components must be used within LoginStatus.Root",
+        );
+    }
+    return context;
+};
+
 const loginStatusStyle = sva({
-    slots: ["root", "avatar", "menu"],
+    slots: ["root", "avatar"],
     base: {
         root: {
             display: "flex",
@@ -19,101 +33,50 @@ const loginStatusStyle = sva({
             alignItems: "center",
             width: "44px",
             height: "44px",
-            gap: "var(--spacings-radii-2, 8px)",
         },
         avatar: {
             width: "44px",
             height: "44px",
             borderRadius: "md",
-        },
-        menu: {
-            width: "160px",
+            cursor: "pointer",
         },
     },
 });
 
-export const LoginStatus = ({ session }: LoginStatusProps) => {
+const Root = ({ session, children }: PropsWithChildren<LoginStatusProps>) => {
     const style = loginStatusStyle();
 
+    if (!session?.user) {
+        return null;
+    }
+
     return (
-        <div className={style.root}>
-            {session?.user ? <PlayerHead session={session} /> : null}
-        </div>
+        <LoginStatusContext.Provider value={{ session }}>
+            <div className={style.root}>{children}</div>
+        </LoginStatusContext.Provider>
     );
 };
 
-const PlayerHead = ({ session }: { session: SessionData }) => {
+const Avatar = () => {
+    const { session } = useLoginStatusContext();
     const style = loginStatusStyle();
 
     return (
-        <Menu.Root>
-            <Menu.Trigger>
-                <img
-                    className={style.avatar}
-                    src={
-                        session?.user?.image ??
-                        "https://crafthead.net/avatar/Steave" + "/128.png"
-                    }
-                    width="44"
-                    height="44"
-                    alt="logo"
-                />
-            </Menu.Trigger>
-            <Menu.Positioner>
-                <Menu.Content className={style.menu}>
-                    <Menu.ItemGroup>
-                        <Menu.ItemGroupLabel>
-                            <div>{session?.user?.name}</div>
-                        </Menu.ItemGroupLabel>
-                        <Menu.Separator />
-                        <Menu.Item value="profile">
-                            <Link to="/my-page">
-                                <HStack gap="2">
-                                    <UserIcon />
-                                    プロフィール
-                                </HStack>
-                            </Link>
-                        </Menu.Item>
-                        <Menu.Item value="settings">
-                            <Link to="/my-page">
-                                <HStack gap="2">
-                                    <Settings /> 設定
-                                </HStack>
-                            </Link>
-                        </Menu.Item>
-                        <Menu.Separator />
-                        <Menu.Item value="logout">
-                            <LogoutForm />
-                        </Menu.Item>
-                    </Menu.ItemGroup>
-                </Menu.Content>
-            </Menu.Positioner>
-        </Menu.Root>
+        <img
+            className={style.avatar}
+            src={
+                session?.user?.image ??
+                "https://crafthead.net/avatar/Steve/128.png"
+            }
+            width="44"
+            height="44"
+            alt={session?.user?.name ?? "User avatar"}
+        />
     );
 };
 
-// サーバー関数としてサインアウトを実行
-// サインアウト対象のセッションを特定するために request.headers を渡す
-const signOutAction = createServerFn().handler(async ({ request }) => {
-    await auth.api.signOut({
-        headers: request.headers,
-    });
-});
-
-const LogoutForm = () => {
-    return (
-        <form
-            action={async () => {
-                await signOutAction();
-                window.location.reload();
-            }}
-        >
-            <button type="submit">
-                <HStack gap="2">
-                    <LogOutIcon />
-                    <div>ログアウト</div>
-                </HStack>
-            </button>
-        </form>
-    );
+export const LoginStatus = {
+    Root,
+    Avatar,
+    Menu: UserMenu,
 };
