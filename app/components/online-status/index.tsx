@@ -45,7 +45,7 @@ const onlineStatusStyle = sva({
             color: "var(--chakra-colors-color-palette-50)",
             paddingLeft: "24px",
             gap: "2rem",
-            height: "72px",
+            paddingY : "16px",
             fontWeight: "bold",
         },
         onlineCount: {
@@ -57,7 +57,7 @@ const onlineStatusStyle = sva({
         label: {
             fontSize: "md",
             lineHeight: "1",
-            opacity: 0.6,
+            opacity: 0.7,
         },
         countWrapper: {
             display: "flex",

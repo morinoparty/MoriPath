@@ -33,7 +33,9 @@ function Home() {
                 bgColor: "var(--chakra-colors-color-palette-500)",
                 color: "var(--chakra-colors-color-palette-50)",
                 padding: "0 24px",
-                height: "56px",
+                height: "48px",
+                display: "flex",
+                alignItems: "center",
                 fontWeight: "bold",
             },
         },
@@ -43,7 +45,7 @@ function Home() {
         <div className={style.root}>
             <Header.Builted session={session} />
             <div className={style.title}>
-                <h1>もりのパーティ</h1>
+                <h1 className={css({ lineHeight: "1" })}>もりのパーティ</h1>
             </div>
             <OnlineStatus.Root players={players}>
                 <OnlineStatus.Count />
