@@ -19,7 +19,7 @@ const headerStyle = sva({
             display: "flex",
             height: "102px",
             margin: "0 auto",
-            padding: "16px 24px 8px 24px",
+            padding: "16px 24px",
             justifyContent: "space-between",
             alignItems: "flex-end",
             bgColor: "var(--chakra-colors-color-palette-500)",
