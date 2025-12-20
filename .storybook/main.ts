@@ -33,6 +33,14 @@ const config: StorybookConfig = {
                 "node_modules/.cache/storybook",
                 "node_modules/.cache/sb-vite-plugin-externals",
             ],
+            esbuildOptions: {
+                ...config.optimizeDeps?.esbuildOptions,
+                external: [
+                    ...(config.optimizeDeps?.esbuildOptions?.external ?? []),
+                    "#tanstack-router-entry",
+                    "#tanstack-start-entry",
+                ],
+            },
         };
         config.resolve = {
             ...(config.resolve ?? {}),

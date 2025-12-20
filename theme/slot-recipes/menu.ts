@@ -22,7 +22,7 @@ export const menuSlotRecipe = defineSlotRecipe({
   base: {
     content: {
       outline: 0,
-      bg: "bg.panel",
+      bg: "var(--chakra-colors-color-palette-bg-panel)",
       boxShadow: "lg",
       color: "fg",
       maxHeight: "var(--available-height)",
@@ -91,7 +91,7 @@ export const menuSlotRecipe = defineSlotRecipe({
     },
     separator: {
       height: "1px",
-      bg: "bg.muted",
+      bg: "var(--chakra-colors-color-palette-bg-muted)",
       my: "1",
       mx: "-1",
     },
@@ -101,7 +101,7 @@ export const menuSlotRecipe = defineSlotRecipe({
       subtle: {
         item: {
           _highlighted: {
-            bg: "bg.emphasized/60",
+            bg: "var(--chakra-colors-color-palette-bg-emphasized)/60",
           },
         },
       },

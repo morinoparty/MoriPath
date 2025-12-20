@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import type { PropsWithChildren, ReactNode } from "react";
 import { sva } from "../../../styled-system/css";
 import type { SessionData } from "../../lib/server-functions";
 import { LoginStatus } from "../login-status";
@@ -11,8 +12,8 @@ interface HeaderProps {
     session: SessionData;
 }
 
-export const headerStyle = sva({
-    slots: ["root", "logoLink", "logoImage", "indicator"],
+const headerStyle = sva({
+    slots: ["root", "logoLink", "logoImage", "actions"],
     base: {
         root: {
             display: "flex",
@@ -35,7 +36,7 @@ export const headerStyle = sva({
             height: "44px",
             aspectRatio: 34 / 40,
         },
-        indicator: {
+        actions: {
             display: "flex",
             alignItems: "center",
             gap: "24px",
@@ -43,25 +44,80 @@ export const headerStyle = sva({
     },
 });
 
-export const Header = ({ session }: HeaderProps) => {
+interface RootProps extends PropsWithChildren {
+    className?: string;
+}
+
+const Root = ({ children, className }: RootProps) => {
+    const style = headerStyle();
+    return <div className={className ?? style.root}>{children}</div>;
+};
+
+interface LogoProps {
+    to?: string;
+    src?: string;
+    alt?: string;
+}
+
+const Logo = ({
+    to = "/",
+    src = "/moripa.svg",
+    alt = "MoriPath",
+}: LogoProps) => {
+    const style = headerStyle();
+    return (
+        <Link to={to} className={style.logoLink}>
+            <img
+                className={style.logoImage}
+                src={src}
+                alt={alt}
+                width={200}
+                height={200}
+            />
+        </Link>
+    );
+};
+
+interface ActionsProps {
+    children: ReactNode;
+}
+
+const Actions = ({ children }: ActionsProps) => {
+    const style = headerStyle();
+    return <div className={style.actions}>{children}</div>;
+};
+
+// Legacy default export for backward compatibility
+const Builted = ({ session }: HeaderProps) => {
     const style = headerStyle();
     return (
         <div className={style.root}>
-            <Link to="/" className={style.logoLink}>
-                <img
-                    className={style.logoImage}
-                    src="/moripa.svg"
-                    alt="MoriPath"
-                    width={200}
-                    height={200}
-                />
-            </Link>
-            <div className={style.indicator}>
-                <ColorModeButton />
+            <Logo />
+            <div className={style.actions}>
+                {/* <ColorModeButton /> */}
                 <PaletteButton />
                 <Notification />
-                <LoginStatus session={session} />
+                <LoginStatus.Root session={session}>
+                    <LoginStatus.Menu.Root session={session}>
+                        <LoginStatus.Menu.Trigger>
+                            <LoginStatus.Avatar />
+                        </LoginStatus.Menu.Trigger>
+                        <LoginStatus.Menu.Content>
+                            <LoginStatus.Menu.ProfileItem />
+                            <LoginStatus.Menu.SettingsItem />
+                            <LoginStatus.Menu.Separator />
+                            <LoginStatus.Menu.LogoutItem />
+                        </LoginStatus.Menu.Content>
+                    </LoginStatus.Menu.Root>
+                </LoginStatus.Root>
             </div>
         </div>
     );
+};
+
+export const Header = {
+    Root,
+    Logo,
+    Actions,
+    Builted,
 };

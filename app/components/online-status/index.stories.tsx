@@ -8,44 +8,92 @@ const mockPlayers: ServerPlayerData[] = [
     { id: "853c80ef-3c37-49fd-aa49-938b674adae6", username: "jeb_" },
 ];
 
+const manyMockPlayers: ServerPlayerData[] = [
+    ...mockPlayers,
+    { id: "f84c6a79-0a4e-45e0-879b-cd49ebd4c4e2", username: "Steve" },
+    { id: "ec561538-f3fd-461d-aff5-086b22154bce", username: "Alex" },
+    { id: "61699b2e-d327-4a01-9e1e-0ea8c3f06bc6", username: "Herobrine" },
+];
+
 const meta: Meta<typeof OnlineStatus> = {
     title: "Components/OnlineStatus",
-    component: OnlineStatus,
     tags: ["autodocs"],
+    parameters: {
+        layout: "fullwidth",
+    },
 };
 
 export default meta;
 
 type Story = StoryObj<typeof OnlineStatus>;
 
+// Compound Component stories
 export const Default: Story = {
-    args: {
-        players: mockPlayers,
-    },
+    render: () => (
+        <OnlineStatus.Root players={mockPlayers}>
+            <OnlineStatus.Count />
+            <OnlineStatus.PlayerList />
+        </OnlineStatus.Root>
+    ),
 };
 
 export const Empty: Story = {
-    args: {
-        players: [],
-    },
+    render: () => (
+        <OnlineStatus.Root players={[]}>
+            <OnlineStatus.Count />
+            <OnlineStatus.PlayerList />
+        </OnlineStatus.Root>
+    ),
 };
 
 export const SinglePlayer: Story = {
-    args: {
-        players: [mockPlayers[0]],
-    },
+    render: () => (
+        <OnlineStatus.Root players={[mockPlayers[0]]}>
+            <OnlineStatus.Count />
+            <OnlineStatus.PlayerList />
+        </OnlineStatus.Root>
+    ),
 };
 
 export const ManyPlayers: Story = {
-    args: {
-        players: [
-            ...mockPlayers,
-            { id: "f84c6a79-0a4e-45e0-879b-cd49ebd4c4e2", username: "Steve" },
-            { id: "ec561538-f3fd-461d-aff5-086b22154bce", username: "Alex" },
-            {
-                id: "61699b2e-d327-4a01-9e1e-0ea8c3f06bc6",
-                username: "Herobrine",
-            },
-        ],
-    },
+    render: () => (
+        <OnlineStatus.Root players={manyMockPlayers}>
+            <OnlineStatus.Count />
+            <OnlineStatus.PlayerList />
+        </OnlineStatus.Root>
+    ),
+};
+export const CustomLabels: Story = {
+    render: () => (
+        <OnlineStatus.Root players={mockPlayers}>
+            <OnlineStatus.Count label="現在接続中" unit="名" />
+            <OnlineStatus.PlayerList />
+        </OnlineStatus.Root>
+    ),
+};
+
+export const SmallPlayerAvatars: Story = {
+    render: () => (
+        <OnlineStatus.Root players={mockPlayers}>
+            <OnlineStatus.Count />
+            <OnlineStatus.PlayerList size="sm" />
+        </OnlineStatus.Root>
+    ),
+};
+
+export const LargePlayerAvatars: Story = {
+    render: () => (
+        <OnlineStatus.Root players={mockPlayers}>
+            <OnlineStatus.Count />
+            <OnlineStatus.PlayerList size="lg" />
+        </OnlineStatus.Root>
+    ),
+};
+
+export const CountOnly: Story = {
+    render: () => (
+        <OnlineStatus.Root players={mockPlayers}>
+            <OnlineStatus.Count />
+        </OnlineStatus.Root>
+    ),
 };
