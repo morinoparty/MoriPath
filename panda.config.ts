@@ -10,7 +10,7 @@ export const textStyles = defineTextStyles({
         value: {
             fontFamily:
                 "'Satoshi-Variable', 'GenJyuuGothicLP', BlinkMacSystemFont, 'Noto Sans JP', -apple-system, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif",
-            fontVariationSettings: "'wght' 500",
+            fontVariationSettings: "'wght' 600",
             fontSize: {
                 base: "sm",
                 md: "md",
@@ -35,11 +35,11 @@ const globalCss = defineGlobalStyles({
         outlineOffset: "2px",
         borderRadius: "var(--radii-md)",
     },
+    ...textStyles,
 });
 
 export default defineConfig({
     globalCss,
-
     preflight: true,
 
     include: ["./app/**/*.{ts,tsx,js,jsx}"],
@@ -49,6 +49,12 @@ export default defineConfig({
             {
                 src: 'url("/assets/fonts/Satoshi-Variable.woff2") format("woff2"), url("/assets/fonts/Satoshi-Variable.woff") format("woff"), url("/assets/fonts/Satoshi-Variable..ttf") format("truetype")',
                 fontWeight: "400",
+                fontDisplay: "swap",
+                fontStyle: "normal",
+            },
+            {
+                src: 'url("/assets/fonts/Satoshi-Variable.woff2") format("woff2"), url("/assets/fonts/Satoshi-Variable.woff") format("woff"), url("/assets/fonts/Satoshi-Variable..ttf") format("truetype")',
+                fontWeight: "500",
                 fontDisplay: "swap",
                 fontStyle: "normal",
             },

@@ -1,24 +1,26 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { LandPlot, Nut } from "lucide-react";
 import castlePicture from "/castle-width.png";
 import { css, sva } from "../../../styled-system/css";
 import { Header } from "../../components/header";
-import { LoginStatus } from "../../components/login-status";
-import { Notification } from "../../components/notification";
-import { OnlineStatus } from "../../components/online-status";
-import { ColorModeButton } from "../../components/ui/color-mode";
-import { PaletteButton } from "../../components/ui/palette";
-import { getOnlinePlayers } from "../../lib/server-functions";
+import { CardSquare } from "./-components/card-square";
+import { OnlineStatus } from "./-components/online-status";
+import { getOnlinePlayers, getVaultBalance } from "./-functions";
 
 export const Route = createFileRoute("/_signed_in/")({
     loader: async () => {
-        const players = await getOnlinePlayers();
-        return { players };
+        const [players, balance] = await Promise.all([
+            getOnlinePlayers(),
+            getVaultBalance().catch(() => 0),
+        ]);
+        const protectionBlocks = Math.floor(Math.random() * 10000);
+        return { players, balance, protectionBlocks };
     },
     component: Home,
 });
 
 function Home() {
-    const { players } = Route.useLoaderData();
+    const { players, balance, protectionBlocks } = Route.useLoaderData();
     const { session } = Route.useRouteContext();
 
     const indexStyle = sva({
@@ -56,7 +58,7 @@ function Home() {
                 alt="That is a castle that is built by Itachi"
                 className={css({
                     width: "100%",
-                    height: "35vh",
+                    height: "280px",
                     objectFit: "cover",
                     objectPosition: "top",
                     aspectRatio: "16/9",
@@ -64,6 +66,26 @@ function Home() {
                 width={(300 * 16) / 9}
                 height={300}
             />
+
+            <div
+                className={css({
+                    display: "grid",
+                    gridTemplateColumns: "repeat(2, 1fr)",
+                    gap: "16px",
+                    padding: "16px",
+                })}
+            >
+                <CardSquare
+                    icon={<Nut />}
+                    label="どんぐり"
+                    value={balance.toLocaleString()}
+                />
+                <CardSquare
+                    icon={<LandPlot />}
+                    label="保護ブロック"
+                    value={protectionBlocks.toLocaleString()}
+                />
+            </div>
         </div>
     );
 }
