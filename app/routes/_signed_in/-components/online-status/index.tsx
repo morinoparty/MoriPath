@@ -1,8 +1,8 @@
 import type { PropsWithChildren, ReactNode } from "react";
 import { createContext, useContext } from "react";
-import { sva } from "../../../styled-system/css";
-import type { ServerPlayerData } from "../../types/player";
-import { PlayerMap } from "../player-map";
+import { sva } from "../../../../../styled-system/css";
+import { PlayerMap } from "../../../../components/player-map";
+import type { ServerPlayerData } from "../../../../types/player";
 
 interface OnlineStatusProps {
     players: ServerPlayerData[];
@@ -45,7 +45,7 @@ const onlineStatusStyle = sva({
             color: "var(--chakra-colors-color-palette-50)",
             paddingLeft: "24px",
             gap: "2rem",
-            paddingY : "16px",
+            paddingY: "16px",
             fontWeight: "bold",
         },
         onlineCount: {

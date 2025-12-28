@@ -12,6 +12,11 @@ const config: StorybookConfig = {
     core: {
         builder: "@storybook/builder-vite",
     },
+    refs: {
+        "@chakra-ui/react": {
+            disable: true,
+        },
+    },
     framework: {
         name: "@storybook/react-vite",
         options: {
@@ -20,6 +25,7 @@ const config: StorybookConfig = {
             },
         },
     },
+    staticDirs: [{ from: "../public/assets", to: "/assets" }],
     // biome-ignore lint/suspicious/noExplicitAny: viteFinalの型定義が見つからない
     viteFinal: async (config: any) => {
         config.esbuild = {

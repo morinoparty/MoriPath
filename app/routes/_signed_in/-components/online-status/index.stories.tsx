@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import type { ServerPlayerData } from "../../types/player";
+import type { ServerPlayerData } from "../../../../types/player";
 import { OnlineStatus } from ".";
 
 const mockPlayers: ServerPlayerData[] = [
@@ -16,7 +16,7 @@ const manyMockPlayers: ServerPlayerData[] = [
 ];
 
 const meta: Meta<typeof OnlineStatus> = {
-    title: "Components/OnlineStatus",
+    title: "Index/OnlineStatus",
     tags: ["autodocs"],
     parameters: {
         layout: "fullwidth",
