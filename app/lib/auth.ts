@@ -15,15 +15,11 @@ export const auth = betterAuth({
             config: [
                 {
                     providerId: "MineAuth",
-                    authorizationUrl: `${env.MAIN_SERVER_URL}/oauth2/authorize`,
-                    tokenUrl: `${env.MAIN_SERVER_URL}/oauth2/token`,
-                    userInfoUrl: `${env.MAIN_SERVER_URL}/oauth2/userinfo`,
-                    // biome-ignore lint/style/noNonNullAssertion: if not set, it will throw an error
-                    clientId: env.CLIENT_ID!,
+                    clientId: env.CLIENT_ID,
+                    // token_endpoint_auth_method: "none" のため空文字列
+                    clientSecret: "",
                     pkce: true,
-                    clientSecret: "", // token_endpoint_auth_method: "none" のため空文字列
-                    scopes: ["openid", "profile", "email"],
-                    authentication: "post", // client_secretをPOSTボディで送信
+                    discoveryUrl: `${env.MAIN_SERVER_URL}/.well-known/openid-configuration`,
                     getUserInfo: async (tokens) => {
                         const response = await fetch(
                             `${env.MAIN_SERVER_URL}/oauth2/userinfo`,
@@ -39,16 +35,18 @@ export const auth = betterAuth({
                         }
 
                         const profile = (await response.json()) as {
-                            id: string;
-                            username: string;
+                            sub: string;
+                            name: string;
+                            nickname: string;
+                            picture: string;
                         };
 
                         return {
-                            id: profile.id,
-                            name: profile.username,
-                            email: `${profile.id}@no-reply.morino.party`,
+                            id: profile.sub,
+                            name: profile.name,
+                            email: `${profile.sub}@no-reply.morino.party`,
                             emailVerified: false,
-                            image: `https://crafthead.net/avatar/${profile.id}`,
+                            image: profile.picture,
                         };
                     },
                 },
