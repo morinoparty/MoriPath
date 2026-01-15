@@ -20,35 +20,6 @@ export const auth = betterAuth({
                     clientSecret: "",
                     pkce: true,
                     discoveryUrl: `${env.MAIN_SERVER_URL}/.well-known/openid-configuration`,
-                    getUserInfo: async (tokens) => {
-                        const response = await fetch(
-                            `${env.MAIN_SERVER_URL}/oauth2/userinfo`,
-                            {
-                                headers: {
-                                    Authorization: `Bearer ${tokens.accessToken}`,
-                                },
-                            },
-                        );
-
-                        if (!response.ok) {
-                            throw new Error("Failed to fetch user info");
-                        }
-
-                        const profile = (await response.json()) as {
-                            sub: string;
-                            name: string;
-                            nickname: string;
-                            picture: string;
-                        };
-
-                        return {
-                            id: profile.sub,
-                            name: profile.name,
-                            email: `${profile.sub}@no-reply.morino.party`,
-                            emailVerified: false,
-                            image: profile.picture,
-                        };
-                    },
                 },
             ],
         }),
