@@ -29,7 +29,6 @@ const playerMapStyle = sva({
         },
         name: {
             fontVariationSettings: "'wght' 600",
-            filter: "blur(3px)",
             fontWeight: "600",
             fontSize: "sm",
             color: "var(--chakra-colors-color-palette-fg)",
