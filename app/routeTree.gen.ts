@@ -9,13 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as NofooterAuthSignInIndexRouteImport } from './routes/_nofooter/auth/sign-in/index'
-import { Route as NofooterTermsIndexRouteImport } from './routes/_nofooter/terms/index'
 import { Route as Signed_inRouteImport } from './routes/_signed_in'
-import { Route as Signed_inSplatRouteImport } from './routes/_signed_in/$'
 import { Route as Signed_inIndexRouteImport } from './routes/_signed_in/index'
+import { Route as Signed_inSplatRouteImport } from './routes/_signed_in/$'
 import { Route as Signed_inMyPageIndexRouteImport } from './routes/_signed_in/my-page/index'
+import { Route as Signed_inBalanceClaimIndexRouteImport } from './routes/_signed_in/balance-claim/index'
+import { Route as NofooterTermsIndexRouteImport } from './routes/_nofooter/terms/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as NofooterAuthSignInIndexRouteImport } from './routes/_nofooter/auth/sign-in/index'
 
 const Signed_inRoute = Signed_inRouteImport.update({
   id: '/_signed_in',
@@ -36,6 +37,12 @@ const Signed_inMyPageIndexRoute = Signed_inMyPageIndexRouteImport.update({
   path: '/my-page/',
   getParentRoute: () => Signed_inRoute,
 } as any)
+const Signed_inBalanceClaimIndexRoute =
+  Signed_inBalanceClaimIndexRouteImport.update({
+    id: '/balance-claim/',
+    path: '/balance-claim/',
+    getParentRoute: () => Signed_inRoute,
+  } as any)
 const NofooterTermsIndexRoute = NofooterTermsIndexRouteImport.update({
   id: '/_nofooter/terms/',
   path: '/terms/',
@@ -57,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/': typeof Signed_inIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/terms': typeof NofooterTermsIndexRoute
+  '/balance-claim': typeof Signed_inBalanceClaimIndexRoute
   '/my-page': typeof Signed_inMyPageIndexRoute
   '/auth/sign-in': typeof NofooterAuthSignInIndexRoute
 }
@@ -65,6 +73,7 @@ export interface FileRoutesByTo {
   '/': typeof Signed_inIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/terms': typeof NofooterTermsIndexRoute
+  '/balance-claim': typeof Signed_inBalanceClaimIndexRoute
   '/my-page': typeof Signed_inMyPageIndexRoute
   '/auth/sign-in': typeof NofooterAuthSignInIndexRoute
 }
@@ -75,6 +84,7 @@ export interface FileRoutesById {
   '/_signed_in/': typeof Signed_inIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_nofooter/terms/': typeof NofooterTermsIndexRoute
+  '/_signed_in/balance-claim/': typeof Signed_inBalanceClaimIndexRoute
   '/_signed_in/my-page/': typeof Signed_inMyPageIndexRoute
   '/_nofooter/auth/sign-in/': typeof NofooterAuthSignInIndexRoute
 }
@@ -85,10 +95,18 @@ export interface FileRouteTypes {
     | '/'
     | '/api/auth/$'
     | '/terms'
+    | '/balance-claim'
     | '/my-page'
     | '/auth/sign-in'
   fileRoutesByTo: FileRoutesByTo
-  to: '/$' | '/' | '/api/auth/$' | '/terms' | '/my-page' | '/auth/sign-in'
+  to:
+    | '/$'
+    | '/'
+    | '/api/auth/$'
+    | '/terms'
+    | '/balance-claim'
+    | '/my-page'
+    | '/auth/sign-in'
   id:
     | '__root__'
     | '/_signed_in'
@@ -96,6 +114,7 @@ export interface FileRouteTypes {
     | '/_signed_in/'
     | '/api/auth/$'
     | '/_nofooter/terms/'
+    | '/_signed_in/balance-claim/'
     | '/_signed_in/my-page/'
     | '/_nofooter/auth/sign-in/'
   fileRoutesById: FileRoutesById
@@ -137,6 +156,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Signed_inMyPageIndexRouteImport
       parentRoute: typeof Signed_inRoute
     }
+    '/_signed_in/balance-claim/': {
+      id: '/_signed_in/balance-claim/'
+      path: '/balance-claim'
+      fullPath: '/balance-claim'
+      preLoaderRoute: typeof Signed_inBalanceClaimIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
     '/_nofooter/terms/': {
       id: '/_nofooter/terms/'
       path: '/terms'
@@ -164,12 +190,14 @@ declare module '@tanstack/react-router' {
 interface Signed_inRouteChildren {
   Signed_inSplatRoute: typeof Signed_inSplatRoute
   Signed_inIndexRoute: typeof Signed_inIndexRoute
+  Signed_inBalanceClaimIndexRoute: typeof Signed_inBalanceClaimIndexRoute
   Signed_inMyPageIndexRoute: typeof Signed_inMyPageIndexRoute
 }
 
 const Signed_inRouteChildren: Signed_inRouteChildren = {
   Signed_inSplatRoute: Signed_inSplatRoute,
   Signed_inIndexRoute: Signed_inIndexRoute,
+  Signed_inBalanceClaimIndexRoute: Signed_inBalanceClaimIndexRoute,
   Signed_inMyPageIndexRoute: Signed_inMyPageIndexRoute,
 }
 
@@ -187,9 +215,8 @@ export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 
-import type { createStart } from '@tanstack/react-start'
 import type { getRouter } from './router.ts'
-
+import type { createStart } from '@tanstack/react-start'
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true

@@ -2,11 +2,11 @@ import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
 import { auth } from "../../../lib/auth";
 
-interface VaultBalanceResponse {
-    balance: number;
-}
+// クエスト情報のレスポンス型（実際のレスポンス構造に応じて調整が必要）
+// biome-ignore lint/suspicious/noExplicitAny: レスポンス構造が不明なためanyを使用
+export type QuestsResponse = any;
 
-export const getVaultBalance = createServerFn().handler(
+export const getQuests = createServerFn().handler(
     // biome-ignore lint/suspicious/noExplicitAny: request is not typed
     async ({ request }: any) => {
         const tokenResult = await auth.api.getAccessToken({
@@ -20,8 +20,10 @@ export const getVaultBalance = createServerFn().handler(
             throw new Error("No access token available");
         }
 
+        //再起動終わりました ご協力ありがとうございました
         const response = await fetch(
-            `${env.MAIN_SERVER_URL}/api/v1/plugins/mineauth-addon-vault/balance/me`,
+            `${env.SERVER_URL}res/api/v1/plugins/betonquest-dailyquest-mineauth-integration/daily-quests/me`,
+            // `http://127.0.0.1:51123/api/v1/plugins/mineauth-betonquest-addon/quests/me`,
             {
                 headers: {
                     Authorization: `Bearer ${tokenResult.accessToken}`,
@@ -30,12 +32,12 @@ export const getVaultBalance = createServerFn().handler(
         );
 
         if (!response.ok) {
-            throw new Error("Failed to fetch vault balance");
+            throw new Error("Failed to fetch quests");
         }
 
-        const data = (await response.json()) as VaultBalanceResponse;
-        return Math.round(data.balance);
+        const data = (await response.json()) as QuestsResponse;
+        return data;
     },
 );
 
-export type VaultBalanceData = Awaited<ReturnType<typeof getVaultBalance>>;
+export type QuestsData = Awaited<ReturnType<typeof getQuests>>;

@@ -5,22 +5,26 @@ import { css, sva } from "../../../styled-system/css";
 import { Header } from "../../components/header";
 import { CardSquare } from "./-components/card-square";
 import { OnlineStatus } from "./-components/online-status";
-import { getOnlinePlayers, getVaultBalance } from "./-functions";
+import { getMyClaims, getOnlinePlayers, getQuests, getVaultBalance } from "./-functions";
+import { getUserInfo } from "./-functions/get-userinfo";
 
 export const Route = createFileRoute("/_signed_in/")({
     loader: async () => {
-        const [players, balance] = await Promise.all([
+        const [players, balance, userInfo, quests, claims] = await Promise.all([
             getOnlinePlayers(),
             getVaultBalance().catch(() => 0),
+            getUserInfo(),
+            getQuests().catch(() => null),
+            getMyClaims().catch(() => null),
         ]);
-        const protectionBlocks = Math.floor(Math.random() * 10000);
-        return { players, balance, protectionBlocks };
+        return { players, balance, claims, userInfo, quests };
     },
     component: Home,
 });
 
 function Home() {
-    const { players, balance, protectionBlocks } = Route.useLoaderData();
+    const { players, balance, claims, userInfo, quests } =
+        Route.useLoaderData();
     const { session } = Route.useRouteContext();
 
     const indexStyle = sva({
@@ -83,7 +87,7 @@ function Home() {
                 <CardSquare
                     icon={<LandPlot />}
                     label="保護ブロック"
-                    value={protectionBlocks.toLocaleString()}
+                    value={claims?.remainingClaimBlocks?.toLocaleString() ?? "—"}
                 />
             </div>
         </div>

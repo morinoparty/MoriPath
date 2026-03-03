@@ -74,3 +74,13 @@ export interface PlayerServerData {
     uuid: string;
     server: string;
 }
+
+// ユーザー情報取得API(`/oauth2/userinfo`)の戻り値型
+export interface UserInfoData {
+    sub: string; // uuid
+    picture: string; // プロフィール画像URL
+    preferred_username: string; // 通常MCIDと同一
+    email: string; // noreplyメールアドレス
+    email_verified: boolean; // emailが認証されているか
+    roles: string[]; // ロール一覧
+}
