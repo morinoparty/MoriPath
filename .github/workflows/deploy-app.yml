@@ -6,6 +6,10 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  packages: read
+
 jobs:
   deploy:
     env:
@@ -26,6 +30,14 @@ jobs:
         name: Install pnpm
         with:
           run_install: false
+
+      # private パッケージ (@morinoparty/chlorophyll-react) 取得用の GitHub Packages 認証
+      - name: Setup npm auth for GitHub Packages
+        run: |
+          echo "@morinoparty:registry=https://npm.pkg.github.com" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install
         run: |

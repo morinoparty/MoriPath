@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  packages: read
 
 jobs:
   deploy:
@@ -37,6 +38,14 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache-dependency-path: ./pnpm-lock.yaml
           cache: 'pnpm'
+
+      # private パッケージ (@morinoparty/chlorophyll-react) 取得用の GitHub Packages 認証
+      - name: Setup npm auth for GitHub Packages
+        run: |
+          echo "@morinoparty:registry=https://npm.pkg.github.com" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install
         run: pnpm install
