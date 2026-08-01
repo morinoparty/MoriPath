@@ -6,15 +6,18 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  packages: read
+
 jobs:
   deploy:
     env:
-      AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
       MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
       SERVER_URL: ${{ secrets.SERVER_URL }}
       SERVERS: ${{ secrets.SERVERS }}
       REDIRECT_AUTH_URL: ${{ secrets.REDIRECT_AUTH_URL }}
-      
+
     runs-on: ubuntu-latest
     name: Deploy
     steps:
@@ -28,6 +31,14 @@ jobs:
         with:
           run_install: false
 
+      # private パッケージ (@morinoparty/chlorophyll-react) 取得用の GitHub Packages 認証
+      - name: Setup npm auth for GitHub Packages
+        run: |
+          echo "@morinoparty:registry=https://npm.pkg.github.com" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Install
         run: |
           pnpm install
@@ -36,20 +47,34 @@ jobs:
         run: |
           pnpm run build
 
+      # AUTH_SECRET は Cloudflare Secrets Store バインディング (BSM: shared/AUTH_SECRET) から
+      # Worker 実行時に供給されるため、ここでの取得・wrangler secret put は不要。
+      # デプロイトークンは BSM morinoparty プロジェクトの shared/CLOUDFLARE_API_TOKEN から取得
+      # (Secrets Store バインディング付きデプロイには Secrets Store Edit 権限が必要なため)
+      - name: Get deploy token from Bitwarden Secrets Manager
+        uses: bitwarden/sm-action@v2
+        with:
+          access_token: ${{ secrets.NIKOMARU_BITWARDEN_SECRET_MANAGER_ACCESS_TOKEN }}
+          secrets: |
+            d1a5c5d9-41cc-48f0-9035-b49901583491 > CLOUDFLARE_API_TOKEN
+
+      # sm-action は env にしか出さないため、wrangler-action の with: から参照できるよう output 化
+      - name: Expose deploy token as step output
+        id: bws-deploy
+        run: echo "cloudflare_api_token=$CLOUDFLARE_API_TOKEN" >> "$GITHUB_OUTPUT"
+
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
-          apiToken: ${{ secrets.CF_API_KEY }}
+          apiToken: ${{ steps.bws-deploy.outputs.cloudflare_api_token }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           environment: production
           secrets: |
-            AUTH_SECRET
             MAIN_SERVER_URL
             SERVER_URL
             SERVERS
             REDIRECT_AUTH_URL
         env:
-          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
           SERVER_URL: ${{ secrets.SERVER_URL }}
           SERVERS: ${{ secrets.SERVERS }}

@@ -5,7 +5,7 @@ import { LogOutIcon, Settings, UserIcon } from "lucide-react";
 import type { PropsWithChildren } from "react";
 import { createContext, useContext } from "react";
 import { css } from "../../../styled-system/css";
-import { auth } from "../../lib/auth";
+import { getAuth } from "../../lib/auth";
 import type { SessionData } from "../../lib/server-functions";
 
 interface UserMenuProps {
@@ -99,6 +99,7 @@ const SettingsItem = () => {
 // サーバー関数としてサインアウトを実行
 // biome-ignore lint/suspicious/noExplicitAny: request is not typed
 const signOutAction = createServerFn().handler(async ({ request }: any) => {
+    const auth = await getAuth();
     await auth.api.signOut({
         headers: request.headers,
     });

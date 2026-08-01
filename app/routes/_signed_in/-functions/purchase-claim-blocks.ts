@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
-import { auth } from "../../../lib/auth";
+import { getAuth } from "../../../lib/auth";
 
 /** 購入 API のレスポンス型（OpenAPI 準拠） */
 interface PurchaseClaimBlocksResponse {
@@ -21,6 +21,7 @@ export const purchaseClaimBlocks = createServerFn().handler(
             data: { blockCount: number };
             request: Request;
         };
+        const auth = await getAuth();
         const tokenResult = await auth.api.getAccessToken({
             body: {
                 providerId: "MineAuth",
