@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
-import { auth } from "../../../lib/auth";
+import { getAuth } from "../../../lib/auth";
 
 // クエスト情報のレスポンス型（実際のレスポンス構造に応じて調整が必要）
 // biome-ignore lint/suspicious/noExplicitAny: レスポンス構造が不明なためanyを使用
@@ -9,6 +9,7 @@ export type QuestsResponse = any;
 export const getQuests = createServerFn().handler(
     // biome-ignore lint/suspicious/noExplicitAny: request is not typed
     async ({ request }: any) => {
+        const auth = await getAuth();
         const tokenResult = await auth.api.getAccessToken({
             body: {
                 providerId: "MineAuth",

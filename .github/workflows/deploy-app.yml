@@ -9,12 +9,11 @@ on:
 jobs:
   deploy:
     env:
-      AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
       MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
       SERVER_URL: ${{ secrets.SERVER_URL }}
       SERVERS: ${{ secrets.SERVERS }}
       REDIRECT_AUTH_URL: ${{ secrets.REDIRECT_AUTH_URL }}
-      
+
     runs-on: ubuntu-latest
     name: Deploy
     steps:
@@ -36,6 +35,8 @@ jobs:
         run: |
           pnpm run build
 
+      # AUTH_SECRET は Cloudflare Secrets Store バインディング (BSM: shared/AUTH_SECRET) から
+      # Worker 実行時に供給されるため、ここでの取得・wrangler secret put は不要。
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
@@ -43,13 +44,11 @@ jobs:
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           environment: production
           secrets: |
-            AUTH_SECRET
             MAIN_SERVER_URL
             SERVER_URL
             SERVERS
             REDIRECT_AUTH_URL
         env:
-          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
           SERVER_URL: ${{ secrets.SERVER_URL }}
           SERVERS: ${{ secrets.SERVERS }}

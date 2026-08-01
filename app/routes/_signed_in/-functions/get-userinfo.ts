@@ -1,10 +1,11 @@
 import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
-import { auth } from "../../../lib/auth";
+import { getAuth } from "../../../lib/auth";
 import type { UserInfoData } from "../../../types/player";
 
 export const getUserInfo = createServerFn().handler(
     async ({ request }: any) => {
+        const auth = await getAuth();
         const tokenResult = await auth.api.getAccessToken({
             body: {
                 providerId: "MineAuth",

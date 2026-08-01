@@ -1,10 +1,11 @@
 import { Button, HStack } from "@chakra-ui/react";
 import { createServerFn } from "@tanstack/react-start";
 import { LogOut } from "lucide-react";
-import { auth } from "../../lib/auth";
+import { getAuth } from "../../lib/auth";
 
 // サーバー関数としてサインアウトを実行
 const signOutAction = createServerFn().handler(async ({ request }) => {
+    const auth = await getAuth();
     await auth.api.signOut({
         headers: request.headers,
     });

@@ -1,7 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
-import { auth } from "../../../../../lib/auth";
+import { getAuth } from "../../../../../lib/auth";
 
 export const signInAction = createServerFn().handler(async () => {
+    const auth = await getAuth();
     const result = await auth.api.signInWithOAuth2({
         body: {
             providerId: "MineAuth",

@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
-import { auth } from "../../../lib/auth";
+import { getAuth } from "../../../lib/auth";
 
 interface VaultBalanceResponse {
     balance: number;
@@ -9,6 +9,7 @@ interface VaultBalanceResponse {
 export const getVaultBalance = createServerFn().handler(
     // biome-ignore lint/suspicious/noExplicitAny: request is not typed
     async ({ request }: any) => {
+        const auth = await getAuth();
         const tokenResult = await auth.api.getAccessToken({
             body: {
                 providerId: "MineAuth",

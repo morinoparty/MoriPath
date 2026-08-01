@@ -10,8 +10,9 @@ permissions:
 
 jobs:
   deploy:
+    # AUTH_SECRET は Cloudflare Secrets Store バインディング (BSM: shared/AUTH_SECRET) から
+    # Worker 実行時に供給されるため、ここでの取得は不要。
     env:
-      AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
       MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
       SERVER_URL: ${{ secrets.SERVER_URL }}
       SERVERS: ${{ secrets.SERVERS }}
