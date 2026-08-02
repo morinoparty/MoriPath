@@ -1,0 +1,26 @@
+{
+    "extends": "./tsconfig.json",
+    "include": [
+        "src/**/*",
+        "worker-configuration.d.ts",
+        "vite.d.ts",
+        "theme/**/*",
+        "styled-system/**/*"
+    ],
+    "compilerOptions": {
+        "composite": true,
+        "strict": true,
+        "lib": ["DOM", "DOM.Iterable", "ES2022"],
+        "target": "ES2022",
+        "module": "ES2022",
+        "moduleResolution": "bundler",
+        "jsx": "react-jsx",
+        "baseUrl": ".",
+        "paths": {
+            "styled-system/*": ["./styled-system/*"]
+        },
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "types": ["vite/client"]
+    }
+}

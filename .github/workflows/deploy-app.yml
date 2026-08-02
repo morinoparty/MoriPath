@@ -68,6 +68,7 @@ jobs:
         with:
           apiToken: ${{ steps.bws-deploy.outputs.cloudflare_api_token }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          workingDirectory: app
           environment: production
           secrets: |
             MAIN_SERVER_URL
