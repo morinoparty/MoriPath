@@ -1,0 +1,8 @@
+packages:
+    - app
+    - storybook
+
+onlyBuiltDependencies:
+    - esbuild
+    - sharp
+    - workerd

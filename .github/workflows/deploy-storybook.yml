@@ -73,4 +73,5 @@ jobs:
         with:
           apiToken: ${{ steps.bws-deploy.outputs.cloudflare_api_token }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          command: deploy -c wrangler-storybook.jsonc 
+          workingDirectory: storybook
+          command: deploy

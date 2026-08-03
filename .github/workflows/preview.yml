@@ -79,6 +79,7 @@ jobs:
         with:
           apiToken: ${{ steps.bws-deploy.outputs.cloudflare_api_token }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          workingDirectory: app
           command: versions upload --env=staging --message "Deployed pages by GitHub Actions branch ${{ github.ref_name }}"
           environment: staging
       
@@ -88,7 +89,8 @@ jobs:
         with:
           apiToken: ${{ steps.bws-deploy.outputs.cloudflare_api_token }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          command: versions upload -c wrangler-storybook.jsonc --message "Deployed storybook by GitHub Actions branch ${{ github.ref_name }}"
+          workingDirectory: storybook
+          command: versions upload --message "Deployed storybook by GitHub Actions branch ${{ github.ref_name }}"
           
       - name: Create comment file
         id: create-comment-file
