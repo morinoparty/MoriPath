@@ -32,7 +32,7 @@
         "staging": {
             "workers_dev": true,
             "vars": {
-                "CLIENT_ID": "a7a9ef40-e868-9acf-098b-b6fa96cc022e",
+                "CLIENT_ID": "019fc686-49f0-7442-84d5-af12e3a4734e",
                 "REDIRECT_AUTH_URL": "http://pre000-moripath-preview.nikomaru.workers.dev"
             },
             // AUTH_SECRET は Cloudflare Secrets Store (BSM: shared/AUTH_SECRET) から供給する
@@ -46,7 +46,7 @@
         },
         "production": {
             "vars": {
-                "CLIENT_ID": "efc132a6-0bba-43dc-b5ac-6eb7446e15c7",
+                "CLIENT_ID": "019fc686-49f0-7442-84d5-af12e3a4734e",
                 "REDIRECT_AUTH_URL": "http://moripath.nikomaru.workers.dev"
             },
             // AUTH_SECRET は Cloudflare Secrets Store (BSM: shared/AUTH_SECRET) から供給する
