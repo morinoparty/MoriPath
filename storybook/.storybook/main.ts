@@ -12,11 +12,6 @@ const config: StorybookConfig = {
     core: {
         builder: "@storybook/builder-vite",
     },
-    refs: {
-        "@chakra-ui/react": {
-            disable: true,
-        },
-    },
     framework: {
         name: "@storybook/react-vite",
         options: {

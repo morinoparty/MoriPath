@@ -1,11 +1,10 @@
 import "@/style/app.css";
-import { Box, ChakraProvider } from "@chakra-ui/react";
 import type { Decorator, Preview } from "@storybook/react-vite";
 import { ThemeProvider } from "next-themes";
 import { useEffect } from "react";
 import { themes } from "storybook/theming";
 import { PaletteProvider } from "@/components/ui/palette";
-import { system } from "../../app/theme";
+import { css } from "../styled-system/css";
 import { registerAPCACheck } from "./a11y";
 import { withDummyRouter } from "./dummy-router";
 
@@ -110,15 +109,14 @@ const preview: Preview = {
         withTheme,
         (Story, context) => {
             const colorMode = context.globals.colorMode || "light";
-            const palette = context.globals.palette || "mori";
+            // パレット自体は withTheme が :root の data-color-palette 属性に設定し、
+            // Panda の globalCss (app/panda.config.ts) が colorPalette を追従させる
             return (
                 <PaletteProvider>
                     <ThemeProvider forcedTheme={colorMode} enableSystem={false}>
-                        <ChakraProvider value={system}>
-                            <Box colorPalette={palette} bg="bg">
-                                <Story />
-                            </Box>
-                        </ChakraProvider>
+                        <div className={css({ bg: "bg" })}>
+                            <Story />
+                        </div>
                     </ThemeProvider>
                 </PaletteProvider>
             );
