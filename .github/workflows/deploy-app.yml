@@ -16,7 +16,6 @@ jobs:
       MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
       SERVER_URL: ${{ secrets.SERVER_URL }}
       SERVERS: ${{ secrets.SERVERS }}
-      REDIRECT_AUTH_URL: ${{ secrets.REDIRECT_AUTH_URL }}
 
     runs-on: ubuntu-latest
     name: Deploy
@@ -69,14 +68,11 @@ jobs:
           apiToken: ${{ steps.bws-deploy.outputs.cloudflare_api_token }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           workingDirectory: app
-          environment: production
           secrets: |
             MAIN_SERVER_URL
             SERVER_URL
             SERVERS
-            REDIRECT_AUTH_URL
         env:
           MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
           SERVER_URL: ${{ secrets.SERVER_URL }}
           SERVERS: ${{ secrets.SERVERS }}
-          REDIRECT_AUTH_URL: ${{ secrets.REDIRECT_AUTH_URL }}
