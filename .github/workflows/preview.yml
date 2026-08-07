@@ -80,8 +80,8 @@ jobs:
           apiToken: ${{ steps.bws-deploy.outputs.cloudflare_api_token }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           workingDirectory: app
-          command: versions upload --env=staging --message "Deployed pages by GitHub Actions branch ${{ github.ref_name }}"
-          environment: staging
+          # 本番 worker (moripath) の未昇格バージョンとしてアップロードし、preview URL を得る
+          command: versions upload --message "Deployed pages by GitHub Actions branch ${{ github.ref_name }}"
       
       - name: Deploy storybook preview
         id: deploy-storybook-preview

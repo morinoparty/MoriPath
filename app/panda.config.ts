@@ -16,10 +16,7 @@ export const textStyles = defineTextStyles({
                 md: "md",
                 lg: "lg",
             },
-            color: "var(--chakra-colors-color-palette-fg)",
-            textDecoration: {
-                color: "var(--chakra-colors-text)",
-            },
+            color: "colorPalette.fg",
             lineHeight: "1.8",
             fontWeight: "500",
         },
@@ -28,18 +25,20 @@ export const textStyles = defineTextStyles({
 
 const globalCss = defineGlobalStyles({
     "*::selection": {
-        bg: "var(--chakra-colors-color-palette-300)/80",
+        bg: "colorPalette.5",
     },
     "*:focus-visible": {
-        outline: "2px solid var(--chakra-colors-primary)",
+        outline: "2px solid",
+        outlineColor: "colorPalette.9",
         outlineOffset: "2px",
-        borderRadius: "var(--radii-md)",
+        borderRadius: "md",
+    },
+    // 既定パレット。SSR 直後(data-color-palette 未設定)でも mori で描画する
+    ":root": {
+        colorPalette: "mori",
     },
     // data-color-palette 属性(app/components/ui/palette.tsx が設定)に
     // Panda 側の colorPalette を追従させる
-    ':root[data-color-palette="mori"]': {
-        colorPalette: "mori",
-    },
     ':root[data-color-palette="umi"]': {
         colorPalette: "umi",
     },
@@ -57,11 +56,13 @@ export default defineConfig({
 
     include: ["./src/**/*.{ts,tsx,js,jsx}"],
 
-    // chlorophyll の Button は実行時に variant を受け取るため、
-    // 静的抽出できない全 variant の CSS を生成しておく
+    // chlorophyll のコンポーネントは node_modules 配下の生 TSX から
+    // 実行時に variant を受け取るため、静的抽出できない
+    // 全 variant の CSS を生成しておく
     staticCss: {
         recipes: {
             button: ["*"],
+            playerMap: ["*"],
         },
     },
 

@@ -76,7 +76,7 @@ export const SmallPlayerAvatars: Story = {
     render: () => (
         <OnlineStatus.Root players={mockPlayers}>
             <OnlineStatus.Count />
-            <OnlineStatus.PlayerList size="sm" />
+            <OnlineStatus.PlayerList size="md" />
         </OnlineStatus.Root>
     ),
 };

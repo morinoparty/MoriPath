@@ -1,9 +1,8 @@
 "use client";
 
-import type { IconButtonProps } from "@chakra-ui/react";
-import { ClientOnly, IconButton, Skeleton } from "@chakra-ui/react";
 import { Leaf, Waves } from "lucide-react";
 import * as React from "react";
+import { IconButton, type IconButtonProps } from "./icon-button";
 
 export type Palette = "mori" | "umi";
 
@@ -94,23 +93,13 @@ export const PaletteButton = React.forwardRef<
 >(function PaletteButton(props, ref) {
     const { togglePalette } = usePalette();
     return (
-        <ClientOnly fallback={<Skeleton boxSize="8" />}>
-            <IconButton
-                onClick={togglePalette}
-                variant="ghost"
-                aria-label="Toggle palette"
-                size="sm"
-                ref={ref}
-                {...props}
-                css={{
-                    _icon: {
-                        width: "5",
-                        height: "5",
-                    },
-                }}
-            >
-                <PaletteIcon />
-            </IconButton>
-        </ClientOnly>
+        <IconButton
+            onClick={togglePalette}
+            aria-label="Toggle palette"
+            ref={ref}
+            {...props}
+        >
+            <PaletteIcon />
+        </IconButton>
     );
 });

@@ -1,7 +1,7 @@
+import { Button } from "@morinoparty/chlorophyll-react/components";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import castlePicture from "/castle-tall.png";
-import { sva, css } from "../../../../../styled-system/css";
-import { Button } from "@morinoparty/chlorophyll-react";
+import { css, sva } from "../../../../../styled-system/css";
 import { handleLogin } from "./-functions/handle-login";
 
 export const Route = createFileRoute("/_nofooter/auth/sign-in/")({
@@ -62,7 +62,7 @@ const signInStyle = sva({
             width: "100%",
         },
         terms: {
-            color: "var(--chakra-colors-color-palette-fg-subtle)",
+            color: "colorPalette.fg.subtle",
             fontSize: "sm",
             textAlign: "center",
         },
@@ -72,7 +72,7 @@ const signInStyle = sva({
             textDecoration: "underline",
             textUnderlineOffset: "3px",
             textDecorationStyle: "dotted",
-            textDecorationColor: "var(--chakra-colors-color-palette-fg-subtle)",
+            textDecorationColor: "colorPalette.fg.subtle",
         },
     },
 });
@@ -97,15 +97,15 @@ function SignInPage() {
                 </div>
                 <div className={style.termsBox}>
                     <Button
-            type="submit"
-            size="lg"
-            onClick={handleLogin}
-            className={css({
-                fontWeight: "medium",
-            })}
-        >
-            MineAuthでログイン
-        </Button>
+                        type="submit"
+                        size="lg"
+                        onClick={handleLogin}
+                        className={css({
+                            fontWeight: "medium",
+                        })}
+                    >
+                        MineAuthでログイン
+                    </Button>
                     <p className={style.terms}>
                         ログインすることで、
                         <Link className={style.termsLink} to="/terms">
