@@ -34,7 +34,7 @@ export const purchaseClaimBlocks = createServerFn().handler(
         }
 
         const response = await fetch(
-            `${env.MAIN_SERVER_URL}/api/v1/plugins/mineauth-addon-griefprevention/claims/purchase`,
+            `${env.MAIN_SERVER_URL}/api/v1/plugins/griefprevention/claims/purchase`,
             {
                 method: "POST",
                 headers: {

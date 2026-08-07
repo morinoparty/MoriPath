@@ -38,7 +38,7 @@ export const getMyClaims = createServerFn().handler(
         }
 
         const response = await fetch(
-            `${env.MAIN_SERVER_URL}/api/v1/plugins/mineauth-addon-griefprevention/claims/me`,
+            `${env.MAIN_SERVER_URL}/api/v1/plugins/griefprevention/claims/me`,
             {
                 headers: {
                     Authorization: `Bearer ${tokenResult.accessToken}`,

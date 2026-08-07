@@ -22,7 +22,7 @@ export const getVaultBalance = createServerFn().handler(
         }
 
         const response = await fetch(
-            `${env.MAIN_SERVER_URL}/api/v1/plugins/mineauth-addon-vault/balance/me`,
+            `${env.MAIN_SERVER_URL}/api/v1/plugins/vault/balance/me`,
             {
                 headers: {
                     Authorization: `Bearer ${tokenResult.accessToken}`,
