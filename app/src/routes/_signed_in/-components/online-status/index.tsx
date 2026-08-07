@@ -1,7 +1,10 @@
+import {
+    PlayerMap,
+    type PlayerMapSize,
+} from "@morinoparty/chlorophyll-react/components";
 import type { PropsWithChildren, ReactNode } from "react";
 import { createContext, useContext } from "react";
 import { sva } from "../../../../../styled-system/css";
-import { PlayerMap } from "../../../../components/player-map";
 import type { ServerPlayerData } from "../../../../types/player";
 
 interface OnlineStatusProps {
@@ -41,8 +44,8 @@ const onlineStatusStyle = sva({
             display: "flex",
             alignItems: "center",
             flexDirection: "row",
-            bgColor: "var(--chakra-colors-color-palette-500)",
-            color: "var(--chakra-colors-color-palette-50)",
+            bgColor: "colorPalette.solid",
+            color: "colorPalette.contrast",
             paddingLeft: "24px",
             gap: "2rem",
             paddingY: "16px",
@@ -117,7 +120,7 @@ const Count = ({ label = "オンライン", unit = "人" }: CountProps) => {
 };
 
 interface PlayerListProps {
-    size?: "sm" | "md" | "lg";
+    size?: PlayerMapSize;
     children?: ReactNode;
 }
 
@@ -131,8 +134,8 @@ const PlayerList = ({ size = "md", children }: PlayerListProps) => {
                 players.map((player) => (
                     <PlayerMap
                         key={player.id}
-                        uuid={player.id}
-                        name={player.username}
+                        playerId={player.id}
+                        playerName={player.username}
                         size={size}
                     />
                 ))}

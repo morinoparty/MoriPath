@@ -1,10 +1,10 @@
-import { HStack, Menu } from "@chakra-ui/react";
+import { Menu } from "@ark-ui/react/menu";
 import { Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { LogOutIcon, Settings, UserIcon } from "lucide-react";
 import type { PropsWithChildren } from "react";
 import { createContext, useContext } from "react";
-import { css } from "../../../styled-system/css";
+import { css, sva } from "../../../styled-system/css";
 import { getAuth } from "../../lib/auth";
 import type { SessionData } from "../../lib/server-functions";
 
@@ -27,6 +27,53 @@ const useUserMenuContext = () => {
     }
     return context;
 };
+
+// Ark UI の Menu はヘッドレスなので、パネルと項目の見た目をここで持つ
+const userMenuStyle = sva({
+    slots: ["content", "groupLabel", "separator", "item", "itemRow"],
+    base: {
+        content: {
+            minWidth: "160px",
+            padding: "1",
+            bgColor: "bg.panel",
+            color: "fg",
+            border: "1px solid",
+            borderColor: "border",
+            borderRadius: "md",
+            boxShadow: "overlay",
+            zIndex: "dropdown",
+            outline: "none",
+        },
+        groupLabel: {
+            padding: "6px 8px",
+            fontSize: "sm",
+            fontWeight: "bold",
+            color: "fg.muted",
+        },
+        separator: {
+            marginY: "1",
+            border: "none",
+            borderTop: "1px solid",
+            borderColor: "border.muted",
+        },
+        item: {
+            display: "block",
+            width: "100%",
+            padding: "6px 8px",
+            fontSize: "sm",
+            borderRadius: "sm",
+            cursor: "pointer",
+            _highlighted: {
+                bgColor: "colorPalette.surface.hover",
+            },
+        },
+        itemRow: {
+            display: "flex",
+            alignItems: "center",
+            gap: "2",
+        },
+    },
+});
 
 const Root = ({ session, children }: PropsWithChildren<UserMenuProps>) => {
     if (!session?.user) {
@@ -54,15 +101,16 @@ interface ContentProps {
 
 const Content = ({ children }: ContentProps) => {
     const { session } = useUserMenuContext();
+    const style = userMenuStyle();
 
     return (
         <Menu.Positioner>
-            <Menu.Content minW="160px">
+            <Menu.Content className={style.content}>
                 <Menu.ItemGroup>
-                    <Menu.ItemGroupLabel>
+                    <Menu.ItemGroupLabel className={style.groupLabel}>
                         {session?.user?.name}
                     </Menu.ItemGroupLabel>
-                    <Menu.Separator />
+                    <Menu.Separator className={style.separator} />
                     {children}
                 </Menu.ItemGroup>
             </Menu.Content>
@@ -71,26 +119,28 @@ const Content = ({ children }: ContentProps) => {
 };
 
 const ProfileItem = () => {
+    const style = userMenuStyle();
     return (
-        <Menu.Item value="profile" asChild>
+        <Menu.Item value="profile" className={style.item} asChild>
             <Link to="/my-page">
-                <HStack gap="2">
+                <span className={style.itemRow}>
                     <UserIcon size={16} />
                     <span>プロフィール</span>
-                </HStack>
+                </span>
             </Link>
         </Menu.Item>
     );
 };
 
 const SettingsItem = () => {
+    const style = userMenuStyle();
     return (
-        <Menu.Item value="settings" asChild>
+        <Menu.Item value="settings" className={style.item} asChild>
             <Link to="/my-page">
-                <HStack gap="2">
+                <span className={style.itemRow}>
                     <Settings size={16} />
                     <span>設定</span>
-                </HStack>
+                </span>
             </Link>
         </Menu.Item>
     );
@@ -106,6 +156,7 @@ const signOutAction = createServerFn().handler(async ({ request }: any) => {
 });
 
 const LogoutItem = () => {
+    const style = userMenuStyle();
     const handleLogout = async (e: React.MouseEvent) => {
         e.preventDefault();
         await signOutAction();
@@ -113,24 +164,28 @@ const LogoutItem = () => {
     };
 
     return (
-        <Menu.Item value="logout" asChild>
+        <Menu.Item value="logout" className={style.item} asChild>
             <button
                 type="button"
                 onClick={handleLogout}
                 className={css({
-                    width: "100%",
                     background: "none",
                     border: "none",
-                    cursor: "pointer",
+                    textAlign: "left",
                 })}
             >
-                <HStack gap="2">
+                <span className={style.itemRow}>
                     <LogOutIcon size={16} />
                     <span>ログアウト</span>
-                </HStack>
+                </span>
             </button>
         </Menu.Item>
     );
+};
+
+const Separator = () => {
+    const style = userMenuStyle();
+    return <Menu.Separator className={style.separator} />;
 };
 
 export const UserMenu = {
@@ -140,5 +195,5 @@ export const UserMenu = {
     ProfileItem,
     SettingsItem,
     LogoutItem,
-    Separator: Menu.Separator,
+    Separator,
 };

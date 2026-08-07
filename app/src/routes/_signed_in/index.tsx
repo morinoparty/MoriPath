@@ -41,8 +41,8 @@ function Home() {
             },
             title: {
                 fontSize: "3xl",
-                bgColor: "var(--chakra-colors-color-palette-500)",
-                color: "var(--chakra-colors-color-palette-50)",
+                bgColor: "colorPalette.solid",
+                color: "colorPalette.contrast",
                 padding: "0 24px",
                 height: "48px",
                 display: "flex",

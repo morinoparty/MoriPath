@@ -27,17 +27,17 @@ const cardSquareStyle = sva({
             gap: "12px",
         },
         iconWrapper: {
-            color: "var(--chakra-colors-color-palette-500)",
+            color: "colorPalette.9",
             width: "24px",
             height: "24px",
         },
         label: {
-            color: "var(--chakra-colors-color-palette-500)",
+            color: "colorPalette.9",
             fontSize: "16px",
             fontWeight: "bold",
         },
         value: {
-            color: "var(--chakra-colors-color-palette-700)",
+            color: "colorPalette.fg",
             fontSize: "28px",
             fontWeight: "bold",
         },

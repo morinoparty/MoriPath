@@ -44,12 +44,12 @@ const navbarStyle = sva({
         icon: {
             width: "24px",
             height: "24px",
-            color: "var(--chakra-colors-color-palette-500)",
+            color: "colorPalette.9",
         },
         label: {
             fontSize: "12px",
             fontWeight: "medium",
-            color: "var(--chakra-colors-color-palette-500)",
+            color: "colorPalette.9",
             textAlign: "center",
             lineHeight: "1",
         },

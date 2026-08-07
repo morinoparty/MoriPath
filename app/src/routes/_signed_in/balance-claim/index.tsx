@@ -1,3 +1,4 @@
+import { Button } from "@morinoparty/chlorophyll-react/components";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { LandPlot, Nut } from "lucide-react";
 import { useRef, useState } from "react";
@@ -25,7 +26,7 @@ export const Route = createFileRoute("/_signed_in/balance-claim/")({
 });
 
 const pageStyle = sva({
-    slots: ["root", "title", "section", "form", "input", "button", "error"],
+    slots: ["root", "title", "section", "form", "input", "error"],
     base: {
         root: {
             display: "flex",
@@ -33,8 +34,8 @@ const pageStyle = sva({
         },
         title: {
             fontSize: "3xl",
-            bgColor: "var(--chakra-colors-color-palette-500)",
-            color: "var(--chakra-colors-color-palette-50)",
+            bgColor: "colorPalette.solid",
+            color: "colorPalette.contrast",
             padding: "0 24px",
             height: "48px",
             display: "flex",
@@ -57,29 +58,13 @@ const pageStyle = sva({
             width: "120px",
             padding: "8px 12px",
             fontSize: "md",
-            border: "1px solid var(--chakra-colors-border)",
+            border: "1px solid",
+            borderColor: "border",
             borderRadius: "8px",
-            bgColor: "var(--chakra-colors-bg)",
-        },
-        button: {
-            padding: "8px 20px",
-            fontSize: "md",
-            fontWeight: "bold",
-            color: "var(--chakra-colors-color-palette-50)",
-            bgColor: "var(--chakra-colors-color-palette-500)",
-            border: "none",
-            borderRadius: "8px",
-            cursor: "pointer",
-            _hover: {
-                bgColor: "var(--chakra-colors-color-palette-600)",
-            },
-            _disabled: {
-                opacity: 0.6,
-                cursor: "not-allowed",
-            },
+            bgColor: "bg",
         },
         error: {
-            color: "var(--chakra-colors-red-500)",
+            color: "red.9",
             fontSize: "sm",
         },
     },
@@ -175,13 +160,9 @@ function BalanceClaimPage() {
                             disabled={isSubmitting}
                         />
                     </label>
-                    <button
-                        type="submit"
-                        className={style.button}
-                        disabled={isSubmitting}
-                    >
+                    <Button type="submit" disabled={isSubmitting}>
                         {isSubmitting ? "処理中…" : "購入する"}
-                    </button>
+                    </Button>
                 </form>
                 {error && <p className={style.error}>{error}</p>}
             </div>
