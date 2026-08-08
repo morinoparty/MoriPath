@@ -20,12 +20,12 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 26
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         name: Install pnpm
         with:
           run_install: false
@@ -51,7 +51,7 @@ jobs:
       # デプロイトークンは BSM morinoparty プロジェクトの shared/CLOUDFLARE_API_TOKEN から取得
       # (Secrets Store バインディング付きデプロイには Secrets Store Edit 権限が必要なため)
       - name: Get deploy token from Bitwarden Secrets Manager
-        uses: bitwarden/sm-action@v2
+        uses: bitwarden/sm-action@v3.0.1
         with:
           access_token: ${{ secrets.NIKOMARU_BITWARDEN_SECRET_MANAGER_ACCESS_TOKEN }}
           secrets: |
@@ -62,16 +62,20 @@ jobs:
         id: bws-deploy
         run: echo "cloudflare_api_token=$CLOUDFLARE_API_TOKEN" >> "$GITHUB_OUTPUT"
 
+      # secrets は deploy の後 (postCommands) にアップロードする。
+      # wrangler-action の secrets: 入力は deploy より先に `wrangler secret bulk` を実行するが、
+      # preview.yml の `versions upload` で未デプロイの最新バージョンが存在すると
+      # Cloudflare API がエラー 10214 を返して deploy に到達できなくなるため。
       - name: Deploy
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ steps.bws-deploy.outputs.cloudflare_api_token }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           workingDirectory: app
-          secrets: |
-            MAIN_SERVER_URL
-            SERVER_URL
-            SERVERS
+          postCommands: |
+            jq -n --arg MAIN_SERVER_URL "$MAIN_SERVER_URL" --arg SERVER_URL "$SERVER_URL" --arg SERVERS "$SERVERS" '$ARGS.named' > "$RUNNER_TEMP/secrets.json"
+            wrangler secret bulk "$RUNNER_TEMP/secrets.json"
+            rm -f "$RUNNER_TEMP/secrets.json"
         env:
           MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
           SERVER_URL: ${{ secrets.SERVER_URL }}
