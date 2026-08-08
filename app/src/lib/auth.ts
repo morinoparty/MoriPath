@@ -32,11 +32,15 @@ async function buildAuth(baseURL: string) {
         baseURL,
         secret,
         session: {
+            // MineAuth の refresh token 寿命 (30日) に合わせる。
+            // クッキー内セッションペイロードの expiresAt はこの値で決まり、
+            // cookieCache.maxAge より短いとそちらが先に失効してしまう
+            expiresIn: 60 * 60 * 24 * 30,
             cookieCache: {
                 enabled: true,
                 // DB-less ではこの値が session_data / account_data クッキーの
-                // 寿命になる(= 実質のセッション上限)。セッション既定の7日に合わせる
-                maxAge: 60 * 60 * 24 * 7,
+                // 寿命になる(= 実質のセッション上限)。refresh token と同じ30日
+                maxAge: 60 * 60 * 24 * 30,
             },
         },
         account: {
