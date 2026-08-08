@@ -4,14 +4,17 @@ import { betterAuth } from "better-auth";
 import { genericOAuth } from "better-auth/plugins";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 
-type Auth = ReturnType<typeof betterAuth>;
+// buildAuth の戻り値から型を推論する。better-auth 1.6 以降は betterAuth() が
+// 渡したオプションにジェネリックなため、ReturnType<typeof betterAuth> だと
+// genericOAuth プラグインのエンドポイント型 (signInWithOAuth2 など) が失われる
+type Auth = Awaited<ReturnType<typeof buildAuth>>;
 
 // baseURL(= リクエストの origin)ごとに BetterAuth インスタンスをメモ化する。
 // 固定の REDIRECT_AUTH_URL を持たないことで、production / PR ごとの
 // preview バージョン / ローカル開発のどの origin でもそのまま動く
 const authCache = new Map<string, Promise<Auth>>();
 
-async function buildAuth(baseURL: string): Promise<Auth> {
+async function buildAuth(baseURL: string) {
     // AUTH_SECRET は Cloudflare Secrets Store バインディング (BSM: shared/AUTH_SECRET) から
     // 供給されるため、他の env とは異なり非同期の `.get()` で読み出す必要がある。
     // (Secrets Store バインディングは workerd の global scope での非同期I/Oを許可しないため、
@@ -20,9 +23,28 @@ async function buildAuth(baseURL: string): Promise<Auth> {
 
     // BetterAuthの設定
     // TanStack Start との連携のために tanstackStartCookies プラグインを最後に追加する
+    //
+    // database を渡さない DB-less 構成: セッションとアカウント(MineAuth の
+    // access/refresh token)はすべて暗号化クッキーに保存される。
+    // isolate のメモリに依存しないため、Workers の isolate 入れ替えでも
+    // ログイン状態とトークンが維持される
     return betterAuth({
         baseURL,
         secret,
+        session: {
+            cookieCache: {
+                enabled: true,
+                // DB-less ではこの値が session_data / account_data クッキーの
+                // 寿命になる(= 実質のセッション上限)。セッション既定の7日に合わせる
+                maxAge: 60 * 60 * 24 * 7,
+            },
+        },
+        account: {
+            // MineAuth のトークン一式を account_data クッキーに保存する。
+            // access token (300秒) が切れると getAccessToken が refresh token で
+            // 自動更新し、ローテーション後の新 refresh token もクッキーに書き戻す
+            storeAccountCookie: true,
+        },
         plugins: [
             genericOAuth({
                 config: [
