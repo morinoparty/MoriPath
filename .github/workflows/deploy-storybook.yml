@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [22]
+        node-version: [26]
     timeout-minutes: 10
     name: Deploy Storybook
     steps:
@@ -29,7 +29,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 26
 
         # Node.jsのインストール
       - name: Use Node.js ${{ matrix.node-version }}
