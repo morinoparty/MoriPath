@@ -10,7 +10,7 @@ export const Layout: React.FC<{
                 minHeight: "100vh",
                 margin: "0 auto",
                 textStyle: "body",
-                bgColor: "colorPalette.bg.subtle",
+                bgColor: "colorPalette.bg",
                 color: "colorPalette.fg",
             })}
         >
