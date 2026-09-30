@@ -13,7 +13,7 @@ export default defineConfig({
             enabled: true,
         },
         env: {
-            CLIENT_ID: bindings.text("019fc686-49f0-7442-84d5-af12e3a4734e"),
+            CLIENT_ID: bindings.text("01a0f085-727a-73a9-beba-62806e520f81"),
             // secrets はデプロイ時に `cf deploy --secrets-file` でアップロードする
             // 値は GitHub リポジトリの Actions secrets に置く
             AUTH_SECRET: bindings.secret(),
