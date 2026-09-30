@@ -15,7 +15,7 @@ type Auth = Awaited<ReturnType<typeof buildAuth>>;
 const authCache = new Map<string, Promise<Auth>>();
 
 async function buildAuth(baseURL: string) {
-    // AUTH_SECRET は BSM (shared/AUTH_SECRET) の値を CI が Worker secret としてアップロードする
+    // AUTH_SECRET は GitHub の Actions secret を CI が Worker secret としてアップロードする
     const secret = env.AUTH_SECRET;
 
     // BetterAuthの設定

@@ -12,10 +12,12 @@ permissions:
 
 jobs:
   deploy:
+    # アプリの secret はリポジトリの Actions secrets に置き、--secrets-file でアップロードする
     env:
       MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
       SERVER_URL: ${{ secrets.SERVER_URL }}
       SERVERS: ${{ secrets.SERVERS }}
+      AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
 
     runs-on: ubuntu-latest
     name: Deploy
@@ -46,15 +48,6 @@ jobs:
       - name: Build
         run: |
           pnpm run build
-
-      # 共有 secret は BSM morinoparty プロジェクトから取得する (shared/AUTH_SECRET)
-      # このプロジェクト専用の secret (MAIN_SERVER_URL など) はリポジトリの Actions secrets に置く
-      - name: Get shared secrets from Bitwarden Secrets Manager
-        uses: bitwarden/sm-action@v3.0.1
-        with:
-          access_token: ${{ secrets.NIKOMARU_BITWARDEN_SECRET_MANAGER_ACCESS_TOKEN }}
-          secrets: |
-            039f1100-66e3-48bc-b2df-b49900deb78a > AUTH_SECRET
 
       # secrets は `--secrets-file` でバージョンと同時にアップロードする。
       # (デプロイ前に secret を個別更新すると、preview.yml の未デプロイバージョンが
