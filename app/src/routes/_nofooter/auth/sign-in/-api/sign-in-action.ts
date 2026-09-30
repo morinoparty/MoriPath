@@ -7,7 +7,7 @@ export const signInAction = createServerFn().handler(async () => {
         body: {
             providerId: "MineAuth",
             callbackURL: "/",
-            scopes: ["openid", "profile", "email", "roles"],
+            scopes: ["openid", "profile", "email", "roles", "plugin"],
         },
     });
     const redirectUrl = typeof result === "string" ? result : result.url;
