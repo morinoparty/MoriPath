@@ -15,8 +15,11 @@ type Auth = Awaited<ReturnType<typeof buildAuth>>;
 const authCache = new Map<string, Promise<Auth>>();
 
 async function buildAuth(baseURL: string) {
-    // AUTH_SECRET は GitHub の Actions secret を CI が Worker secret としてアップロードする
-    const secret = env.AUTH_SECRET;
+    // AUTH_SECRET は Cloudflare Secrets Store バインディング (BSM: shared/AUTH_SECRET) から
+    // 供給されるため、他の env とは異なり非同期の `.get()` で読み出す必要がある。
+    // (Secrets Store バインディングは workerd の global scope での非同期I/Oを許可しないため、
+    // モジュールトップレベルではなく初回リクエスト時に遅延解決してキャッシュする)
+    const secret = await env.AUTH_SECRET.get();
 
     // BetterAuthの設定
     // TanStack Start との連携のために tanstackStartCookies プラグインを最後に追加する
