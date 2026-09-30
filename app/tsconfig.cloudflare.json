@@ -2,7 +2,7 @@
     "extends": "./tsconfig.json",
     "include": [
         "src/**/*",
-        "worker-configuration.d.ts",
+        ".cloudflare/types/index.d.ts",
         "vite.d.ts",
         "theme/**/*",
         "styled-system/**/*"
