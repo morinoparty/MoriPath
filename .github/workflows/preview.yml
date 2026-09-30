@@ -11,8 +11,7 @@ permissions:
 
 jobs:
   deploy:
-    # AUTH_SECRET は Cloudflare Secrets Store バインディング (BSM: shared/AUTH_SECRET) から
-    # Worker 実行時に供給されるため、ここでの取得は不要。
+    # このプロジェクト専用の secret (リポジトリの Actions secrets)
     env:
       MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
       SERVER_URL: ${{ secrets.SERVER_URL }}
@@ -52,47 +51,44 @@ jobs:
       - name: Install
         run: pnpm install
 
-      - name: Build pages
-        run: pnpm run build:all
-        
-      # デプロイトークンは BSM morinoparty プロジェクトの shared/CLOUDFLARE_API_TOKEN から取得
-      # (Secrets Store バインディング付きデプロイには Secrets Store Edit 権限が必要なため)
-      - name: Get deploy token from Bitwarden Secrets Manager
+      # Storybook を先にビルドし、app の client アセット (/storybook) に同梱する
+      - name: Build
+        run: pnpm run build
+
+      # 共有 secret は BSM morinoparty プロジェクトから取得する (shared/AUTH_SECRET)
+      # このプロジェクト専用の secret (MAIN_SERVER_URL など) はリポジトリの Actions secrets に置く
+      - name: Get shared secrets from Bitwarden Secrets Manager
         uses: bitwarden/sm-action@v3.0.1
         with:
           access_token: ${{ secrets.NIKOMARU_BITWARDEN_SECRET_MANAGER_ACCESS_TOKEN }}
           secrets: |
-            d1a5c5d9-41cc-48f0-9035-b49901583491 > CLOUDFLARE_API_TOKEN
+            039f1100-66e3-48bc-b2df-b49900deb78a > AUTH_SECRET
 
-      # sm-action は env にしか出さないため、wrangler-action の with: から参照できるよう output 化
-      - name: Expose deploy token as step output
-        id: bws-deploy
-        run: echo "cloudflare_api_token=$CLOUDFLARE_API_TOKEN" >> "$GITHUB_OUTPUT"
+      # 本番 worker (moripath) の未昇格バージョンとしてアップロードし、preview URL を得る
+      - name: Upload preview version
+        id: upload-preview
+        working-directory: app
+        run: |
+          jq -n --arg AUTH_SECRET "$AUTH_SECRET" --arg MAIN_SERVER_URL "$MAIN_SERVER_URL" --arg SERVER_URL "$SERVER_URL" --arg SERVERS "$SERVERS" '$ARGS.named' > "$RUNNER_TEMP/secrets.json"
+          pnpm exec cf workers versions create --prebuilt \
+            --secrets-file "$RUNNER_TEMP/secrets.json" \
+            --preview-alias "pr-${{ github.event.number }}" \
+            --message "Deployed by GitHub Actions branch ${{ github.head_ref }}" 2>&1 | tee "$RUNNER_TEMP/upload.log"
+          rm -f "$RUNNER_TEMP/secrets.json"
+          # PR ごとに固定のエイリアス URL を優先し、無ければバージョンの preview URL を使う
+          url=$(grep -oE 'https://pr-${{ github.event.number }}-[A-Za-z0-9.-]+\.workers\.dev' "$RUNNER_TEMP/upload.log" | head -1)
+          url=${url:-$(grep -oE 'https://[A-Za-z0-9.-]+\.workers\.dev' "$RUNNER_TEMP/upload.log" | head -1)}
+          test -n "$url"
+          echo "deployment-url=$url" >> "$GITHUB_OUTPUT"
+        # morino.party を持つ OWNER の Cloudflare アカウントにデプロイする (org secrets)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.OWNER_CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.OWNER_CLOUDFLARE_ACCOUNT_ID }}
 
-      - name: Deploy pages preview
-        id: deploy-pages-preview
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ steps.bws-deploy.outputs.cloudflare_api_token }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          workingDirectory: app
-          # 本番 worker (moripath) の未昇格バージョンとしてアップロードし、preview URL を得る
-          command: versions upload --message "Deployed pages by GitHub Actions branch ${{ github.ref_name }}"
-      
-      - name: Deploy storybook preview
-        id: deploy-storybook-preview
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ steps.bws-deploy.outputs.cloudflare_api_token }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          workingDirectory: storybook
-          command: versions upload --message "Deployed storybook by GitHub Actions branch ${{ github.ref_name }}"
-          
       - name: Create comment file
         id: create-comment-file
         env:
-          DEPLOYMENT_URL: ${{ steps.deploy-pages-preview.outputs.deployment-url }}
-          STORYBOOK_URL: ${{ steps.deploy-storybook-preview.outputs.deployment-url }}
+          DEPLOYMENT_URL: ${{ steps.upload-preview.outputs.deployment-url }}
         run: |
           cat  << EOF > comment.md
           ## 🚀 Deploying ${{ github.event.repository.name }} with Cloudflare Workers
@@ -103,7 +99,7 @@ jobs:
             </tr>
             <tr>
               <th scope="row">Storybook URL</th>
-              <td><a href="$STORYBOOK_URL">$STORYBOOK_URL</a></td>
+              <td><a href="$DEPLOYMENT_URL/storybook/">$DEPLOYMENT_URL/storybook/</a></td>
             </tr>
           </table>
           EOF
