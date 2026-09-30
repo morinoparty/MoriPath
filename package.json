@@ -6,11 +6,9 @@
         "dev": "pnpm --filter @moripath/app dev",
         "dev:storybook": "pnpm --filter @moripath/storybook dev",
         "dev:all": "pnpx concurrently \"pnpm dev\" \"pnpm dev:storybook\"",
-        "build": "pnpm --filter @moripath/app build",
+        "build": "pnpm build:storybook && pnpm --filter @moripath/app build",
         "build:storybook": "pnpm --filter @moripath/storybook build",
-        "build:all": "pnpx concurrently \"pnpm build\" \"pnpm build:storybook\"",
-        "deploy": "pnpm --filter @moripath/app deploy",
-        "deploy:storybook": "pnpm --filter @moripath/storybook deploy",
+        "deploy": "pnpm build:storybook && pnpm --filter @moripath/app deploy",
         "cf-typegen": "pnpm --filter @moripath/app cf-typegen",
         "check": "biome check ./ --write"
     },

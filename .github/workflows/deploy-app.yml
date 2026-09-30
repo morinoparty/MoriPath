@@ -12,7 +12,9 @@ permissions:
 
 jobs:
   deploy:
+    # アプリの secret はリポジトリの Actions secrets に置き、--secrets-file でアップロードする
     env:
+      AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
       MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
       SERVER_URL: ${{ secrets.SERVER_URL }}
       SERVERS: ${{ secrets.SERVERS }}
@@ -42,14 +44,12 @@ jobs:
         run: |
           pnpm install
 
+      # Storybook を先にビルドし、app の client アセット (/storybook) に同梱する
       - name: Build
         run: |
           pnpm run build
 
-      # AUTH_SECRET は Cloudflare Secrets Store バインディング (BSM: shared/AUTH_SECRET) から
-      # Worker 実行時に供給されるため、ここでの取得・wrangler secret put は不要。
       # デプロイトークンは BSM morinoparty プロジェクトの shared/CLOUDFLARE_API_TOKEN から取得
-      # (Secrets Store バインディング付きデプロイには Secrets Store Edit 権限が必要なため)
       - name: Get deploy token from Bitwarden Secrets Manager
         uses: bitwarden/sm-action@v3.0.1
         with:
@@ -57,26 +57,14 @@ jobs:
           secrets: |
             d1a5c5d9-41cc-48f0-9035-b49901583491 > CLOUDFLARE_API_TOKEN
 
-      # sm-action は env にしか出さないため、wrangler-action の with: から参照できるよう output 化
-      - name: Expose deploy token as step output
-        id: bws-deploy
-        run: echo "cloudflare_api_token=$CLOUDFLARE_API_TOKEN" >> "$GITHUB_OUTPUT"
-
-      # secrets は deploy の後 (postCommands) にアップロードする。
-      # wrangler-action の secrets: 入力は deploy より先に `wrangler secret bulk` を実行するが、
-      # preview.yml の `versions upload` で未デプロイの最新バージョンが存在すると
-      # Cloudflare API がエラー 10214 を返して deploy に到達できなくなるため。
+      # secrets は `--secrets-file` でバージョンと同時にアップロードする。
+      # (デプロイ前に secret を個別更新すると、preview.yml の未デプロイバージョンが
+      #  存在する場合に Cloudflare API がエラー 10214 を返すため)
       - name: Deploy
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ steps.bws-deploy.outputs.cloudflare_api_token }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          workingDirectory: app
-          postCommands: |
-            jq -n --arg MAIN_SERVER_URL "$MAIN_SERVER_URL" --arg SERVER_URL "$SERVER_URL" --arg SERVERS "$SERVERS" '$ARGS.named' > "$RUNNER_TEMP/secrets.json"
-            wrangler secret bulk "$RUNNER_TEMP/secrets.json"
-            rm -f "$RUNNER_TEMP/secrets.json"
+        working-directory: app
+        run: |
+          jq -n --arg AUTH_SECRET "$AUTH_SECRET" --arg MAIN_SERVER_URL "$MAIN_SERVER_URL" --arg SERVER_URL "$SERVER_URL" --arg SERVERS "$SERVERS" '$ARGS.named' > "$RUNNER_TEMP/secrets.json"
+          pnpm exec cf deploy --prebuilt --secrets-file "$RUNNER_TEMP/secrets.json" --message "Deployed by GitHub Actions ${GITHUB_SHA::7}"
+          rm -f "$RUNNER_TEMP/secrets.json"
         env:
-          MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
-          SERVER_URL: ${{ secrets.SERVER_URL }}
-          SERVERS: ${{ secrets.SERVERS }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}

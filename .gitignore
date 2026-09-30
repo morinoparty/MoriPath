@@ -39,7 +39,8 @@ next-env.d.ts
 # OpenNext
 .open-next/
 
-# wrangler files
+# cf / wrangler files
+.cloudflare
 .wrangler
 .dev.vars*
 !.dev.vars.example
@@ -55,3 +56,7 @@ styled-system-studio
 storybook-static/
 
 dist
+
+## .agent/build.sh で生成される成果物
+.cursorrules
+.github/copilot-instructions.md
