@@ -8,6 +8,6 @@
         "skipLibCheck": true,
         "strict": true,
         "noEmit": true,
-        "types": ["./.cloudflare/types/index.d.ts"]
+        "types": ["./worker-configuration.d.ts"]
     }
 }

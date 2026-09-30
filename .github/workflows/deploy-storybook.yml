@@ -1,34 +1,39 @@
-name: Deploy
+name: Deploy Storybook
 
 on:
   workflow_dispatch:
   push:
     branches:
       - main
+      - master
 
 permissions:
-  contents: read
+  contents: write
   packages: read
 
 jobs:
   deploy:
-    env:
-      MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
-      SERVER_URL: ${{ secrets.SERVER_URL }}
-      SERVERS: ${{ secrets.SERVERS }}
-
     runs-on: ubuntu-latest
-    name: Deploy
+    strategy:
+      matrix:
+        node-version: [26]
+    timeout-minutes: 10
+    name: Deploy Storybook
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 26
 
       - uses: pnpm/action-setup@v6
         name: Install pnpm
         with:
           run_install: false
+
+        # Node.jsのインストール
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache-dependency-path: ./pnpm-lock.yaml
+          cache: 'pnpm'
 
       # private パッケージ (@morinoparty/chlorophyll-react) 取得用の GitHub Packages 認証
       - name: Setup npm auth for GitHub Packages
@@ -39,15 +44,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install
-        run: |
-          pnpm install
+        run: pnpm install
 
-      - name: Build
-        run: |
-          pnpm run build
-
-      # AUTH_SECRET は Cloudflare Secrets Store バインディング (BSM: shared/AUTH_SECRET) から
-      # Worker 実行時に供給されるため、ここでの取得・wrangler secret put は不要。
+      - name: Build storybook
+        run: pnpm run build:storybook
+        
       # デプロイトークンは BSM morinoparty プロジェクトの shared/CLOUDFLARE_API_TOKEN から取得
       # (Secrets Store バインディング付きデプロイには Secrets Store Edit 権限が必要なため)
       - name: Get deploy token from Bitwarden Secrets Manager
@@ -62,21 +63,11 @@ jobs:
         id: bws-deploy
         run: echo "cloudflare_api_token=$CLOUDFLARE_API_TOKEN" >> "$GITHUB_OUTPUT"
 
-      # secrets は deploy の後 (postCommands) にアップロードする。
-      # wrangler-action の secrets: 入力は deploy より先に `wrangler secret bulk` を実行するが、
-      # preview.yml の `versions upload` で未デプロイの最新バージョンが存在すると
-      # Cloudflare API がエラー 10214 を返して deploy に到達できなくなるため。
-      - name: Deploy
+      - name: Deploy storybook
+        id: deploy-storybook
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ steps.bws-deploy.outputs.cloudflare_api_token }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          workingDirectory: app
-          postCommands: |
-            jq -n --arg MAIN_SERVER_URL "$MAIN_SERVER_URL" --arg SERVER_URL "$SERVER_URL" --arg SERVERS "$SERVERS" '$ARGS.named' > "$RUNNER_TEMP/secrets.json"
-            wrangler secret bulk "$RUNNER_TEMP/secrets.json"
-            rm -f "$RUNNER_TEMP/secrets.json"
-        env:
-          MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
-          SERVER_URL: ${{ secrets.SERVER_URL }}
-          SERVERS: ${{ secrets.SERVERS }}
+          workingDirectory: storybook
+          command: deploy
