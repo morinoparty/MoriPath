@@ -60,6 +60,8 @@ jobs:
       - name: Upload preview version
         id: upload-preview
         working-directory: app
+        # pipefail を有効にして tee の前の cf の失敗を拾う
+        shell: bash
         run: |
           jq -n --arg AUTH_SECRET "$AUTH_SECRET" --arg MAIN_SERVER_URL "$MAIN_SERVER_URL" --arg SERVER_URL "$SERVER_URL" --arg SERVERS "$SERVERS" '$ARGS.named' > "$RUNNER_TEMP/secrets.json"
           pnpm exec cf workers versions create --prebuilt \
