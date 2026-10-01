@@ -20,6 +20,7 @@ node_modules
 # misc
 .DS_Store
 *.pem
+.idea/
 
 # debug
 npm-debug.log*
@@ -58,5 +59,7 @@ storybook-static/
 dist
 
 ## .agent/build.sh で生成される成果物
+AGENTS.md
+CLAUDE.md
 .cursorrules
 .github/copilot-instructions.md
