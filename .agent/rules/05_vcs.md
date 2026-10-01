@@ -7,29 +7,32 @@
 
 ## Repository
 - [MoriPath](https://github.com/morinoparty/MoriPath)
+- [Chlorophyll](https://github.com/morinoparty/chlorophyll) (デザインシステムコンポーネントライブラリ)
 
 ## コミットメッセージ
-- コミットメッセージは Conventional Commits の形式に従い、プレフィックスを付けて記述してください。
+- コミットメッセージには gitmoji を使用し、以下のような形式で記述してください。
 
 ```
-<type>: <subject>
+<emoji> <コミットの概要>
 ```
 
-主な type:
-- `feat`: 新機能
-- `fix`: バグ修正
-- `docs`: ドキュメントの変更
-- `style`: コードの動作に影響しないフォーマット等の変更
-- `refactor`: リファクタリング
-- `perf`: パフォーマンス改善
-- `test`: テストの追加・修正
-- `chore`: ビルドツールや補助ツールの変更、依存関係の更新
+主な gitmoji の例:
+- ✨ (`:sparkles:`): 新機能の追加
+- 🐛 (`:bug:`): バグ修正
+- 📝 (`:memo:`): ドキュメントの変更
+- 💄 (`:lipstick:`): UI やスタイルの変更
+- ♻️ (`:recycle:`): リファクタリング
+- ⚡️ (`:zap:`): パフォーマンス改善
+- 🧪 (`:test_tube:`): テストの追加・改善
+- 🔧 (`:wrench:`): 設定ファイルやツールの変更
+- 📦 (`:package:`): 依存関係の追加・更新
+- 🚀 (`:rocket:`): デプロイ関連の変更
 
 例:
 ```
-feat: MineAuth に要求する scope に plugin を追加
-fix: secrets アップロードを deploy 後に移動しデプロイ失敗を解消
-chore: @morinoparty/chlorophyll-react を 0.4.4 に更新
+✨ Add claim block purchase modal
+🐛 Fix session validation on route change
+📦 Update @morinoparty/chlorophyll-react to 0.4.4
 ```
 
 ## Issueについて
@@ -38,8 +41,15 @@ chore: @morinoparty/chlorophyll-react を 0.4.4 に更新
 - Issue は英語で書き、適切なラベルを追加してください。
 - 現状存在しないラベルについては、勝手に作成しないでください。
 - どうしても必要である場合は、ユーザーに相談してください。
+- **Chlorophyll への Issue 起票:**
+  - Chlorophyll に存在しないコンポーネントを Ark UI + Panda CSS で実装した際、デザインシステム側にも共通コンポーネントとしてあったほうがよいと思われる場合は、[Chlorophyll リポジトリ](https://github.com/morinoparty/chlorophyll) に Issue を起票してください。
 
 ## PRについて
 
 - PR の本文は日本語で書いて、変更内容と動作確認結果を記載してください。
-- PR のタイトルも Conventional Commits の形式（例: `feat: ...`, `fix: ...`）にしてください。
+- PR のタイトルもコミットメッセージと同様に gitmoji で始まる形式（例: `✨ ...`, `🐛 ...`, `🔧 ...`）にしてください。
+
+例:
+```
+✨ 土地保護ブロック購入モーダルの追加
+```

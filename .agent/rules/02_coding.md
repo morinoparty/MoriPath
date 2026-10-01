@@ -29,6 +29,7 @@
 - 関数コンポーネントと Hooks を使用してください（クラスコンポーネントは使用しない）。
 - サーバー状態管理には TanStack Query (`useQuery` / `useMutation`) を使用してください。グローバルな props バケツリレーは避けてください。
 - UI コンポーネントは Chlorophyll (`@morinoparty/chlorophyll-react`) および Ark UI プリミティブをベースに構築してください。
+- Chlorophyll に該当コンポーネントが存在しない場合は、Ark UI + Panda CSS で実装してください。また、Chlorophyll 側にもあったほうがよい汎用的なコンポーネントの場合は、[Chlorophyll](https://github.com/morinoparty/chlorophyll) に Issue を立ててください。
 - スタイリングは Panda CSS を使用し、スロットレシピには `sva()`、単一コンポーネントのレシピには `cva()` または `css()` を使用してください。
 - 色やスペースなどの値は直接ハードコードせず、Morino Party のカラートークン（Chlorophyll / BaseToken）を活用してください。
 - アイコンは `lucide-react` を使用してください。

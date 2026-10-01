@@ -17,6 +17,7 @@
 
 - コンポーネントは Compound Component パターンに従って柔軟かつ再利用可能に設計してください。
 - アクセシビリティを確保するため、Ark UI のヘッドレスプリミティブと Chlorophyll のデザインシステムを活用してください。
+- Chlorophyll に該当コンポーネントが存在しない場合は、Ark UI + Panda CSS で実装してください。共通デザインシステムとしてあったほうがよいと思われるものは [morinoparty/chlorophyll](https://github.com/morinoparty/chlorophyll) に Issue を起票して提案してください。
 - 新しいコンポーネントを作成した際は、`storybook/stories/` に対応する `*.stories.tsx` を追加し、Storybook 上で表示・動作確認できるようにしてください。
 
 ## サーバー処理 / セキュリティ
