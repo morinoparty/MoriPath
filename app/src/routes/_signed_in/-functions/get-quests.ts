@@ -1,6 +1,6 @@
-import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
 import { getAuth } from "../../../lib/auth";
+import { getServerUrl } from "../../../lib/server-list";
 
 // クエスト情報のレスポンス型（実際のレスポンス構造に応じて調整が必要）
 // biome-ignore lint/suspicious/noExplicitAny: レスポンス構造が不明なためanyを使用
@@ -23,7 +23,7 @@ export const getQuests = createServerFn().handler(
 
         //再起動終わりました ご協力ありがとうございました
         const response = await fetch(
-            `${env.SERVER_URL}res/api/v1/plugins/betonquest-dailyquest-mineauth-integration/daily-quests/me`,
+            `${getServerUrl("res")}/api/v1/plugins/betonquest-dailyquest-mineauth-integration/daily-quests/me`,
             // `http://127.0.0.1:51123/api/v1/plugins/mineauth-betonquest-addon/quests/me`,
             {
                 headers: {

@@ -15,9 +15,7 @@ jobs:
     # アプリの secret はリポジトリの Actions secrets に置き、--secrets-file でアップロードする
     env:
       AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-      MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
       SERVER_URL: ${{ secrets.SERVER_URL }}
-      SERVERS: ${{ secrets.SERVERS }}
 
     runs-on: ubuntu-latest
     name: Deploy
@@ -49,22 +47,15 @@ jobs:
         run: |
           pnpm run build
 
-      # デプロイトークンは BSM morinoparty プロジェクトの shared/CLOUDFLARE_API_TOKEN から取得
-      - name: Get deploy token from Bitwarden Secrets Manager
-        uses: bitwarden/sm-action@v3.0.1
-        with:
-          access_token: ${{ secrets.NIKOMARU_BITWARDEN_SECRET_MANAGER_ACCESS_TOKEN }}
-          secrets: |
-            d1a5c5d9-41cc-48f0-9035-b49901583491 > CLOUDFLARE_API_TOKEN
-
       # secrets は `--secrets-file` でバージョンと同時にアップロードする。
       # (デプロイ前に secret を個別更新すると、preview.yml の未デプロイバージョンが
       #  存在する場合に Cloudflare API がエラー 10214 を返すため)
       - name: Deploy
         working-directory: app
         run: |
-          jq -n --arg AUTH_SECRET "$AUTH_SECRET" --arg MAIN_SERVER_URL "$MAIN_SERVER_URL" --arg SERVER_URL "$SERVER_URL" --arg SERVERS "$SERVERS" '$ARGS.named' > "$RUNNER_TEMP/secrets.json"
+          jq -n --arg AUTH_SECRET "$AUTH_SECRET" --arg SERVER_URL "$SERVER_URL" '$ARGS.named' > "$RUNNER_TEMP/secrets.json"
           pnpm exec cf deploy --prebuilt --secrets-file "$RUNNER_TEMP/secrets.json" --message "Deployed by GitHub Actions ${GITHUB_SHA::7}"
           rm -f "$RUNNER_TEMP/secrets.json"
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_KEY }}

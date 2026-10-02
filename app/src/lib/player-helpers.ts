@@ -1,5 +1,5 @@
-import { env } from "cloudflare:workers";
 import type { PlayerServerData, ServerPlayerData } from "../types/player";
+import { getServers, getServerUrl } from "./server-list";
 
 // カラータグを削除する関数
 export const removeColorTags = (text: string): string => {
@@ -43,10 +43,11 @@ export const validateUsername = async (
 };
 
 export async function getPlayerData(uuid: string): Promise<PlayerServerData> {
-    const servers = env.SERVERS.split(",");
+    // サーバー一覧は `${SERVER_URL}servers` から取得する
+    const servers = await getServers();
     for (const server of servers) {
         const response = await fetch(
-            `${env.SERVER_URL}${server}/api/v1/commons/server/players`,
+            `${getServerUrl(server)}/api/v1/commons/server/players`,
             {},
         );
         const players = await response.json<ServerPlayerData[]>();

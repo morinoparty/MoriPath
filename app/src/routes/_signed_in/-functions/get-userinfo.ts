@@ -1,6 +1,6 @@
-import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
 import { getAuth } from "../../../lib/auth";
+import { getAuthServerUrl } from "../../../lib/server-list";
 import type { UserInfoData } from "../../../types/player";
 
 export const getUserInfo = createServerFn().handler(
@@ -13,7 +13,11 @@ export const getUserInfo = createServerFn().handler(
             headers: request.headers,
         });
 
-        const response = await fetch(`${env.MAIN_SERVER_URL}/oauth2/userinfo`, {
+        // サーバーリストの上から順に解決した認証サーバー (MineAuth) に問い合わせる
+
+        const authServerUrl = await getAuthServerUrl();
+
+        const response = await fetch(`${authServerUrl}/oauth2/userinfo`, {
             headers: {
                 Authorization: `Bearer ${tokenResult.accessToken}`,
             },

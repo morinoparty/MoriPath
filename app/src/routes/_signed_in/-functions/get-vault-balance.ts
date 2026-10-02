@@ -1,6 +1,6 @@
-import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
 import { getAuth } from "../../../lib/auth";
+import { getServerUrl } from "../../../lib/server-list";
 
 interface VaultBalanceResponse {
     balance: number;
@@ -21,8 +21,11 @@ export const getVaultBalance = createServerFn().handler(
             throw new Error("No access token available");
         }
 
+        // プラグイン (GriefPrevention / Vault) は main サーバーにのみ存在するため固定で問い合わせる
+        const mainServerUrl = getServerUrl("main");
+
         const response = await fetch(
-            `${env.MAIN_SERVER_URL}/api/v1/plugins/vault/balance/me`,
+            `${mainServerUrl}/api/v1/plugins/vault/balance/me`,
             {
                 headers: {
                     Authorization: `Bearer ${tokenResult.accessToken}`,
