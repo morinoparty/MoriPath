@@ -1,6 +1,6 @@
-import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
 import { getAuth } from "../../../lib/auth";
+import { getAuthServerUrl } from "../../../lib/server-list";
 
 /** GriefPrevention API の claims/me レスポンス型（OpenAPI 準拠） */
 interface ClaimsMeResponse {
@@ -37,8 +37,12 @@ export const getMyClaims = createServerFn().handler(
             throw new Error("No access token available");
         }
 
+        // サーバーリストの上から順に解決した認証サーバー (MineAuth) に問い合わせる
+
+        const authServerUrl = await getAuthServerUrl();
+
         const response = await fetch(
-            `${env.MAIN_SERVER_URL}/api/v1/plugins/griefprevention/claims/me`,
+            `${authServerUrl}/api/v1/plugins/griefprevention/claims/me`,
             {
                 headers: {
                     Authorization: `Bearer ${tokenResult.accessToken}`,

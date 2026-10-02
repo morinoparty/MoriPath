@@ -16,9 +16,8 @@ export default defineConfig({
             // secrets はデプロイ時に `cf deploy --secrets-file` でアップロードする
             // 値は GitHub リポジトリの Actions secrets に置く
             AUTH_SECRET: bindings.secret(),
-            MAIN_SERVER_URL: bindings.secret(),
+            // サーバー一覧と認証サーバーは `${SERVER_URL}servers` から実行時に解決する
             SERVER_URL: bindings.secret(),
-            SERVERS: bindings.secret(),
             ASSETS: bindings.assets(),
         },
     },

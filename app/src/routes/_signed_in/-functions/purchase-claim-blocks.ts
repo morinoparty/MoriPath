@@ -1,6 +1,6 @@
-import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
 import { getAuth } from "../../../lib/auth";
+import { getAuthServerUrl } from "../../../lib/server-list";
 
 /** 購入 API のレスポンス型（OpenAPI 準拠） */
 interface PurchaseClaimBlocksResponse {
@@ -33,8 +33,12 @@ export const purchaseClaimBlocks = createServerFn().handler(
             throw new Error("No access token available");
         }
 
+        // サーバーリストの上から順に解決した認証サーバー (MineAuth) に問い合わせる
+
+        const authServerUrl = await getAuthServerUrl();
+
         const response = await fetch(
-            `${env.MAIN_SERVER_URL}/api/v1/plugins/griefprevention/claims/purchase`,
+            `${authServerUrl}/api/v1/plugins/griefprevention/claims/purchase`,
             {
                 method: "POST",
                 headers: {

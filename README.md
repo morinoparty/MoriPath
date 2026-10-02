@@ -62,9 +62,7 @@ cp app/.env.example app/.env
 | Variable | Description |
 |----------|-------------|
 | `AUTH_SECRET` | Secret key used for session encryption (at least 32 characters) |
-| `MAIN_SERVER_URL` | Main Minecraft server backend API endpoint (e.g. `https://api.morino.party/main`) |
-| `SERVER_URL` | Base API endpoint for Morino Party services |
-| `SERVERS` | Comma-separated list of server identifiers (e.g. `main,res,lobby`) |
+| `SERVER_URL` | Base API endpoint for Morino Party services (e.g. `https://api.morino.party/`). The server list is fetched from `${SERVER_URL}servers`, and the first reachable server in that list is used as the MineAuth server |
 | `CLIENT_ID` | MineAuth OAuth2 client ID |
 
 ### Running dev servers

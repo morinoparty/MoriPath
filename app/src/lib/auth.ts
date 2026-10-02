@@ -3,18 +3,20 @@ import { getRequest } from "@tanstack/react-start/server";
 import { betterAuth } from "better-auth";
 import { genericOAuth } from "better-auth/plugins";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
+import { getAuthServerUrl } from "./server-list";
 
 // buildAuth の戻り値から型を推論する。better-auth 1.6 以降は betterAuth() が
 // 渡したオプションにジェネリックなため、ReturnType<typeof betterAuth> だと
 // genericOAuth プラグインのエンドポイント型 (signInWithOAuth2 など) が失われる
 type Auth = Awaited<ReturnType<typeof buildAuth>>;
 
-// baseURL(= リクエストの origin)ごとに BetterAuth インスタンスをメモ化する。
+// baseURL(= リクエストの origin)と認証サーバーの組ごとに BetterAuth インスタンスをメモ化する。
 // 固定の REDIRECT_AUTH_URL を持たないことで、production / PR ごとの
-// preview バージョン / ローカル開発のどの origin でもそのまま動く
+// preview バージョン / ローカル開発のどの origin でもそのまま動く。
+// 認証サーバーがフォールバックで切り替わった場合は別インスタンスを作り直す
 const authCache = new Map<string, Promise<Auth>>();
 
-async function buildAuth(baseURL: string) {
+async function buildAuth(baseURL: string, authServerUrl: string) {
     // AUTH_SECRET は GitHub の Actions secret を CI が Worker secret としてアップロードする
     const secret = env.AUTH_SECRET;
 
@@ -55,7 +57,8 @@ async function buildAuth(baseURL: string) {
                         // token_endpoint_auth_method: "none" のため空文字列
                         clientSecret: "",
                         pkce: true,
-                        discoveryUrl: `${env.MAIN_SERVER_URL}/.well-known/openid-configuration`,
+                        // サーバーリストの上から順に解決した認証サーバーの discovery を使う
+                        discoveryUrl: `${authServerUrl}/.well-known/openid-configuration`,
                     },
                 ],
             }),
@@ -70,12 +73,15 @@ async function buildAuth(baseURL: string) {
  * リクエストコンテキスト内(サーバー関数・ルートハンドラー)からのみ呼び出せる。
  * 呼び出し側は必ず await すること。
  */
-export function getAuth(): Promise<Auth> {
+export async function getAuth(): Promise<Auth> {
+    // getRequest() はリクエストコンテキストに依存するため await より前に呼ぶ
     const origin = new URL(getRequest().url).origin;
-    let auth = authCache.get(origin);
+    const authServerUrl = await getAuthServerUrl();
+    const cacheKey = `${origin}|${authServerUrl}`;
+    let auth = authCache.get(cacheKey);
     if (!auth) {
-        auth = buildAuth(origin);
-        authCache.set(origin, auth);
+        auth = buildAuth(origin, authServerUrl);
+        authCache.set(cacheKey, auth);
     }
     return auth;
 }

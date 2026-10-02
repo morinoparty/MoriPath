@@ -1,14 +1,15 @@
-import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
+import { getServers, getServerUrl } from "../../../lib/server-list";
 import type { ServerPlayerData } from "../../../types/player";
 
 export const getOnlinePlayers = createServerFn().handler(async () => {
-    const servers = env.SERVERS.split(",");
+    // サーバー一覧は `${SERVER_URL}servers` から取得する
+    const servers = await getServers();
 
     const players = await Promise.all(
         servers.map((server) =>
             fetch(
-                `${env.SERVER_URL}${server}/api/v1/commons/server/players`,
+                `${getServerUrl(server)}/api/v1/commons/server/players`,
                 {},
             ).then((res) => res.json() as Promise<ServerPlayerData[]>),
         ),
