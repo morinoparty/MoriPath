@@ -104,7 +104,7 @@ function SignInPage() {
                             fontWeight: "medium",
                         })}
                     >
-                        <img src="/moripa.svg" alt="" width={17} height={20} />
+                        <img src="/moripa.svg" alt="" width={28} height={32} />
                         もりぱアカウントでログイン
                     </Button>
                     <p className={style.terms}>
