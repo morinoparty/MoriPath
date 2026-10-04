@@ -90,7 +90,7 @@ function SignInPage() {
             />
             <div className={style.box}>
                 <div className={style.contentBox}>
-                    <h1 className={style.title}>もりパスへようこそ</h1>
+                    <h1 className={style.title}>もりぱすへようこそ</h1>
                     <p className={style.description}>
                         もりぱすを使うと、さまざまなもりのパーティの機能を使うことができます。
                     </p>
@@ -104,7 +104,8 @@ function SignInPage() {
                             fontWeight: "medium",
                         })}
                     >
-                        MineAuthでログイン
+                        <img src="/moripa.svg" alt="" width={17} height={20} />
+                        もりぱアカウントでログイン
                     </Button>
                     <p className={style.terms}>
                         ログインすることで、
