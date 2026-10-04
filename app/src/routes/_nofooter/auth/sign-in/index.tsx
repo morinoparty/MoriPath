@@ -102,9 +102,10 @@ function SignInPage() {
                         onClick={handleLogin}
                         className={css({
                             fontWeight: "medium",
+                            gap: "16px",
                         })}
                     >
-                        <img src="/moripa.svg" alt="" width={28} height={32} />
+                        <img src="/moripa.svg" alt="" width={27} height={32} />
                         もりぱアカウントでログイン
                     </Button>
                     <p className={style.terms}>
