@@ -103,6 +103,7 @@ function SignInPage() {
                         className={css({
                             fontWeight: "medium",
                             gap: "16px",
+                            height: "48px",
                         })}
                     >
                         <img src="/moripa.svg" alt="" width={27} height={32} />
