@@ -12,9 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as Signed_inRouteImport } from './routes/_signed_in'
 import { Route as Signed_inIndexRouteImport } from './routes/_signed_in/index'
 import { Route as Signed_inSplatRouteImport } from './routes/_signed_in/$'
-import { Route as Signed_inMyPageIndexRouteImport } from './routes/_signed_in/my-page/index'
-import { Route as Signed_inBalanceClaimIndexRouteImport } from './routes/_signed_in/balance-claim/index'
 import { Route as NofooterTermsIndexRouteImport } from './routes/_nofooter/terms/index'
+import { Route as Signed_inBalanceClaimIndexRouteImport } from './routes/_signed_in/balance-claim/index'
+import { Route as Signed_inMyPageIndexRouteImport } from './routes/_signed_in/my-page/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as NofooterAuthSignInIndexRouteImport } from './routes/_nofooter/auth/sign-in/index'
 
@@ -32,10 +32,10 @@ const Signed_inSplatRoute = Signed_inSplatRouteImport.update({
   path: '/$',
   getParentRoute: () => Signed_inRoute,
 } as any)
-const Signed_inMyPageIndexRoute = Signed_inMyPageIndexRouteImport.update({
-  id: '/my-page/',
-  path: '/my-page/',
-  getParentRoute: () => Signed_inRoute,
+const NofooterTermsIndexRoute = NofooterTermsIndexRouteImport.update({
+  id: '/_nofooter/terms/',
+  path: '/terms/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const Signed_inBalanceClaimIndexRoute =
   Signed_inBalanceClaimIndexRouteImport.update({
@@ -43,10 +43,10 @@ const Signed_inBalanceClaimIndexRoute =
     path: '/balance-claim/',
     getParentRoute: () => Signed_inRoute,
   } as any)
-const NofooterTermsIndexRoute = NofooterTermsIndexRouteImport.update({
-  id: '/_nofooter/terms/',
-  path: '/terms/',
-  getParentRoute: () => rootRouteImport,
+const Signed_inMyPageIndexRoute = Signed_inMyPageIndexRouteImport.update({
+  id: '/my-page/',
+  path: '/my-page/',
+  getParentRoute: () => Signed_inRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
@@ -60,13 +60,13 @@ const NofooterAuthSignInIndexRoute = NofooterAuthSignInIndexRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/$': typeof Signed_inSplatRoute
   '/': typeof Signed_inIndexRoute
+  '/$': typeof Signed_inSplatRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/terms': typeof NofooterTermsIndexRoute
-  '/balance-claim': typeof Signed_inBalanceClaimIndexRoute
-  '/my-page': typeof Signed_inMyPageIndexRoute
-  '/auth/sign-in': typeof NofooterAuthSignInIndexRoute
+  '/terms/': typeof NofooterTermsIndexRoute
+  '/balance-claim/': typeof Signed_inBalanceClaimIndexRoute
+  '/my-page/': typeof Signed_inMyPageIndexRoute
+  '/auth/sign-in/': typeof NofooterAuthSignInIndexRoute
 }
 export interface FileRoutesByTo {
   '/$': typeof Signed_inSplatRoute
@@ -91,13 +91,13 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/$'
     | '/'
+    | '/$'
     | '/api/auth/$'
-    | '/terms'
-    | '/balance-claim'
-    | '/my-page'
-    | '/auth/sign-in'
+    | '/terms/'
+    | '/balance-claim/'
+    | '/my-page/'
+    | '/auth/sign-in/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/$'
@@ -131,7 +131,7 @@ declare module '@tanstack/react-router' {
     '/_signed_in': {
       id: '/_signed_in'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof Signed_inRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -149,26 +149,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Signed_inSplatRouteImport
       parentRoute: typeof Signed_inRoute
     }
-    '/_signed_in/my-page/': {
-      id: '/_signed_in/my-page/'
-      path: '/my-page'
-      fullPath: '/my-page'
-      preLoaderRoute: typeof Signed_inMyPageIndexRouteImport
-      parentRoute: typeof Signed_inRoute
+    '/_nofooter/terms/': {
+      id: '/_nofooter/terms/'
+      path: '/terms'
+      fullPath: '/terms/'
+      preLoaderRoute: typeof NofooterTermsIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_signed_in/balance-claim/': {
       id: '/_signed_in/balance-claim/'
       path: '/balance-claim'
-      fullPath: '/balance-claim'
+      fullPath: '/balance-claim/'
       preLoaderRoute: typeof Signed_inBalanceClaimIndexRouteImport
       parentRoute: typeof Signed_inRoute
     }
-    '/_nofooter/terms/': {
-      id: '/_nofooter/terms/'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof NofooterTermsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_signed_in/my-page/': {
+      id: '/_signed_in/my-page/'
+      path: '/my-page'
+      fullPath: '/my-page/'
+      preLoaderRoute: typeof Signed_inMyPageIndexRouteImport
+      parentRoute: typeof Signed_inRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -180,7 +180,7 @@ declare module '@tanstack/react-router' {
     '/_nofooter/auth/sign-in/': {
       id: '/_nofooter/auth/sign-in/'
       path: '/auth/sign-in'
-      fullPath: '/auth/sign-in'
+      fullPath: '/auth/sign-in/'
       preLoaderRoute: typeof NofooterAuthSignInIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
