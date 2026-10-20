@@ -10,7 +10,8 @@
         "build": "cf build",
         "preview": "vite build && vite preview",
         "deploy": "cf deploy",
-        "cf-typegen": "cf workers types"
+        "cf-typegen": "cf workers types",
+        "typecheck": "tsc --noEmit -p tsconfig.cloudflare.json && tsc --noEmit -p tsconfig.node.json"
     },
     "dependencies": {
         "@ark-ui/react": "^5.30.0",

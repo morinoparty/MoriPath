@@ -10,7 +10,9 @@
         "build:storybook": "pnpm --filter @moripath/storybook build",
         "deploy": "pnpm build:storybook && pnpm --filter @moripath/app deploy",
         "cf-typegen": "pnpm --filter @moripath/app cf-typegen",
-        "check": "biome check ./ --write"
+        "check": "biome check ./ --write",
+        "check:ci": "biome ci ./",
+        "typecheck": "pnpm --filter @moripath/app typecheck"
     },
     "devDependencies": {
         "@biomejs/biome": "2.3.9"
