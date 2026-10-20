@@ -10,11 +10,16 @@ interface PurchaseClaimBlocksResponse {
     totalCost: number;
 }
 
+/** 呼び出し側の `{ data: { blockCount } }` を型付けするための入力定義 */
+const purchaseClaimBlocksFn = createServerFn().inputValidator(
+    (data: { blockCount: number }) => data,
+);
+
 /**
  * MineAuth GriefPrevention API で保護ブロックを購入する。
  * どんぐり残高から指定数分が消費される。
  */
-export const purchaseClaimBlocks = createServerFn().handler(
+export const purchaseClaimBlocks = purchaseClaimBlocksFn.handler(
     // biome-ignore lint/suspicious/noExplicitAny: ctx の型は createServerFn のコンテキストに依存する
     async (ctx: any) => {
         const { data, request } = ctx as {

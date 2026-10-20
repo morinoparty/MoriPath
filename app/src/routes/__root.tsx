@@ -70,7 +70,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             <body>
                 {children}
 
-                {process.env.NODE_ENV === "development" && (
+                {import.meta.env.DEV && (
                     <TanStackDevtools
                         config={{
                             position: "bottom-right",
