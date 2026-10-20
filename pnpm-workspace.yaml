@@ -6,3 +6,8 @@ onlyBuiltDependencies:
     - esbuild
     - sharp
     - workerd
+
+overrides:
+    # @pandacss/* 1.12 が postcss を 8.5.14 に固定しているため、vite 側 (8.5.31) と型が食い違い
+    # vite.config.ts の css.postcss.plugins が型エラーになる。同じ postcss に揃える
+    "postcss@8.5.14": 8.5.31
