@@ -23,9 +23,7 @@ export const purchaseClaimBlocks = createServerFn().handler(
         };
         const auth = await getAuth();
         const tokenResult = await auth.api.getAccessToken({
-            body: {
-                providerId: "MineAuth",
-            },
+            body: { useAccountCookie: true },
             headers: request.headers,
         });
 

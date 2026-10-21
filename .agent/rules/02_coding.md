@@ -39,6 +39,8 @@
 
 - TanStack Start の Server Functions (`createServerFn()`) を活用してクライアント・サーバー間の安全な通信を実装してください。
 - ユーザーセッションの確認や認証保護には `authMiddleware` や Better Auth API を使用してください。
+- MineAuth へのサインインは `auth.api.signInSocial({ body: { provider: "MineAuth" } })` で始めます。MineAuth 側に登録するリダイレクト URI は `<origin>/api/auth/callback/MineAuth` です。
+- MineAuth の API を呼ぶときは `auth.api.getAccessToken({ body: { useAccountCookie: true }, headers })` でアクセストークンを取得してください。失効していれば refresh token で自動更新されます。
 - 入力値の検証には Zod を使用してください。
 
 ## ビルド・確認コマンド

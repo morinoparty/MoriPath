@@ -11,9 +11,7 @@ export const getQuests = createServerFn().handler(
     async ({ request }: any) => {
         const auth = await getAuth();
         const tokenResult = await auth.api.getAccessToken({
-            body: {
-                providerId: "MineAuth",
-            },
+            body: { useAccountCookie: true },
             headers: request.headers,
         });
 
