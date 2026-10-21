@@ -7,7 +7,7 @@ import { getAuthServerUrl } from "./server-list";
 
 // buildAuth の戻り値から型を推論する。better-auth 1.6 以降は betterAuth() が
 // 渡したオプションにジェネリックなため、ReturnType<typeof betterAuth> だと
-// genericOAuth プラグインのエンドポイント型 (signInWithOAuth2 など) が失われる
+// プラグインを含むエンドポイント型 (signInSocial / getAccessToken など) が失われる
 type Auth = Awaited<ReturnType<typeof buildAuth>>;
 
 // baseURL(= リクエストの origin)と認証サーバーの組ごとに BetterAuth インスタンスをメモ化する。
@@ -49,16 +49,31 @@ async function buildAuth(baseURL: string, authServerUrl: string) {
             storeAccountCookie: true,
         },
         plugins: [
+            // better-auth 1.7 以降、genericOAuth のプロバイダーは通常のソーシャルプロバイダーとして
+            // 登録され、signIn.social (`/sign-in/social`) と `/callback/:id` で扱われる。
+            // MineAuth 側に登録するリダイレクト URI は `<origin>/api/auth/callback/MineAuth`
             genericOAuth({
                 config: [
                     {
                         providerId: "MineAuth",
                         clientId: env.CLIENT_ID,
-                        // token_endpoint_auth_method: "none" のため空文字列
-                        clientSecret: "",
+                        // MineAuth のクライアントは public client (token_endpoint_auth_method: "none")
+                        tokenEndpointAuth: { method: "none" },
                         pkce: true,
+                        // 1.7 から signOut が discovery の end_session_endpoint への
+                        // RP-initiated logout を試みるようになった。サーバー関数経由の
+                        // signOut では Location を返せないため、従来どおり Better Auth の
+                        // セッション(クッキー)を消すだけにする
+                        disableProviderLogout: true,
                         // サーバーリストの上から順に解決した認証サーバーの discovery を使う
                         discoveryUrl: `${authServerUrl}/.well-known/openid-configuration`,
+                        scopes: [
+                            "openid",
+                            "profile",
+                            "email",
+                            "roles",
+                            "plugin",
+                        ],
                     },
                 ],
             }),

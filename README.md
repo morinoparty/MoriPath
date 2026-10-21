@@ -65,7 +65,7 @@ cp app/.env.example app/.env
 | `CLOUDFLARE_API_TOKEN` | Cloudflare API token used by the `cf` CLI (not passed to the Worker) |
 | `AUTH_SECRET` | Secret key used for session encryption (at least 32 characters) |
 | `SERVER_URL` | Base API endpoint for Morino Party services (e.g. `https://api.morino.party/`). The server list is fetched from `${SERVER_URL}servers`, and the first reachable server in that list is used as the MineAuth server |
-| `CLIENT_ID` | MineAuth OAuth2 client ID (defined as a var in `app/cloudflare.config.ts`; set it in `.env` only to override it locally) |
+| `CLIENT_ID` | MineAuth OAuth2 client ID (defined as a var in `app/cloudflare.config.ts`; set it in `.env` only to override it locally). The redirect URI to register on MineAuth is `<origin>/api/auth/callback/MineAuth` |
 
 ### Running dev servers
 
