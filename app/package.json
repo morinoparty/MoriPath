@@ -33,7 +33,7 @@
     "devDependencies": {
         "@cloudflare/vite-plugin": "^1.62.2",
         "@pandacss/dev": "^1.7.1",
-        "@types/node": "^25.0.3",
+        "@types/node": "^26.6.3",
         "@types/react": "^19.2.7",
         "@types/react-dom": "^19.2.3",
         "@vitejs/plugin-react": "^5.1.2",
