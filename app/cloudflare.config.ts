@@ -6,7 +6,9 @@ export default defineConfig({
         compatibilityDate: "2025-12-13",
         compatibilityFlags: ["nodejs_compat", "global_fetch_strictly_public"],
         entrypoint: "@tanstack/react-start/server-entry",
-        // PR ごとの preview は `cf workers versions create` の未昇格バージョン + preview URL で行う
+        // 公開は <name>.morinoparty.workers.dev のみ (カスタムドメインは使わない)
+        workersDev: true,
+        // PR ごとの preview は `cf previews deploy` で行う
         previewUrls: true,
         observability: {
             enabled: true,

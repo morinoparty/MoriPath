@@ -1,5 +1,9 @@
 name: Deploy
 
+# main への push と手動実行で build + dry-run を行い、main への push のときだけ本番 deploy する。
+# 必要な secret (`gh secret set -f app/.env` で登録する):
+#   CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID … cf CLI 用 (Worker には渡さない)
+#   AUTH_SECRET, SERVER_URL … Worker secret (--secrets-file で渡す)
 on:
   workflow_dispatch:
   push:
@@ -12,23 +16,22 @@ permissions:
 
 jobs:
   deploy:
-    # アプリの secret はリポジトリの Actions secrets に置き、--secrets-file でアップロードする
-    env:
-      AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-      SERVER_URL: ${{ secrets.SERVER_URL }}
-
     runs-on: ubuntu-latest
     name: Deploy
+    env:
+      CF_SEND_TELEMETRY: "false"
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 26
 
+      # pnpm の版は package.json の packageManager から読む
       - uses: pnpm/action-setup@v6
         name: Install pnpm
         with:
           run_install: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
 
       # private パッケージ (@morinoparty/chlorophyll-react) 取得用の GitHub Packages 認証
       - name: Setup npm auth for GitHub Packages
@@ -39,23 +42,32 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install
-        run: |
-          pnpm install
+        run: pnpm install --frozen-lockfile
 
       # Storybook を先にビルドし、app の client アセット (/storybook) に同梱する
-      - name: Build
-        run: |
-          pnpm run build
+      - name: Build Storybook
+        run: pnpm run build:storybook
 
-      # secrets は `--secrets-file` でバージョンと同時にアップロードする。
-      # (デプロイ前に secret を個別更新すると、preview.yml の未デプロイバージョンが
-      #  存在する場合に Cloudflare API がエラー 10214 を返すため)
+      - name: Build
+        working-directory: app
+        run: pnpm exec cf build
+
+      - name: Dry run
+        working-directory: app
+        run: pnpm exec cf deploy --prebuilt --mode production --dry-run
+
+      # secrets は `--secrets-file` でバージョンと同時にアップロードする
       - name: Deploy
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         working-directory: app
         run: |
+          # 空の secret で上書きしないよう、揃っていなければ止める
+          : "${AUTH_SECRET:?}" "${SERVER_URL:?}"
           jq -n --arg AUTH_SECRET "$AUTH_SECRET" --arg SERVER_URL "$SERVER_URL" '$ARGS.named' > "$RUNNER_TEMP/secrets.json"
-          pnpm exec cf deploy --prebuilt --secrets-file "$RUNNER_TEMP/secrets.json" --message "Deployed by GitHub Actions ${GITHUB_SHA::7}"
+          pnpm exec cf deploy --prebuilt --mode production --secrets-file "$RUNNER_TEMP/secrets.json" --message "Deployed by GitHub Actions ${GITHUB_SHA::7}"
           rm -f "$RUNNER_TEMP/secrets.json"
         env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_KEY }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          SERVER_URL: ${{ secrets.SERVER_URL }}
