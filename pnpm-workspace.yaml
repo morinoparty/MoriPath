@@ -6,6 +6,3 @@ allowBuilds:
     esbuild: true
     sharp: true
     workerd: true
-
-minimumReleaseAgeExclude:
-    - '@morinoparty/chlorophyll-react@0.4.11'
