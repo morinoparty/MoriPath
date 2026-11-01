@@ -9,8 +9,12 @@ interface PurchaseClaimBlocksResponse {
     totalCost: number;
 }
 
+const purchaseClaimBlocksFn = createServerFn().inputValidator(
+    (data: { blockCount: number }) => data,
+);
+
 /** どんぐり残高を消費して保護ブロックを購入する */
-export const purchaseClaimBlocks = createServerFn().handler(
+export const purchaseClaimBlocks = purchaseClaimBlocksFn.handler(
     // biome-ignore lint/suspicious/noExplicitAny: ctx の型は createServerFn のコンテキストに依存する
     async (ctx: any) => {
         const { data, request } = ctx as {

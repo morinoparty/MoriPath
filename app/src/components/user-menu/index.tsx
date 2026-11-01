@@ -8,7 +8,7 @@ import { css, sva } from "../../../styled-system/css";
 import { getAuth } from "../../lib/auth";
 import type { SessionData } from "../../lib/server-functions";
 
-interface UserMenuProps {
+export interface UserMenuProps {
     session: SessionData;
 }
 
@@ -87,7 +87,7 @@ const Root = ({ session, children }: PropsWithChildren<UserMenuProps>) => {
     );
 };
 
-interface TriggerProps {
+export interface TriggerProps {
     children: React.ReactNode;
 }
 
@@ -95,7 +95,7 @@ const Trigger = ({ children }: TriggerProps) => {
     return <Menu.Trigger>{children}</Menu.Trigger>;
 };
 
-interface ContentProps {
+export interface ContentProps {
     children?: React.ReactNode;
 }
 
