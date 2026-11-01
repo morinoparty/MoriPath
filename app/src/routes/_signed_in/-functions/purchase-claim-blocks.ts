@@ -2,7 +2,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { getAuth } from "../../../lib/auth";
 import { getServerUrl } from "../../../lib/server-list";
 
-/** 購入 API のレスポンス型（OpenAPI 準拠） */
 interface PurchaseClaimBlocksResponse {
     newBalance: number;
     purchased: number;
@@ -10,10 +9,7 @@ interface PurchaseClaimBlocksResponse {
     totalCost: number;
 }
 
-/**
- * MineAuth GriefPrevention API で保護ブロックを購入する。
- * どんぐり残高から指定数分が消費される。
- */
+/** どんぐり残高を消費して保護ブロックを購入する */
 export const purchaseClaimBlocks = createServerFn().handler(
     // biome-ignore lint/suspicious/noExplicitAny: ctx の型は createServerFn のコンテキストに依存する
     async (ctx: any) => {
@@ -31,7 +27,7 @@ export const purchaseClaimBlocks = createServerFn().handler(
             throw new Error("No access token available");
         }
 
-        // プラグイン (GriefPrevention / Vault) は main サーバーにのみ存在するため固定で問い合わせる
+        // GriefPrevention / Vault は main サーバーにのみ存在する
         const mainServerUrl = getServerUrl("main");
 
         const response = await fetch(

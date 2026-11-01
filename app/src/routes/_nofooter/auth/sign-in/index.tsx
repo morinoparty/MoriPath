@@ -28,7 +28,7 @@ const signInStyle = sva({
         },
         castlePicture: {
             width: "100%",
-            height: "100%", // 残った部分を全て画像が占めるようにする
+            height: "100%", // 残りの高さを画像で埋める
             objectFit: "cover",
             objectPosition: "top",
         },
@@ -39,8 +39,8 @@ const signInStyle = sva({
             width: "100%",
             padding: "2rem",
             paddingBottom: "5rem",
-            minHeight: "280px", // boxに固定の高さを設定
-            flexShrink: 0, // boxのサイズを固定
+            minHeight: "280px",
+            flexShrink: 0,
         },
         contentBox: {
             display: "flex",

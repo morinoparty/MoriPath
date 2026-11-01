@@ -27,7 +27,6 @@ export default meta;
 
 type Story = StoryObj<typeof OnlineStatus>;
 
-// Compound Component stories
 export const Default: Story = {
     render: () => (
         <OnlineStatus.Root players={mockPlayers}>

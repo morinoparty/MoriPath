@@ -47,8 +47,7 @@ const config: StorybookConfig = {
             ...(config.resolve ?? {}),
             alias: {
                 ...(config.resolve?.alias ?? {}),
-                // TanStack Start の内部/仮想モジュールは Storybook では不要なのでスタブへ解決する
-                // better-authのせい
+                // Storybook では不要な TanStack Start の内部/仮想モジュールをスタブへ解決する
                 "#tanstack-router-entry": fileURLToPath(
                     new URL(
                         "./shims/tanstack-router-entry.ts",

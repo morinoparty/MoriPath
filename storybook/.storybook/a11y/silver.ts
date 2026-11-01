@@ -1,7 +1,6 @@
 import APCACheck, { type ConformanceThresholdFn } from "./apca";
 
 const silverPlusAPCALookupTable = [
-    // See https://readtech.org/ARC/tests/visual-readability-contrast/?tn=criterion (May 22, 2022)
     // font size in px | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 weights
     [10, -1, -1, -1, -1, -1, -1, -1, -1, -1],
     [12, -1, -1, -1, -1, -1, -1, -1, -1, -1],
@@ -27,9 +26,7 @@ const APCASilverPlusConformanceThresholdFn: ConformanceThresholdFn = (
     const size = Number.parseFloat(fontSize);
     const weight = Number.parseFloat(fontWeight);
 
-    // Go over the table backwards to find the first matching font size and then the weight.
-    // The value null is returned when the combination of font size and weight does not have
-    // any elegible APCA luminosity silver compliant thresholds (represented by -1 in the table).
+    // Returns null when no compliant threshold exists (-1 in the table)
     const reversedTable = [...silverPlusAPCALookupTable].reverse();
 
     for (const [rowSize, ...rowWeights] of reversedTable) {

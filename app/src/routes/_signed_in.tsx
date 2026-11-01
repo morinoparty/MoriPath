@@ -9,7 +9,6 @@ export const Route = createFileRoute("/_signed_in")({
         middleware: [authMiddleware],
     },
     beforeLoad: async () => {
-        // Fetch session data and add to context
         const session = await getSession();
         return { session };
     },

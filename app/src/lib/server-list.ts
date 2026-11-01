@@ -1,11 +1,9 @@
 import { env } from "cloudflare:workers";
 import { z } from "zod";
 
-// `${SERVER_URL}servers` が返すサーバー識別子の配列 (例: ["main", "res", "lobby"])
 const serverListSchema = z.array(z.string().min(1));
 
-// サーバーリスト・認証サーバーの解決結果を isolate 内でキャッシュする期間
-// サーバー構成はめったに変わらないため、リクエストごとの余計な往復を避ける
+// サーバー構成はめったに変わらないため、解決結果を isolate 内でキャッシュする
 const CACHE_TTL_MS = 60 * 1000;
 
 type Cached<T> = { value: Promise<T>; expiresAt: number };
@@ -13,17 +11,11 @@ type Cached<T> = { value: Promise<T>; expiresAt: number };
 let serverListCache: Cached<string[]> | undefined;
 let authServerCache: Cached<string> | undefined;
 
-/**
- * SERVER_URL を末尾スラッシュ付きに正規化したベース URL を返す。
- * Secret の値が `https://api.morino.party` でも `https://api.morino.party/` でも動くようにする
- */
+// SERVER_URL の末尾スラッシュの有無を吸収する
 function getBaseUrl(): string {
     return env.SERVER_URL.endsWith("/") ? env.SERVER_URL : `${env.SERVER_URL}/`;
 }
 
-/**
- * サーバー識別子から、そのサーバーの API ベース URL (末尾スラッシュなし) を組み立てる
- */
 export function getServerUrl(server: string): string {
     return `${getBaseUrl()}${server}`;
 }
@@ -35,18 +27,14 @@ async function fetchServerList(): Promise<string[]> {
             `サーバーリストの取得に失敗しました: ${response.status}`,
         );
     }
-    // 想定外のレスポンス形式は Zod で弾く
     return serverListSchema.parse(await response.json());
 }
 
-/**
- * `${SERVER_URL}servers` からサーバー識別子の一覧を取得する (並び順は API のまま)
- */
 export function getServers(): Promise<string[]> {
     const now = Date.now();
     if (!serverListCache || serverListCache.expiresAt <= now) {
         const value = fetchServerList();
-        // 失敗した Promise をキャッシュし続けないよう、エラー時はキャッシュを破棄する
+        // 失敗した Promise はキャッシュしない
         value.catch(() => {
             if (serverListCache?.value === value) {
                 serverListCache = undefined;
@@ -59,7 +47,7 @@ export function getServers(): Promise<string[]> {
 
 async function resolveAuthServerUrl(): Promise<string> {
     const servers = await getServers();
-    // リストの上から順に OIDC discovery が応答するサーバーを探し、最初に見つかったものを認証サーバーにする
+    // OIDC discovery に最初に応答したサーバーを認証サーバーとする
     for (const server of servers) {
         const serverUrl = getServerUrl(server);
         try {
@@ -70,22 +58,17 @@ async function resolveAuthServerUrl(): Promise<string> {
                 return serverUrl;
             }
         } catch (error) {
-            // ネットワークエラーなどは次のサーバーへフォールバックする
             console.warn(`認証サーバー候補 ${server} に接続できません:`, error);
         }
     }
     throw new Error("利用可能な認証サーバーが見つかりません");
 }
 
-/**
- * 認証サーバー (MineAuth) の API ベース URL を返す。
- * サーバーリストの上から順に試し、応答した最初のサーバーを採用する
- */
 export function getAuthServerUrl(): Promise<string> {
     const now = Date.now();
     if (!authServerCache || authServerCache.expiresAt <= now) {
         const value = resolveAuthServerUrl();
-        // 失敗した Promise をキャッシュし続けないよう、エラー時はキャッシュを破棄する
+        // 失敗した Promise はキャッシュしない
         value.catch(() => {
             if (authServerCache?.value === value) {
                 authServerCache = undefined;

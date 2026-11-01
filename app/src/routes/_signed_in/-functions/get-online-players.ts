@@ -3,7 +3,6 @@ import { getServers, getServerUrl } from "../../../lib/server-list";
 import type { ServerPlayerData } from "../../../types/player";
 
 export const getOnlinePlayers = createServerFn().handler(async () => {
-    // サーバー一覧は `${SERVER_URL}servers` から取得する
     const servers = await getServers();
 
     const players = await Promise.all(
