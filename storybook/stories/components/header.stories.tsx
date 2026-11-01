@@ -48,7 +48,6 @@ export const LoggedOut: Story = {
     render: () => <Header.Builted session={null} />,
 };
 
-// Compound Component stories
 export const CompoundDefault: Story = {
     render: () => (
         <Header.Root>

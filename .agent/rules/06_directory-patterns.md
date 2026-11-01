@@ -19,7 +19,7 @@
   - `lib/` — 認証設定 (`auth.ts`, `auth-middleware.ts`)、共通 Server Functions (`server-functions/`)、プレイヤーヘルパーなど
   - `types/` — アプリケーション全体の共有型定義
   - `style/` — グローバル CSS (`app.css`)
-- `app/wrangler.jsonc` — Cloudflare Workers 設定
+- `app/cloudflare.config.ts` — Cloudflare Workers 設定 (`cf` CLI)
 - `app/panda.config.ts` — Panda CSS 設定
 
 ## `storybook/` — Storybook コンポーネントカタログ
@@ -34,4 +34,4 @@
 
 - `workflows/` — GitHub Actions ワークフロー
   - `deploy-app.yml` — `main` ブランチ push 時の本番デプロイ
-  - `preview.yml` — PR 作成・更新時のプレビュー環境デプロイ
+  - `preview.yml` — PR 作成・更新時のプレビュー環境デプロイ (`cf previews deploy`)

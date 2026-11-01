@@ -1,18 +1,30 @@
 "use client";
 
 import { MinecraftProvider } from "@morinoparty/chlorophyll-react/components";
+import { useMemo } from "react";
 import { ColorModeProvider, type ColorModeProviderProps } from "./color-mode";
 import { PaletteProvider } from "./palette";
 
-// プレイヤー画像は従来どおり crafthead.net から取得する
-// (chlorophyll の既定は mc-heads.net)
-const minecraftConfig = {
-    avatarUrl: (playerId: string, pixelSize: number) =>
-        `https://crafthead.net/avatar/${playerId}/${pixelSize}`,
-    skinUrl: (playerId: string) => `https://crafthead.net/skin/${playerId}`,
+type ProviderProps = ColorModeProviderProps & {
+    mcApiUrl: string;
 };
 
-export function Provider(props: ColorModeProviderProps) {
+// プレイヤー画像を chlorophyll 既定の取得先ではなくプレイヤー API から取得する
+function createMinecraftConfig(mcApiUrl: string) {
+    const player = (playerId: string) =>
+        `${mcApiUrl}/v1/players/${encodeURIComponent(playerId)}`;
+    return {
+        avatarUrl: (playerId: string, pixelSize: number) =>
+            `${player(playerId)}/avatar?size=${pixelSize}`,
+        skinUrl: (playerId: string) => `${player(playerId)}/skin`,
+    };
+}
+
+export function Provider({ mcApiUrl, ...props }: ProviderProps) {
+    const minecraftConfig = useMemo(
+        () => createMinecraftConfig(mcApiUrl),
+        [mcApiUrl],
+    );
     return (
         <PaletteProvider>
             <MinecraftProvider config={minecraftConfig}>

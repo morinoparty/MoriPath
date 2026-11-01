@@ -146,7 +146,6 @@ const SettingsItem = () => {
     );
 };
 
-// サーバー関数としてサインアウトを実行
 // biome-ignore lint/suspicious/noExplicitAny: request is not typed
 const signOutAction = createServerFn().handler(async ({ request }: any) => {
     const auth = await getAuth();

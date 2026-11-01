@@ -1,5 +1,3 @@
-// withDummyRouter.tsx
-
 import {
     createMemoryHistory,
     createRootRoute,
@@ -18,7 +16,6 @@ const RenderStory = () => {
     return storyFn();
 };
 
-// List the paths of your application
 const paths = ["/", "/about", "/paths"];
 const routes = paths.map((path) =>
     createRoute({

@@ -5,7 +5,6 @@ import { LogOut } from "lucide-react";
 import { css } from "../../../styled-system/css";
 import { getAuth } from "../../lib/auth";
 
-// サーバー関数としてサインアウトを実行
 const signOutAction = createServerFn().handler(async () => {
     // getRequest() はリクエストコンテキストに依存するため await より前に呼ぶ
     const { headers } = getRequest();

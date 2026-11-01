@@ -33,12 +33,11 @@ const globalCss = defineGlobalStyles({
         outlineOffset: "2px",
         borderRadius: "md",
     },
-    // 既定パレット。SSR 直後(data-color-palette 未設定)でも mori で描画する
+    // data-color-palette 未設定時の既定パレット
     ":root": {
         colorPalette: "mori",
     },
-    // data-color-palette 属性(app/components/ui/palette.tsx が設定)に
-    // Panda 側の colorPalette を追従させる
+    // data-color-palette 属性に colorPalette を追従させる
     ':root[data-color-palette="umi"]': {
         colorPalette: "umi",
     },
@@ -56,9 +55,7 @@ export default defineConfig({
 
     include: ["./src/**/*.{ts,tsx,js,jsx}"],
 
-    // chlorophyll のコンポーネントは node_modules 配下の生 TSX から
-    // 実行時に variant を受け取るため、静的抽出できない
-    // 全 variant の CSS を生成しておく
+    // chlorophyll の variant は静的抽出できないため全 variant を生成する
     staticCss: {
         recipes: {
             button: ["*"],

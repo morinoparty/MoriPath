@@ -5,76 +5,64 @@ import { genericOAuth } from "better-auth/plugins";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { getAuthServerUrl } from "./server-list";
 
-// buildAuth の戻り値から型を推論する。better-auth 1.6 以降は betterAuth() が
-// 渡したオプションにジェネリックなため、ReturnType<typeof betterAuth> だと
-// genericOAuth プラグインのエンドポイント型 (signInWithOAuth2 など) が失われる
+// プラグイン込みのエンドポイント型を保つため buildAuth の戻り値から推論する
 type Auth = Awaited<ReturnType<typeof buildAuth>>;
 
-// baseURL(= リクエストの origin)と認証サーバーの組ごとに BetterAuth インスタンスをメモ化する。
-// 固定の REDIRECT_AUTH_URL を持たないことで、production / PR ごとの
-// preview バージョン / ローカル開発のどの origin でもそのまま動く。
-// 認証サーバーがフォールバックで切り替わった場合は別インスタンスを作り直す
+// origin ごとに動かすため、origin と認証サーバーの組でインスタンスをメモ化する
 const authCache = new Map<string, Promise<Auth>>();
 
 async function buildAuth(baseURL: string, authServerUrl: string) {
-    // AUTH_SECRET は GitHub の Actions secret を CI が Worker secret としてアップロードする
     const secret = env.AUTH_SECRET;
 
-    // BetterAuthの設定
-    // TanStack Start との連携のために tanstackStartCookies プラグインを最後に追加する
-    //
-    // database を渡さない DB-less 構成: セッションとアカウント(MineAuth の
-    // access/refresh token)はすべて暗号化クッキーに保存される。
-    // isolate のメモリに依存しないため、Workers の isolate 入れ替えでも
-    // ログイン状態とトークンが維持される
+    // DB-less 構成: isolate が入れ替わってもログインを保つため、セッションとトークンを暗号化クッキーに保存する
     return betterAuth({
         baseURL,
         secret,
         session: {
-            // MineAuth の refresh token 寿命 (30日) に合わせる。
-            // クッキー内セッションペイロードの expiresAt はこの値で決まり、
-            // cookieCache.maxAge より短いとそちらが先に失効してしまう
+            // refresh token の寿命 (30日) に合わせる
             expiresIn: 60 * 60 * 24 * 30,
             cookieCache: {
                 enabled: true,
-                // DB-less ではこの値が session_data / account_data クッキーの
-                // 寿命になる(= 実質のセッション上限)。refresh token と同じ30日
+                // DB-less ではこれが実質のセッション上限になる
                 maxAge: 60 * 60 * 24 * 30,
             },
         },
         account: {
-            // MineAuth のトークン一式を account_data クッキーに保存する。
-            // access token (300秒) が切れると getAccessToken が refresh token で
-            // 自動更新し、ローテーション後の新 refresh token もクッキーに書き戻す
+            // getAccessToken で access token を自動更新できるようトークンをクッキーに保存する
             storeAccountCookie: true,
         },
         plugins: [
+            // MineAuth 側のリダイレクト URI は <origin>/api/auth/callback/MineAuth
             genericOAuth({
                 config: [
                     {
                         providerId: "MineAuth",
                         clientId: env.CLIENT_ID,
-                        // token_endpoint_auth_method: "none" のため空文字列
-                        clientSecret: "",
+                        // MineAuth のクライアントは public client
+                        tokenEndpointAuth: { method: "none" },
                         pkce: true,
-                        // サーバーリストの上から順に解決した認証サーバーの discovery を使う
+                        // サーバー関数経由の signOut ではリダイレクトできないため、クッキーの削除だけにする
+                        disableProviderLogout: true,
                         discoveryUrl: `${authServerUrl}/.well-known/openid-configuration`,
+                        scopes: [
+                            "openid",
+                            "profile",
+                            "email",
+                            "roles",
+                            "plugin",
+                        ],
                     },
                 ],
             }),
-            // Better Auth 公式の TanStack Start 向けクッキープラグイン
+            // 最後に置く必要がある
             tanstackStartCookies(),
         ],
     });
 }
 
-/**
- * 現在のリクエストの origin を baseURL としたメモ化済み BetterAuth インスタンスを返す。
- * リクエストコンテキスト内(サーバー関数・ルートハンドラー)からのみ呼び出せる。
- * 呼び出し側は必ず await すること。
- */
+/** リクエストコンテキスト内からのみ呼び出せる */
 export async function getAuth(): Promise<Auth> {
-    // getRequest() はリクエストコンテキストに依存するため await より前に呼ぶ
+    // リクエストコンテキストを失わないよう await より前に呼ぶ
     const origin = new URL(getRequest().url).origin;
     const authServerUrl = await getAuthServerUrl();
     const cacheKey = `${origin}|${authServerUrl}`;
