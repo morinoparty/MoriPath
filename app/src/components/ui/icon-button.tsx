@@ -4,8 +4,7 @@ import { ark, type HTMLArkProps } from "@ark-ui/react/factory";
 import * as React from "react";
 import { css, cx } from "../../../styled-system/css";
 
-// アイコンだけを載せる正方形のゴーストボタン。
-// Chakra の IconButton (variant="ghost", size="sm") の置き換え
+// アイコンだけを載せる正方形のゴーストボタン
 const iconButtonClass = css({
     display: "inline-flex",
     alignItems: "center",

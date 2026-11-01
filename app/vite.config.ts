@@ -8,8 +8,7 @@ import autoprefixer from "autoprefixer";
 import { defineConfig, type Plugin } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-// storybook パッケージのビルド成果物 (storybook-static) を
-// client のアセットとして /storybook 配下に同梱する
+// Storybook のビルド成果物を client アセットの /storybook に同梱する
 const storybookDir = path.resolve(__dirname, "../storybook/storybook-static");
 const bundleStorybook = (): Plugin => ({
     name: "moripath:bundle-storybook",
@@ -30,7 +29,7 @@ const bundleStorybook = (): Plugin => ({
         );
         fs.cpSync(storybookDir, outDir, {
             recursive: true,
-            // app/public を staticDirs に含めているため、_headers が混入する
+            // staticDirs 経由で混入する app/public の _headers を除外する
             filter: (src) => path.basename(src) !== "_headers",
         });
     },
@@ -39,8 +38,7 @@ const bundleStorybook = (): Plugin => ({
 export default defineConfig({
     resolve: {
         alias: {
-            // @morinoparty/chlorophyll-react が bare specifier で
-            // styled-system/recipes を参照するため、Panda の outdir に解決する
+            // chlorophyll-react が bare specifier で参照する styled-system を Panda の outdir に解決する
             "styled-system": path.resolve(__dirname, "styled-system"),
         },
     },
@@ -49,9 +47,7 @@ export default defineConfig({
             plugins: [pandacss(), autoprefixer],
         },
     },
-    // @morinoparty/chlorophyll-react は生の TSX を配布しているため、
-    // dep optimizer (esbuild) の JSX 変換を automatic にしないと
-    // SSR で `React is not defined` になる
+    // chlorophyll-react は生の TSX を配布しているため JSX 変換を automatic にする
     optimizeDeps: {
         esbuildOptions: {
             jsx: "automatic",
@@ -67,7 +63,7 @@ export default defineConfig({
     plugins: [
         cloudflare({
             viteEnvironment: { name: "ssr" },
-            // wrangler.jsonc ではなく cloudflare.config.ts (cf CLI) から設定を読む
+            // cloudflare.config.ts から設定を読む
             experimental: { newConfig: true },
         }),
         tanstackStart({

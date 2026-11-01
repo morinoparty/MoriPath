@@ -75,12 +75,12 @@ export interface PlayerServerData {
     server: string;
 }
 
-// ユーザー情報取得API(`/oauth2/userinfo`)の戻り値型
+// `/oauth2/userinfo` のレスポンス
 export interface UserInfoData {
     sub: string; // uuid
-    picture: string; // プロフィール画像URL
+    picture: string;
     preferred_username: string; // 通常MCIDと同一
     email: string; // noreplyメールアドレス
-    email_verified: boolean; // emailが認証されているか
-    roles: string[]; // ロール一覧
+    email_verified: boolean;
+    roles: string[];
 }

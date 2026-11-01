@@ -11,8 +11,6 @@ export const getUserInfo = createServerFn().handler(
             headers: request.headers,
         });
 
-        // サーバーリストの上から順に解決した認証サーバー (MineAuth) に問い合わせる
-
         const authServerUrl = await getAuthServerUrl();
 
         const response = await fetch(`${authServerUrl}/oauth2/userinfo`, {

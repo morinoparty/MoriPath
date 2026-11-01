@@ -2,7 +2,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { getAuth } from "../../../lib/auth";
 import { getServerUrl } from "../../../lib/server-list";
 
-/** GriefPrevention API の claims/me レスポンス型（OpenAPI 準拠） */
 interface ClaimsMeResponse {
     accruedClaimBlocks: number;
     bonusClaimBlocks: number;
@@ -18,10 +17,6 @@ interface ClaimsMeResponse {
     totalClaimCount: number;
 }
 
-/**
- * MineAuth GriefPrevention API で「自分のクレーム情報」を取得する。
- * remainingClaimBlocks が残り保護ブロック数（remainingClaimAmount）として使える。
- */
 export const getMyClaims = createServerFn().handler(
     // biome-ignore lint/suspicious/noExplicitAny: request is not typed
     async ({ request }: any) => {
@@ -35,7 +30,7 @@ export const getMyClaims = createServerFn().handler(
             throw new Error("No access token available");
         }
 
-        // プラグイン (GriefPrevention / Vault) は main サーバーにのみ存在するため固定で問い合わせる
+        // GriefPrevention / Vault は main サーバーにのみ存在する
         const mainServerUrl = getServerUrl("main");
 
         const response = await fetch(

@@ -9,7 +9,7 @@ const meta: Meta<typeof PlayerMap> = {
     component: PlayerMap,
     tags: ["autodocs"],
     decorators: [
-        // app (components/ui/provider.tsx) と同じく crafthead.net からアバターを取得する
+        // Storybook では MC_API_URL を使えないため crafthead.net から取得する
         (Story) => (
             <MinecraftProvider
                 config={{

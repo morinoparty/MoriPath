@@ -16,7 +16,6 @@ const withTheme: Decorator = (Story, context) => {
     useEffect(() => {
         const root = document.documentElement;
 
-        // Set color mode
         if (colorMode === "dark") {
             root.classList.add("dark");
             root.setAttribute("data-theme", "dark");
@@ -25,7 +24,6 @@ const withTheme: Decorator = (Story, context) => {
             root.setAttribute("data-theme", "light");
         }
 
-        // Set palette
         root.setAttribute("data-color-palette", palette);
     }, [colorMode, palette]);
 
@@ -109,8 +107,7 @@ const preview: Preview = {
         withTheme,
         (Story, context) => {
             const colorMode = context.globals.colorMode || "light";
-            // パレット自体は withTheme が :root の data-color-palette 属性に設定し、
-            // Panda の globalCss (app/panda.config.ts) が colorPalette を追従させる
+            // パレットは withTheme が設定する data-color-palette 属性で切り替わる
             return (
                 <PaletteProvider>
                     <ThemeProvider forcedTheme={colorMode} enableSystem={false}>

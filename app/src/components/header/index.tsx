@@ -85,14 +85,12 @@ const Actions = ({ children }: ActionsProps) => {
     return <div className={style.actions}>{children}</div>;
 };
 
-// Legacy default export for backward compatibility
 const Builted = ({ session }: HeaderProps) => {
     const style = headerStyle();
     return (
         <div className={style.root}>
             <Logo />
             <div className={style.actions}>
-                {/*<ColorModeButton />*/}
                 <PaletteButton />
                 <Notification />
                 <LoginStatus.Root session={session}>
