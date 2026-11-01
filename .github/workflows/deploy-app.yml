@@ -1,9 +1,6 @@
 name: Deploy
 
-# main への push と手動実行で build + dry-run を行い、main への push のときだけ本番 deploy する。
-# 必要な secret (`gh secret set -f app/.env` で登録する):
-#   CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID … cf CLI 用 (Worker には渡さない)
-#   AUTH_SECRET, SERVER_URL … Worker secret (--secrets-file で渡す)
+# 本番 deploy は main への push のみ。手動実行は dry-run まで
 on:
   workflow_dispatch:
   push:
@@ -22,17 +19,15 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # pnpm (package.json の packageManager) と Node (.node-version) をまとめて入れる。
-      # pnpm/action-setup の self-installer (npm 経由) を使わないので速い
       - uses: pnpm/setup@v3
         with:
-          cache: true      # pnpm store を lockfile ごとにキャッシュ
-          install: false   # install は次の Install ステップで --frozen-lockfile 付きで行う
+          cache: true
+          install: false   # Install ステップで --frozen-lockfile 付きで行う
 
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      # Storybook を先にビルドし、app の client アセット (/storybook) に同梱する
+      # app の /storybook に同梱するため先にビルドする
       - name: Build Storybook
         run: pnpm run build:storybook
 
@@ -44,14 +39,13 @@ jobs:
         working-directory: app
         run: pnpm exec cf deploy --prebuilt --mode production --dry-run
 
-      # secrets は `--secrets-file` でバージョンと同時にアップロードする
       - name: Deploy
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         working-directory: app
         run: |
           # 空の secret で上書きしないよう、揃っていなければ止める
-          : "${AUTH_SECRET:?}" "${SERVER_URL:?}"
-          jq -n --arg AUTH_SECRET "$AUTH_SECRET" --arg SERVER_URL "$SERVER_URL" '$ARGS.named' > "$RUNNER_TEMP/secrets.json"
+          : "${AUTH_SECRET:?}" "${SERVER_URL:?}" "${MC_API_URL:?}"
+          jq -n --arg AUTH_SECRET "$AUTH_SECRET" --arg SERVER_URL "$SERVER_URL" --arg MC_API_URL "$MC_API_URL" '$ARGS.named' > "$RUNNER_TEMP/secrets.json"
           pnpm exec cf deploy --prebuilt --mode production --secrets-file "$RUNNER_TEMP/secrets.json" --message "Deployed by GitHub Actions ${GITHUB_SHA::7}"
           rm -f "$RUNNER_TEMP/secrets.json"
         env:
@@ -59,3 +53,4 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           SERVER_URL: ${{ secrets.SERVER_URL }}
+          MC_API_URL: ${{ secrets.MC_API_URL }}

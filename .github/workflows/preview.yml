@@ -19,33 +19,28 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # pnpm (package.json の packageManager) と Node (.node-version) をまとめて入れる。
-      # pnpm/action-setup の self-installer (npm 経由) を使わないので速い
       - uses: pnpm/setup@v3
         with:
-          cache: true      # pnpm store を lockfile ごとにキャッシュ
-          install: false   # install は次の Install ステップで --frozen-lockfile 付きで行う
+          cache: true
+          install: false   # Install ステップで --frozen-lockfile 付きで行う
 
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      # Storybook を先にビルドし、app の client アセット (/storybook) に同梱する
+      # app の /storybook に同梱するため先にビルドする
       - name: Build Storybook
         run: pnpm run build:storybook
 
-      # Worker "moripath" の Worker Preview として deploy する。
-      # `cf previews deploy` は isPreview でビルドし直すので --prebuilt は付けない。
-      # `cf previews deploy` は --secrets-file を受け付けない。Preview が本番 Worker に
-      # 登録済みの secret (AUTH_SECRET, SERVER_URL) を使えるかは未確認。
+      # `cf previews deploy` は自前でビルドするため --prebuilt は付けない
+      # --secrets-file を受け付けないため secret は渡せない
       - name: Deploy preview
         id: upload-preview
         working-directory: app
-        # pipefail を有効にして tee の前の cf の失敗を拾う
+        # pipefail で tee の前の cf の失敗を拾う
         shell: bash
         run: |
           pnpm exec cf previews deploy "pr-${{ github.event.number }}" | tee "$RUNNER_TEMP/preview.json"
-          # 出力 JSON の preview_urls (無ければ deployment_urls) から URL を取り、
-          # JSON として読めなければ出力中の workers.dev URL を使う
+          # 出力から preview URL を取り出す
           url=$(jq -r '[(.preview_urls, .deployment_urls) | .. | strings | select(startswith("https://"))][0] // empty' "$RUNNER_TEMP/preview.json" 2>/dev/null || true)
           url=${url:-$(grep -oE 'https://[A-Za-z0-9.-]+\.workers\.dev' "$RUNNER_TEMP/preview.json" | head -1)}
           test -n "$url"

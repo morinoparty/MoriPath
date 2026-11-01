@@ -1,13 +1,11 @@
 import type { PlayerServerData, ServerPlayerData } from "../types/player";
+import { getMcApiUrl } from "./player-api";
 import { getServers, getServerUrl } from "./server-list";
 
-// カラータグを削除する関数
 export const removeColorTags = (text: string): string => {
-    // <#RRGGBB>や</#RRGGBB>、<gold>や</gold>などのタグを削除
     return text.replace(/<[/#]?(?:#[0-9a-fA-F]{6}|[a-zA-Z]+)>/g, "");
 };
 
-// ユーザー名の検証を行う関数
 export const validateUsername = async (
     username: string,
     currentUser: string | undefined,
@@ -16,15 +14,14 @@ export const validateUsername = async (
         return "Minecraft IDを入力してください";
     }
 
-    // 自分自身への送金を防ぐ
     if (currentUser && username.toLowerCase() === currentUser.toLowerCase()) {
         return "自分自身には送金できません";
     }
 
     try {
-        // ユーザーが存在するか確認するAPIを呼び出す
+        // もりのパーティに参加したことがあるプレイヤーかを確認する
         const response = await fetch(
-            `https://api.ashcon.app/mojang/v2/user/${encodeURIComponent(username)}`,
+            `${getMcApiUrl()}/v1/players/${encodeURIComponent(username)}`,
         );
 
         if (response.status === 404) {
@@ -43,7 +40,6 @@ export const validateUsername = async (
 };
 
 export async function getPlayerData(uuid: string): Promise<PlayerServerData> {
-    // サーバー一覧は `${SERVER_URL}servers` から取得する
     const servers = await getServers();
     for (const server of servers) {
         const response = await fetch(
