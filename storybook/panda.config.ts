@@ -1,6 +1,5 @@
 import { defineConfig } from "@pandacss/dev";
-// app 側の Panda 設定(トークン・preset・staticCss)をそのまま流用し、
-// 抽出対象と出力先だけ Storybook 用に差し替える
+// app の Panda 設定を流用し、抽出対象と出力先だけ差し替える
 import appConfig from "../app/panda.config";
 
 export default defineConfig({

@@ -7,13 +7,9 @@ export const getUserInfo = createServerFn().handler(
     async ({ request }: any) => {
         const auth = await getAuth();
         const tokenResult = await auth.api.getAccessToken({
-            body: {
-                providerId: "MineAuth",
-            },
+            body: { useAccountCookie: true },
             headers: request.headers,
         });
-
-        // サーバーリストの上から順に解決した認証サーバー (MineAuth) に問い合わせる
 
         const authServerUrl = await getAuthServerUrl();
 

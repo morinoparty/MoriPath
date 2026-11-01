@@ -11,9 +11,7 @@ export const getVaultBalance = createServerFn().handler(
     async ({ request }: any) => {
         const auth = await getAuth();
         const tokenResult = await auth.api.getAccessToken({
-            body: {
-                providerId: "MineAuth",
-            },
+            body: { useAccountCookie: true },
             headers: request.headers,
         });
 
@@ -21,7 +19,7 @@ export const getVaultBalance = createServerFn().handler(
             throw new Error("No access token available");
         }
 
-        // プラグイン (GriefPrevention / Vault) は main サーバーにのみ存在するため固定で問い合わせる
+        // GriefPrevention / Vault は main サーバーにのみ存在する
         const mainServerUrl = getServerUrl("main");
 
         const response = await fetch(

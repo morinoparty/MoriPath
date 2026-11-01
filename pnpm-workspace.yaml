@@ -2,10 +2,10 @@ packages:
     - app
     - storybook
 
-onlyBuiltDependencies:
-    - esbuild
-    - sharp
-    - workerd
+allowBuilds:
+    esbuild: true
+    sharp: true
+    workerd: true
 
 overrides:
     # @pandacss/* 1.12 が postcss を 8.5.14 に固定しているため、vite 側 (8.5.31) と型が食い違い

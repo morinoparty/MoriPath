@@ -6,18 +6,21 @@ export default defineConfig({
         compatibilityDate: "2025-12-13",
         compatibilityFlags: ["nodejs_compat", "global_fetch_strictly_public"],
         entrypoint: "@tanstack/react-start/server-entry",
-        // PR ごとの preview は `cf workers versions create` の未昇格バージョン + preview URL で行う
+        // workers.dev でのみ公開する
+        workersDev: true,
+        // PR ごとの preview 用
         previewUrls: true,
         observability: {
             enabled: true,
         },
         env: {
-            CLIENT_ID: bindings.text("01a0f416-28d5-7472-b4ae-4e8d295bc800"),
-            // secrets はデプロイ時に `cf deploy --secrets-file` でアップロードする
-            // 値は GitHub リポジトリの Actions secrets に置く
+            CLIENT_ID: bindings.text("01a15d07-5d72-76da-83d5-09c6794ddfdc"),
+            // secrets は `cf deploy --secrets-file` でアップロードする
             AUTH_SECRET: bindings.secret(),
-            // サーバー一覧と認証サーバーは `${SERVER_URL}servers` から実行時に解決する
+            // `${SERVER_URL}servers` からサーバー一覧と認証サーバーを解決する
             SERVER_URL: bindings.secret(),
+            // プレイヤー情報・画像 API
+            MC_API_URL: bindings.secret(),
             ASSETS: bindings.assets(),
         },
     },

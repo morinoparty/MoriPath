@@ -8,6 +8,7 @@ import {
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Layout } from "../components/layout";
 import { Provider } from "../components/ui/provider";
+import { getMcApiUrlFn } from "../lib/server-functions/get-mc-api-url";
 import appCss from "../style/app.css?url";
 
 export const Route = createRootRoute({
@@ -46,13 +47,17 @@ export const Route = createRootRoute({
             },
         ],
     }),
+    // MC_API_URL は deploy ごとにしか変わらないため再取得しない
+    loader: async () => ({ mcApiUrl: await getMcApiUrlFn() }),
+    staleTime: Number.POSITIVE_INFINITY,
     component: RootComponent,
 });
 
 function RootComponent() {
+    const { mcApiUrl } = Route.useLoaderData();
     return (
         <RootDocument>
-            <Provider>
+            <Provider mcApiUrl={mcApiUrl}>
                 <Layout>
                     <Outlet />
                 </Layout>
@@ -70,7 +75,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             <body>
                 {children}
 
-                {process.env.NODE_ENV === "development" && (
+                {import.meta.env.DEV && (
                     <TanStackDevtools
                         config={{
                             position: "bottom-right",

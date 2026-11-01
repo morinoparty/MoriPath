@@ -13,10 +13,8 @@ export default defineConfig(({ mode }) => {
         mode: "development",
         resolve: {
             alias: {
-                // app パッケージのソースを Storybook から参照するための alias
                 "@": path.resolve(__dirname, "../app/src"),
-                // @morinoparty/chlorophyll-react が bare specifier で
-                // styled-system/recipes を参照するため、app 側の Panda outdir に解決する
+                // chlorophyll-react が参照する styled-system を app 側の出力先に解決する
                 "styled-system": path.resolve(
                     __dirname,
                     "../app/styled-system",
@@ -28,8 +26,7 @@ export default defineConfig(({ mode }) => {
                 plugins: [autoprefixer, pandacss],
             },
         },
-        // @morinoparty/chlorophyll-react は生の TSX を配布しているため、
-        // dep optimizer (esbuild) の JSX 変換を automatic にする
+        // chlorophyll-react は生の TSX を配布しているため JSX 変換を automatic にする
         optimizeDeps: {
             esbuildOptions: {
                 jsx: "automatic",

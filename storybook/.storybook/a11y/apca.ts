@@ -8,8 +8,7 @@ type ConformanceThresholdFn = (
     fontWeight: string,
 ) => number | null;
 
-// Augment Axe types to include the color utilities we use in this file
-// https://github.com/dequelabs/axe-core/blob/develop/lib/commons/color/color.js
+// Augment Axe types with the color utilities used here
 type Color = {
     red: number;
     green: number;
@@ -77,7 +76,6 @@ const generateColorContrastAPCAConformanceCheck = (
             bgColor,
         );
 
-        // missing data to determine APCA contrast for this node
         if (!bgColor || !fgColor || !fontSize || !fontWeight) {
             return undefined;
         }
@@ -90,11 +88,10 @@ const generateColorContrastAPCAConformanceCheck = (
             calcAPCA(toRGBA(fgColor), toRGBA(bgColor)) as number,
         );
 
-        // Check if element has data-placeholder attribute
         const hasPlaceholderAttr = node.hasAttribute("data-placeholder");
         const originalThreshold = conformanceThresholdFn(fontSize, fontWeight);
 
-        // Use reduced threshold of 30 for placeholders, otherwise use original threshold
+        // Placeholders use a relaxed threshold
         const apcaThreshold = hasPlaceholderAttr ? 30 : originalThreshold;
 
         this.data({

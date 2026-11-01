@@ -11,7 +11,7 @@ Web application and portal service for the Morino Party (もりのパーティ) 
 - **Storybook integration**: Component catalog developed with Storybook and bundled under `/storybook`
 - **Edge rendering**: High-performance SSR and edge execution powered by Cloudflare Workers
 
-The live portal is available at [app.morino.party](https://app.morino.party), and the component catalog is accessible at [app.morino.party/storybook](https://app.morino.party/storybook).
+The live portal is available at [moripath.morinoparty.workers.dev](https://moripath.morinoparty.workers.dev), and the component catalog is accessible at [moripath.morinoparty.workers.dev/storybook](https://moripath.morinoparty.workers.dev/storybook/).
 
 ## Modules
 
@@ -36,7 +36,7 @@ The live portal is available at [app.morino.party](https://app.morino.party), an
 ## Requirements
 
 - **Node.js** 26+
-- **pnpm** 10+
+- **pnpm** 12 (version pinned by `packageManager` in `package.json`)
 - **[Task](https://taskfile.dev/)** (optional)
 
 ## Development
@@ -61,9 +61,11 @@ cp app/.env.example app/.env
 
 | Variable | Description |
 |----------|-------------|
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID used by the `cf` CLI (not passed to the Worker) |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API token used by the `cf` CLI (not passed to the Worker) |
 | `AUTH_SECRET` | Secret key used for session encryption (at least 32 characters) |
 | `SERVER_URL` | Base API endpoint for Morino Party services (e.g. `https://api.morino.party/`). The server list is fetched from `${SERVER_URL}servers`, and the first reachable server in that list is used as the MineAuth server |
-| `CLIENT_ID` | MineAuth OAuth2 client ID |
+| `CLIENT_ID` | MineAuth OAuth2 client ID (defined as a var in `app/cloudflare.config.ts`; set it in `.env` only to override it locally). The redirect URI to register on MineAuth is `<origin>/api/auth/callback/MineAuth` |
 
 ### Running dev servers
 
@@ -93,12 +95,21 @@ cd app && pnpm preview
 
 ## Deployment
 
-Deployments to Cloudflare Workers are automated via GitHub Actions on push to `main` (and PR preview deployments).
+The app is deployed with the `cf` CLI as the Worker `moripath` and served only on `https://moripath.morinoparty.workers.dev` (no custom domain).
 
-To build and deploy manually:
+- `.github/workflows/deploy-app.yml` runs `cf build` and `cf deploy --prebuilt --mode production --dry-run`, and deploys to production on push to `main`.
+- `.github/workflows/preview.yml` deploys each PR with `cf previews deploy` and comments the preview URL on the PR.
+
+Secrets are read from GitHub Actions secrets: `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` for the `cf` CLI, and `AUTH_SECRET` and `SERVER_URL`, which CI uploads as Worker secrets with `cf deploy --secrets-file`. Register them from your local `.env`:
 
 ```bash
-pnpm deploy
+gh secret set -f app/.env
+```
+
+To build and deploy manually (`cf` reads `CLOUDFLARE_*` from `app/.env`):
+
+```bash
+pnpm run deploy
 ```
 
 ## Scripts
@@ -111,7 +122,7 @@ pnpm deploy
 | `pnpm build` | Build Storybook and web application |
 | `pnpm build:storybook` | Build Storybook static assets |
 | `pnpm check` | Run Biome linter and formatter checks with autofix |
-| `pnpm deploy` | Build Storybook and deploy application via `cf deploy` |
+| `pnpm run deploy` | Build Storybook and deploy application via `cf deploy` |
 | `pnpm cf-typegen` | Generate Cloudflare Worker environment bindings |
 
 ## Design system
