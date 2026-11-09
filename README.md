@@ -25,19 +25,19 @@ The live portal is available at [moripath.morinoparty.workers.dev](https://morip
 - **TanStack Start** / **TanStack Router** - full-stack React framework with SSR and file-based routing
 - **React** 19 / **TypeScript** 5.9
 - **Cloudflare Workers** (`cf` CLI / workerd) - edge serverless runtime
-- **Vite** 7 - frontend tooling and build pipeline
+- **[Vite+](https://viteplus.dev)** 1.5 (`vite-plus`, `vp` CLI) - unified toolchain: Vite 8 + Rolldown for builds, Vite Task for cached task runs
 - **TanStack Query** - asynchronous server state synchronization and data fetching
 - **Chlorophyll** (`@morinoparty/chlorophyll-react`) - Morino Party design system component library
 - **Ark UI** / **Panda CSS** - accessible headless UI primitives and zero-runtime CSS-in-JS
 - **Better Auth** - authentication framework integrated with MineAuth OIDC provider
-- **Biome** - linter and code formatter
+- **Oxlint** / **Oxfmt** (via `vp check`) - linter and code formatter
 - **Storybook** 10 - UI component development and preview
 
 ## Requirements
 
 - **Node.js** 26+
 - **pnpm** 12 (version pinned by `packageManager` in `package.json`)
-- **[Task](https://taskfile.dev/)** (optional)
+- **[Vite+ global CLI](https://viteplus.dev/guide/global-cli)** (optional) - `vite-plus` is a devDependency, so `pnpm run <script>` and `pnpm exec vp <command>` work without it. A global `vp` delegates `vp build`, `vp run`, etc. to the project's version (pinned in the `catalog` of `pnpm-workspace.yaml`)
 
 ## Development
 
@@ -47,9 +47,11 @@ The live portal is available at [moripath.morinoparty.workers.dev](https://morip
 # Install dependencies
 pnpm install
 
-# Setup git hooks
+# Setup git hooks (lefthook is a devDependency)
 pnpm lefthook install
 ```
+
+The lefthook `pre-commit` hook runs `vp check --fix` on staged files. Git hooks are managed by lefthook only: do not run `vp config` or `vp hooks enable`, which set `core.hooksPath` to the Vite+ hook dispatcher and bypass lefthook.
 
 ### Environment variables
 
@@ -65,6 +67,7 @@ cp app/.env.example app/.env
 | `CLOUDFLARE_API_TOKEN` | Cloudflare API token used by the `cf` CLI (not passed to the Worker) |
 | `AUTH_SECRET` | Secret key used for session encryption (at least 32 characters) |
 | `SERVER_URL` | Base API endpoint for Morino Party services (e.g. `https://api.morino.party/`). The server list is fetched from `${SERVER_URL}servers`, and the first reachable server in that list is used as the MineAuth server |
+| `MC_API_URL` | Player API used for player names and images |
 | `CLIENT_ID` | MineAuth OAuth2 client ID (defined as a var in `app/cloudflare.config.ts`; set it in `.env` only to override it locally). The redirect URI to register on MineAuth is `<origin>/api/auth/callback/MineAuth` |
 
 ### Running dev servers
@@ -83,8 +86,14 @@ pnpm dev:all
 ## Build & check
 
 ```bash
-# Run Biome linter and formatter
+# Format (Oxfmt) and lint (Oxlint) with autofix
 pnpm check
+
+# Same checks without autofix, as run in CI
+pnpm check:ci
+
+# Type-check the app (tsc)
+pnpm typecheck
 
 # Build Storybook and the web app
 pnpm build
@@ -93,14 +102,31 @@ pnpm build
 cd app && pnpm preview
 ```
 
+Lint, format and task settings live in the root `vite.config.ts`. `vp check` does not type-check here, so run `pnpm typecheck` as well.
+
+`pnpm build:storybook` empties `storybook/storybook-static` and then runs the `build-storybook` Vite Task defined in the root `vite.config.ts`. When its inputs are unchanged, it restores `storybook/storybook-static` from the task cache (`node_modules/.vite/task-cache`) instead of rebuilding. The inputs are an explicit list, so add new locations there if stories start reading files from elsewhere. To force a rebuild:
+
+```bash
+pnpm exec vp run --no-cache build-storybook
+```
+
 ## Deployment
 
 The app is deployed with the `cf` CLI as the Worker `moripath` and served only on `https://moripath.morinoparty.workers.dev` (no custom domain).
 
-- `.github/workflows/deploy-app.yml` runs `cf build` and `cf deploy --prebuilt --mode production --dry-run`, and deploys to production on push to `main`.
-- `.github/workflows/preview.yml` deploys each PR with `cf previews deploy` and comments the preview URL on the PR.
+A single workflow, `.github/workflows/deploy.yml`, runs on pull requests, on push to `main` and on manual dispatch. Every run executes `check:ci`, `typecheck`, the Storybook build (with the Vite Task cache restored from the GitHub Actions cache), `vp build` and `cf deploy --prebuilt --mode production --dry-run`. Then:
 
-Secrets are read from GitHub Actions secrets: `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` for the `cf` CLI, and `AUTH_SECRET` and `SERVER_URL`, which CI uploads as Worker secrets with `cf deploy --secrets-file`. Register them from your local `.env`:
+- **Push to `main`**: deploys to production with `cf deploy --prebuilt --mode production --secrets-file`.
+- **Pull requests**: uploads a Worker Version with `cf workers versions create` (not deployed to production) and gives it the preview alias `pr-<N>`. PR runs check out and build the PR head commit (not the merge commit), so each upload matches one commit. This yields two preview URLs:
+  - the PR alias URL (`pr-<N>`), which always points to the latest commit of the PR
+  - the Version URL, which stays pinned to that commit
+
+  Storybook is served under `/storybook/` on both. The URLs, the Worker Version ID and the head commit are posted as a PR comment, which is edited in place on later pushes, and are also written to the run's job summary.
+- A re-run of an older run whose head is no longer the PR head skips the upload and the comment, so the PR alias does not go back to old code.
+- Previews use the production Worker secrets. MineAuth sign-in may fail on preview origins, because the redirect URI `<origin>/api/auth/callback/MineAuth` is not registered for them.
+- Previews are skipped for pull requests from forks and from Dependabot, which do not receive repository secrets.
+
+Secrets are read from GitHub Actions secrets: `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` for the `cf` CLI, and `AUTH_SECRET`, `SERVER_URL` and `MC_API_URL`, which CI uploads as Worker secrets with `cf deploy --secrets-file`. Register them from your local `.env`:
 
 ```bash
 gh secret set -f app/.env
@@ -120,8 +146,10 @@ pnpm run deploy
 | `pnpm dev:storybook` | Start Storybook dev server (`storybook`) |
 | `pnpm dev:all` | Start both web application and Storybook concurrently |
 | `pnpm build` | Build Storybook and web application |
-| `pnpm build:storybook` | Build Storybook static assets |
-| `pnpm check` | Run Biome linter and formatter checks with autofix |
+| `pnpm build:storybook` | Build Storybook static assets (cached Vite Task) |
+| `pnpm check` | Format and lint with autofix (`vp check --fix`: Oxfmt + Oxlint) |
+| `pnpm check:ci` | Format and lint checks without autofix (`vp check`) |
+| `pnpm typecheck` | Type-check the web application with `tsc` |
 | `pnpm run deploy` | Build Storybook and deploy application via `cf deploy` |
 | `pnpm cf-typegen` | Generate Cloudflare Worker environment bindings |
 

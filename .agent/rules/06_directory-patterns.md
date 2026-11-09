@@ -4,6 +4,9 @@
 
 プロジェクトは pnpm ワークスペースで、`app` と `storybook` の 2 パッケージから構成されます。
 
+- `vite.config.ts` (ルート) — Vite+ の整形 (`fmt`)・lint (`lint`)・タスク (`run`、Storybook ビルドのキャッシュ) の設定
+- `pnpm-workspace.yaml` — ワークスペース定義と、Vite+ のバージョンを一元管理する `catalog`
+
 ## `app/` — Web アプリケーション本体
 
 - `app/src/` — アプリケーションのソースコード
@@ -33,5 +36,4 @@
 ## `.github/`
 
 - `workflows/` — GitHub Actions ワークフロー
-  - `deploy-app.yml` — `main` ブランチ push 時の本番デプロイ
-  - `preview.yml` — PR 作成・更新時のプレビュー環境デプロイ (`cf previews deploy`)
+  - `deploy.yml` — PR・`main` への push・手動実行でのチェックとビルド。`main` への push で本番デプロイ、PR では preview 用の Worker Version を upload して URL をコメント

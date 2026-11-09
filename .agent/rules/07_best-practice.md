@@ -26,7 +26,10 @@
 - 認証が必要な処理には `authMiddleware` や Better Auth のセッション検証を必ず適用してください。
 - 入力値の検証には Zod スキーマを使用し、型安全性とバリデーションを両立してください。
 
-## コード品質 & Biome
+## コード品質 & Oxlint / Oxfmt
 
 - コミット前に必ず `pnpm check` を実行し、Linter / Formatter のチェックをパスさせてください。
 - 未使用の import や変数、曖昧な `any` 型を放置しないでください。
+- import 文の並べ替えは Oxfmt が行います。順序に意味のある副作用 import (CSS・polyfill など) の直前にはコメントを置き、そこで並べ替えを区切ってください (コメントがないと前後の import がその import をまたいで移動します)。
+- 埋め込み式のない文字列はテンプレートリテラルではなく `"..."` で書いてください (Biome の noUnusedTemplateLiteral に相当するルールが Oxlint にないため、lint では検出されません)。
+- lint の抑制が必要な場合は、`// oxlint-disable-next-line <ルール名> -- <理由>` のようにルール名と理由を書いてください。

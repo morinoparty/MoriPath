@@ -9,13 +9,13 @@ interface PurchaseClaimBlocksResponse {
     totalCost: number;
 }
 
-const purchaseClaimBlocksFn = createServerFn().inputValidator(
+const purchaseClaimBlocksFn = createServerFn().validator(
     (data: { blockCount: number }) => data,
 );
 
 /** どんぐり残高を消費して保護ブロックを購入する */
 export const purchaseClaimBlocks = purchaseClaimBlocksFn.handler(
-    // biome-ignore lint/suspicious/noExplicitAny: ctx の型は createServerFn のコンテキストに依存する
+    // oxlint-disable-next-line typescript/no-explicit-any -- ctx の型は createServerFn のコンテキストに依存する
     async (ctx: any) => {
         const { data, request } = ctx as {
             data: { blockCount: number };

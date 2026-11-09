@@ -2,11 +2,11 @@ import { createServerFn } from "@tanstack/react-start";
 import { getAuth } from "../../../lib/auth";
 import { getServerUrl } from "../../../lib/server-list";
 
-// biome-ignore lint/suspicious/noExplicitAny: レスポンス構造が未定義
+// oxlint-disable-next-line typescript/no-explicit-any -- レスポンス構造が未定義
 export type QuestsResponse = any;
 
 export const getQuests = createServerFn().handler(
-    // biome-ignore lint/suspicious/noExplicitAny: request is not typed
+    // oxlint-disable-next-line typescript/no-explicit-any -- request is not typed
     async ({ request }: any) => {
         const auth = await getAuth();
         const tokenResult = await auth.api.getAccessToken({

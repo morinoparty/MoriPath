@@ -21,7 +21,7 @@
 - 書籍「リーダブルコード」のようなベストプラクティスを常に適用してください。
 - コードの意図・背景などのコメントを各行に日本語で積極的に入れてください。
 - ファイルの命名規則には kebab-case を使用してください。
-- コードを書いた後は、Biome のチェック (`pnpm check`) およびビルドが通ることを確認してください。
+- コードを書いた後は、lint・整形のチェック (`pnpm check`)、型チェック (`pnpm typecheck`) およびビルドが通ることを確認してください。
 - 作業後に勝手に開発サーバーの起動 (`pnpm dev` 等) やデプロイ (`pnpm deploy`) は行わないでください。
 
 ## フロントエンド (`app/src/`, `storybook/`, TypeScript / React)
@@ -49,8 +49,10 @@
 - Web アプリの開発起動: `pnpm dev`
 - Storybook の開発起動: `pnpm dev:storybook`
 - 両方を同時起動: `pnpm dev:all`
-- Biome チェック & 自動修正: `pnpm check`
+- lint・整形チェック & 自動修正 (Oxlint / Oxfmt): `pnpm check`
+- CI と同じ lint・整形チェック (自動修正なし): `pnpm check:ci`
+- 型チェック: `pnpm typecheck`
 - 全体ビルド (Storybook + Web アプリ): `pnpm build`
-- Storybook 単体ビルド: `pnpm build:storybook`
+- Storybook 単体ビルド: `pnpm build:storybook` (`storybook-static` を空にしてから Vite Task で実行し、入力が変わっていなければキャッシュから戻す。強制的に再ビルドする場合は `pnpm exec vp run --no-cache build-storybook`)
 - Web アプリのローカルプレビュー: `cd app && pnpm preview`
 - Cloudflare 型定義生成: `pnpm cf-typegen`

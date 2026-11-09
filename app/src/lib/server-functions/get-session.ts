@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getAuth } from "../auth";
 
-// biome-ignore lint/suspicious/noExplicitAny: request is not typed
+// oxlint-disable-next-line typescript/no-explicit-any -- request is not typed
 export const getSession = createServerFn().handler(async ({ request }: any) => {
     const auth = await getAuth();
     const session = await auth.api.getSession({

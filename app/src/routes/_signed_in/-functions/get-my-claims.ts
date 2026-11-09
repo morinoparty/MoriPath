@@ -18,7 +18,7 @@ interface ClaimsMeResponse {
 }
 
 export const getMyClaims = createServerFn().handler(
-    // biome-ignore lint/suspicious/noExplicitAny: request is not typed
+    // oxlint-disable-next-line typescript/no-explicit-any -- request is not typed
     async ({ request }: any) => {
         const auth = await getAuth();
         const tokenResult = await auth.api.getAccessToken({
