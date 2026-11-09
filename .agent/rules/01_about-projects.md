@@ -19,12 +19,12 @@
 - **TanStack Start / TanStack Router** — SSR およびファイルベースルーティングを備えたフルスタック React フレームワーク
 - **React 19 / TypeScript 5.9** — フロントエンド UI と型安全な実装
 - **Cloudflare Workers (`cf` CLI / workerd)** — エッジサーバーレスランタイム
-- **Vite 7** — 高速なフロントエンドビルドツール
+- **Vite+ (`vite-plus` / `vp` CLI)** — Vite 8 + Rolldown によるビルドと、Vite Task によるキャッシュ付きタスク実行をまとめたツールチェーン
 - **TanStack Query** — 非同期データフェッチおよびサーバー状態管理
 - **Chlorophyll (`@morinoparty/chlorophyll-react`)** — Morino Party 公式デザインシステムコンポーネントライブラリ
 - **Ark UI / Panda CSS** — ヘッドレス UI プリミティブおよびゼロランタイム CSS-in-JS
 - **Better Auth** — MineAuth OIDC プロバイダと統合された認証フレームワーク
-- **Biome** — 高速な Linter & Formatter
+- **Oxlint / Oxfmt** — Vite+ の `vp check` で実行する Linter & Formatter
 
 ### コンポーネントカタログ (`storybook/`)
 
@@ -34,5 +34,5 @@
 ### インフラ・CI
 
 - **Cloudflare Workers** — `cf deploy` による高速エッジデプロイ
-- **GitHub Actions** — `main` ブランチへの push による自動デプロイ、PR プレビュー環境の自動構築
+- **GitHub Actions** — `deploy.yml` で check / typecheck / ビルド / dry-run を行い、`main` ブランチへの push で本番デプロイ。PR では本番に deploy しない Worker Version を upload し、PR の最新 commit を指す `pr-<番号>` の URL と、その commit に固定した Version の URL を PR にコメント (PR の head commit をビルド)
 - **pnpm ワークスペース** — `app` と `storybook` の 2 パッケージ構成

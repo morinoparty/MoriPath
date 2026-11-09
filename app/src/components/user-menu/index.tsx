@@ -146,7 +146,7 @@ const SettingsItem = () => {
     );
 };
 
-// biome-ignore lint/suspicious/noExplicitAny: request is not typed
+// oxlint-disable-next-line typescript/no-explicit-any -- request is not typed
 const signOutAction = createServerFn().handler(async ({ request }: any) => {
     const auth = await getAuth();
     await auth.api.signOut({

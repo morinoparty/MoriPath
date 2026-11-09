@@ -21,11 +21,11 @@ const config: StorybookConfig = {
         },
     },
     staticDirs: ["../../app/public"],
-    // biome-ignore lint/suspicious/noExplicitAny: viteFinalの型定義が見つからない
+    // oxlint-disable-next-line typescript/no-explicit-any -- viteFinalの型定義が見つからない
     viteFinal: async (config: any) => {
-        config.esbuild = {
-            ...config.esbuild,
-            jsx: "automatic",
+        config.oxc = {
+            ...config.oxc,
+            jsx: { runtime: "automatic" },
         };
         config.optimizeDeps = {
             ...config.optimizeDeps,
@@ -34,19 +34,19 @@ const config: StorybookConfig = {
                 "node_modules/.cache/storybook",
                 "node_modules/.cache/sb-vite-plugin-externals",
             ],
-            esbuildOptions: {
-                ...config.optimizeDeps?.esbuildOptions,
+            rolldownOptions: {
+                ...config.optimizeDeps?.rolldownOptions,
                 external: [
-                    ...(config.optimizeDeps?.esbuildOptions?.external ?? []),
+                    ...(config.optimizeDeps?.rolldownOptions?.external ?? []),
                     "#tanstack-router-entry",
                     "#tanstack-start-entry",
                 ],
             },
         };
         config.resolve = {
-            ...(config.resolve ?? {}),
+            ...config.resolve,
             alias: {
-                ...(config.resolve?.alias ?? {}),
+                ...config.resolve?.alias,
                 // Storybook では不要な TanStack Start の内部/仮想モジュールをスタブへ解決する
                 "#tanstack-router-entry": fileURLToPath(
                     new URL(

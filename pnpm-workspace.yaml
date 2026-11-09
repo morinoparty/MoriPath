@@ -4,10 +4,41 @@ packages:
 
 allowBuilds:
     esbuild: true
+    # git hook は README の手順 (pnpm lefthook install) で入れる
+    lefthook: false
     sharp: true
     workerd: true
 
+# Vite+ のバージョンはここで一元管理する
+catalog:
+    vite: npm:@voidzero-dev/vite-plus-core@1.5.1
+    vite-plus: 1.5.1
+
 overrides:
-    # @pandacss/* 1.12 が postcss を 8.5.14 に固定しているため、vite 側 (8.5.31) と型が食い違い
+    # @pandacss/* 1.12 が postcss を 8.5.14 に固定しているため、vite 側 (8.5.32) と型が食い違い
     # vite.config.ts の css.postcss.plugins が型エラーになる。同じ postcss に揃える
-    "postcss@8.5.14": 8.5.31
+    "postcss@8.5.14": 8.5.32
+    # 依存が参照する vite も Vite+ のコアに揃え、vite が二重に入らないようにする
+    vite@*: "catalog:"
+
+peerDependencyRules:
+    # vite-plus-core の版番号は各プラグインの peer 範囲 (vite ^8 など) に一致しないため許可する
+    allowAny:
+        - vite
+    allowedVersions:
+        vite: "*"
+        # storybook の任意 peer (^0.x) が古いだけで、参照するのは vite-plus/versions のみ
+        storybook>vite-plus: "1"
+
+# vp migrate が追加。公開直後の Vite+ を入れられるよう、pnpm の公開待ち期間から除外する
+minimumReleaseAgeExclude:
+    - "@voidzero-dev/vite-plus-core@1.5.1"
+    - "@voidzero-dev/vite-plus-darwin-arm64@1.5.1"
+    - "@voidzero-dev/vite-plus-darwin-x64@1.5.1"
+    - "@voidzero-dev/vite-plus-linux-arm64-gnu@1.5.1"
+    - "@voidzero-dev/vite-plus-linux-arm64-musl@1.5.1"
+    - "@voidzero-dev/vite-plus-linux-x64-gnu@1.5.1"
+    - "@voidzero-dev/vite-plus-linux-x64-musl@1.5.1"
+    - "@voidzero-dev/vite-plus-win32-arm64-msvc@1.5.1"
+    - "@voidzero-dev/vite-plus-win32-x64-msvc@1.5.1"
+    - vite-plus@1.5.1

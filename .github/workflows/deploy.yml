@@ -1,0 +1,215 @@
+# TanStack Start アプリ (app/) を cf でビルドし、Worker "moripath" として deploy する。
+#
+# PR・main への push・手動実行で check / typecheck / build / dry-run を行い、
+# main への push のときだけ本番 deploy する。
+# PR では本番に deploy しない Worker Version を preview alias (pr-<番号>) 付きで upload し、
+# PR (最新の commit) と commit 固定の 2 つの URL を PR にコメントする。
+# 必要な secret:
+#   CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID … cf CLI 用 (Worker には渡さない)
+#   AUTH_SECRET, SERVER_URL, MC_API_URL         … Worker secret (--secrets-file で渡す)
+name: Deploy
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  # 本番 deploy (main への push) は固定のグループで直列化する。
+  # PR / 手動実行は本番に deploy しないので ref ごとに分け、本番の待ち行列を押し出さない
+  group: ${{ github.event_name == 'push' && 'deploy-production' || format('deploy-{0}', github.ref) }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  # PR に preview の URL をコメントする
+  pull-requests: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CF_SEND_TELEMETRY: "false"
+    defaults:
+      run:
+        # bash を明示すると -eo pipefail で実行される
+        shell: bash
+    steps:
+      # PR では merge commit ではなく head commit をビルドし、commit 固定の preview と中身を一致させる
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      # Vite+ (vp)、Node (.node-version)、pnpm (package.json の packageManager) をまとめて入れ、
+      # lockfile を固定したまま install する。vp のバージョンは catalog の vite-plus から決まる
+      - uses: voidzero-dev/setup-vp@v1.22.0
+        with:
+          node-version-file: .node-version
+          cache: true # pnpm store を lockfile ごとにキャッシュ
+          run-install: |
+            args: ["--frozen-lockfile"]
+
+      # Vite Task の結果を run をまたいで再利用する。install が node_modules を作り直すので install 後に戻す。
+      # 入力の変化は Vite Task が判定するため、key には run ごとの値だけを入れて最新のものを戻す
+      - name: Restore Vite Task cache
+        id: task-cache
+        uses: actions/cache/restore@v6
+        with:
+          path: node_modules/.vite/task-cache
+          key: vite-task-${{ runner.os }}-${{ runner.arch }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            vite-task-${{ runner.os }}-${{ runner.arch }}-
+
+      - name: Check
+        run: vp run check:ci
+
+      - name: Typecheck
+        run: vp run typecheck
+
+      # app の /storybook に同梱するため先にビルドする。
+      # build:storybook は vite.config.ts の build-storybook タスク (既定でキャッシュ対象) を実行し、
+      # 入力が変わっていなければ前回の storybook-static を戻す
+      - name: Build Storybook
+        run: vp run build:storybook
+
+      # 後続の deploy が失敗してもキャッシュを残せるよう、ビルド直後に保存する
+      - name: Save Vite Task cache
+        uses: actions/cache/save@v6
+        with:
+          path: node_modules/.vite/task-cache
+          key: ${{ steps.task-cache.outputs.cache-primary-key }}
+
+      # cf build は workspace の lockfile を見つけられず npx vp build に委ねるだけなので、直接ビルドする。
+      # 設定の変換・検証は次の dry-run で行われる。
+      # --mode は付けない。vite build が build output に mode "production" を記録するので、
+      # 後続の --prebuilt --mode production と一致する
+      - name: Build
+        working-directory: app
+        run: vp build
+
+      - name: Dry run
+        working-directory: app
+        run: vp exec cf deploy --prebuilt --mode production --dry-run
+
+      # PR の preview。本番には deploy せず、Worker Version だけを upload して
+      # preview alias (pr-<番号>) を付ける。secret は本番の Worker のものをそのまま引き継ぐ。
+      # fork と Dependabot の PR には repository secrets が渡されないのでスキップする
+      - if: >-
+          github.event_name == 'pull_request'
+          && github.event.pull_request.head.repo.full_name == github.repository
+          && github.actor != 'dependabot[bot]'
+        id: preview
+        name: Upload preview version
+        working-directory: app
+        run: |
+          # 古い run の再実行で alias を古いコードに戻さないよう、PR の head が進んでいたら upload しない
+          current_head="$(gh api "repos/${GH_REPO}/pulls/${PR_NUMBER}" --jq .head.sha)"
+          if [ "$current_head" != "$HEAD_SHA" ]; then
+            echo "::notice::PR の head が ${current_head::8} に進んでいるため、${HEAD_SHA::8} の preview は upload しません"
+            echo "stale=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          short_sha="${HEAD_SHA::8}"
+          alias="pr-${PR_NUMBER}"
+          # URL は 2 つ得られる。
+          #   alias (pr-<番号>)          … その PR の最新 commit を指し続ける
+          #   Version (<Version ID 8 桁>) … この commit の upload に固定される
+          # commit SHA は数字で始まることがあり、英小文字始まりが必要な alias には使えないため、
+          # commit に固定した URL には Version の URL を使う
+          # cf は upload 結果を ND-JSON で WRANGLER_OUTPUT_FILE_PATH に書き出す
+          export WRANGLER_OUTPUT_FILE_PATH="$RUNNER_TEMP/cf-output.ndjson"
+          rm -f "$WRANGLER_OUTPUT_FILE_PATH"
+          vp exec cf workers versions create --prebuilt --mode production \
+            --preview-alias "$alias" --tag "$alias" \
+            --message "PR #${PR_NUMBER} (${short_sha})"
+          result="$(jq -c 'select(.type == "version-upload")' "$WRANGLER_OUTPUT_FILE_PATH" | tail -n 1)"
+          printf '%s\n' "$result"
+          version_id="$(jq -r '.version_id // empty' <<<"$result")"
+          pr_url="$(jq -r '.preview_alias_url // empty' <<<"$result")"
+          version_url="$(jq -r '.preview_url // empty' <<<"$result")"
+          if [ -z "$version_id" ]; then
+            echo "::error::cf の出力から Worker Version ID を取得できませんでした"
+            exit 1
+          fi
+          # preview URL は Worker の preview_urls が有効なときだけ返る
+          if [ -z "$pr_url" ] || [ -z "$version_url" ]; then
+            echo "::warning::cf の出力に preview URL がありません"
+          fi
+          {
+            echo "short_sha=${short_sha}"
+            echo "version_id=${version_id}"
+            echo "pr_url=${pr_url}"
+            echo "version_url=${version_url}"
+          } >> "$GITHUB_OUTPUT"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+
+      # push のたびにコメントを増やさないよう、前回のコメントを書き換える。
+      # 同じ表を Job Summary にも残し、commit ごとの URL を run から辿れるようにする
+      - if: steps.preview.outcome == 'success' && steps.preview.outputs.stale != 'true'
+        name: Comment preview URL
+        run: |
+          comment="$RUNNER_TEMP/preview-comment.md"
+          {
+            echo "## 🚀 Preview of ${REPO_NAME}"
+            echo
+            echo "| Resource | Link |"
+            echo "|----------|------|"
+            if [ -n "$PR_URL" ]; then
+              echo "| 🌐 PR #${PR_NUMBER} (latest) | ${PR_URL} |"
+              echo "| 📚 Storybook (latest) | ${PR_URL}/storybook/ |"
+            fi
+            if [ -n "$VERSION_URL" ]; then
+              echo "| 📌 Commit \`${SHORT_SHA}\` | ${VERSION_URL} |"
+              echo "| 📚 Storybook (\`${SHORT_SHA}\`) | ${VERSION_URL}/storybook/ |"
+            fi
+            echo "| 🧩 Worker Version | \`${VERSION_ID}\` |"
+            echo "| 🔖 Head commit | [\`${SHORT_SHA}\`](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${HEAD_SHA}) |"
+            echo
+            echo "> [!NOTE]"
+            echo "> preview は本番の Worker secret をそのまま使います。"
+            echo "> MineAuth の OAuth redirect URI (\`<origin>/api/auth/callback/MineAuth\`) は preview の origin では登録されていないため、サインインに失敗することがあります。"
+          } > "$comment"
+          cat "$comment" >> "$GITHUB_STEP_SUMMARY"
+          gh pr comment "$PR_NUMBER" --body-file "$comment" --edit-last --create-if-none
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          SHORT_SHA: ${{ steps.preview.outputs.short_sha }}
+          VERSION_ID: ${{ steps.preview.outputs.version_id }}
+          PR_URL: ${{ steps.preview.outputs.pr_url }}
+          VERSION_URL: ${{ steps.preview.outputs.version_url }}
+
+      # 本番 deploy は main への push のときだけ
+      - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        name: Deploy to Cloudflare
+        working-directory: app
+        run: |
+          # 空の secret で上書きしないよう、揃っていなければ止める
+          : "${AUTH_SECRET:?}" "${SERVER_URL:?}" "${MC_API_URL:?}"
+          secrets_file="$RUNNER_TEMP/worker-secrets.json"
+          # 失敗しても secret のファイルを残さない
+          trap 'rm -f "$secrets_file"' EXIT
+          jq -n \
+            --arg AUTH_SECRET "$AUTH_SECRET" \
+            --arg SERVER_URL "$SERVER_URL" \
+            --arg MC_API_URL "$MC_API_URL" \
+            '$ARGS.named' > "$secrets_file"
+          vp exec cf deploy --prebuilt --mode production --secrets-file "$secrets_file" \
+            --message "Deployed by GitHub Actions ${GITHUB_SHA::7}"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          SERVER_URL: ${{ secrets.SERVER_URL }}
+          MC_API_URL: ${{ secrets.MC_API_URL }}
