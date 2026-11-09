@@ -243,6 +243,9 @@ importers:
       '@pandacss/dev':
         specifier: ^1.12.1
         version: 1.12.1(typescript@5.9.3)
+      '@pandacss/preset-base':
+        specifier: ^1.12.1
+        version: 1.12.1
       '@types/node':
         specifier: ^26.6.5
         version: 26.6.5
@@ -301,6 +304,9 @@ importers:
       '@pandacss/dev':
         specifier: ^1.12.1
         version: 1.12.1(typescript@5.9.3)
+      '@pandacss/preset-base':
+        specifier: ^1.12.1
+        version: 1.12.1
       '@storybook/addon-a11y':
         specifier: ^10.6.6
         version: 10.6.6(storybook@10.6.6(@types/react@19.3.0)(prettier@3.9.10)(react@19.3.1)(vite-plus@1.5.1(@types/node@26.6.5)(@vitest/ui@5.1.0)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.21.0)(typescript@5.9.3)))
