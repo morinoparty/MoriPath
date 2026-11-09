@@ -6,6 +6,8 @@ allowBuilds:
     esbuild: true
     # git hook は README の手順 (pnpm lefthook install) で入れる
     lefthook: false
+    # Panda 2 の依存。ビルド済みバイナリを optional 依存で取得するため、ソースビルドは不要
+    "@parcel/watcher": false
     sharp: true
     workerd: true
 
@@ -15,9 +17,6 @@ catalog:
     vite-plus: 1.5.1
 
 overrides:
-    # @pandacss/* 1.12 が postcss を 8.5.14 に固定しているため、vite 側 (8.5.32) と型が食い違い
-    # vite.config.ts の css.postcss.plugins が型エラーになる。同じ postcss に揃える
-    "postcss@8.5.14": 8.5.32
     # 依存が参照する vite も Vite+ のコアに揃え、vite が二重に入らないようにする
     vite@*: "catalog:"
 
@@ -42,3 +41,4 @@ minimumReleaseAgeExclude:
     - "@voidzero-dev/vite-plus-win32-arm64-msvc@1.5.1"
     - "@voidzero-dev/vite-plus-win32-x64-msvc@1.5.1"
     - vite-plus@1.5.1
+    - "@morinoparty/chlorophyll-react@0.5.2"

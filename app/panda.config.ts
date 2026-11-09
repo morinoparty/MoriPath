@@ -1,11 +1,13 @@
 import { createPreset, stone } from "@morinoparty/chlorophyll-react/preset";
 import {
+    type Config,
     defineConfig,
     defineGlobalStyles,
     defineTextStyles,
 } from "@pandacss/dev";
+import type { TextStyles } from "@pandacss/types";
 
-export const textStyles = defineTextStyles({
+export const textStyles: TextStyles = defineTextStyles({
     body: {
         description: "The body text style - used in paragraphs",
         value: {
@@ -44,7 +46,7 @@ const globalCss = defineGlobalStyles({
     ...textStyles,
 });
 
-export default defineConfig({
+const config: Config = defineConfig({
     globalCss,
     preflight: true,
 
@@ -66,3 +68,5 @@ export default defineConfig({
     jsxFramework: "react",
     outdir: "styled-system",
 });
+
+export default config;
