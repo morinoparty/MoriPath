@@ -36,7 +36,7 @@
         "autoprefixer": "^10.7.0",
         "axe-core": "^4.14.1",
         "storybook": "^10.6.8",
-        "typescript": "^5.9.3",
+        "typescript": "^7.0.2",
         "vite-plugin-svgr": "^5.2.0",
         "vite-plus": "catalog:"
     }
