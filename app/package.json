@@ -32,7 +32,7 @@
         "zod": "^4.6.7"
     },
     "devDependencies": {
-        "@cloudflare/vite-plugin": "2.0.0-beta.v.12",
+        "@cloudflare/vite-plugin": "2.0.0-beta.v.15",
         "@pandacss/dev": "^2.5.0",
         "@pandacss/preset-base": "^2.5.0",
         "@pandacss/preset-panda": "^2.5.0",
