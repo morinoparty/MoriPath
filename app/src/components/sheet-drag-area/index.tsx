@@ -19,6 +19,8 @@ const INTERACTIVE_SELECTOR =
 const sheetDragAreaStyle = css({
     display: "flex",
     flexDirection: "column",
+    // 包む前と同じく、つまみと見出しのあいだをシートの段の間隔 (gap 5) だけ空ける
+    gap: "5",
     flexShrink: "0",
     // ブラウザのスクロールやプルリフレッシュに取られず、縦のドラッグをこちらで受け取る
     touchAction: "none",

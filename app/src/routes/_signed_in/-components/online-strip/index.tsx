@@ -1,6 +1,7 @@
 import { PlayerAvatar } from "@morinoparty/chlorophyll-react/components";
 import { ChevronRightIcon } from "lucide-react";
 import type { ComponentProps } from "react";
+import { useEffect, useRef } from "react";
 import { css, cx, sva } from "../../../../../styled-system/css";
 import {
     InlineSkeleton,
@@ -63,13 +64,17 @@ const onlineStripStyle = sva({
             overscrollBehaviorX: "contain",
             scrollbarWidth: "none",
             "&::-webkit-scrollbar": { display: "none" },
-            // 右端で顔をふんわり消して、まだ続きがあることを示す
-            maskImage:
-                "linear-gradient(to right, black calc(100% - 2.5rem), transparent)",
+            // 右に続きがあるときだけ、右端で顔をふんわり消して横に動かせることを示す
+            "&[data-more]": {
+                maskImage:
+                    "linear-gradient(to right, black calc(100% - 2.5rem), transparent)",
+            },
         },
         face: {
             flexShrink: "0",
             borderRadius: "full",
+            // PlayerAvatar は角丸の四角なので、縁取りと同じ真円に切りそろえる
+            "& > *, & img": { borderRadius: "full" },
             // 縁取りを画面の地の色にして、顔と帯の地の境目を出す
             outline: "2px solid",
             outlineColor: "colorPalette.bg",
@@ -118,6 +123,27 @@ export const OnlineStrip = ({
     ...buttonProps
 }: OnlineStripProps) => {
     const count = players.length;
+    const facesRef = useRef<HTMLSpanElement>(null);
+
+    // 顔の並びが帯からはみ出していて、まだ右端まで送っていないときだけ data-more を付ける
+    useEffect(() => {
+        const faces = facesRef.current;
+        if (!faces) return;
+        const update = () => {
+            // 小数の幅の誤差で消え残らないよう 1px の余裕を見る
+            const hasMore =
+                faces.scrollLeft + faces.clientWidth < faces.scrollWidth - 1;
+            faces.toggleAttribute("data-more", hasMore);
+        };
+        update();
+        const observer = new ResizeObserver(update);
+        observer.observe(faces);
+        faces.addEventListener("scroll", update, { passive: true });
+        return () => {
+            observer.disconnect();
+            faces.removeEventListener("scroll", update);
+        };
+    }, [count]);
 
     // 誰もいないときは開いても空なので、ボタンにせず一言だけ出す
     if (count === 0) {
@@ -143,7 +169,7 @@ export const OnlineStrip = ({
                 <span className={style.label}>{count}人がプレイ中</span>
             </span>
             {/* 読み上げは aria-label で足りるため、顔の並びは装飾として隠す */}
-            <span className={style.faces} aria-hidden>
+            <span ref={facesRef} className={style.faces} aria-hidden>
                 {players.map((player) => (
                     <span key={player.id} className={style.face}>
                         <PlayerAvatar
