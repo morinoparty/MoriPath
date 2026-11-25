@@ -45,9 +45,9 @@ export default meta;
 
 type Story = StoryObj<typeof StationMarker>;
 
-// 拡大しているときは札と駅名
+// 拡大しているときは札と駅名。タップの当たり判定は地図側で行い、この要素は指やマウスを受けない
 export const Full: Story = {
-    args: { detail: "full", hitSize: 80 },
+    args: { detail: "full" },
 };
 
 // 少し縮小すると札だけ
@@ -55,7 +55,7 @@ export const Badges: Story = {
     args: { detail: "badges" },
 };
 
-// さらに縮小すると点だけ (当たり判定は 44px を保つ)
+// さらに縮小すると点だけ (地図側の当たり判定は半径 22px を保つ)
 export const Dot: Story = {
     args: { detail: "dot" },
 };

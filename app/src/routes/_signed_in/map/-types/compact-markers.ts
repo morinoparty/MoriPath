@@ -41,6 +41,12 @@ export interface MapPinData {
 export interface CompactBaseMarkers {
     railwayLines: RailwayLine[];
     railwayCircles: RailwayCircle[];
+    /**
+     * ナンバリングの記号 (「PAK」など) → 路線の色。
+     * AdvanceRailway の API を使えないときに札を路線の色で描くため、squaremap の駅と路線から推定したもの。
+     * 推定できなかった記号は入らない。古いキャッシュには無いことがある
+     */
+    numberingColors?: Record<string, string>;
     worldBorder: BorderLine[];
     spawn: MapPinData[];
     banners: MapPinData[];

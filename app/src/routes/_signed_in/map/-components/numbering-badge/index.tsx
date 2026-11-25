@@ -8,6 +8,8 @@ const numberingBadgeStyle = cva({
         alignItems: "center",
         justifyContent: "center",
         flexShrink: 0,
+        // 文字は路線の色の上ではなく面 (bg.panel) の上に置く。路線の色は枠だけに使うので、
+        // 黄色のような明るい色でも紺のような暗い色でも、ライト・ダークの両方で文字のコントラストは変わらない
         bg: "bg.panel",
         color: "fg",
         borderStyle: "solid",

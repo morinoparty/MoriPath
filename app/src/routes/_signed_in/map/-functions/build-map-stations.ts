@@ -5,6 +5,7 @@ import type {
 } from "../-types/compact-markers";
 import type { ApiStation, MapStation, StationLine } from "../-types/station";
 import type { Vec2 } from "../-types/world-map";
+import { numberingPrefix } from "./numbering-colors";
 
 // 大きさの分からない駅の既定の半径 (AdvanceRailway の circleSizeBase と同じ)
 const DEFAULT_STATION_RADIUS = 5;
@@ -15,8 +16,20 @@ const LINE_ENDPOINT_REACH = 40;
 /** 座標を整数に丸めた比較用のキー (API は小数、squaremap は整数で持つ) */
 const pointKey = ({ x, z }: Vec2) => `${Math.round(x)},${Math.round(z)}`;
 
-/** squaremap の駅 (円) だけから駅を作る。路線の色は分からない */
-const stationsFromCircles = (circles: RailwayCircle[]): MapStation[] =>
+/** ナンバリングの記号から、squaremap から推定した路線の色を引く */
+const colorOfCode = (
+    code: string | null,
+    numberingColors: Record<string, string>,
+): string | null => {
+    const prefix = code ? numberingPrefix(code) : null;
+    return (prefix && numberingColors[prefix]) || null;
+};
+
+/** squaremap の駅 (円) だけから駅を作る。札の色は記号から推定した路線の色にする */
+const stationsFromCircles = (
+    circles: RailwayCircle[],
+    numberingColors: Record<string, string>,
+): MapStation[] =>
     circles.flatMap((circle) => {
         const { name } = circle;
         if (!name) {
@@ -31,7 +44,7 @@ const stationsFromCircles = (circles: RailwayCircle[]): MapStation[] =>
                 numberings: circle.numberings.map((code) => ({
                     lineName: "",
                     code,
-                    color: null,
+                    color: colorOfCode(code, numberingColors),
                 })),
             },
         ];
@@ -41,14 +54,16 @@ const stationsFromCircles = (circles: RailwayCircle[]): MapStation[] =>
  * 表示中のワールドの駅を作る。
  * API の駅は Bukkit のワールド名を持ち、squaremap のワールド ID と対応が取れないため、
  * squaremap の駅 (円) と座標が一致した駅のワールドを、表示中のワールドとみなす。
- * API を使えないときは squaremap の駅だけで作る
+ * API を使えないときは squaremap の駅だけで作る。
+ * 札の色は API の路線の色を優先し、無ければ squaremap から推定した色 (numberingColors) を使う
  */
 export const buildMapStations = (
     circles: RailwayCircle[],
     apiStations: ApiStation[] | null,
+    numberingColors: Record<string, string> = {},
 ): MapStation[] => {
     if (!apiStations) {
-        return stationsFromCircles(circles);
+        return stationsFromCircles(circles, numberingColors);
     }
     // 駅の大きさは squaremap の円の半径 (overrideSize か接続路線数から決まる) を使う
     const radiusByPoint = new Map(
@@ -69,7 +84,12 @@ export const buildMapStations = (
                 radiusByPoint.get(pointKey(station.point)) ??
                 station.overrideSize ??
                 DEFAULT_STATION_RADIUS,
-            numberings: station.numberings,
+            numberings: station.numberings.map((numbering) => ({
+                ...numbering,
+                color:
+                    numbering.color ??
+                    colorOfCode(numbering.code, numberingColors),
+            })),
         }));
 };
 

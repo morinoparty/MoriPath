@@ -25,6 +25,7 @@ import { StationPopup } from "../station-popup";
 import { createMinecraftCrs } from "./create-minecraft-crs";
 import {
     ClaimLayer,
+    LINE_TAP_TOLERANCE,
     PinLayer,
     PlayersLayer,
     RailwayLayer,
@@ -145,7 +146,10 @@ export const WorldMapCanvas = ({
     // CRS と renderer は地図の生成時にしか渡せないので 1 度だけ作る
     const crs = useMemo(() => createMinecraftCrs(), []);
     // 指でも細い路線をタップできるよう、当たり判定を線の外側まで広げる
-    const renderer = useMemo(() => L.canvas({ tolerance: 8 }), []);
+    const renderer = useMemo(
+        () => L.canvas({ tolerance: LINE_TAP_TOLERANCE }),
+        [],
+    );
     // 保護範囲以外は開いたときに (SSR なら loader で) 取り、保護範囲は表示を ON にしたときだけ取る
     const markers = useBaseMarkers(world);
     const claims = useClaims(world, overlays.claims);
@@ -199,6 +203,7 @@ export const WorldMapCanvas = ({
                     key={`${world}-railway`}
                     lines={base.railwayLines}
                     circles={base.railwayCircles}
+                    numberingColors={base.numberingColors}
                     onSelect={select}
                 />
             )}

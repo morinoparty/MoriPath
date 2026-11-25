@@ -7,6 +7,7 @@ import {
     buildMapStations,
     findLinesAtStation,
 } from "../../-functions/build-map-stations";
+import { hitTestStation } from "../../-functions/station-hit-test";
 import { toClaimInfo } from "../../-functions/to-claim-info";
 import { useRailwayNetwork } from "../../-functions/use-railway-network";
 import {
@@ -32,7 +33,11 @@ import type {
 } from "../../-types/world-map";
 import { MapPin } from "../map-pin";
 import { PlayerMarker } from "../player-marker";
-import { StationMarker, type StationMarkerDetail } from "../station-marker";
+import {
+    stationFootprint,
+    StationMarker,
+    type StationMarkerDetail,
+} from "../station-marker";
 import { PortalMarker } from "./portal-marker";
 
 /** タップされた図形と、ポップアップを出す位置 */
@@ -48,6 +53,11 @@ export type SelectedFeature =
       };
 
 type SelectHandler = (feature: SelectedFeature) => void;
+
+// 路線の線の太さ (px)
+const RAILWAY_LINE_WEIGHT = 5;
+// 指でも細い線をタップできるよう、線の外側でもタップを拾う距離 (px)。canvas の renderer に渡す
+export const LINE_TAP_TOLERANCE = 8;
 
 /** 線の頂点 [x, z] を Leaflet の [lat, lng] にする */
 const tupleToLatLng = ([x, z]: PointTuple): [number, number] => [z, x];
@@ -89,10 +99,10 @@ const useResolvedColor = (cssValue: string) => {
 };
 
 /**
- * 駅 1 つ分の当たり判定。駅のボタンを押したとき、地図 (と下の路線) にクリックを渡さない。
- * こうすると駅の周りでは路線の乗換案内ではなく駅が選ばれる
+ * 駅 1 つ分の札・点。指やマウスでは押せず (地図のドラッグを邪魔しない)、
+ * キーボード・スクリーンリーダーからだけボタンとして選べる
  */
-const StationHitTarget = ({
+const StationLabel = ({
     station,
     zoom,
     onSelect,
@@ -101,15 +111,13 @@ const StationHitTarget = ({
     zoom: number;
     onSelect: (station: MapStation) => void;
 }) => {
-    // Leaflet は地図の要素でクリックやドラッグを拾うので、ボタンの外へ伝えない
+    // キーボードで押したときのクリックが地図まで伝わり、地図の click (当たり判定) が走らないようにする
     const stopPropagation = useCallback((element: HTMLButtonElement | null) => {
         if (element) {
             L.DomEvent.disableClickPropagation(element);
             L.DomEvent.disableScrollPropagation(element);
         }
     }, []);
-    // 駅の円 (半径はブロック単位) を今の縮尺の px に直した大きさ
-    const hitSize = station.radius * 2 * 2 ** (zoom - NATIVE_MAX_ZOOM);
     return (
         <PortalMarker position={station.point} zIndexOffset={500}>
             <StationMarker
@@ -117,7 +125,6 @@ const StationHitTarget = ({
                 name={station.name}
                 numberings={station.numberings}
                 detail={stationDetailAt(zoom)}
-                hitSize={hitSize}
                 onSelect={() => onSelect(station)}
             />
         </PortalMarker>
@@ -128,18 +135,26 @@ const StationHitTarget = ({
 export const RailwayLayer = ({
     lines: polylines,
     circles,
+    numberingColors,
     onSelect,
 }: {
     lines: RailwayLine[];
     circles: RailwayCircle[];
+    /** squaremap から推定した、ナンバリングの記号ごとの路線の色 */
+    numberingColors: Record<string, string> | undefined;
     onSelect: SelectHandler;
 }) => {
     const zoom = useZoom();
     // 駅の色やナンバリングは AdvanceRailway の API から取る。使えなければ squaremap の駅で描く
     const network = useRailwayNetwork(true);
     const stations = useMemo(
-        () => buildMapStations(circles, network.data?.stations ?? null),
-        [circles, network.data],
+        () =>
+            buildMapStations(
+                circles,
+                network.data?.stations ?? null,
+                numberingColors,
+            ),
+        [circles, network.data, numberingColors],
     );
     // 駅を選んだら、駅の中心にポップアップを出す
     const selectStation = (station: MapStation) =>
@@ -149,6 +164,29 @@ export const RailwayLayer = ({
             station,
             fallbackLines: findLinesAtStation(station, stations, polylines),
         });
+    // 駅のタップは地図の click で判定する。Leaflet はドラッグしたときは click を出さないので、
+    // 駅の上から始めても地図を動かせる。路線・保護範囲の click の後に来るので、駅が選ばれたら上書きする
+    useMapEvents({
+        click: (event) => {
+            const detail = stationDetailAt(zoom);
+            const station = hitTestStation({
+                // 丸めずに使う (拡大時は 1 ブロックが数 px になるため)
+                tap: { x: event.latlng.lng, z: event.latlng.lat },
+                pxPerBlock: 2 ** (zoom - NATIVE_MAX_ZOOM),
+                stations,
+                footprintOf: (target) =>
+                    stationFootprint(target.numberings, detail),
+                lines: polylines,
+                line: {
+                    halfWeight: RAILWAY_LINE_WEIGHT / 2,
+                    tolerance: LINE_TAP_TOLERANCE,
+                },
+            });
+            if (station) {
+                selectStation(station);
+            }
+        },
+    });
     return (
         <>
             {polylines.map((line) => {
@@ -157,7 +195,11 @@ export const RailwayLayer = ({
                     <Polyline
                         key={lineKey(line.points)}
                         positions={line.points.map(tupleToLatLng)}
-                        pathOptions={{ color, weight: 5, opacity: 0.9 }}
+                        pathOptions={{
+                            color,
+                            weight: RAILWAY_LINE_WEIGHT,
+                            opacity: 0.9,
+                        }}
                         eventHandlers={{
                             click: (event) =>
                                 onSelect({
@@ -174,7 +216,7 @@ export const RailwayLayer = ({
                 );
             })}
             {stations.map((station) => (
-                <StationHitTarget
+                <StationLabel
                     key={station.id ?? `${station.point.x},${station.point.z}`}
                     station={station}
                     zoom={zoom}

@@ -1,10 +1,9 @@
 import type { Ref } from "react";
 import { sva } from "../../../../../../styled-system/css";
+import type { StationFootprint } from "../../-functions/station-hit-test";
 import type { StationNumbering } from "../../-types/station";
 import { NumberingBadge } from "../numbering-badge";
 
-// 指で押しやすいよう、当たり判定は最低でもこの大きさ (px) にする
-export const MIN_STATION_HIT_SIZE = 44;
 // 地図に並べるナンバリングの数。乗換駅でも札が並びすぎないよう、それ以上はポップアップで見せる
 const MAX_BADGES = 2;
 
@@ -12,13 +11,11 @@ const stationMarkerStyle = sva({
     slots: ["root", "dot", "badges", "name"],
     base: {
         root: {
-            // 駅の中心に当たり判定の中心を合わせる。大きさは地図の縮尺に合わせて外から渡す
+            // 札・点の中心を駅の中心に合わせる
             position: "absolute",
             left: 0,
             top: 0,
             transform: "translate(-50%, -50%)",
-            width: "var(--hit-size)",
-            height: "var(--hit-size)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -28,9 +25,10 @@ const stationMarkerStyle = sva({
             bg: "transparent",
             border: "none",
             borderRadius: "full",
-            cursor: "pointer",
-            // Leaflet はマーカーのアイコンの pointer-events を切るので、ボタンだけ押せるようにする
-            pointerEvents: "auto",
+            // 指やマウスでは押させない。駅の上からでも地図をドラッグできるよう、
+            // タップは地図の click (ドラッグしなかったときだけ来る) で当たり判定して選ぶ。
+            // キーボード・スクリーンリーダーからはこのボタンで選べる
+            pointerEvents: "none",
             _focusVisible: {
                 outline: "2px solid",
                 outlineColor: "colorPalette.solid",
@@ -68,29 +66,49 @@ const stationMarkerStyle = sva({
 /** 縮尺に応じた見せ方。縮小しているときは点だけ、拡大するほど札と駅名を出す */
 export type StationMarkerDetail = "dot" | "badges" | "full";
 
+/** 地図に出す札 (番号の無いナンバリングは出さない) */
+const visibleBadges = (numberings: StationNumbering[]) =>
+    numberings
+        .filter((numbering) => numbering.code !== null)
+        .slice(0, MAX_BADGES);
+
+/**
+ * 地図に描いた駅のおおよその大きさ (px、中心からの半分の幅と高さ)。
+ * タップの当たり判定で、札に触れたか・路線とどちらが近いかを決めるのに使う。
+ * 下のスタイルの寸法 (点 10px、札 24px 角 + 文字の幅、駅名 12px) に合わせた概算
+ */
+export const stationFootprint = (
+    numberings: StationNumbering[],
+    detail: StationMarkerDetail,
+): StationFootprint => {
+    const badgeCount = visibleBadges(numberings).length;
+    if (detail === "dot" || badgeCount === 0) {
+        return { halfWidth: 5, halfHeight: 5 };
+    }
+    // 札 1 枚は記号 3 文字までで幅 26px ほど、札どうしの間は 2px
+    const halfWidth = (badgeCount * 26 + (badgeCount - 1) * 2) / 2;
+    // 駅名を出すときは札の下に 2px 空けて 1 行 (約 14px) 足す
+    return { halfWidth, halfHeight: detail === "full" ? 20 : 12 };
+};
+
 export interface StationMarkerProps {
     name: string;
     numberings: StationNumbering[];
     detail: StationMarkerDetail;
-    /** 当たり判定の一辺 (px)。MIN_STATION_HIT_SIZE より小さくはしない */
-    hitSize?: number;
     onSelect?: () => void;
     ref?: Ref<HTMLButtonElement>;
 }
 
-/** 地図上の駅。駅の周りを押すと駅を選ぶ (路線より優先する) */
+/** 地図上の駅。見た目とキーボード操作だけを受け持ち、タップの当たり判定は地図側で行う */
 export const StationMarker = ({
     name,
     numberings,
     detail,
-    hitSize = MIN_STATION_HIT_SIZE,
     onSelect,
     ref,
 }: StationMarkerProps) => {
     const style = stationMarkerStyle();
-    const badges = numberings
-        .filter((numbering) => numbering.code !== null)
-        .slice(0, MAX_BADGES);
+    const badges = visibleBadges(numberings);
     // 札が無い駅や縮小しているときは点で示す
     const showBadges = detail !== "dot" && badges.length > 0;
     return (
@@ -98,11 +116,6 @@ export const StationMarker = ({
             ref={ref}
             type="button"
             className={style.root}
-            style={
-                {
-                    "--hit-size": `${Math.max(hitSize, MIN_STATION_HIT_SIZE)}px`,
-                } as React.CSSProperties
-            }
             aria-label={name}
             onClick={onSelect}
         >

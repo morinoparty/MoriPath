@@ -9,6 +9,7 @@ import type {
     RailwayCircle,
     RailwayLine,
 } from "../-types/compact-markers";
+import { buildNumberingColors } from "./numbering-colors";
 import { parseClaimPopup } from "./parse-claim-popup";
 import {
     parseRailwayPopup,
@@ -192,6 +193,8 @@ export const compactBaseMarkers = (
     return {
         railwayLines,
         railwayCircles,
+        // 札の色の推定は全駅 × 全路線の距離を見るので、クライアントではなくここで 1 回だけ行う
+        numberingColors: buildNumberingColors(railwayCircles, railwayLines),
         worldBorder,
         spawn: toPins(layers.get(LAYER_IDS.spawn), counter),
         banners: toPins(layers.get(LAYER_IDS.banners), counter),
