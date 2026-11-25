@@ -101,7 +101,8 @@ const recipientPickerStyle = sva({
             alignItems: "center",
             gap: "2",
             height: "11",
-            paddingLeft: "2",
+            // 頭を上下左右とも同じ 6px の内側に置き、ピルの丸い端と頭の円を同心にする
+            paddingLeft: "1.5",
             paddingRight: "3.5",
             bg: "colorPalette.bg",
             borderRadius: "full",
@@ -111,19 +112,19 @@ const recipientPickerStyle = sva({
                 outlineColor: "colorPalette.focusRing",
             },
         },
-        // 顔 (または見つかる前の人型アイコン) を 24px の角丸に収める
+        // 顔 (または見つかる前の人型アイコン) を 32px の円に収める。ピル (高さ 44px) の端の半円と同心になる
         head: {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             flexShrink: "0",
-            width: "6",
-            height: "6",
-            borderRadius: "6px",
+            width: "8",
+            height: "8",
+            borderRadius: "full",
             overflow: "hidden",
             bg: "bg.muted",
             color: "fg.muted",
-            "& > svg": { width: "4", height: "4" },
+            "& > svg": { width: "4.5", height: "4.5" },
             "& > img": {
                 width: "full",
                 height: "full",
@@ -162,7 +163,7 @@ const RecipientHead = ({ recipient }: { recipient: Recipient | null }) => {
     const { avatarUrl } = useMinecraftConfig();
     return recipient ? (
         // 名前を隣に文字で出しているため、画像は飾りとして読み上げない
-        <img src={avatarUrl(recipient.id, 32)} alt="" />
+        <img src={avatarUrl(recipient.id, 64)} alt="" />
     ) : (
         <User aria-hidden />
     );
