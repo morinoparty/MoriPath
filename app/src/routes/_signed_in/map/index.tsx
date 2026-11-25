@@ -6,17 +6,25 @@ import { WorldMapView } from "./-components/world-map-view";
 import { WorldSwitcher } from "./-components/world-switcher";
 import { defaultOverlays } from "./-functions/default-overlays";
 import { getWorldMapUrlFn } from "./-functions/get-world-map-url";
+import { baseMarkersQueryOptions } from "./-functions/map-markers-query";
 import { mapSearchSchema } from "./-functions/map-search";
 import { useWorldSettings } from "./-functions/use-world-settings";
 import type { Vec2, WorldId } from "./-types/world-map";
 
 export const Route = createFileRoute("/_signed_in/map/")({
     validateSearch: mapSearchSchema,
-    loader: async () => {
+    // 表示するワールドのマーカーを loader で取るため、ワールドが変わったら loader を呼び直す
+    loaderDeps: ({ search }) => ({ world: search.world }),
+    loader: async ({ context, deps }) => {
         const [worldMapUrl, userInfo] = await Promise.all([
             getWorldMapUrlFn(),
             // 自分のマーカーを UUID で見分けるため、userinfo の sub を取る。失敗しても地図は出す
             getUserInfo().catch(() => null),
+            // 保護範囲以外のマーカーを先に取り、SSR の HTML に載せる (画面の useQuery と同じキャッシュ)。
+            // 失敗しても地図は出し、画面側で取り直す
+            context.queryClient
+                .ensureQueryData(baseMarkersQueryOptions(deps.world))
+                .catch(() => null),
         ]);
         return { worldMapUrl, userInfo };
     },

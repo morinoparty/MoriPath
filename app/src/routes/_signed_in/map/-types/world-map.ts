@@ -15,68 +15,6 @@ export interface Vec2 {
     z: number;
 }
 
-/** 円 (鉄道の駅など)。radius はブロック単位 */
-export interface CircleMarker {
-    type: "circle";
-    center: Vec2;
-    radius: number;
-    color?: string;
-    fillColor?: string;
-    popup?: string;
-    tooltip?: string;
-}
-
-/** 折れ線 (鉄道の路線、ワールドボーダーなど) */
-export interface PolylineMarker {
-    type: "polyline";
-    points: Vec2[];
-    color?: string;
-    fillColor?: string;
-    weight?: number;
-    popup?: string;
-    tooltip?: string;
-}
-
-/** 矩形 (GriefPrevention の保護範囲など)。points は対角の 2 点 */
-export interface RectangleMarker {
-    type: "rectangle";
-    points: [Vec2, Vec2];
-    color?: string;
-    fillColor?: string;
-    weight?: number;
-    popup?: string;
-    tooltip?: string;
-}
-
-/** アイコン (スポーン地点、バナーなど) */
-export interface IconMarker {
-    type: "icon";
-    icon: string;
-    point: Vec2;
-    size?: Vec2;
-    anchor?: Vec2;
-    popup?: string;
-    tooltip?: string;
-}
-
-export type MapMarker =
-    | CircleMarker
-    | PolylineMarker
-    | RectangleMarker
-    | IconMarker;
-
-/** markers.json の 1 レイヤー分 */
-export interface MarkerLayer {
-    id: string;
-    name: string;
-    hide: boolean;
-    control: boolean;
-    order: number;
-    z_index: number;
-    timestamp: number;
-    markers: MapMarker[];
-}
-
 /** players.json の 1 プレイヤー分 */
 export interface MapPlayer {
     uuid: string;

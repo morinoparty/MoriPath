@@ -1,15 +1,10 @@
-import type { ApiStation, MapStation, StationLine } from "../-types/station";
 import type {
-    CircleMarker,
-    MarkerLayer,
-    PolylineMarker,
-    Vec2,
-} from "../-types/world-map";
-import {
-    parseRailwayPopup,
-    parseStationName,
-    parseStationNumberings,
-} from "./parse-railway-popup";
+    PointTuple,
+    RailwayCircle,
+    RailwayLine,
+} from "../-types/compact-markers";
+import type { ApiStation, MapStation, StationLine } from "../-types/station";
+import type { Vec2 } from "../-types/world-map";
 
 // 大きさの分からない駅の既定の半径 (AdvanceRailway の circleSizeBase と同じ)
 const DEFAULT_STATION_RADIUS = 5;
@@ -20,25 +15,10 @@ const LINE_ENDPOINT_REACH = 40;
 /** 座標を整数に丸めた比較用のキー (API は小数、squaremap は整数で持つ) */
 const pointKey = ({ x, z }: Vec2) => `${Math.round(x)},${Math.round(z)}`;
 
-/** 鉄道レイヤーから駅 (円) と路線 (折れ線) を取り出す */
-export const splitRailwayLayer = (layer: MarkerLayer | undefined) => {
-    const circles: CircleMarker[] = [];
-    const polylines: PolylineMarker[] = [];
-    for (const marker of layer?.markers ?? []) {
-        if (marker.type === "circle") {
-            circles.push(marker);
-        } else if (marker.type === "polyline") {
-            polylines.push(marker);
-        }
-    }
-    return { circles, polylines };
-};
-
 /** squaremap の駅 (円) だけから駅を作る。路線の色は分からない */
-const stationsFromCircles = (circles: CircleMarker[]): MapStation[] =>
+const stationsFromCircles = (circles: RailwayCircle[]): MapStation[] =>
     circles.flatMap((circle) => {
-        const popup = circle.popup ?? "";
-        const name = parseStationName(popup);
+        const { name } = circle;
         if (!name) {
             return [];
         }
@@ -48,7 +28,7 @@ const stationsFromCircles = (circles: CircleMarker[]): MapStation[] =>
                 name,
                 point: circle.center,
                 radius: circle.radius,
-                numberings: parseStationNumberings(popup).map((code) => ({
+                numberings: circle.numberings.map((code) => ({
                     lineName: "",
                     code,
                     color: null,
@@ -64,7 +44,7 @@ const stationsFromCircles = (circles: CircleMarker[]): MapStation[] =>
  * API を使えないときは squaremap の駅だけで作る
  */
 export const buildMapStations = (
-    circles: CircleMarker[],
+    circles: RailwayCircle[],
     apiStations: ApiStation[] | null,
 ): MapStation[] => {
     if (!apiStations) {
@@ -94,14 +74,11 @@ export const buildMapStations = (
 };
 
 /** 点にいちばん近い駅 (LINE_ENDPOINT_REACH より遠ければ undefined) */
-const nearestStation = (point: Vec2, stations: MapStation[]) => {
+const nearestStation = ([x, z]: PointTuple, stations: MapStation[]) => {
     let nearest: MapStation | undefined;
     let nearestDistance = LINE_ENDPOINT_REACH;
     for (const station of stations) {
-        const distance = Math.hypot(
-            point.x - station.point.x,
-            point.z - station.point.z,
-        );
+        const distance = Math.hypot(x - station.point.x, z - station.point.z);
         if (distance <= nearestDistance) {
             nearest = station;
             nearestDistance = distance;
@@ -118,7 +95,7 @@ const nearestStation = (point: Vec2, stations: MapStation[]) => {
 export const findLinesAtStation = (
     station: MapStation,
     stations: MapStation[],
-    polylines: PolylineMarker[],
+    polylines: RailwayLine[],
 ): StationLine[] => {
     const lines = new Map<string, StationLine>();
     for (const polyline of polylines) {
@@ -133,11 +110,11 @@ export const findLinesAtStation = (
         if (!reachesStation) {
             continue;
         }
-        const { lineName } = parseRailwayPopup(polyline.popup ?? "");
+        const { lineName } = polyline.route;
         if (lineName && !lines.has(lineName)) {
             lines.set(lineName, {
                 name: lineName,
-                color: polyline.color ?? null,
+                color: polyline.color || null,
             });
         }
     }

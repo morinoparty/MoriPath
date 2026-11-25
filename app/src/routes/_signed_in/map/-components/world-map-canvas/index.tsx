@@ -4,8 +4,7 @@ import L from "leaflet";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, Popup, TileLayer, useMap } from "react-leaflet";
 import { css } from "../../../../../../styled-system/css";
-import { layerOverlayKeys } from "../../-functions/default-overlays";
-import { useMapMarkers } from "../../-functions/use-map-markers";
+import { useBaseMarkers, useClaims } from "../../-functions/map-markers-query";
 import { useMapPlayers } from "../../-functions/use-map-players";
 import { useStationLines } from "../../-functions/use-station-lines";
 import {
@@ -15,7 +14,6 @@ import {
     toLatLng,
 } from "../../-functions/world-map-coords";
 import type {
-    MarkerLayer,
     OverlayVisibility,
     SelfPlayer,
     Vec2,
@@ -136,30 +134,6 @@ const StationPopupContent = ({
 const popupKey = (feature: SelectedFeature) =>
     `${feature.kind}:${feature.position.x},${feature.position.z}`;
 
-/** squaremap のレイヤー 1 つを、種類に応じた描き方で出す */
-const MarkerLayerView = ({
-    layer,
-    onSelect,
-}: {
-    layer: MarkerLayer;
-    onSelect: (feature: SelectedFeature) => void;
-}) => {
-    switch (layer.id) {
-        case "Railway":
-            return <RailwayLayer layer={layer} onSelect={onSelect} />;
-        case "griefprevention":
-            return <ClaimLayer layer={layer} onSelect={onSelect} />;
-        case "squaremap-worldborder":
-            return <WorldBorderLayer layer={layer} />;
-        case "squaremap-spawn_icon":
-            return <PinLayer layer={layer} variant="spawn" />;
-        case "banners":
-            return <PinLayer layer={layer} variant="banner" />;
-        default:
-            return null;
-    }
-};
-
 /** squaremap のタイルを Leaflet で表示する地図本体 */
 export const WorldMapCanvas = ({
     baseUrl,
@@ -172,7 +146,9 @@ export const WorldMapCanvas = ({
     const crs = useMemo(() => createMinecraftCrs(), []);
     // 指でも細い路線をタップできるよう、当たり判定を線の外側まで広げる
     const renderer = useMemo(() => L.canvas({ tolerance: 8 }), []);
-    const markers = useMapMarkers(baseUrl, world);
+    // 保護範囲以外は開いたときに (SSR なら loader で) 取り、保護範囲は表示を ON にしたときだけ取る
+    const markers = useBaseMarkers(world);
+    const claims = useClaims(world, overlays.claims);
     const players = useMapPlayers(baseUrl, overlays.players);
     // 表示中のワールドにいるプレイヤーだけを出す
     const worldPlayers =
@@ -189,11 +165,7 @@ export const WorldMapCanvas = ({
     // ワールドを切り替えたら、前のワールドのポップアップは出さない
     const selected = selection?.world === world ? selection.feature : null;
 
-    // 選ばれていない項目のレイヤーは描かない (対応の無いレイヤーも出さない)
-    const visibleLayers = (markers.data ?? []).filter((layer) => {
-        const key = layerOverlayKeys[layer.id];
-        return key !== undefined && overlays[key];
-    });
+    const base = markers.data;
 
     return (
         <MapContainer
@@ -221,13 +193,42 @@ export const WorldMapCanvas = ({
                 maxNativeZoom={NATIVE_MAX_ZOOM}
                 noWrap
             />
-            {visibleLayers.map((layer) => (
-                <MarkerLayerView
-                    key={`${world}-${layer.id}`}
-                    layer={layer}
+            {/* 選ばれていない項目のレイヤーは描かない。key にワールドを入れ、切り替えたら作り直す */}
+            {base && overlays.railway && (
+                <RailwayLayer
+                    key={`${world}-railway`}
+                    lines={base.railwayLines}
+                    circles={base.railwayCircles}
                     onSelect={select}
                 />
-            ))}
+            )}
+            {claims.data && overlays.claims && (
+                <ClaimLayer
+                    key={`${world}-claims`}
+                    data={claims.data}
+                    onSelect={select}
+                />
+            )}
+            {base && overlays.worldBorder && (
+                <WorldBorderLayer
+                    key={`${world}-border`}
+                    lines={base.worldBorder}
+                />
+            )}
+            {base && overlays.spawn && (
+                <PinLayer
+                    key={`${world}-spawn`}
+                    pins={base.spawn}
+                    variant="spawn"
+                />
+            )}
+            {base && overlays.banners && (
+                <PinLayer
+                    key={`${world}-banners`}
+                    pins={base.banners}
+                    variant="banner"
+                />
+            )}
             {overlays.players && (
                 <PlayersLayer players={worldPlayers} self={self} />
             )}

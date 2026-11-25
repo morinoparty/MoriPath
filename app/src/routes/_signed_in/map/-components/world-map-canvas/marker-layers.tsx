@@ -6,24 +6,26 @@ import { token } from "../../../../../../styled-system/tokens";
 import {
     buildMapStations,
     findLinesAtStation,
-    splitRailwayLayer,
 } from "../../-functions/build-map-stations";
-import { markerKey } from "../../-functions/marker-key";
-import { parseClaimPopup } from "../../-functions/parse-claim-popup";
-import { parseRailwayPopup } from "../../-functions/parse-railway-popup";
-import { stripMarkerHtml } from "../../-functions/strip-marker-html";
+import { toClaimInfo } from "../../-functions/to-claim-info";
 import { useRailwayNetwork } from "../../-functions/use-railway-network";
 import {
     fromLatLng,
     NATIVE_MAX_ZOOM,
     normalizeUuid,
-    toLatLng,
 } from "../../-functions/world-map-coords";
+import type {
+    BorderLine,
+    CompactClaims,
+    MapPinData,
+    PointTuple,
+    RailwayCircle,
+    RailwayLine,
+} from "../../-types/compact-markers";
 import type { MapStation, StationLine } from "../../-types/station";
 import type {
     ClaimInfo,
     MapPlayer,
-    MarkerLayer,
     RailwayRoute,
     SelfPlayer,
     Vec2,
@@ -46,6 +48,13 @@ export type SelectedFeature =
       };
 
 type SelectHandler = (feature: SelectedFeature) => void;
+
+/** 線の頂点 [x, z] を Leaflet の [lat, lng] にする */
+const tupleToLatLng = ([x, z]: PointTuple): [number, number] => [z, x];
+
+/** 線の React の key。squaremap のマーカーには ID が無いため、端点と頂点数から作る (上り・下りは端点が逆になる) */
+const lineKey = (points: PointTuple[]) =>
+    `${points[0]?.join(",")}:${points[points.length - 1]?.join(",")}:${points.length}`;
 
 /** 縮尺ごとの駅の見せ方。縮小すると札や駅名が重なって読めないため点にする */
 const stationDetailAt = (zoom: number): StationMarkerDetail => {
@@ -117,19 +126,17 @@ const StationHitTarget = ({
 
 /** 鉄道: 路線 (タップで乗換案内) と駅 (タップで駅の案内) */
 export const RailwayLayer = ({
-    layer,
+    lines: polylines,
+    circles,
     onSelect,
 }: {
-    layer: MarkerLayer;
+    lines: RailwayLine[];
+    circles: RailwayCircle[];
     onSelect: SelectHandler;
 }) => {
     const zoom = useZoom();
     // 駅の色やナンバリングは AdvanceRailway の API から取る。使えなければ squaremap の駅で描く
     const network = useRailwayNetwork(true);
-    const { circles, polylines } = useMemo(
-        () => splitRailwayLayer(layer),
-        [layer],
-    );
     const stations = useMemo(
         () => buildMapStations(circles, network.data?.stations ?? null),
         [circles, network.data],
@@ -144,12 +151,12 @@ export const RailwayLayer = ({
         });
     return (
         <>
-            {polylines.map((marker) => {
-                const color = marker.color ?? marker.fillColor ?? "";
+            {polylines.map((line) => {
+                const { color } = line;
                 return (
                     <Polyline
-                        key={markerKey(marker)}
-                        positions={marker.points.map(toLatLng)}
+                        key={lineKey(line.points)}
+                        positions={line.points.map(tupleToLatLng)}
                         pathOptions={{ color, weight: 5, opacity: 0.9 }}
                         eventHandlers={{
                             click: (event) =>
@@ -159,9 +166,7 @@ export const RailwayLayer = ({
                                         event.latlng.lat,
                                         event.latlng.lng,
                                     ),
-                                    route: parseRailwayPopup(
-                                        marker.popup ?? "",
-                                    ),
+                                    route: line.route,
                                     color,
                                 }),
                         }}
@@ -185,10 +190,10 @@ export const RailwayLayer = ({
  * Leaflet の図形を canvas にまとめて描き、タップされた保護だけをポップアップに出す
  */
 export const ClaimLayer = ({
-    layer,
+    data,
     onSelect,
 }: {
-    layer: MarkerLayer;
+    data: CompactClaims;
     onSelect: SelectHandler;
 }) => {
     const map = useMap();
@@ -198,14 +203,14 @@ export const ClaimLayer = ({
 
     useEffect(() => {
         const group = L.layerGroup();
-        for (const marker of layer.markers) {
-            if (marker.type !== "rectangle") {
-                continue;
-            }
-            const claim = parseClaimPopup(marker.popup ?? "");
-            const color = claim.isAdmin ? adminColor : ownerColor;
+        for (const claim of data.claims) {
+            const [x1, z1, x2, z2, , isAdmin] = claim;
+            const color = isAdmin === 1 ? adminColor : ownerColor;
             L.rectangle(
-                [toLatLng(marker.points[0]), toLatLng(marker.points[1])],
+                [
+                    [z1, x1],
+                    [z2, x2],
+                ],
                 {
                     color,
                     weight: 1,
@@ -220,7 +225,8 @@ export const ClaimLayer = ({
                             event.latlng.lat,
                             event.latlng.lng,
                         ),
-                        claim,
+                        // 名前は辞書の番号で届くので、タップされた保護だけ名前に戻す
+                        claim: toClaimInfo(data.names, claim),
                     }),
                 )
                 .addTo(group);
@@ -229,50 +235,49 @@ export const ClaimLayer = ({
         return () => {
             group.remove();
         };
-    }, [map, layer, ownerColor, adminColor, onSelect]);
+    }, [map, data, ownerColor, adminColor, onSelect]);
 
     return null;
 };
 
 /** ワールドボーダー: 赤い枠線 (タップには反応しない) */
-export const WorldBorderLayer = ({ layer }: { layer: MarkerLayer }) => (
+export const WorldBorderLayer = ({ lines }: { lines: BorderLine[] }) => (
     <>
-        {layer.markers.map((marker) =>
-            marker.type === "polyline" ? (
-                <Polyline
-                    key={markerKey(marker)}
-                    positions={marker.points.map(toLatLng)}
-                    pathOptions={{
-                        color: marker.color ?? "",
-                        weight: 2,
-                        dashArray: "8 6",
-                    }}
-                    interactive={false}
-                />
-            ) : null,
-        )}
+        {lines.map((line) => (
+            <Polyline
+                key={lineKey(line.points)}
+                positions={line.points.map(tupleToLatLng)}
+                pathOptions={{
+                    color: line.color,
+                    weight: 2,
+                    dashArray: "8 6",
+                }}
+                interactive={false}
+            />
+        ))}
     </>
 );
 
 /** バナー (町の名前) とスポーン地点のピン */
 export const PinLayer = ({
-    layer,
+    pins,
     variant,
 }: {
-    layer: MarkerLayer;
+    pins: MapPinData[];
     variant: "banner" | "spawn";
 }) => (
     <>
-        {layer.markers.map((marker) =>
-            marker.type === "icon" ? (
-                <PortalMarker key={markerKey(marker)} position={marker.point}>
-                    <MapPin
-                        label={stripMarkerHtml(marker.tooltip ?? "")}
-                        icon={variant === "spawn" ? Flag : undefined}
-                    />
-                </PortalMarker>
-            ) : null,
-        )}
+        {pins.map((pin) => (
+            <PortalMarker
+                key={`${pin.point.x},${pin.point.z}`}
+                position={pin.point}
+            >
+                <MapPin
+                    label={pin.label}
+                    icon={variant === "spawn" ? Flag : undefined}
+                />
+            </PortalMarker>
+        ))}
     </>
 );
 
