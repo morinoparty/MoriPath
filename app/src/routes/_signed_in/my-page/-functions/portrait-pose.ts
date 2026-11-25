@@ -22,7 +22,7 @@ const PORTRAIT_POSES: Record<PortraitPoseId, PortraitPose> = {
     diagonal: { yaw: DIAGONAL_YAW, pitch: DIAGONAL_PITCH, animation: "idle" },
     // 右腕を前に掲げてツルハシを持つ。掲げた腕が顔に重ならないよう、左側面寄りから見る
     pickaxe: {
-        yaw: 40,
+        yaw: 28,
         pitch: DIAGONAL_PITCH,
         animation: "raise",
         rightHandItem: PORTRAIT_PICKAXE_ITEM,

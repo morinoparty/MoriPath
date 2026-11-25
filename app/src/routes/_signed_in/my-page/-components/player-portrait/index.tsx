@@ -27,7 +27,7 @@ const WORLD_IMAGE_URL = "/castle-width.png";
 
 // 3D スキンの canvas の大きさ。最初に 1 回だけ作り、縮小は transform で行う。
 // 横幅は斜めのポーズで前に出した腕と持ったアイテムが切れない広さにする (顔の位置は幅の中央で変わらない)
-const SKIN_WIDTH = 360;
+const SKIN_WIDTH = 440;
 const SKIN_HEIGHT = 576;
 const SKIN_HEAD = estimateSkinHead({ width: SKIN_WIDTH, height: SKIN_HEIGHT });
 
