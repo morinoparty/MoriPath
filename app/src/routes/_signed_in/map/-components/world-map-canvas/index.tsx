@@ -13,6 +13,7 @@ import {
     TILE_SIZE,
     toLatLng,
 } from "../../-functions/world-map-coords";
+import type { MapPinTarget } from "../../-types/map-pin-target";
 import type {
     OverlayVisibility,
     SelfPlayer,
@@ -20,8 +21,10 @@ import type {
     WorldId,
 } from "../../-types/world-map";
 import { ClaimPopup } from "../claim-popup";
+import { MapTargetPin } from "../map-target-pin";
 import { RailwayPopup } from "../railway-popup";
 import { StationPopup } from "../station-popup";
+import { ClickShield } from "./click-shield";
 import { createMinecraftCrs } from "./create-minecraft-crs";
 import {
     ClaimLayer,
@@ -32,11 +35,14 @@ import {
     type SelectedFeature,
     WorldBorderLayer,
 } from "./marker-layers";
+import { PortalMarker } from "./portal-marker";
 
 // 拡大しすぎるとドットが崩れるだけなので、ネイティブより 2 段階まで
 const MAX_ZOOM = NATIVE_MAX_ZOOM + 2;
 // 開いたときは 1 ブロック = 1 px で見せる
 const DEFAULT_ZOOM = NATIVE_MAX_ZOOM;
+// ピンを指して開いたときは 1 ブロック = 2 px まで寄せ、建物やお店の区画が分かるようにする
+const PIN_ZOOM = NATIVE_MAX_ZOOM + 1;
 
 const mapStyle = css({
     position: "absolute",
@@ -92,20 +98,24 @@ export interface WorldMapCanvasProps {
     overlays: OverlayVisibility;
     /** ログイン中のプレイヤー。分からなければ null */
     self: SelfPlayer | null;
+    /** URL で指された地点。center はこの地点になっている */
+    pin?: (MapPinTarget & { label?: string }) | null;
+    /** ピンを外す (閉じるボタン) */
+    onClearPin?: () => void;
 }
 
-/** 中心座標が変わったとき (ワールド切り替えなど) に地図を移動させる */
-const CenterUpdater = ({ center }: { center: Vec2 }) => {
+/** 中心座標が変わったとき (ワールド切り替え・別のピンなど) に地図を移動させる */
+const CenterUpdater = ({ center, zoom }: { center: Vec2; zoom: number }) => {
     const map = useMap();
-    // 初回は MapContainer の center で表示済みなので、変化したときだけ動かす
-    const isFirst = useRef(true);
+    // 最後に合わせた座標。初回は MapContainer の center で表示済み。
+    // 座標の値が変わったときだけ動かし、ズームだけが変わったとき (ピンを外したなど) は見ている位置をそのままにする
+    const lastCenter = useRef(center);
+    const { x, z } = center;
     useEffect(() => {
-        if (isFirst.current) {
-            isFirst.current = false;
-            return;
-        }
-        map.setView(toLatLng(center), DEFAULT_ZOOM);
-    }, [map, center]);
+        if (lastCenter.current.x === x && lastCenter.current.z === z) return;
+        lastCenter.current = { x, z };
+        map.setView(toLatLng({ x, z }), zoom);
+    }, [map, x, z, zoom]);
     return null;
 };
 
@@ -142,6 +152,8 @@ export const WorldMapCanvas = ({
     center,
     overlays,
     self,
+    pin = null,
+    onClearPin,
 }: WorldMapCanvasProps) => {
     // CRS と renderer は地図の生成時にしか渡せないので 1 度だけ作る
     const crs = useMemo(() => createMinecraftCrs(), []);
@@ -176,7 +188,7 @@ export const WorldMapCanvas = ({
             className={mapStyle}
             crs={crs}
             center={toLatLng(center)}
-            zoom={DEFAULT_ZOOM}
+            zoom={pin ? PIN_ZOOM : DEFAULT_ZOOM}
             minZoom={0}
             maxZoom={MAX_ZOOM}
             // ズームはピンチ・ホイール・ダブルタップで行い、ボタンは置かない
@@ -186,7 +198,10 @@ export const WorldMapCanvas = ({
             preferCanvas
             renderer={renderer}
         >
-            <CenterUpdater center={center} />
+            <CenterUpdater
+                center={center}
+                zoom={pin ? PIN_ZOOM : DEFAULT_ZOOM}
+            />
             <TileLayer
                 // ワールドを切り替えたらタイルを作り直す
                 key={world}
@@ -236,6 +251,23 @@ export const WorldMapCanvas = ({
             )}
             {overlays.players && (
                 <PlayersLayer players={worldPlayers} self={self} />
+            )}
+            {pin && (
+                <PortalMarker
+                    position={pin}
+                    // 指された地点はプレイヤー (〜2000) よりも上に出す
+                    zIndexOffset={3000}
+                >
+                    <ClickShield>
+                        <MapTargetPin
+                            type={pin.type}
+                            x={pin.x}
+                            z={pin.z}
+                            label={pin.label}
+                            onClear={onClearPin}
+                        />
+                    </ClickShield>
+                </PortalMarker>
             )}
             {selected && (
                 <Popup

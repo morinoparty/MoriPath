@@ -2,6 +2,7 @@ import { Spinner } from "@morinoparty/chlorophyll-react/components";
 import { ClientOnly } from "@tanstack/react-router";
 import { lazy, type ReactNode, Suspense } from "react";
 import { css, sva } from "../../../../../../styled-system/css";
+import type { MapPinTarget } from "../../-types/map-pin-target";
 import type {
     OverlayVisibility,
     SelfPlayer,
@@ -74,6 +75,10 @@ export interface WorldMapViewProps {
     overlays: OverlayVisibility;
     /** ログイン中のプレイヤー。分からなければ null */
     self: SelfPlayer | null;
+    /** URL で指された地点。無ければ null */
+    pin?: (MapPinTarget & { label?: string }) | null;
+    /** ピンを外す */
+    onClearPin?: () => void;
     /** 地図の左上に置く操作 */
     startControl?: ReactNode;
     /** 地図の右上に置く操作 */
@@ -87,6 +92,8 @@ export const WorldMapView = ({
     center,
     overlays,
     self,
+    pin,
+    onClearPin,
     startControl,
     endControl,
 }: WorldMapViewProps) => {
@@ -114,6 +121,8 @@ export const WorldMapView = ({
                                 center={center}
                                 overlays={overlays}
                                 self={self}
+                                pin={pin}
+                                onClearPin={onClearPin}
                             />
                         </Suspense>
                     )}
