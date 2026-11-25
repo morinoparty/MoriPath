@@ -6,7 +6,8 @@
 # PR (最新の commit) と commit 固定の 2 つの URL を PR にコメントする。
 # 必要な secret:
 #   CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID … cf CLI 用 (Worker には渡さない)
-#   AUTH_SECRET, SERVER_URL, MC_API_URL         … Worker secret (--secrets-file で渡す)
+#   AUTH_SECRET, SERVER_URL, MC_API_URL,
+#   WORLD_MAP_URL                               … Worker secret (--secrets-file で渡す)
 name: Deploy
 
 on:
@@ -94,7 +95,9 @@ jobs:
         run: vp exec cf deploy --prebuilt --mode production --dry-run
 
       # PR の preview。本番には deploy せず、Worker Version だけを upload して
-      # preview alias (pr-<番号>) を付ける。secret は本番の Worker のものをそのまま引き継ぐ。
+      # preview alias (pr-<番号>) を付ける。
+      # secret は本番と同じ値を --secrets-file でこの Version にだけ渡す。
+      # 引き継ぎに任せると、本番にまだ無い secret (新しく追加したもの) を解決できず upload が失敗する。
       # fork と Dependabot の PR には repository secrets が渡されないのでスキップする
       - if: >-
           github.event_name == 'pull_request'
@@ -121,9 +124,21 @@ jobs:
           # cf は upload 結果を ND-JSON で WRANGLER_OUTPUT_FILE_PATH に書き出す
           export WRANGLER_OUTPUT_FILE_PATH="$RUNNER_TEMP/cf-output.ndjson"
           rm -f "$WRANGLER_OUTPUT_FILE_PATH"
+          # 空の secret で upload しないよう、揃っていなければ止める
+          : "${AUTH_SECRET:?}" "${SERVER_URL:?}" "${MC_API_URL:?}" "${WORLD_MAP_URL:?}"
+          secrets_file="$RUNNER_TEMP/worker-secrets.json"
+          # 失敗しても secret のファイルを残さない
+          trap 'rm -f "$secrets_file"' EXIT
+          jq -n \
+            --arg AUTH_SECRET "$AUTH_SECRET" \
+            --arg SERVER_URL "$SERVER_URL" \
+            --arg MC_API_URL "$MC_API_URL" \
+            --arg WORLD_MAP_URL "$WORLD_MAP_URL" \
+            '$ARGS.named' > "$secrets_file"
           vp exec cf workers versions create --prebuilt --mode production \
             --preview-alias "$alias" --tag "$alias" \
-            --message "PR #${PR_NUMBER} (${short_sha})"
+            --message "PR #${PR_NUMBER} (${short_sha})" \
+            --secrets-file "$secrets_file"
           result="$(jq -c 'select(.type == "version-upload")' "$WRANGLER_OUTPUT_FILE_PATH" | tail -n 1)"
           printf '%s\n' "$result"
           version_id="$(jq -r '.version_id // empty' <<<"$result")"
@@ -150,6 +165,10 @@ jobs:
           GH_REPO: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          SERVER_URL: ${{ secrets.SERVER_URL }}
+          MC_API_URL: ${{ secrets.MC_API_URL }}
+          WORLD_MAP_URL: ${{ secrets.WORLD_MAP_URL }}
 
       # push のたびにコメントを増やさないよう、前回のコメントを書き換える。
       # 同じ表を Job Summary にも残し、commit ごとの URL を run から辿れるようにする
@@ -174,7 +193,7 @@ jobs:
             echo "| 🔖 Head commit | [\`${SHORT_SHA}\`](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${HEAD_SHA}) |"
             echo
             echo "> [!NOTE]"
-            echo "> preview は本番の Worker secret をそのまま使います。"
+            echo "> preview は本番と同じ値の Worker secret を使います。"
             echo "> MineAuth の OAuth redirect URI (\`<origin>/api/auth/callback/MineAuth\`) は preview の origin では登録されていないため、サインインに失敗することがあります。"
           } > "$comment"
           cat "$comment" >> "$GITHUB_STEP_SUMMARY"
@@ -196,7 +215,7 @@ jobs:
         working-directory: app
         run: |
           # 空の secret で上書きしないよう、揃っていなければ止める
-          : "${AUTH_SECRET:?}" "${SERVER_URL:?}" "${MC_API_URL:?}"
+          : "${AUTH_SECRET:?}" "${SERVER_URL:?}" "${MC_API_URL:?}" "${WORLD_MAP_URL:?}"
           secrets_file="$RUNNER_TEMP/worker-secrets.json"
           # 失敗しても secret のファイルを残さない
           trap 'rm -f "$secrets_file"' EXIT
@@ -204,6 +223,7 @@ jobs:
             --arg AUTH_SECRET "$AUTH_SECRET" \
             --arg SERVER_URL "$SERVER_URL" \
             --arg MC_API_URL "$MC_API_URL" \
+            --arg WORLD_MAP_URL "$WORLD_MAP_URL" \
             '$ARGS.named' > "$secrets_file"
           vp exec cf deploy --prebuilt --mode production --secrets-file "$secrets_file" \
             --message "Deployed by GitHub Actions ${GITHUB_SHA::7}"
@@ -213,3 +233,4 @@ jobs:
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           SERVER_URL: ${{ secrets.SERVER_URL }}
           MC_API_URL: ${{ secrets.MC_API_URL }}
+          WORLD_MAP_URL: ${{ secrets.WORLD_MAP_URL }}

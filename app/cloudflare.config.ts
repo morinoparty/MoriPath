@@ -21,6 +21,8 @@ export default defineConfig({
             SERVER_URL: bindings.secret(),
             // プレイヤー情報・画像 API
             MC_API_URL: bindings.secret(),
+            // ワールドマップ (squaremap) のタイル・マーカー・プレイヤー位置の取得元
+            WORLD_MAP_URL: bindings.secret(),
             ASSETS: bindings.assets(),
         },
     },
