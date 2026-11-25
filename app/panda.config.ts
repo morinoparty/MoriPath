@@ -81,18 +81,6 @@ const config: Config = defineConfig({
                     },
                 },
             },
-            keyframes: {
-                // ボトムシート: 画面下端から滑り込む
-                sheetSlideUp: {
-                    from: { transform: "translateY(100%)" },
-                    to: { transform: "translateY(0)" },
-                },
-                // ボトムシート: 画面下端へ滑り出る。完了 (animationend) で Ark UI が DOM を外す
-                sheetSlideDown: {
-                    from: { transform: "translateY(0)" },
-                    to: { transform: "translateY(100%)" },
-                },
-            },
             semanticTokens: {
                 shadows: {
                     // TabBar などページの上に浮かぶ白いクロム用の影 (カードには使わない)

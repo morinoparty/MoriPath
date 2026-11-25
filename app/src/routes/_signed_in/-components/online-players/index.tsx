@@ -1,6 +1,7 @@
 import { Dialog } from "@ark-ui/react/dialog";
 import { Portal } from "@ark-ui/react/portal";
 import {
+    Drawer,
     IconButton,
     PlayerPhraseCard,
 } from "@morinoparty/chlorophyll-react/components";
@@ -18,7 +19,6 @@ const onlinePlayersSheetStyle = sva({
         "backdrop",
         "positioner",
         "content",
-        "handle",
         "header",
         "heading",
         "title",
@@ -29,77 +29,22 @@ const onlinePlayersSheetStyle = sva({
     base: {
         // パレットの文字色を薄く敷いて、後ろのホームを沈める
         backdrop: {
-            position: "fixed",
-            inset: "0",
-            zIndex: "overlay",
             bg: "colorPalette.fg/32",
-            _open: {
-                animationName: "drawerFadeIn",
-                animationDuration: "normal",
-                animationTimingFunction: "easeOut",
-            },
-            // 閉じるアニメーションの終わりで Ark UI が DOM を外す
-            _closed: {
-                animationName: "modalDialogFadeOut",
-                animationDuration: "fast",
-                animationTimingFunction: "easeIn",
-            },
         },
-        // シートを画面下の中央に寄せるだけのレイヤー。シートの外のクリックは暗幕へ通す
+        // ボトムシートを画面の幅いっぱいではなく、ホームの本文の幅で中央に寄せる
         positioner: {
-            position: "fixed",
-            inset: "0",
-            zIndex: "modal",
-            display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "center",
-            pointerEvents: "none",
+            alignItems: "center",
         },
+        // 開閉のアニメーション・85dvh で止めて中をスクロールする動きは Chlorophyll の Drawer に任せ、余白と幅だけを決める
         content: {
-            pointerEvents: "auto",
-            display: "flex",
-            flexDirection: "column",
             gap: "5",
-            width: "full",
-            // ホームの本文と同じ幅に収め、人数が多いときはシートの中だけをスクロールする
             maxWidth: "md",
-            maxHeight: "85dvh",
-            overflowY: "auto",
-            overscrollBehavior: "contain",
             paddingX: "6",
-            paddingTop: "3",
             // ホームインジケーターのある端末では、その分だけ下を空ける
             paddingBottom:
                 "max(token(spacing.10), env(safe-area-inset-bottom))",
-            bg: "bg.panel",
+            // Morino Party のカードに合わせて、上の角を大きく丸める
             borderTopRadius: "3xl",
-            boxShadow: "floating",
-            outline: "none",
-            _open: {
-                animationName: "sheetSlideUp",
-                animationDuration: "normal",
-                animationTimingFunction: "emphasizedDecelerate",
-            },
-            _closed: {
-                animationName: "sheetSlideDown",
-                animationDuration: "fast",
-                animationTimingFunction: "emphasizedAccelerate",
-            },
-            // 動きを減らす設定では、滑らせずにその場でフェードさせる
-            _motionReduce: {
-                _open: { animationName: "drawerFadeIn" },
-                _closed: { animationName: "modalDialogFadeOut" },
-            },
-        },
-        // 下から引き出したシートであることを示す取っ手 (操作はできない飾り)
-        handle: {
-            alignSelf: "center",
-            flexShrink: "0",
-            width: "10",
-            height: "1",
-            borderRadius: "full",
-            bg: "colorPalette.fg.muted",
-            opacity: "0.3",
         },
         header: {
             display: "flex",
@@ -144,7 +89,7 @@ interface OnlinePlayersSheetProps {
 }
 
 /**
- * フレーズ付きのプレイヤー一覧。Dialog.Content の中に置き、Root の lazyMount で
+ * フレーズ付きのプレイヤー一覧。Drawer.Content の中に置き、Root の lazyMount で
  * 開いたときに初めてクライアントで描かれるため、現在時刻から作るフレーズが
  * サーバーの描画とずれる (ハイドレーションの不一致) ことはない
  */
@@ -194,10 +139,11 @@ const OnlinePlayersSheet = ({
 
     return (
         <Portal>
-            <Dialog.Backdrop className={style.backdrop} />
-            <Dialog.Positioner className={style.positioner}>
-                <Dialog.Content className={style.content}>
-                    <div className={style.handle} aria-hidden />
+            <Drawer.Backdrop className={style.backdrop} />
+            <Drawer.Positioner className={style.positioner}>
+                <Drawer.Content className={style.content}>
+                    <Drawer.Handle />
+                    {/* Drawer は Ark UI の Dialog なので、見出しと説明・閉じるボタンは Dialog の部品で Content に結び付ける */}
                     <div className={style.header}>
                         <div className={style.heading}>
                             <Dialog.Title className={style.title}>
@@ -222,8 +168,8 @@ const OnlinePlayersSheet = ({
                         players={players}
                         referenceTime={referenceTime}
                     />
-                </Dialog.Content>
-            </Dialog.Positioner>
+                </Drawer.Content>
+            </Drawer.Positioner>
         </Portal>
     );
 };
@@ -251,15 +197,20 @@ export const OnlinePlayers = ({
     }
 
     return (
-        // フォーカストラップ・Esc で閉じる・背景のスクロール止めは Ark UI の Dialog に任せる
-        <Dialog.Root defaultOpen={defaultOpen} lazyMount unmountOnExit>
-            <Dialog.Trigger asChild>
+        // フォーカストラップ・Esc で閉じる・背景のスクロール止めは Drawer (Ark UI の Dialog) に任せる
+        <Drawer.Root
+            placement="bottom"
+            defaultOpen={defaultOpen}
+            lazyMount
+            unmountOnExit
+        >
+            <Drawer.Trigger asChild>
                 <OnlineStrip players={players} />
-            </Dialog.Trigger>
+            </Drawer.Trigger>
             <OnlinePlayersSheet
                 players={players}
                 referenceTime={referenceTime}
             />
-        </Dialog.Root>
+        </Drawer.Root>
     );
 };

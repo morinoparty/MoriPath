@@ -1,6 +1,6 @@
 import { Dialog } from "@ark-ui/react/dialog";
 import { Portal } from "@ark-ui/react/portal";
-import { Button } from "@morinoparty/chlorophyll-react/components";
+import { Button, Drawer } from "@morinoparty/chlorophyll-react/components";
 import { Link } from "@tanstack/react-router";
 import { MapPin } from "lucide-react";
 import { sva } from "../../../../../../styled-system/css";
@@ -21,7 +21,6 @@ const shopDetailSheetStyle = sva({
         "backdrop",
         "positioner",
         "content",
-        "handle",
         "head",
         "heading",
         "title",
@@ -43,79 +42,25 @@ const shopDetailSheetStyle = sva({
     base: {
         // 画面の地の色を薄く敷いて、後ろの一覧を沈める
         backdrop: {
-            position: "fixed",
-            inset: "0",
-            zIndex: "overlay",
             bg: "colorPalette.fg/32",
-            _open: {
-                animationName: "drawerFadeIn",
-                animationDuration: "normal",
-                animationTimingFunction: "easeOut",
-            },
-            // 閉じるアニメーションの終わりで Ark UI が DOM を外す
-            _closed: {
-                animationName: "modalDialogFadeOut",
-                animationDuration: "fast",
-                animationTimingFunction: "easeIn",
-            },
         },
-        // シートを画面下の中央に寄せるだけのレイヤー。シートの外のクリックは暗幕へ通す
+        // ボトムシートを画面の幅いっぱいではなく、アプリの本文の幅で中央に寄せる
         positioner: {
-            position: "fixed",
-            inset: "0",
-            zIndex: "modal",
-            display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "center",
-            pointerEvents: "none",
+            alignItems: "center",
         },
+        // 開閉のアニメーション・85dvh で止めて中をスクロールする動きは Chlorophyll の Drawer に任せ、余白と幅だけを決める
         content: {
-            pointerEvents: "auto",
-            display: "flex",
-            flexDirection: "column",
             alignItems: "stretch",
             gap: "5",
-            width: "full",
-            // アプリの本文と同じ幅に収める
             maxWidth: "md",
-            maxHeight: "85dvh",
-            overflowY: "auto",
-            overscrollBehavior: "contain",
             paddingX: "6",
-            paddingTop: "3",
             // ホームインジケーターのある端末では、その分だけ下を空ける
             paddingBottom:
                 "max(token(spacing.10), env(safe-area-inset-bottom))",
-            bg: "bg.panel",
+            // Morino Party のカードに合わせて、上の角を大きく丸める
             borderTopRadius: "28px",
-            boxShadow: "floating",
-            outline: "none",
             color: "colorPalette.fg",
             lineHeight: "1.4",
-            _open: {
-                animationName: "sheetSlideUp",
-                animationDuration: "normal",
-                animationTimingFunction: "emphasizedDecelerate",
-            },
-            _closed: {
-                animationName: "sheetSlideDown",
-                animationDuration: "fast",
-                animationTimingFunction: "emphasizedAccelerate",
-            },
-            // 動きを減らす設定では、滑らせずにその場でフェードさせる
-            _motionReduce: {
-                _open: { animationName: "drawerFadeIn" },
-                _closed: { animationName: "modalDialogFadeOut" },
-            },
-        },
-        // 下から引き出したシートであることを示す取っ手 (操作はできない飾り)
-        handle: {
-            alignSelf: "center",
-            flexShrink: "0",
-            width: "10",
-            height: "5px",
-            borderRadius: "3px",
-            bg: "colorPalette.fg.muted",
         },
         head: {
             display: "flex",
@@ -250,10 +195,11 @@ const ShopDetail = ({ shop }: { shop: ShopListing }) => {
 
     return (
         <>
-            <div className={style.handle} aria-hidden />
+            <Drawer.Handle />
             <div className={style.head}>
                 <ShopItemIcon itemId={shop.itemId} size="lg" />
                 <div className={style.heading}>
+                    {/* Drawer.Title は余白付きの見た目を持つため、Ark UI の Dialog.Title で見出しだけを結び付ける */}
                     <Dialog.Title className={style.title}>
                         {itemWithAmount(shop)}
                     </Dialog.Title>
@@ -337,20 +283,22 @@ export const ShopDetailSheet = ({
 }: ShopDetailSheetProps) => {
     const style = shopDetailSheetStyle();
     return (
-        <Dialog.Root
+        // フォーカストラップ・Esc で閉じる・閉じたあとのフォーカスの戻し先は Drawer (Ark UI の Dialog) に任せる
+        <Drawer.Root
+            placement="bottom"
             open={open && shop !== null}
             onOpenChange={(details) => onOpenChange(details.open)}
             lazyMount
             unmountOnExit
         >
             <Portal>
-                <Dialog.Backdrop className={style.backdrop} />
-                <Dialog.Positioner className={style.positioner}>
-                    <Dialog.Content className={style.content}>
+                <Drawer.Backdrop className={style.backdrop} />
+                <Drawer.Positioner className={style.positioner}>
+                    <Drawer.Content className={style.content}>
                         {shop && <ShopDetail shop={shop} />}
-                    </Dialog.Content>
-                </Dialog.Positioner>
+                    </Drawer.Content>
+                </Drawer.Positioner>
             </Portal>
-        </Dialog.Root>
+        </Drawer.Root>
     );
 };
