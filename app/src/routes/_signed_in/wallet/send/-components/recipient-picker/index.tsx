@@ -54,8 +54,10 @@ const recipientPickerStyle = sva({
             flexDirection: "column",
             alignItems: "center",
             gap: "1",
-            flexShrink: "0",
-            width: "16",
+            // 候補が少ないときは左に寄らないよう、列を等分に広げて顔を各列の中央に置く。
+            // 多いときは 64px を下限に並べ、はみ出した分は横スクロールにする
+            flex: "1 0 token(sizes.16)",
+            minWidth: "16",
             cursor: "pointer",
             borderRadius: "control",
             _focusVisible: {
