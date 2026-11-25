@@ -6,7 +6,7 @@ import type {
 
 // 駅の円の外側でも、このくらい (ブロック) までに路線が通っていれば駅に乗り入れているとみなす。
 // 実データでは 3 だと端点がホームの位置にずれた駅 (RES02 など) が票を入れられず、8 以上で結果が安定した
-const STATION_LINE_TOLERANCE = 8;
+export const STATION_LINE_TOLERANCE = 8;
 
 /** 「PAK08」「PAK 08」から路線の記号「PAK」を取り出す。記号が無ければ null */
 export const numberingPrefix = (code: string): string | null => {

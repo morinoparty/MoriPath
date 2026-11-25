@@ -5,7 +5,11 @@ import type {
 } from "../-types/compact-markers";
 import type { ApiStation, MapStation, StationLine } from "../-types/station";
 import type { Vec2 } from "../-types/world-map";
-import { numberingPrefix } from "./numbering-colors";
+import {
+    distanceToPolyline,
+    numberingPrefix,
+    STATION_LINE_TOLERANCE,
+} from "./numbering-colors";
 
 // 大きさの分からない駅の既定の半径 (AdvanceRailway の circleSizeBase と同じ)
 const DEFAULT_STATION_RADIUS = 5;
@@ -127,7 +131,18 @@ export const findLinesAtStation = (
             (end) =>
                 end !== undefined && nearestStation(end, stations) === station,
         );
-        if (!reachesStation) {
+        // 端が駅に無くても、乗換案内の発着駅がこの駅か、駅の円の近くを通る線は乗り入れているとみなす。
+        // 途中駅を通り抜ける長い線は端が終点にしか無いため、端だけで見ると途中駅の路線が空になる
+        const { fromStation, toStation } = polyline.route;
+        const servesByRoute =
+            fromStation === station.name || toStation === station.name;
+        const passesNearby =
+            distanceToPolyline(
+                [station.point.x, station.point.z],
+                polyline.points,
+            ) <=
+            station.radius + STATION_LINE_TOLERANCE;
+        if (!reachesStation && !servesByRoute && !passesNearby) {
             continue;
         }
         const { lineName } = polyline.route;
