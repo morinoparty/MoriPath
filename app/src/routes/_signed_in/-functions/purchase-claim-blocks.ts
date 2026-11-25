@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { getAuth } from "../../../lib/auth";
+import { getMineAuthAccessToken } from "../../../lib/auth";
+import { MINEAUTH_MUTATION_TIMEOUT_MS } from "../../../lib/mineauth-timeout";
 import { getServerUrl } from "../../../lib/server-list";
 import type { PurchaseClaimBlocksResult } from "../balance-claim/-types/claim-purchase";
 
@@ -56,11 +57,9 @@ export const purchaseClaimBlocks = createServerFn({ method: "POST" })
             // 買う前の認証はまだ何も動いていないため、失敗したら rejected として返す
             let accessToken: string;
             try {
-                const auth = await getAuth();
-                const tokenResult = await auth.api.getAccessToken({
-                    body: { useAccountCookie: true },
-                    headers: (request as Request).headers,
-                });
+                const tokenResult = await getMineAuthAccessToken(
+                    (request as Request).headers,
+                );
                 if (!tokenResult?.accessToken) {
                     throw new Error("No access token available");
                 }
@@ -83,6 +82,10 @@ export const purchaseClaimBlocks = createServerFn({ method: "POST" })
                     `${mainServerUrl}/api/v1/plugins/griefprevention/claims/purchase`,
                     {
                         method: "POST",
+                        // 購入は途中で切ると結果が分からなくなるため、長めに待つ
+                        signal: AbortSignal.timeout(
+                            MINEAUTH_MUTATION_TIMEOUT_MS,
+                        ),
                         headers: {
                             Authorization: `Bearer ${accessToken}`,
                             "Content-Type": "application/json",

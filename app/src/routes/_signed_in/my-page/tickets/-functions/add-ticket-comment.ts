@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { MINEAUTH_MUTATION_TIMEOUT_MS } from "../../../../../lib/mineauth-timeout";
 import type { AddTicketCommentResult } from "../-types/ticket";
 import {
     type AddTicketCommentInput,
@@ -49,6 +50,8 @@ export const addTicketComment = createServerFn({ method: "POST" })
                 `${api.baseUrl}/me/tickets/${ticketId}/comments`,
                 {
                     method: "POST",
+                    // 書き込みは途中で切ると結果が分からなくなるため、長めに待つ
+                    signal: AbortSignal.timeout(MINEAUTH_MUTATION_TIMEOUT_MS),
                     headers: {
                         Authorization: `Bearer ${api.accessToken}`,
                         "Content-Type": "application/json",

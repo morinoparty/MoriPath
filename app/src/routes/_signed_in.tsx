@@ -3,13 +3,25 @@ import { css } from "../../styled-system/css";
 import { resolveParty } from "../components/home-header";
 import { resolveActiveTab, TabBar } from "../components/tab-bar";
 import { authMiddleware } from "../lib/auth-middleware";
-import { getSession, type SessionData } from "../lib/server-functions";
+import {
+    getSession,
+    type SessionData,
+    type SessionResult,
+} from "../lib/server-functions";
+import { redirectToUnavailable } from "../lib/unavailable-redirect";
 
 export const Route = createFileRoute("/_signed_in")({
     server: {
         middleware: [authMiddleware],
     },
-    beforeLoad: async () => ({ session: await getSessionForNavigation() }),
+    beforeLoad: async ({ location }) => {
+        const result = await getSessionForNavigation();
+        // MineAuth に届かずセッションを確かめられないときは、サインインへ回さず案内ページへ送る
+        if (result.authServerUnavailable) {
+            throw redirectToUnavailable(location.href);
+        }
+        return { session: result.session };
+    },
     component: SignedInLayout,
 });
 
@@ -22,7 +34,7 @@ let clientSession:
     | undefined;
 
 /** 画面の移動で使うセッション。サーバーでは毎回、ブラウザでは覚えている間はそれを返す */
-async function getSessionForNavigation(): Promise<SessionData> {
+async function getSessionForNavigation(): Promise<SessionResult> {
     if (typeof window === "undefined") {
         return getSession();
     }
@@ -31,12 +43,14 @@ async function getSessionForNavigation(): Promise<SessionData> {
         clientSession &&
         now - clientSession.fetchedAt < CLIENT_SESSION_TTL_MS
     ) {
-        return clientSession.value;
+        return { session: clientSession.value, authServerUnavailable: false };
     }
-    const session = await getSession();
-    // サインアウトしている (null) ときは覚えない。サインアウトの操作はページを読み込み直すので、この値も消える
-    clientSession = session ? { value: session, fetchedAt: now } : undefined;
-    return session;
+    const result = await getSession();
+    // サインアウトしている (null) ときや確かめられなかったときは覚えない。サインアウトの操作はページを読み込み直すので、この値も消える
+    clientSession = result.session
+        ? { value: result.session, fetchedAt: now }
+        : undefined;
+    return result;
 }
 
 const layoutStyle = css({

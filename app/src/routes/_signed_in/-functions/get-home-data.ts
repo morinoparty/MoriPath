@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
-import { getAuth } from "../../../lib/auth";
+import { getMineAuthAccessToken } from "../../../lib/auth";
 import { authMiddleware } from "../../../lib/auth-middleware";
 import { createLoadTimer } from "../../../lib/load-timer";
 import type { HomeData } from "../-types/home-data";
@@ -31,15 +31,10 @@ export const getHomeData = createServerFn()
         // ダイアリーはトークンを使わないため、トークンを待たずに取り始める
         const diaryEntries = timer.track("diary", fetchLatestDiaryEntries());
 
-        const auth = await getAuth();
         // MineAuth のアクセストークンは 5 分で切れるため、ここで更新が走ることが多い
         const accessToken = await timer.track(
             "token",
-            auth.api
-                .getAccessToken({
-                    body: { useAccountCookie: true },
-                    headers: getRequest().headers,
-                })
+            getMineAuthAccessToken(getRequest().headers)
                 .then((result) => result?.accessToken ?? null)
                 .catch((error: unknown) => {
                     console.warn("アクセストークンを取得できません:", error);

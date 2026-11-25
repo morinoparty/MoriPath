@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getAuth } from "../../../lib/auth";
+import { getMineAuthAccessToken } from "../../../lib/auth";
+import { MINEAUTH_API_TIMEOUT_MS } from "../../../lib/mineauth-timeout";
 import { getServerUrl } from "../../../lib/server-list";
 
 // oxlint-disable-next-line typescript/no-explicit-any -- レスポンス構造が未定義
@@ -8,11 +9,7 @@ export type QuestsResponse = any;
 export const getQuests = createServerFn().handler(
     // oxlint-disable-next-line typescript/no-explicit-any -- request is not typed
     async ({ request }: any) => {
-        const auth = await getAuth();
-        const tokenResult = await auth.api.getAccessToken({
-            body: { useAccountCookie: true },
-            headers: request.headers,
-        });
+        const tokenResult = await getMineAuthAccessToken(request.headers);
 
         if (!tokenResult?.accessToken) {
             throw new Error("No access token available");
@@ -24,6 +21,7 @@ export const getQuests = createServerFn().handler(
                 headers: {
                     Authorization: `Bearer ${tokenResult.accessToken}`,
                 },
+                signal: AbortSignal.timeout(MINEAUTH_API_TIMEOUT_MS),
             },
         );
 

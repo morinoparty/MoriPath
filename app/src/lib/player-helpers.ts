@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { PlayerServerData, ServerPlayerData } from "../types/player";
+import { MINEAUTH_API_TIMEOUT_MS } from "./mineauth-timeout";
 import { getMcApiUrl } from "./player-api";
 import { findServerLabel } from "./server-labels";
 import { getServers, getServerUrl } from "./server-list";
@@ -104,7 +105,7 @@ export async function getPlayerData(uuid: string): Promise<PlayerServerData> {
     for (const server of servers) {
         const response = await fetch(
             `${getServerUrl(server)}/api/v1/commons/server/players`,
-            {},
+            { signal: AbortSignal.timeout(MINEAUTH_API_TIMEOUT_MS) },
         );
         const players = await response.json<ServerPlayerData[]>();
         const player = players.find((player) => player.id === uuid);

@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { getAuth } from "../../../../lib/auth";
+import { getMineAuthAccessToken } from "../../../../lib/auth";
+import { MINEAUTH_API_TIMEOUT_MS } from "../../../../lib/mineauth-timeout";
 import { getServerUrl } from "../../../../lib/server-list";
 
 // AdvanceRailway は main サーバーにだけ入っている
@@ -51,16 +52,13 @@ export const fetchAdvanceRailway = async <T>(
     path: string,
     schema: z.ZodType<T>,
 ): Promise<T> => {
-    const auth = await getAuth();
-    const tokenResult = await auth.api.getAccessToken({
-        body: { useAccountCookie: true },
-        headers,
-    });
+    const tokenResult = await getMineAuthAccessToken(headers);
     if (!tokenResult?.accessToken) {
         throw new AdvanceRailwayUnavailableError("No access token available");
     }
     const response = await fetch(`${getServerUrl("main")}${API_PATH}${path}`, {
         headers: { Authorization: `Bearer ${tokenResult.accessToken}` },
+        signal: AbortSignal.timeout(MINEAUTH_API_TIMEOUT_MS),
     });
     if (response.status === 401 || response.status === 403) {
         throw new AdvanceRailwayUnavailableError(

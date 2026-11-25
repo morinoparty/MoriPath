@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { getAuth } from "../../../../../lib/auth";
+import { getMineAuthAccessToken } from "../../../../../lib/auth";
 import { getServerUrl } from "../../../../../lib/server-list";
 import { sortShops } from "../../../shop/-functions/filter-shops";
 import {
@@ -31,11 +31,7 @@ const myShopsResponseSchema = z.array(z.union([z.number(), quickShopSchema]));
 async function fetchMyShopRefs(
     headers: Headers,
 ): Promise<Array<number | QuickShop>> {
-    const auth = await getAuth();
-    const tokenResult = await auth.api.getAccessToken({
-        body: { useAccountCookie: true },
-        headers,
-    });
+    const tokenResult = await getMineAuthAccessToken(headers);
     if (!tokenResult?.accessToken) {
         throw new Error("No access token available");
     }

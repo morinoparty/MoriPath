@@ -13,6 +13,7 @@ import { Route as Signed_inRouteImport } from './routes/_signed_in'
 import { Route as Signed_inIndexRouteImport } from './routes/_signed_in/index'
 import { Route as Signed_inSplatRouteImport } from './routes/_signed_in/$'
 import { Route as NofooterTermsIndexRouteImport } from './routes/_nofooter/terms/index'
+import { Route as NofooterUnavailableIndexRouteImport } from './routes/_nofooter/unavailable/index'
 import { Route as Signed_inBalanceClaimIndexRouteImport } from './routes/_signed_in/balance-claim/index'
 import { Route as Signed_inDiaryIndexRouteImport } from './routes/_signed_in/diary/index'
 import { Route as Signed_inDiaryDateRouteImport } from './routes/_signed_in/diary/$date'
@@ -48,6 +49,12 @@ const NofooterTermsIndexRoute = NofooterTermsIndexRouteImport.update({
   path: '/terms/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NofooterUnavailableIndexRoute =
+  NofooterUnavailableIndexRouteImport.update({
+    id: '/_nofooter/unavailable/',
+    path: '/unavailable/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const Signed_inBalanceClaimIndexRoute =
   Signed_inBalanceClaimIndexRouteImport.update({
     id: '/balance-claim/',
@@ -137,6 +144,7 @@ export interface FileRoutesByFullPath {
   '/diary/$date': typeof Signed_inDiaryDateRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/terms/': typeof NofooterTermsIndexRoute
+  '/unavailable/': typeof NofooterUnavailableIndexRoute
   '/balance-claim/': typeof Signed_inBalanceClaimIndexRoute
   '/diary/': typeof Signed_inDiaryIndexRoute
   '/fishing/': typeof Signed_inFishingIndexRoute
@@ -157,6 +165,7 @@ export interface FileRoutesByTo {
   '/diary/$date': typeof Signed_inDiaryDateRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/terms': typeof NofooterTermsIndexRoute
+  '/unavailable': typeof NofooterUnavailableIndexRoute
   '/balance-claim': typeof Signed_inBalanceClaimIndexRoute
   '/diary': typeof Signed_inDiaryIndexRoute
   '/fishing': typeof Signed_inFishingIndexRoute
@@ -179,6 +188,7 @@ export interface FileRoutesById {
   '/_signed_in/diary/$date': typeof Signed_inDiaryDateRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_nofooter/terms/': typeof NofooterTermsIndexRoute
+  '/_nofooter/unavailable/': typeof NofooterUnavailableIndexRoute
   '/_signed_in/balance-claim/': typeof Signed_inBalanceClaimIndexRoute
   '/_signed_in/diary/': typeof Signed_inDiaryIndexRoute
   '/_signed_in/fishing/': typeof Signed_inFishingIndexRoute
@@ -201,6 +211,7 @@ export interface FileRouteTypes {
     | '/diary/$date'
     | '/api/auth/$'
     | '/terms/'
+    | '/unavailable/'
     | '/balance-claim/'
     | '/diary/'
     | '/fishing/'
@@ -221,6 +232,7 @@ export interface FileRouteTypes {
     | '/diary/$date'
     | '/api/auth/$'
     | '/terms'
+    | '/unavailable'
     | '/balance-claim'
     | '/diary'
     | '/fishing'
@@ -242,6 +254,7 @@ export interface FileRouteTypes {
     | '/_signed_in/diary/$date'
     | '/api/auth/$'
     | '/_nofooter/terms/'
+    | '/_nofooter/unavailable/'
     | '/_signed_in/balance-claim/'
     | '/_signed_in/diary/'
     | '/_signed_in/fishing/'
@@ -261,6 +274,7 @@ export interface RootRouteChildren {
   Signed_inRoute: typeof Signed_inRouteWithChildren
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   NofooterTermsIndexRoute: typeof NofooterTermsIndexRoute
+  NofooterUnavailableIndexRoute: typeof NofooterUnavailableIndexRoute
   NofooterAuthSignInIndexRoute: typeof NofooterAuthSignInIndexRoute
 }
 
@@ -292,6 +306,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms/'
       preLoaderRoute: typeof NofooterTermsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_nofooter/unavailable/': {
+      id: '/_nofooter/unavailable/'
+      path: '/unavailable'
+      fullPath: '/unavailable/'
+      preLoaderRoute: typeof NofooterUnavailableIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_signed_in/balance-claim/': {
@@ -446,6 +467,7 @@ const rootRouteChildren: RootRouteChildren = {
   Signed_inRoute: Signed_inRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   NofooterTermsIndexRoute: NofooterTermsIndexRoute,
+  NofooterUnavailableIndexRoute: NofooterUnavailableIndexRoute,
   NofooterAuthSignInIndexRoute: NofooterAuthSignInIndexRoute,
 }
 export const routeTree = rootRouteImport

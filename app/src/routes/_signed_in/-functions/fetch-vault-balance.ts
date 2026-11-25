@@ -1,3 +1,4 @@
+import { MINEAUTH_API_TIMEOUT_MS } from "../../../lib/mineauth-timeout";
 import { getServerUrl } from "../../../lib/server-list";
 
 interface VaultBalanceResponse {
@@ -11,7 +12,10 @@ export async function fetchVaultBalance(accessToken: string): Promise<number> {
 
     const response = await fetch(
         `${mainServerUrl}/api/v1/plugins/vault/balance/me`,
-        { headers: { Authorization: `Bearer ${accessToken}` } },
+        {
+            headers: { Authorization: `Bearer ${accessToken}` },
+            signal: AbortSignal.timeout(MINEAUTH_API_TIMEOUT_MS),
+        },
     );
 
     if (!response.ok) {

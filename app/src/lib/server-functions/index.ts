@@ -1,1 +1,5 @@
-export { getSession, type SessionData } from "./get-session";
+export {
+    getSession,
+    type SessionData,
+    type SessionResult,
+} from "./get-session";

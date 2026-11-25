@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getAuth } from "../../../../lib/auth";
+import { getMineAuthAccessToken } from "../../../../lib/auth";
 import type { MyStamps } from "../-types/stamp";
 import { fetchMyStamps } from "./fetch-my-stamps";
 
@@ -8,11 +8,7 @@ export const getMyStamps = createServerFn().handler(
     // oxlint-disable-next-line typescript/no-explicit-any -- request is not typed
     async ({ request }: any): Promise<MyStamps | null> => {
         try {
-            const auth = await getAuth();
-            const tokenResult = await auth.api.getAccessToken({
-                body: { useAccountCookie: true },
-                headers: request.headers,
-            });
+            const tokenResult = await getMineAuthAccessToken(request.headers);
 
             if (!tokenResult?.accessToken) {
                 return null;

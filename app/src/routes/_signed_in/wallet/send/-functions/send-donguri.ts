@@ -1,5 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import {
+    MINEAUTH_API_TIMEOUT_MS,
+    MINEAUTH_MUTATION_TIMEOUT_MS,
+} from "../../../../../lib/mineauth-timeout";
 import { toDashedUuid } from "../../../../../lib/player-helpers";
 import { getServerUrl } from "../../../../../lib/server-list";
 import type { SendDonguriResult } from "../-types/wallet-send";
@@ -94,7 +98,10 @@ export const sendDonguri = createServerFn({ method: "POST" })
             // 残高を超える送金は API に送る前に断る。残高が取れなくても API 側で確かめられるので続ける
             const balance = await fetch(
                 `${mainServerUrl}/api/v1/plugins/vault/balance/me`,
-                { headers: authorization },
+                {
+                    headers: authorization,
+                    signal: AbortSignal.timeout(MINEAUTH_API_TIMEOUT_MS),
+                },
             )
                 .then((response) =>
                     response.ok
@@ -116,6 +123,10 @@ export const sendDonguri = createServerFn({ method: "POST" })
                     `${mainServerUrl}/api/v1/plugins/vault/send`,
                     {
                         method: "POST",
+                        // 送金は途中で切ると結果が分からなくなるため、長めに待つ
+                        signal: AbortSignal.timeout(
+                            MINEAUTH_MUTATION_TIMEOUT_MS,
+                        ),
                         headers: {
                             ...authorization,
                             "Content-Type": "application/json",

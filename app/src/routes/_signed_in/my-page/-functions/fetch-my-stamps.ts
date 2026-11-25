@@ -8,6 +8,7 @@ import {
 } from "../-types/stamp";
 import { orderStamps } from "./order-stamps";
 // 対応表はサーバー側でだけ読み、クライアントには字形と名前だけを渡す
+import { MINEAUTH_API_TIMEOUT_MS } from "../../../../lib/mineauth-timeout";
 import stampEmojiTable from "./stamp-emoji.gen.json";
 import { toStamp } from "./to-stamp";
 
@@ -33,6 +34,7 @@ async function fetchStampTotal(mainServerUrl: string): Promise<number> {
     // 総数は認証なしで取れる全スタンプの一覧から数える
     const response = await fetch(
         `${mainServerUrl}/api/v1/plugins/minestamp/stamps/all`,
+        { signal: AbortSignal.timeout(MINEAUTH_API_TIMEOUT_MS) },
     );
     if (!response.ok) {
         throw new Error(`スタンプ一覧の取得に失敗しました: ${response.status}`);
@@ -57,7 +59,10 @@ async function fetchOwnedStamps(
 ): Promise<Stamp[]> {
     const response = await fetch(
         `${mainServerUrl}/api/v1/plugins/minestamp/stamps`,
-        { headers: { Authorization: `Bearer ${accessToken}` } },
+        {
+            headers: { Authorization: `Bearer ${accessToken}` },
+            signal: AbortSignal.timeout(MINEAUTH_API_TIMEOUT_MS),
+        },
     );
     if (!response.ok) {
         throw new Error(`所持スタンプの取得に失敗しました: ${response.status}`);

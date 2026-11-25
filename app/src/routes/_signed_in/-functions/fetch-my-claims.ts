@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { getAuth } from "../../../lib/auth";
+import { getMineAuthAccessToken } from "../../../lib/auth";
+import { MINEAUTH_API_TIMEOUT_MS } from "../../../lib/mineauth-timeout";
 import { getServerUrl } from "../../../lib/server-list";
 
 // サーバー関数の中からだけ呼ぶ。クライアントに auth を持ち込まないよう、サーバー関数とは別のファイルに置く
@@ -47,11 +48,7 @@ export type ClaimsResponse = z.output<typeof claimsResponseSchema>;
 
 /** ログイン中のプレイヤーの保護範囲と保護ブロックを MineAuth から取る */
 export async function fetchMyClaims(headers: Headers): Promise<ClaimsResponse> {
-    const auth = await getAuth();
-    const tokenResult = await auth.api.getAccessToken({
-        body: { useAccountCookie: true },
-        headers,
-    });
+    const tokenResult = await getMineAuthAccessToken(headers);
 
     if (!tokenResult?.accessToken) {
         throw new Error("No access token available");
@@ -69,7 +66,10 @@ export async function fetchMyClaimsWithToken(
 
     const response = await fetch(
         `${mainServerUrl}/api/v1/plugins/griefprevention/claims/me`,
-        { headers: { Authorization: `Bearer ${accessToken}` } },
+        {
+            headers: { Authorization: `Bearer ${accessToken}` },
+            signal: AbortSignal.timeout(MINEAUTH_API_TIMEOUT_MS),
+        },
     );
 
     if (!response.ok) {

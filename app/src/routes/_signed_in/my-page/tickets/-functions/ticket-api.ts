@@ -1,5 +1,6 @@
 import type { z } from "zod";
-import { getAuth } from "../../../../../lib/auth";
+import { getMineAuthAccessToken } from "../../../../../lib/auth";
+import { MINEAUTH_API_TIMEOUT_MS } from "../../../../../lib/mineauth-timeout";
 import { getServerUrl } from "../../../../../lib/server-list";
 import {
     ticketCommentListResponseSchema,
@@ -24,11 +25,7 @@ export interface TicketApi {
 
 /** サーバー関数の中で、moripautils の API を呼ぶための情報を用意する */
 export const getTicketApi = async (headers: Headers): Promise<TicketApi> => {
-    const auth = await getAuth();
-    const tokenResult = await auth.api.getAccessToken({
-        body: { useAccountCookie: true },
-        headers,
-    });
+    const tokenResult = await getMineAuthAccessToken(headers);
     if (!tokenResult?.accessToken) {
         throw new Error("No access token available");
     }
@@ -47,6 +44,7 @@ export const fetchTicketJson = async <Schema extends z.ZodType>(
 ): Promise<z.infer<Schema>> => {
     const response = await fetch(`${api.baseUrl}${path}`, {
         headers: { Authorization: `Bearer ${api.accessToken}` },
+        signal: AbortSignal.timeout(MINEAUTH_API_TIMEOUT_MS),
     });
     // 他人のチケットは /me では 404、スタッフ用の API では 403 になる
     if (response.status === 404 || response.status === 403) {

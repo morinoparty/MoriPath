@@ -1,4 +1,5 @@
-import { getAuth } from "../../../../../lib/auth";
+import { getMineAuthAccessToken } from "../../../../../lib/auth";
+import { MINEAUTH_API_TIMEOUT_MS } from "../../../../../lib/mineauth-timeout";
 import { toDashedUuid } from "../../../../../lib/player-helpers";
 import { getAuthServerUrl } from "../../../../../lib/server-list";
 import type { UserInfoData } from "../../../../../types/player";
@@ -14,11 +15,7 @@ export interface WalletAuth {
  * UUID はマイページと同じく userinfo の sub から取り、取れなければ null のまま返す
  */
 export const getWalletAuth = async (headers: Headers): Promise<WalletAuth> => {
-    const auth = await getAuth();
-    const tokenResult = await auth.api.getAccessToken({
-        body: { useAccountCookie: true },
-        headers,
-    });
+    const tokenResult = await getMineAuthAccessToken(headers);
     if (!tokenResult?.accessToken) {
         throw new Error("No access token available");
     }
@@ -29,6 +26,7 @@ export const getWalletAuth = async (headers: Headers): Promise<WalletAuth> => {
         .then((authServerUrl) =>
             fetch(`${authServerUrl}/oauth2/userinfo`, {
                 headers: { Authorization: `Bearer ${accessToken}` },
+                signal: AbortSignal.timeout(MINEAUTH_API_TIMEOUT_MS),
             }),
         )
         .then((response) =>

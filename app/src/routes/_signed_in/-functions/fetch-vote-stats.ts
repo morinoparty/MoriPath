@@ -1,3 +1,4 @@
+import { MINEAUTH_API_TIMEOUT_MS } from "../../../lib/mineauth-timeout";
 import { getServers, getServerUrl } from "../../../lib/server-list";
 import type { VoteStats } from "../-types/vote-stats";
 import { voteStatsResponseSchema } from "../-types/vote-stats";
@@ -17,6 +18,7 @@ async function resolveVotingServerUrl(): Promise<string> {
         try {
             const response = await fetch(
                 `${serverUrl}/api/v1/plugins/voting/sites`,
+                { signal: AbortSignal.timeout(MINEAUTH_API_TIMEOUT_MS) },
             );
             if (response.ok) {
                 return serverUrl;
@@ -47,7 +49,10 @@ export async function fetchVoteStats(
         const votingServerUrl = await getVotingServerUrl();
         const response = await fetch(
             `${votingServerUrl}/api/v1/plugins/voting/stats/me`,
-            { headers: { Authorization: `Bearer ${accessToken}` } },
+            {
+                headers: { Authorization: `Bearer ${accessToken}` },
+                signal: AbortSignal.timeout(MINEAUTH_API_TIMEOUT_MS),
+            },
         );
 
         if (!response.ok) {

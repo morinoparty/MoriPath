@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { MINEAUTH_API_TIMEOUT_MS } from "../../../lib/mineauth-timeout";
 import { getServers, getServerUrl } from "../../../lib/server-list";
 import type {
     OnlineServerPlayerData,
@@ -11,7 +12,9 @@ export const getOnlinePlayers = createServerFn().handler(async () => {
     // 一覧はサーバーごとに取るため、取った先のサーバー ID をそれぞれに付ける
     const players = await Promise.all(
         servers.map((server) =>
-            fetch(`${getServerUrl(server)}/api/v1/commons/server/players`, {})
+            fetch(`${getServerUrl(server)}/api/v1/commons/server/players`, {
+                signal: AbortSignal.timeout(MINEAUTH_API_TIMEOUT_MS),
+            })
                 .then((res) => res.json() as Promise<ServerPlayerData[]>)
                 .then((serverPlayers) =>
                     serverPlayers.map((player): OnlineServerPlayerData => ({
