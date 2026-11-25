@@ -16,7 +16,8 @@ const emojiMap: Readonly<Record<string, string>> = stampEmojiMap;
 // スタンプの総数はめったに変わらず、一覧は 3000 件を超えるため isolate 内でキャッシュする
 const TOTAL_CACHE_TTL_MS = 10 * 60 * 1000;
 
-let totalCache: { value: Promise<number>; expiresAt: number } | undefined;
+// Workers ではリクエストをまたいで Promise を共有できないため、取得し終えた値だけを持つ
+let totalCache: { value: number; expiresAt: number } | undefined;
 
 async function fetchStampTotal(mainServerUrl: string): Promise<number> {
     // 総数は認証なしで取れる全スタンプの一覧から数える
@@ -29,19 +30,15 @@ async function fetchStampTotal(mainServerUrl: string): Promise<number> {
     return allStampsResponseSchema.parse(await response.json()).stamps.length;
 }
 
-function getStampTotal(mainServerUrl: string): Promise<number> {
+async function getStampTotal(mainServerUrl: string): Promise<number> {
     const now = Date.now();
-    if (!totalCache || totalCache.expiresAt <= now) {
-        const value = fetchStampTotal(mainServerUrl);
-        // 失敗した Promise はキャッシュしない
-        value.catch(() => {
-            if (totalCache?.value === value) {
-                totalCache = undefined;
-            }
-        });
-        totalCache = { value, expiresAt: now + TOTAL_CACHE_TTL_MS };
+    if (totalCache && totalCache.expiresAt > now) {
+        return totalCache.value;
     }
-    return totalCache.value;
+    // 失敗は例外のまま返してキャッシュせず、次のリクエストで取り直す
+    const value = await fetchStampTotal(mainServerUrl);
+    totalCache = { value, expiresAt: now + TOTAL_CACHE_TTL_MS };
+    return value;
 }
 
 async function fetchOwnedStamps(

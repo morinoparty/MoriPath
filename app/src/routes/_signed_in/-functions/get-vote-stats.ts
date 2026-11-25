@@ -8,9 +8,8 @@ import { toVoteStats } from "./to-vote-stats";
 // VotingPlugin の載っているサーバーはめったに変わらないため isolate 内でキャッシュする
 const CACHE_TTL_MS = 60 * 1000;
 
-let votingServerCache:
-    | { value: Promise<string>; expiresAt: number }
-    | undefined;
+// Workers ではリクエストをまたいで Promise を共有できないため、解決し終えた値だけを持つ
+let votingServerCache: { value: string; expiresAt: number } | undefined;
 
 async function resolveVotingServerUrl(): Promise<string> {
     const servers = await getServers();
@@ -31,19 +30,15 @@ async function resolveVotingServerUrl(): Promise<string> {
     throw new Error("VotingPlugin のあるサーバーが見つかりません");
 }
 
-function getVotingServerUrl(): Promise<string> {
+async function getVotingServerUrl(): Promise<string> {
     const now = Date.now();
-    if (!votingServerCache || votingServerCache.expiresAt <= now) {
-        const value = resolveVotingServerUrl();
-        // 失敗した Promise はキャッシュしない
-        value.catch(() => {
-            if (votingServerCache?.value === value) {
-                votingServerCache = undefined;
-            }
-        });
-        votingServerCache = { value, expiresAt: now + CACHE_TTL_MS };
+    if (votingServerCache && votingServerCache.expiresAt > now) {
+        return votingServerCache.value;
     }
-    return votingServerCache.value;
+    // 失敗は例外のまま返してキャッシュせず、次のリクエストで取り直す
+    const value = await resolveVotingServerUrl();
+    votingServerCache = { value, expiresAt: now + CACHE_TTL_MS };
+    return value;
 }
 
 /** 自分の投票状況を取得する。取得できなければ null (画面側で非表示にする) */

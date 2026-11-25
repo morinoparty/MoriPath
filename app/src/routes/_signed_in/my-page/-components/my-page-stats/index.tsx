@@ -63,7 +63,8 @@ export const MyPageStats = ({ stats, className }: MyPageStatsProps) => {
                     <Stat.Root key={item.key} className={statRootStyle}>
                         <Stat.Label>{item.label}</Stat.Label>
                         <Stat.Value>
-                            {item.value.toLocaleString()}
+                            {/* SSR とブラウザで桁区切りがずれないよう、ロケールを固定する */}
+                            {item.value.toLocaleString("ja-JP")}
                             {item.unit && <Stat.Unit>{item.unit}</Stat.Unit>}
                         </Stat.Value>
                     </Stat.Root>

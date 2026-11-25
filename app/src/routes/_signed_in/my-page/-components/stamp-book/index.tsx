@@ -183,8 +183,9 @@ export const StampBook = ({ stamps, className }: StampBookProps) => {
                     スタンプ帳
                 </h2>
                 <span className={classes.count}>
-                    {stamps.owned.length.toLocaleString()} /{" "}
-                    {stamps.total.toLocaleString()}
+                    {/* SSR とブラウザで桁区切りがずれないよう、ロケールを固定する */}
+                    {stamps.owned.length.toLocaleString("ja-JP")} /{" "}
+                    {stamps.total.toLocaleString("ja-JP")}
                 </span>
             </div>
             {visible.length === 0 ? (

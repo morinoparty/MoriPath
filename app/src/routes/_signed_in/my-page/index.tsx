@@ -1,6 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { getMyClaims, getVaultBalance, getVoteStats } from "../-functions";
 import { getUserInfo } from "../-functions/get-userinfo";
+import { MyPageError } from "./-components/my-page-error";
 import { MyPageView } from "./-components/my-page-view";
 import { getMyStamps } from "./-functions/get-my-stamps";
 import { getPlayerPresence } from "./-functions/get-player-presence";
@@ -24,8 +25,8 @@ export const Route = createFileRoute("/_signed_in/my-page/")({
                 presencePromise,
                 getVaultBalance().catch(() => null),
                 getMyClaims().catch(() => null),
-                // getVoteStats は失敗すると null を返す
-                getVoteStats(),
+                // getVoteStats は中で失敗を null にするが、通信自体の失敗はここで受け止める
+                getVoteStats().catch(() => null),
                 // 通信自体の失敗も含め、取れなければスタンプ帳を隠す
                 getMyStamps().catch(() => null),
             ]);
@@ -43,9 +44,17 @@ export const Route = createFileRoute("/_signed_in/my-page/")({
         };
     },
     component: MyPage,
+    // 既定の "Something went wrong!" の代わりに、再読み込みできる案内を出す
+    errorComponent: MyPageErrorBoundary,
 });
 
 function MyPage() {
     const data = Route.useLoaderData();
     return <MyPageView {...data} />;
+}
+
+function MyPageErrorBoundary() {
+    const router = useRouter();
+    // invalidate で loader を取り直し、エラー境界も元に戻す
+    return <MyPageError onRetry={() => router.invalidate()} />;
 }

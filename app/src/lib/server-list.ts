@@ -6,7 +6,8 @@ const serverListSchema = z.array(z.string().min(1));
 // サーバー構成はめったに変わらないため、解決結果を isolate 内でキャッシュする
 const CACHE_TTL_MS = 60 * 1000;
 
-type Cached<T> = { value: Promise<T>; expiresAt: number };
+// Workers ではリクエストをまたいで Promise を共有できないため、解決し終えた値だけを持つ
+type Cached<T> = { value: T; expiresAt: number };
 
 let serverListCache: Cached<string[]> | undefined;
 let authServerCache: Cached<string> | undefined;
@@ -30,19 +31,15 @@ async function fetchServerList(): Promise<string[]> {
     return serverListSchema.parse(await response.json());
 }
 
-export function getServers(): Promise<string[]> {
+export async function getServers(): Promise<string[]> {
     const now = Date.now();
-    if (!serverListCache || serverListCache.expiresAt <= now) {
-        const value = fetchServerList();
-        // 失敗した Promise はキャッシュしない
-        value.catch(() => {
-            if (serverListCache?.value === value) {
-                serverListCache = undefined;
-            }
-        });
-        serverListCache = { value, expiresAt: now + CACHE_TTL_MS };
+    if (serverListCache && serverListCache.expiresAt > now) {
+        return serverListCache.value;
     }
-    return serverListCache.value;
+    // 失敗は例外のまま返してキャッシュせず、次のリクエストで取り直す
+    const value = await fetchServerList();
+    serverListCache = { value, expiresAt: now + CACHE_TTL_MS };
+    return value;
 }
 
 async function resolveAuthServerUrl(): Promise<string> {
@@ -64,17 +61,13 @@ async function resolveAuthServerUrl(): Promise<string> {
     throw new Error("利用可能な認証サーバーが見つかりません");
 }
 
-export function getAuthServerUrl(): Promise<string> {
+export async function getAuthServerUrl(): Promise<string> {
     const now = Date.now();
-    if (!authServerCache || authServerCache.expiresAt <= now) {
-        const value = resolveAuthServerUrl();
-        // 失敗した Promise はキャッシュしない
-        value.catch(() => {
-            if (authServerCache?.value === value) {
-                authServerCache = undefined;
-            }
-        });
-        authServerCache = { value, expiresAt: now + CACHE_TTL_MS };
+    if (authServerCache && authServerCache.expiresAt > now) {
+        return authServerCache.value;
     }
-    return authServerCache.value;
+    // 失敗は例外のまま返してキャッシュせず、次のリクエストで取り直す
+    const value = await resolveAuthServerUrl();
+    authServerCache = { value, expiresAt: now + CACHE_TTL_MS };
+    return value;
 }
