@@ -67,7 +67,12 @@ export const PoseTorch: Story = {
     args: { ...Online.args, pose: "torch" },
 };
 
-// 実際のページと同じく、表示のたびにポーズをランダムに選ぶ
+// 正面を向いて左手を振る
+export const PoseWave: Story = {
+    args: { ...Online.args, pose: "wave" },
+};
+
+// 実際のページと同じく、表示のたびにポーズを重み付きでランダムに選ぶ (斜めの立ち姿はレア)
 export const PoseRandom: Story = {
     args: { ...Online.args, pose: undefined },
 };

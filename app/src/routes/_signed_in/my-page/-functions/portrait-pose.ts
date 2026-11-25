@@ -2,13 +2,26 @@
 import type { SkinViewerPose } from "@morinoparty/chlorophyll-react/components";
 import type { PortraitPose, PortraitPoseId } from "../-types/portrait-pose";
 
-/** ランダムに選ぶ候補 (並び順は Storybook の表示順にも使う) */
+/** ポーズの候補 (URL の ?pose= で指定できる値) */
 export const PORTRAIT_POSE_IDS = [
     "front",
     "diagonal",
     "pickaxe",
     "torch",
+    "wave",
 ] as const satisfies readonly PortraitPoseId[];
+
+/**
+ * ランダムに選ぶときの重み (出やすさの比)。
+ * 斜めの立ち姿は動きが少なく地味なので、ほかの 1/3 の確率で出るレアなポーズにする
+ */
+export const PORTRAIT_POSE_WEIGHTS: Readonly<Record<PortraitPoseId, number>> = {
+    front: 3,
+    diagonal: 1,
+    pickaxe: 3,
+    torch: 3,
+    wave: 3,
+};
 
 /** 右手に持たせるツルハシ (Minecraft のアイテム ID) */
 export const PORTRAIT_PICKAXE_ITEM = "diamond_pickaxe";
@@ -48,6 +61,9 @@ const TORCH_SCALE = 1.8;
 // 松明を持つときは体を左へずらし、右側の空いた所に松明を収める (px)
 const TORCH_OFFSET_X = -40;
 
+// 手を振るアニメーションを止めたときの姿勢。左腕を上げて手のひらを見せた形で止める
+const WAVE_STILL: SkinViewerPose = { leftArm: { x: -127, z: 15 } };
+
 const PORTRAIT_POSES: Record<PortraitPoseId, PortraitPose> = {
     // これまでどおり正面を向いて立つ
     front: { yaw: 0, pitch: 0, animation: "idle" },
@@ -77,22 +93,39 @@ const PORTRAIT_POSES: Record<PortraitPoseId, PortraitPose> = {
         heldItemScale: TORCH_SCALE,
         offsetX: TORCH_OFFSET_X,
     },
+    // 正面を向いて左手を振る。振る腕が体に隠れないよう、カメラは正面から少しだけ見下ろす
+    wave: {
+        yaw: 0,
+        pitch: 4,
+        animation: "wave",
+        reducedMotionJoints: WAVE_STILL,
+    },
 };
 
-/** random (0 以上 1 未満) からポーズを 1 つ選ぶ */
+/** random (0 以上 1 未満) から、PORTRAIT_POSE_WEIGHTS の重みに従ってポーズを 1 つ選ぶ */
 export const pickPortraitPose = (
     random: number = Math.random(),
 ): PortraitPoseId => {
-    const index = Math.min(
-        Math.floor(random * PORTRAIT_POSE_IDS.length),
-        PORTRAIT_POSE_IDS.length - 1,
+    const total = PORTRAIT_POSE_IDS.reduce(
+        (sum, id) => sum + PORTRAIT_POSE_WEIGHTS[id],
+        0,
     );
-    return PORTRAIT_POSE_IDS[Math.max(index, 0)];
+    // 0〜total の目盛りの上で、重みの幅ごとに区切った区間のどれに入るかを探す
+    let rest = Math.min(Math.max(random, 0), 1) * total;
+    for (const id of PORTRAIT_POSE_IDS) {
+        rest -= PORTRAIT_POSE_WEIGHTS[id];
+        if (rest < 0) {
+            return id;
+        }
+    }
+    // random が 1 以上のときは最後の候補にする
+    return PORTRAIT_POSE_IDS[PORTRAIT_POSE_IDS.length - 1];
 };
 
 /**
  * ポーズの見た目を求める。
- * - 動きを減らす設定では動かさない (アニメーションを止める。関節の角度で作る姿勢はそのまま)
+ * - 動きを減らす設定では動かさない (アニメーションを止める。関節の角度で作る姿勢はそのまま)。
+ *   アニメーションでしか作れない姿勢 (手を振る) は、代わりの関節の角度で止めた形にする
  * - アイテムのアセットを解決できないときは、アイテムを持たずに同じポーズをとる
  */
 export const resolvePortraitPose = (
@@ -106,6 +139,9 @@ export const resolvePortraitPose = (
     return {
         ...pose,
         animation: reducedMotion ? "none" : pose.animation,
+        joints: reducedMotion
+            ? (pose.reducedMotionJoints ?? pose.joints)
+            : pose.joints,
         rightHandItem: canHoldItem ? pose.rightHandItem : undefined,
         leftHandItem: canHoldItem ? pose.leftHandItem : undefined,
     };
