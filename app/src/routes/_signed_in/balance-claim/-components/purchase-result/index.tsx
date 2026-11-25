@@ -1,6 +1,6 @@
 import { Check } from "lucide-react";
 import { sva } from "../../../../../../styled-system/css";
-import { formatNumber } from "../../-functions/block-count";
+import { formatNumber } from "../../../../../lib/format-number";
 import type { ClaimPurchaseResult } from "../../-types/claim-purchase";
 import { ClaimSummary } from "../claim-summary";
 
@@ -71,11 +71,14 @@ export const PurchaseResult = ({ result }: PurchaseResultProps) => {
                     <h2 className={style.title}>
                         {formatNumber(result.purchased)} ブロック買いました
                     </h2>
-                    <p className={style.used}>
-                        {/* 単価が小数のときに備えて、使ったどんぐりは整数に丸めて出す */}
-                        {formatNumber(Math.round(result.totalCost))}{" "}
-                        どんぐりを使いました
-                    </p>
+                    {/* 購入 API の応答が読めず使った額が分からないときは、この行を出さない */}
+                    {result.totalCost !== null && (
+                        <p className={style.used}>
+                            {/* 単価が小数のときに備えて、使ったどんぐりは整数に丸めて出す */}
+                            {formatNumber(Math.round(result.totalCost))}{" "}
+                            どんぐりを使いました
+                        </p>
+                    )}
                 </div>
             </div>
             <ClaimSummary

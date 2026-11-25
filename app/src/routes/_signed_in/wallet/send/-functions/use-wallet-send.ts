@@ -106,10 +106,12 @@ export const useWalletSend = (balance: number | null) => {
 
     const recipient =
         recipientState.status === "found" ? recipientState.recipient : null;
-    // 残高が分からないときは上限を確かめられないため送らせない
+    // 残高が分からないときは上限を確かめられないため送らせない。
+    // 届いたか分からなかった直後も、二重に送らないよう金額か送り先を選び直すまで送らせない
     const canSend =
         recipient !== null &&
         balance !== null &&
+        sendFailure?.kind !== "unknown" &&
         isSendableAmount(amount, maxAmount);
 
     const send = useMutation({
@@ -124,24 +126,30 @@ export const useWalletSend = (balance: number | null) => {
         retry: false,
     });
 
+    // 送り先か金額を選び直したら、前の失敗の案内は消す (取り直した残高を見てから決め直したとみなす)
     const changeRecipientName = (name: string) => {
         setRecipientName(name);
+        setSendFailure(null);
     };
 
     const pickRecipient = (picked: Recipient) => {
         setPickedRecipient(picked);
         setRecipientName(picked.name);
+        setSendFailure(null);
     };
 
     const pressAmountKey = (key: AmountKey) => {
         setAmount((current) => applyAmountKey(current, key, maxAmount));
+        setSendFailure(null);
     };
 
     const fillAllAmount = () => {
         setAmount(maxAmount);
+        setSendFailure(null);
     };
 
     const requestConfirm = () => {
+        // canSend は届いたか分からない失敗のあいだ false なので、ここで消すのは断られたときの案内だけ
         if (canSend) {
             setSendFailure(null);
             setStep("confirm");

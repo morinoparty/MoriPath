@@ -5,6 +5,7 @@ import {
 import { Link } from "@tanstack/react-router";
 import { CircleCheck } from "lucide-react";
 import { sva } from "../../../../../../../styled-system/css";
+import { formatNumber } from "../../../../../../lib/format-number";
 import type { SendResult as SendResultData } from "../../-types/wallet-send";
 
 const sendResultStyle = sva({
@@ -115,12 +116,15 @@ export const SendResult = ({ result, onSendAnother }: SendResultProps) => {
                     <span className={style.name}>{result.recipient.name}</span>
                 </div>
                 <p className={style.amount}>
-                    {result.amount.toLocaleString()}
+                    {formatNumber(result.amount)}
                     <span className={style.unit}>どんぐり</span>
                 </p>
-                <p className={style.balance}>
-                    残高 {result.balance.toLocaleString()} どんぐり
-                </p>
+                {/* 送金 API の応答が読めず残高が分からないときは、残高の行を出さない */}
+                {result.balance !== null && (
+                    <p className={style.balance}>
+                        残高 {formatNumber(result.balance)} どんぐり
+                    </p>
+                )}
             </div>
             <div className={style.actions}>
                 <Button asChild size="xl" intent="primary">

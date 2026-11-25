@@ -39,13 +39,19 @@ export const useClaimPurchase = (current: ClaimPurchaseState) => {
     const [count, setCount] = useState(DEFAULT_BLOCK_COUNT);
     const [failure, setFailure] = useState<ClaimPurchaseFailure | null>(null);
     const [result, setResult] = useState<ClaimPurchaseResult | null>(null);
+    // 確認ダイアログを開いているか
+    const [isConfirming, setIsConfirming] = useState(false);
+    // 買ったあとに残高と保護ブロックを取り直しているあいだ。終わるまで数を変えさせない
+    const [isRefreshing, setIsRefreshing] = useState(false);
     // 同じ描画のうちに 2 回押されても 1 回しか買わないための印
     const purchasingRef = useRef(false);
 
     const maxBlocks = maxAffordableBlocks(current.balance, current.unitPrice);
     const quote = quoteClaimPurchase(count, current);
-    // 1 ブロックも買えないと分かっているときと、足りないときは買わせない
-    const canPurchase = !quote.isInsufficient && maxBlocks !== 0;
+    // 1 ブロックも買えないと分かっているときと、足りないときは買わせない。
+    // 買えたか分からなかった直後も、二重に買わないよう数を選び直すまで買わせない
+    const canPurchase =
+        !quote.isInsufficient && maxBlocks !== 0 && failure?.kind !== "unknown";
 
     const purchase = useMutation({
         mutationFn: (blockCount: number) =>
@@ -54,6 +60,7 @@ export const useClaimPurchase = (current: ClaimPurchaseState) => {
         retry: false,
     });
 
+    // 数を選び直したら前の失敗の案内は消す (取り直した残高と保護ブロックを見てから決め直したとみなす)
     const changeCount = (next: number) => {
         setCount(clampBlockCount(next));
         setFailure(null);
@@ -66,6 +73,21 @@ export const useClaimPurchase = (current: ClaimPurchaseState) => {
     const fillMax = () => {
         if (maxBlocks !== null && maxBlocks > 0) {
             changeCount(maxBlocks);
+        }
+    };
+
+    const requestConfirm = () => {
+        // canPurchase は買えたか分からない失敗のあいだ false なので、ここで消すのは断られたときの案内だけ
+        if (canPurchase) {
+            setFailure(null);
+            setIsConfirming(true);
+        }
+    };
+
+    const cancelConfirm = () => {
+        // 買っているあいだは閉じさせない (結果を見届けてから閉じる)
+        if (!purchasingRef.current) {
+            setIsConfirming(false);
         }
     };
 
@@ -83,6 +105,7 @@ export const useClaimPurchase = (current: ClaimPurchaseState) => {
                     ...UNREACHABLE_FAILURE,
                 }));
             if (response.ok) {
+                setIsConfirming(false);
                 setResult({
                     purchased: response.purchased,
                     totalCost: response.totalCost,
@@ -90,15 +113,17 @@ export const useClaimPurchase = (current: ClaimPurchaseState) => {
                     remainingClaimBlocks: response.remainingClaimBlocks,
                 });
             } else {
-                // 選んだ数はそのままにして、理由だけを出す
+                // 選んだ数はそのままにして、ダイアログの中に理由だけを出す
                 setFailure({ kind: response.kind, message: response.message });
             }
             // 成功時も結果が分からないときも、ホーム・マイページとこの画面の値を取り直す
             if (response.ok || response.kind === "unknown") {
+                setIsRefreshing(true);
                 await router.invalidate();
             }
         } finally {
             purchasingRef.current = false;
+            setIsRefreshing(false);
         }
     };
 
@@ -114,11 +139,15 @@ export const useClaimPurchase = (current: ClaimPurchaseState) => {
         quote,
         canPurchase,
         isPurchasing: purchase.isPending,
+        isRefreshing,
+        isConfirming,
         failure,
         result,
         changeCount,
         addCount,
         fillMax,
+        requestConfirm,
+        cancelConfirm,
         confirmPurchase,
         purchaseAgain,
     };

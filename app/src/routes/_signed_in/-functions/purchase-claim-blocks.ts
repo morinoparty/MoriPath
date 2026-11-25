@@ -104,19 +104,25 @@ export const purchaseClaimBlocks = createServerFn({ method: "POST" })
                     await response.json().catch(() => null),
                 );
                 if (!parsed.success) {
-                    // 2xx なので買えてはいるが、買ったあとの値が読めない
+                    // 2xx なので買えている。もう一度買わせないよう成功として返し、読めない値は null にする
+                    console.error(
+                        "保護ブロック購入 API の応答を読めませんでした:",
+                        parsed.error,
+                    );
                     return {
-                        ok: false,
-                        kind: "unknown",
-                        message: UNKNOWN_MESSAGE,
+                        ok: true,
+                        purchased: blockCount,
+                        totalCost: null,
+                        balance: null,
+                        remainingClaimBlocks: null,
                     };
                 }
                 return {
                     ok: true,
                     purchased: parsed.data.purchased,
                     totalCost: parsed.data.totalCost,
-                    // 残高は小数で返るため、画面と同じく整数に丸める
-                    balance: Math.round(parsed.data.newBalance),
+                    // 残高は小数で返るため、画面と同じく切り捨てて整数にする
+                    balance: Math.floor(parsed.data.newBalance),
                     remainingClaimBlocks: parsed.data.remainingClaimBlocks,
                 };
             }

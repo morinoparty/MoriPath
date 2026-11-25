@@ -34,15 +34,16 @@ export type AmountKey =
 /** 送金が終わったときの結果 */
 export interface SendResult {
     amount: number;
-    /** 送金後の自分の残高 (API の返した値) */
-    balance: number;
+    /** 送金後の自分の残高 (API の返した値を切り捨てたもの)。2xx でも応答が読めなければ null */
+    balance: number | null;
     recipient: Recipient;
 }
 
 /**
  * 送金に失敗したときの内容。
  * rejected は API がはっきり断ったもの、unknown は届いたかどうか分からないもの
- * (通信エラーや 5xx)。unknown のときは「もう一度」を促さず、残高の確認を促す
+ * (通信エラーや 5xx)。unknown のときは「もう一度」を促さず、残高の確認を促し、
+ * 金額か送り先を選び直すまで送らせない
  */
 export interface SendFailure {
     kind: "rejected" | "unknown";
@@ -51,7 +52,7 @@ export interface SendFailure {
 
 /** 送金のサーバー関数の戻り値。失敗も例外にせず種類つきで返す */
 export type SendDonguriResult =
-    | { ok: true; amount: number; balance: number }
+    | { ok: true; amount: number; balance: number | null }
     | ({ ok: false } & SendFailure);
 
 /** 画面の段階。input = 入力中 / confirm = 確認ダイアログ / done = 送金済み */

@@ -66,7 +66,3 @@ export const quoteClaimPurchase = (
         isInsufficient: balanceAfter !== null && balanceAfter < 0,
     };
 };
-
-/** 画面の数字はロケールを固定して桁区切りする (SSR とブラウザでずれないように) */
-export const formatNumber = (value: number): string =>
-    value.toLocaleString("ja-JP");

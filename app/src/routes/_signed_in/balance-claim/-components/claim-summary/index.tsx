@@ -1,6 +1,6 @@
 import { Stat } from "@morinoparty/chlorophyll-react/components";
 import { sva } from "../../../../../../styled-system/css";
-import { formatNumber } from "../../-functions/block-count";
+import { formatNumber } from "../../../../../lib/format-number";
 
 const claimSummaryStyle = sva({
     slots: ["root", "stat", "value"],

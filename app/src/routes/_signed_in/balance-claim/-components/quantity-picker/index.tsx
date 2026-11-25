@@ -1,8 +1,8 @@
 import { Minus, Plus } from "lucide-react";
 import { useId, useState } from "react";
 import { sva } from "../../../../../../styled-system/css";
+import { formatNumber } from "../../../../../lib/format-number";
 import {
-    formatNumber,
     MAX_BLOCK_COUNT,
     MIN_BLOCK_COUNT,
     parseBlockCountDraft,

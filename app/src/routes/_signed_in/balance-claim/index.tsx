@@ -38,12 +38,16 @@ function BalanceClaimPage() {
             quote={purchase.quote}
             canPurchase={purchase.canPurchase}
             isPurchasing={purchase.isPurchasing}
+            isRefreshing={purchase.isRefreshing}
+            isConfirming={purchase.isConfirming}
             failure={purchase.failure}
             result={purchase.result}
             onCountChange={purchase.changeCount}
             onAdd={purchase.addCount}
             onFillMax={purchase.fillMax}
-            onPurchase={purchase.confirmPurchase}
+            onRequestConfirm={purchase.requestConfirm}
+            onCancelConfirm={purchase.cancelConfirm}
+            onConfirmPurchase={purchase.confirmPurchase}
             onPurchaseAgain={purchase.purchaseAgain}
         />
     );

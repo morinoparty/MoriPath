@@ -36,7 +36,8 @@ export const getVaultBalance = createServerFn().handler(
         }
 
         const data = (await response.json()) as VaultBalanceResponse;
-        return Math.round(data.balance);
+        // 小数の残高を四捨五入すると持っている以上の額を見せてしまうため、切り捨てる
+        return Math.floor(data.balance);
     },
 );
 

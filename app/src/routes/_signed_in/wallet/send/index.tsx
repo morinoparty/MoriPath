@@ -15,15 +15,11 @@ export const Route = createFileRoute("/_signed_in/wallet/send/")({
             getVaultBalance().catch(() => null),
             getOnlinePlayers().catch(() => []),
         ]);
+        // 自分には送れないため候補から外す。セッションの id は Minecraft の UUID ではないため名前で比べる
+        // (万一残っても、送金のサーバー関数が UUID で自分宛てを断る)
         const myName = context.session?.user.name.toLowerCase();
-        const myId = context.session?.user.id;
-        // 自分には送れないため候補から外す
         const suggestions: Recipient[] = onlinePlayers
-            .filter(
-                (player) =>
-                    player.id !== myId &&
-                    player.username.toLowerCase() !== myName,
-            )
+            .filter((player) => player.username.toLowerCase() !== myName)
             .slice(0, MAX_SUGGESTIONS)
             .map((player) => ({ id: player.id, name: player.username }));
         return { balance, suggestions };

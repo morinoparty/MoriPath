@@ -1,6 +1,7 @@
 import { Delete } from "lucide-react";
 import { useEffect, useId, useRef } from "react";
 import { sva } from "../../../../../../../styled-system/css";
+import { formatNumber } from "../../../../../../lib/format-number";
 import { toAmountKey } from "../../-functions/amount-input";
 import type { AmountKey } from "../../-types/wallet-send";
 
@@ -124,6 +125,11 @@ const KEYPAD_KEYS: readonly AmountKey[] = [
     "backspace",
 ];
 
+/** リンクやボタンにフォーカスがあるときの Enter は、その要素の操作に任せる */
+const isInteractiveTarget = (target: EventTarget | null): boolean =>
+    target instanceof HTMLElement &&
+    target.closest("a, button, [role='button']") !== null;
+
 /** 入力中の文字入力欄などにいるときは、物理キーボードの数字を金額に回さない */
 const isTypingTarget = (target: EventTarget | null): boolean =>
     target instanceof HTMLElement &&
@@ -176,8 +182,8 @@ export const AmountPad = ({
                 return;
             }
             if (event.key === "Enter") {
-                // ボタンにフォーカスがあるときは、そのボタンの Enter に任せる
-                if (event.target instanceof HTMLButtonElement) {
+                // 戻るリンクや候補のリンクで Enter を押したときに、確認を開かない
+                if (isInteractiveTarget(event.target)) {
                     return;
                 }
                 handlersRef.current.onSubmit?.();
@@ -207,7 +213,7 @@ export const AmountPad = ({
                     aria-live="polite"
                     data-empty={isEmpty ? "" : undefined}
                 >
-                    {amount.toLocaleString()}
+                    {formatNumber(amount)}
                     <span className={style.caret} aria-hidden />
                 </output>
                 {balance === null ? (
@@ -215,8 +221,8 @@ export const AmountPad = ({
                 ) : (
                     <p className={style.balance}>
                         <span>
-                            残高 {balance.toLocaleString()} →{" "}
-                            {(balance - amount).toLocaleString()} どんぐり
+                            残高 {formatNumber(balance)} →{" "}
+                            {formatNumber(balance - amount)} どんぐり
                         </span>
                         <button
                             type="button"

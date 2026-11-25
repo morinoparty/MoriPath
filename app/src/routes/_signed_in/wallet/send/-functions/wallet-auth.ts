@@ -24,7 +24,7 @@ export const getWalletAuth = async (headers: Headers): Promise<WalletAuth> => {
     }
     const accessToken = tokenResult.accessToken;
 
-    // 自分の確認ができなくても送金 API 側でも弾かれるため、ここでは失敗を null にする
+    // 取れなかったときは null にし、どう扱うか (送金は断る・検索は名前で比べる) は呼び出し側で決める
     const userInfo = await getAuthServerUrl()
         .then((authServerUrl) =>
             fetch(`${authServerUrl}/oauth2/userinfo`, {

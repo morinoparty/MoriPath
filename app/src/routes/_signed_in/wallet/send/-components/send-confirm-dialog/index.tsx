@@ -6,6 +6,7 @@ import {
 } from "@morinoparty/chlorophyll-react/components";
 import { useId } from "react";
 import { sva } from "../../../../../../../styled-system/css";
+import { formatNumber } from "../../../../../../lib/format-number";
 import type { Recipient, SendFailure } from "../../-types/wallet-send";
 
 const sendConfirmStyle = sva({
@@ -131,17 +132,15 @@ export const SendConfirmDialog = ({
                                         </span>
                                     </div>
                                     <p className={style.amount}>
-                                        {amount.toLocaleString()}
+                                        {formatNumber(amount)}
                                         <span className={style.unit}>
                                             どんぐり
                                         </span>
                                     </p>
                                     {balance !== null && (
                                         <p className={style.balance}>
-                                            残高 {balance.toLocaleString()} →{" "}
-                                            {(
-                                                balance - amount
-                                            ).toLocaleString()}
+                                            残高 {formatNumber(balance)} →{" "}
+                                            {formatNumber(balance - amount)}
                                         </p>
                                     )}
                                 </div>

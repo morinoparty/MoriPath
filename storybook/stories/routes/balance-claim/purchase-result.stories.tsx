@@ -22,3 +22,15 @@ export default meta;
 type Story = StoryObj<typeof PurchaseResult>;
 
 export const Default: Story = {};
+
+// 買えたが応答が読めなかったとき。使った額の行を出さず、値は「—」にする
+export const Unreadable: Story = {
+    args: {
+        result: {
+            purchased: 500,
+            totalCost: null,
+            balance: null,
+            remainingClaimBlocks: null,
+        },
+    },
+};

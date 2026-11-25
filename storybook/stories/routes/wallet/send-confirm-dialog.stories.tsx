@@ -37,3 +37,14 @@ export const Sending: Story = {
 export const Rejected: Story = {
     args: { failure: { kind: "rejected", message: "残高が足りません" } },
 };
+
+// 届いたか分からないとき。二重に送らないよう送るボタンを止める
+export const Unknown: Story = {
+    args: {
+        failure: {
+            kind: "unknown",
+            message:
+                "送れたかどうか確かめられませんでした。残高を確かめてから、もう一度ためしてください",
+        },
+    },
+};

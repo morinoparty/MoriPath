@@ -62,6 +62,14 @@ export const sendDonguri = createServerFn({ method: "POST" })
                 const walletAuth = await getWalletAuth(
                     (request as Request).headers,
                 );
+                // 自分の UUID が取れないと自分宛てかを確かめられないため、送らずに断る
+                if (walletAuth.self.id === null) {
+                    return {
+                        ok: false,
+                        kind: "rejected",
+                        message: "ログインを確かめられませんでした",
+                    };
+                }
                 if (isSelf(walletAuth.self, { id: target })) {
                     return {
                         ok: false,
@@ -126,17 +134,18 @@ export const sendDonguri = createServerFn({ method: "POST" })
                     await response.json().catch(() => null),
                 );
                 if (!parsed.success) {
-                    // 2xx なので送れてはいるが、送金後の残高が読めない
-                    return {
-                        ok: false,
-                        kind: "unknown",
-                        message: UNKNOWN_MESSAGE,
-                    };
+                    // 2xx なので送れている。送り直させないよう成功として返し、読めない残高は null にする
+                    console.error(
+                        "送金 API の応答を読めませんでした:",
+                        parsed.error,
+                    );
+                    return { ok: true, amount, balance: null };
                 }
                 return {
                     ok: true,
                     amount: parsed.data.amount,
-                    balance: Math.round(parsed.data.balance),
+                    // 残高は小数で返るため、画面と同じく切り捨てて整数にする
+                    balance: Math.floor(parsed.data.balance),
                 };
             }
 

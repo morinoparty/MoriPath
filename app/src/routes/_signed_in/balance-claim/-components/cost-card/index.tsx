@@ -1,5 +1,5 @@
 import { cx, sva } from "../../../../../../styled-system/css";
-import { formatNumber } from "../../-functions/block-count";
+import { formatNumber } from "../../../../../lib/format-number";
 import type { ClaimPurchaseQuote } from "../../-types/claim-purchase";
 
 const costCardStyle = sva({
@@ -113,7 +113,8 @@ export const CostCard = ({
             {hasTotal && (
                 <>
                     <div className={style.row}>
-                        <span className={style.totalLabel}>合計</span>
+                        {/* 単価は設定の値でサーバーとずれうるため目安とする */}
+                        <span className={style.totalLabel}>合計の目安</span>
                         <span className={style.total}>
                             {formatNumber(quote.totalCost ?? 0)} どんぐり
                         </span>

@@ -23,3 +23,14 @@ export default meta;
 type Story = StoryObj<typeof SendResult>;
 
 export const Default: Story = {};
+
+// 送れたが応答が読めず、送金後の残高が分からないとき。残高の行を出さない
+export const BalanceUnknown: Story = {
+    args: {
+        result: {
+            amount: 500,
+            balance: null,
+            recipient: samplePlayers.chocolatt,
+        },
+    },
+};

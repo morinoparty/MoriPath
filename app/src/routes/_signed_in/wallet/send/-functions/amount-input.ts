@@ -3,7 +3,7 @@ import type { AmountKey } from "../-types/wallet-send";
 // 残高が分からないときでも桁あふれしないよう、入力できる上限を決めておく
 const MAX_AMOUNT = 999_999_999;
 
-/** 送れる上限。残高が取れていればその整数部分、取れていなければ入力上限 */
+/** 送れる上限。残高が取れていればその整数部分 (切り捨て)、取れていなければ入力上限 */
 export const maxSendableAmount = (balance: number | null): number =>
     balance === null ? MAX_AMOUNT : Math.max(0, Math.floor(balance));
 

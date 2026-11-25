@@ -1,6 +1,7 @@
 import { Button } from "@morinoparty/chlorophyll-react/components";
 import { sva } from "../../../../../../../styled-system/css";
 import { SubPageBar } from "../../../../../../components/sub-page-bar";
+import { formatNumber } from "../../../../../../lib/format-number";
 import type {
     AmountKey,
     Recipient,
@@ -15,7 +16,7 @@ import { SendConfirmDialog } from "../send-confirm-dialog";
 import { SendResult } from "../send-result";
 
 const walletSendStyle = sva({
-    slots: ["root", "spacer"],
+    slots: ["root", "spacer", "error"],
     base: {
         // 金額・キーパッド・送るボタンを画面の下端に寄せるため、画面の高さいっぱいの縦並びにする
         root: {
@@ -31,6 +32,13 @@ const walletSendStyle = sva({
         },
         spacer: {
             flex: "1",
+        },
+        error: {
+            fontSize: "14px",
+            fontWeight: "medium",
+            lineHeight: "1.5",
+            textAlign: "center",
+            color: "fg.error",
         },
     },
 });
@@ -119,9 +127,15 @@ export const WalletSendView = ({
                         disabled={!canSend}
                     >
                         {amount > 0
-                            ? `${amount.toLocaleString()} どんぐりを送る`
+                            ? `${formatNumber(amount)} どんぐりを送る`
                             : "どんぐりを送る"}
                     </Button>
+                    {/* 確認を閉じたあとも、送れたか分からないときの案内は送るボタンの下に残す */}
+                    {!isConfirming && sendFailure?.kind === "unknown" && (
+                        <p className={style.error} role="alert">
+                            {sendFailure.message}
+                        </p>
+                    )}
                     <SendConfirmDialog
                         open={isConfirming}
                         recipient={recipient}

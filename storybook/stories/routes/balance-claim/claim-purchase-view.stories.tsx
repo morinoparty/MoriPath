@@ -25,12 +25,15 @@ const meta: Meta<typeof ClaimPurchaseView> = {
         quote: quoteClaimPurchase(500, sampleCurrent),
         canPurchase: true,
         isPurchasing: false,
+        isConfirming: false,
         failure: null,
         result: null,
         onCountChange: noop,
         onAdd: noop,
         onFillMax: noop,
-        onPurchase: noop,
+        onRequestConfirm: noop,
+        onCancelConfirm: noop,
+        onConfirmPurchase: noop,
         onPurchaseAgain: noop,
     },
 };
@@ -42,9 +45,26 @@ type Story = StoryObj<typeof ClaimPurchaseView>;
 // 500 ブロックを選んだ状態 (Figma の /balance-claim)
 export const Default: Story = {};
 
-// 買っているところ。ボタンと数の操作を止める
+// 買うボタンを押して確認ダイアログを開いたところ
+export const Confirming: Story = {
+    args: { isConfirming: true },
+};
+
+// 確認ダイアログで買っているところ。ボタンと数の操作を止める
 export const Purchasing: Story = {
-    args: { isPurchasing: true },
+    args: { isConfirming: true, isPurchasing: true },
+};
+
+// 買えたか分からなかったあと。数を選び直すまで買うボタンを止める
+export const UnknownFailure: Story = {
+    args: {
+        canPurchase: false,
+        failure: {
+            kind: "unknown",
+            message:
+                "買えたかどうか確かめられませんでした。保護ブロックの数を確かめてから、もう一度ためしてください",
+        },
+    },
 };
 
 // 残高が足りないとき
@@ -83,6 +103,18 @@ export const DataUnavailable: Story = {
 export const Rejected: Story = {
     args: {
         failure: { kind: "rejected", message: "購入できませんでした" },
+    },
+};
+
+// 買えたが応答が読めず、使った額と買ったあとの値が分からないとき
+export const SuccessUnreadable: Story = {
+    args: {
+        result: {
+            purchased: 500,
+            totalCost: null,
+            balance: null,
+            remainingClaimBlocks: null,
+        },
     },
 };
 
