@@ -35,12 +35,15 @@ const PICKAXE_HOLD: SkinViewerPose = {
 const PICKAXE_OFFSET_X = 45;
 
 // 松明を掲げる左腕と頭の角度 (度)。
-// 腕を水平より少し上げて体の外へ開き、腕と直交して持つ松明を顔の横で上へ向ける (炎の面がカメラに向く)。
+// 腕をほぼ水平まで上げて体の外へ開き、腕と直交して持つ松明を顔の横で上へ向ける (炎の面がカメラに向く)。
 // 頭は見る人の方へ少し向ける
 const TORCH_HOLD: SkinViewerPose = {
-    leftArm: { x: -100, z: 28 },
+    leftArm: { x: -85, z: 30 },
     head: { y: 8 },
 };
+
+// 細い松明は Minecraft と同じ大きさだと小さく見えるため、握る位置を中心に大きく描く
+const TORCH_SCALE = 1.8;
 
 // 松明を持つときは体を左へずらし、右側の空いた所に松明を収める (px)
 const TORCH_OFFSET_X = -40;
@@ -71,6 +74,7 @@ const PORTRAIT_POSES: Record<PortraitPoseId, PortraitPose> = {
         animation: "idle",
         joints: TORCH_HOLD,
         leftHandItem: PORTRAIT_TORCH_ITEM,
+        heldItemScale: TORCH_SCALE,
         offsetX: TORCH_OFFSET_X,
     },
 };

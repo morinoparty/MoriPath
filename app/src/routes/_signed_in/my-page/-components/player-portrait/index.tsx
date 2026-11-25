@@ -310,6 +310,8 @@ interface PortraitSkinProps {
     poseWeight: number;
     rightHandItem: string | undefined;
     leftHandItem: string | undefined;
+    /** ポーズのアイテムの倍率。poseWeight の割合で 1 から補間する */
+    heldItemScale: number;
     className: string;
 }
 
@@ -328,6 +330,7 @@ const PortraitSkin = memo(
         poseWeight,
         rightHandItem,
         leftHandItem,
+        heldItemScale,
         className,
     }: PortraitSkinProps) => {
         // 関節の角度を直立から補間する。poseWeight が同じ間は同じオブジェクトを渡す
@@ -338,6 +341,8 @@ const PortraitSkin = memo(
                     : undefined,
             [joints, poseWeight],
         );
+        // 腕を下ろすのに合わせて、大きく見せたアイテムも元の大きさへ戻す
+        const itemScale = 1 + (heldItemScale - 1) * poseWeight;
         return (
             <SkinViewer
                 playerId={playerId}
@@ -356,6 +361,8 @@ const PortraitSkin = memo(
                 // アイテムは同じ viewer の腕に押し出したメッシュとして付く。読み込めなければ何も持たない
                 rightHandItem={rightHandItem}
                 leftHandItem={leftHandItem}
+                rightHandItemScale={itemScale}
+                leftHandItemScale={itemScale}
                 className={className}
                 aria-label={`${playerName} のスキン`}
             />
@@ -490,6 +497,7 @@ export const PlayerPortrait = ({
                             poseWeight={skinView.poseWeight}
                             rightHandItem={poseView.rightHandItem}
                             leftHandItem={poseView.leftHandItem}
+                            heldItemScale={poseView.heldItemScale ?? 1}
                             className={style.skinCanvas}
                         />
                     </CatchBoundary>
