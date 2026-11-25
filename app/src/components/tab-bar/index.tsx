@@ -71,10 +71,10 @@ const tabBarStyle = sva({
             textDecoration: "none",
             color: "fg.muted",
             transition: "background 0.15s",
-            // 選択中のタブだけ淡い面で囲み、文字色もブランド色にする
+            // 選択中のタブはブランド色の面で囲み、アイコンと文字もブランドの濃い色にする (以前のデザインと同じ)
             "&[data-active]": {
-                bg: "colorPalette.bg.subtle",
-                color: "colorPalette.fg",
+                bg: "colorPalette.surface",
+                color: "colorPalette.solid",
             },
         },
         icon: {
