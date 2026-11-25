@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import type { Vec2, WorldId } from "../-types/world-map";
 import { buildWorldSettingsUrl } from "./world-map-coords";
 
@@ -27,6 +27,8 @@ export const useWorldSettings = (baseUrl: string | null, world: WorldId) =>
         },
         // URL が未設定の環境では取得しない
         enabled: baseUrl !== null,
+        // ワールドを切り替えた直後も前のスポーン地点を返し、地図を作り直さずに移動させる
+        placeholderData: keepPreviousData,
         // スポーン地点はほとんど変わらないので取り直さない
         staleTime: Number.POSITIVE_INFINITY,
     });

@@ -1,3 +1,4 @@
+import { Spinner } from "@morinoparty/chlorophyll-react/components";
 import { ClientOnly } from "@tanstack/react-router";
 import { lazy, type ReactNode, Suspense } from "react";
 import { css, sva } from "../../../../../../styled-system/css";
@@ -29,7 +30,8 @@ const worldMapViewStyle = sva({
             top: "calc(env(safe-area-inset-top) + 16px)",
             left: "50%",
             transform: "translateX(-50%)",
-            width: "calc(100% - 32px)",
+            // 横向きでノッチがある端末では、左右の safe area の内側に収める
+            width: "calc(100% - 32px - env(safe-area-inset-left) - env(safe-area-inset-right))",
             maxWidth: "calc({sizes.md} - 32px)",
             display: "flex",
             alignItems: "flex-start",
@@ -82,18 +84,23 @@ export const WorldMapView = ({
     endControl,
 }: WorldMapViewProps) => {
     const style = worldMapViewStyle();
-    const message = <p className={style.message}>マップを読み込んでいます</p>;
+    // 読み込み中は文言を出さず、スピナーだけを置く
+    const loading = (
+        <div className={style.message}>
+            <Spinner size="lg" aria-label="マップを読み込み中" />
+        </div>
+    );
 
     return (
         <div className={style.root}>
             {baseUrl === null ? (
                 <p className={style.message}>マップを表示できません</p>
             ) : (
-                <ClientOnly fallback={message}>
+                <ClientOnly fallback={loading}>
                     {center === null ? (
-                        message
+                        loading
                     ) : (
-                        <Suspense fallback={message}>
+                        <Suspense fallback={loading}>
                             <WorldMapCanvas
                                 baseUrl={baseUrl}
                                 world={world}

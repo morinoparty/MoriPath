@@ -39,7 +39,7 @@ const markerToggleMenuStyle = sva({
             width: "32px",
             height: "32px",
             borderRadius: "l2",
-            bg: "colorPalette.bg.subtle",
+            bg: "colorPalette.surface",
             "& svg": {
                 width: "18px",
                 height: "18px",
