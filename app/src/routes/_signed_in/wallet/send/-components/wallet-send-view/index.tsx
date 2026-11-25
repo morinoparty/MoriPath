@@ -17,7 +17,7 @@ import { SendResult } from "../send-result";
 const walletSendStyle = sva({
     slots: ["root", "spacer"],
     base: {
-        // 送るボタンを画面の下端に置くため、画面の高さいっぱいの縦並びにする
+        // 金額・キーパッド・送るボタンを画面の下端に寄せるため、画面の高さいっぱいの縦並びにする
         root: {
             display: "flex",
             flexDirection: "column",
@@ -102,6 +102,8 @@ export const WalletSendView = ({
                         onPick={onPickRecipient}
                         disabled={isConfirming}
                     />
+                    {/* 余白を送り先と金額の間に置き、金額とキーパッドを送るボタンの上 (画面の下側) に寄せる */}
+                    <div className={style.spacer} />
                     <AmountPad
                         amount={amount}
                         balance={balance}
@@ -110,7 +112,6 @@ export const WalletSendView = ({
                         onSubmit={onRequestConfirm}
                         disabled={isConfirming || balance === null}
                     />
-                    <div className={style.spacer} />
                     <Button
                         size="xl"
                         intent="primary"

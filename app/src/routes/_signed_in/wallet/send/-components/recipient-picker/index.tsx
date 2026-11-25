@@ -74,7 +74,8 @@ const recipientPickerStyle = sva({
             borderWidth: "2px",
             borderStyle: "solid",
             borderColor: "transparent",
-            borderRadius: "14px",
+            // 顔 (PlayerAvatar の角丸 lg) と同心になるよう、余白 3px + 枠 2px の分だけ角丸を大きくする
+            borderRadius: "calc(token(radii.lg) + 5px)",
             "[aria-pressed=true] > &": {
                 borderColor: "colorPalette.solid",
             },
