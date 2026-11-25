@@ -12,8 +12,10 @@ export const quickShopSchema = z.object({
     owner: z.string().nullish(),
     mode: z.enum(shopModes),
     stackingAmount: z.number(),
-    // 在庫 (買い取りなら空き)。無限ショップは -1
-    remaining: z.number(),
+    // 在庫 (買い取りなら空き)。古い API は無限ショップを -1、新しい API は数えられない在庫を null で返す
+    remaining: z.number().nullable(),
+    // 新しい API で無限ショップを表す。古い API には無い
+    unlimited: z.boolean().optional(),
     location: z.object({
         world: z.string(),
         x: z.number(),
@@ -66,8 +68,10 @@ export interface ShopListing {
     amount: number;
     /** 1 取引の値段 (どんぐり) */
     price: number;
-    /** 在庫 (買い取りなら空き)。無限なら null */
+    /** 在庫 (買い取りなら空き)。無限、または分からなければ null */
     stock: number | null;
+    /** 在庫の数が分からない (API が数を返さなかった) ときだけ true */
+    stockUnknown?: boolean;
     /** 持ち主。運営のお店なら null */
     owner: ShopOwner | null;
     location: {

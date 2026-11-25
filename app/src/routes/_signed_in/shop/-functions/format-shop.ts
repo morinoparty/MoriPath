@@ -35,6 +35,10 @@ export const stockHeading = (mode: ShopMode): string =>
 
 /** 一覧の右下に出す在庫の一言 */
 export const stockLabel = (shop: ShopListing): string => {
+    // 数の分からない在庫は、無限と取り違えないよう「—」にする
+    if (shop.stockUnknown) {
+        return `${stockHeading(shop.mode)} —`;
+    }
     if (shop.stock === null) {
         return `${stockHeading(shop.mode)} ∞`;
     }

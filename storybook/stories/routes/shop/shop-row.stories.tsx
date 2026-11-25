@@ -41,6 +41,13 @@ export const AdminShop: Story = {
     args: { shop: sampleShops.minecart },
 };
 
+// 在庫の数が分からないお店は、無限 (∞) と見分けるため「—」と出す
+export const StockUnknown: Story = {
+    args: {
+        shop: { ...sampleShops.oakLog, stock: null, stockUnknown: true },
+    },
+};
+
 // Figma の /shop と同じ並び
 export const List: Story = {
     render: () => (

@@ -180,9 +180,13 @@ const shopDetailSheetStyle = sva({
     },
 });
 
-// 在庫の数のあとに付ける単位。無限なら単位なしで ∞ だけ出す
-const formatStock = (stock: number | null) =>
-    stock === null ? "∞" : stock.toLocaleString("ja-JP");
+// 在庫の数。無限なら ∞、分からなければ「—」を単位なしで出す
+const formatStock = (shop: ShopListing) => {
+    if (shop.stockUnknown) {
+        return "—";
+    }
+    return shop.stock === null ? "∞" : shop.stock.toLocaleString("ja-JP");
+};
 
 /** シートの中身。shop が決まっているときだけ描く */
 const ShopDetail = ({ shop }: { shop: ShopListing }) => {
@@ -224,7 +228,7 @@ const ShopDetail = ({ shop }: { shop: ShopListing }) => {
                     </dt>
                     <dd className={style.factValue}>
                         <span className={style.factNumber}>
-                            {formatStock(shop.stock)}
+                            {formatStock(shop)}
                         </span>
                         {shop.stock !== null && (
                             <span className={style.factUnit}>個</span>
