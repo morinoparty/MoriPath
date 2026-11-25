@@ -1,0 +1,2 @@
+/* Leaflet の CSS を leaflet レイヤーに入れ、Panda のスタイル (utilities) で上書きできるようにする */
+@import "leaflet/dist/leaflet.css" layer(leaflet);

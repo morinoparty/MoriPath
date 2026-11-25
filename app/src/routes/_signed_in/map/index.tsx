@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { MarkerToggleMenu } from "./-components/marker-toggle-menu";
 import { WorldMapView } from "./-components/world-map-view";
 import { WorldSwitcher } from "./-components/world-switcher";
+import { defaultOverlays } from "./-functions/default-overlays";
 import { getWorldMapUrlFn } from "./-functions/get-world-map-url";
 import { mapSearchSchema } from "./-functions/map-search";
 import { useWorldSettings } from "./-functions/use-world-settings";
@@ -20,6 +22,8 @@ function MapPage() {
     const search = Route.useSearch();
     const navigate = Route.useNavigate();
     const settings = useWorldSettings(worldMapUrl, search.world);
+    // 表示するマーカーの種類は画面の中だけで持つ (URL を汚さない)
+    const [overlays, setOverlays] = useState(defaultOverlays);
 
     // URL に座標があればそこを、無ければワールドのスポーン地点を中心にする
     const center = useMemo((): Vec2 | null => {
@@ -43,6 +47,13 @@ function MapPage() {
             baseUrl={worldMapUrl}
             world={search.world}
             center={center}
+            overlays={overlays}
+            startControl={
+                <MarkerToggleMenu
+                    value={overlays}
+                    onValueChange={setOverlays}
+                />
+            }
             endControl={
                 <WorldSwitcher
                     value={search.world}

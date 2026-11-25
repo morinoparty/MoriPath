@@ -1,7 +1,7 @@
 import { ClientOnly } from "@tanstack/react-router";
 import { lazy, type ReactNode, Suspense } from "react";
 import { css, sva } from "../../../../../../styled-system/css";
-import type { Vec2, WorldId } from "../../-types/world-map";
+import type { OverlayVisibility, Vec2, WorldId } from "../../-types/world-map";
 
 // Leaflet は SSR で読み込めないため、地図本体はクライアントでだけ遅延読み込みする
 const WorldMapCanvas = lazy(() => import("../world-map-canvas"));
@@ -56,6 +56,8 @@ export interface WorldMapViewProps {
     world: WorldId;
     /** 地図の中心。スポーン地点の取得中は null */
     center: Vec2 | null;
+    /** 「マーカー表示」で選ばれている項目 */
+    overlays: OverlayVisibility;
     /** 地図の左上に置く操作 */
     startControl?: ReactNode;
     /** 地図の右上に置く操作 */
@@ -67,6 +69,7 @@ export const WorldMapView = ({
     baseUrl,
     world,
     center,
+    overlays,
     startControl,
     endControl,
 }: WorldMapViewProps) => {
@@ -87,6 +90,7 @@ export const WorldMapView = ({
                                 baseUrl={baseUrl}
                                 world={world}
                                 center={center}
+                                overlays={overlays}
                             />
                         </Suspense>
                     )}
