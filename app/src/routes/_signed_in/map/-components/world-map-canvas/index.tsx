@@ -54,9 +54,10 @@ const mapStyle = css({
     "& .leaflet-tile": {
         imageRendering: "pixelated",
     },
-    // タイルの原色は強く、上に重ねる駅名やポップアップが埋もれるため、彩度とコントラストを少し落とす
-    "& .leaflet-tile-pane": {
-        filter: "contrast(0.85) brightness(1.1) saturate(0.85)",
+    // タイルの原色は強く、上に重ねる駅名やポップアップが埋もれるため、MoriMap と同じく明るく柔らかくする。
+    // MoriMap の mix-blend-mode: luminosity は、Leaflet のペインが重なりの文脈を作るため背景と混ざらず効果がないので使わない
+    "& .leaflet-tile-container": {
+        filter: "contrast(0.8) brightness(1.2) grayscale(0.15) hue-rotate(-7deg)",
     },
     // Leaflet 既定のフォーカス枠は地図全体を囲んでしまうので消す
     "&:focus-visible": {
