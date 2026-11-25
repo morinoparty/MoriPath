@@ -1,8 +1,10 @@
-import { Stamp as StampIcon } from "lucide-react";
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { ChevronRight } from "lucide-react";
+import { useId } from "react";
 import { cx, sva } from "../../../../../../styled-system/css";
-import { toStampImagePath, toStampLabel } from "../../-functions/stamp-display";
-import type { MyStamps, Stamp } from "../../-types/stamp";
+import { toStampLabel } from "../../-functions/stamp-display";
+import type { MyStamps } from "../../-types/stamp";
+import { StampTile } from "../stamp-tile";
 
 /** 1 列に並べるスタンプの最大数。残りは「+N」のタイルにまとめる */
 const VISIBLE_STAMP_COUNT = 6;
@@ -13,9 +15,9 @@ const stampBookStyle = sva({
         "header",
         "title",
         "count",
+        "moreLink",
+        "moreIcon",
         "row",
-        "tile",
-        "image",
         "rest",
         "label",
         "empty",
@@ -28,12 +30,12 @@ const stampBookStyle = sva({
         },
         header: {
             display: "flex",
-            alignItems: "baseline",
-            justifyContent: "space-between",
+            alignItems: "center",
             gap: "3",
         },
         title: {
             // メニューのセクション見出しとそろえる
+            flex: "1",
             fontSize: "18px",
             fontWeight: "bold",
             lineHeight: "1.5",
@@ -43,6 +45,21 @@ const stampBookStyle = sva({
             textStyle: "sm",
             color: "colorPalette.fg.muted",
             fontVariantNumeric: "tabular-nums",
+        },
+        // ホームのダイアリーの「すべて見る」とそろえる
+        moreLink: {
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.5",
+            textStyle: "sm",
+            color: "colorPalette.fg.muted",
+            _hover: {
+                color: "colorPalette.fg",
+            },
+        },
+        moreIcon: {
+            width: "4",
+            height: "4",
         },
         row: {
             // 6 枚 + 「+N」の 7 枠。狭い画面ではタイルを縮めて 1 列に収める
@@ -54,36 +71,26 @@ const stampBookStyle = sva({
             margin: "0",
             padding: "0",
         },
-        tile: {
-            // 枠線を持たない面のタイル
+        rest: {
+            // 残り枚数のタイルは、押すとスタンプ帳のページへ進む
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             aspectRatio: "1",
             bg: "colorPalette.surface.subtle",
             borderRadius: "control",
-            overflow: "hidden",
-            // 絵文字の字形はタイルの半分強の大きさにする
-            fontSize: "24px",
-            lineHeight: "1",
-            color: "colorPalette.fg.muted",
-            userSelect: "none",
-            "& svg": { width: "20px", height: "20px" },
-        },
-        image: {
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-        },
-        label: {
-            // 画面には出さず、読み上げにだけスタンプ名を渡す
-            srOnly: true,
-        },
-        rest: {
             // 残り枚数は字形より小さい文字で添える
             textStyle: "sm",
             fontWeight: "medium",
             fontVariantNumeric: "tabular-nums",
+            color: "colorPalette.fg.muted",
+            _hover: {
+                color: "colorPalette.fg",
+            },
+        },
+        label: {
+            // 画面には出さず、読み上げにだけスタンプ名を渡す
+            srOnly: true,
         },
         empty: {
             textStyle: "sm",
@@ -91,75 +98,6 @@ const stampBookStyle = sva({
         },
     },
 });
-
-type StampBookClasses = ReturnType<typeof stampBookStyle>;
-
-interface StampImageProps {
-    src: string;
-    alt: string;
-    className: string;
-    onFailed: () => void;
-}
-
-/** 画像スタンプ。読み込めなければ onFailed で仮のタイルに切り替えてもらう */
-const StampImage = ({ src, alt, className, onFailed }: StampImageProps) => {
-    const imageRef = useRef<HTMLImageElement>(null);
-    // SSR の HTML で先に読み込みが失敗すると onError が届かないため、マウント時にも確かめる
-    useEffect(() => {
-        const image = imageRef.current;
-        if (image?.complete && image.naturalWidth === 0) {
-            onFailed();
-        }
-    }, [onFailed]);
-    return (
-        <img
-            ref={imageRef}
-            src={src}
-            alt={alt}
-            className={className}
-            loading="lazy"
-            decoding="async"
-            onError={onFailed}
-        />
-    );
-};
-
-interface StampTileProps {
-    stamp: Stamp;
-    classes: StampBookClasses;
-}
-
-/** スタンプ 1 枚。絵文字は字形、画像は /stamp/ 配下の画像、どちらも無ければ仮のアイコン */
-const StampTile = ({ stamp, classes }: StampTileProps) => {
-    const [imageFailed, setImageFailed] = useState(false);
-    // StampImage の effect が描画のたびに走らないよう、関数を固定する
-    const handleImageFailed = useCallback(() => setImageFailed(true), []);
-    const label = toStampLabel(stamp.shortCode);
-    const imagePath =
-        stamp.type === "IMAGE" ? toStampImagePath(stamp.shortCode) : null;
-
-    // 画像が出せるときは alt で、それ以外は読み上げ用の文字でスタンプ名を伝える
-    if (imagePath && !stamp.emoji && !imageFailed) {
-        return (
-            <li className={classes.tile} title={label}>
-                <StampImage
-                    src={imagePath}
-                    alt={label}
-                    className={classes.image}
-                    onFailed={handleImageFailed}
-                />
-            </li>
-        );
-    }
-
-    return (
-        <li className={classes.tile} title={label}>
-            {/* 絵文字は読み上げると名前と食い違うことがあるため、名前だけを読ませる */}
-            <span aria-hidden>{stamp.emoji ?? <StampIcon />}</span>
-            <span className={classes.label}>{label}</span>
-        </li>
-    );
-};
 
 export interface StampBookProps {
     stamps: MyStamps;
@@ -187,26 +125,34 @@ export const StampBook = ({ stamps, className }: StampBookProps) => {
                     {stamps.owned.length.toLocaleString("ja-JP")} /{" "}
                     {stamps.total.toLocaleString("ja-JP")}
                 </span>
+                <Link to="/my-page/stamps" className={classes.moreLink}>
+                    すべて見る
+                    <ChevronRight className={classes.moreIcon} aria-hidden />
+                </Link>
             </div>
             {visible.length === 0 ? (
                 <p className={classes.empty}>まだスタンプがありません</p>
             ) : (
                 <ul className={classes.row}>
-                    {visible.map((stamp) => (
-                        <StampTile
-                            key={stamp.shortCode}
-                            stamp={stamp}
-                            classes={classes}
-                        />
-                    ))}
+                    {visible.map((stamp) => {
+                        const label = toStampLabel(stamp.shortCode);
+                        return (
+                            <li key={stamp.shortCode}>
+                                <StampTile stamp={stamp} title={label} />
+                                {/* 絵文字は読み上げると名前と食い違うことがあるため、名前だけを読ませる */}
+                                <span className={classes.label}>{label}</span>
+                            </li>
+                        );
+                    })}
                     {restCount > 0 && (
-                        <li className={classes.tile}>
-                            <span className={classes.rest} aria-hidden>
+                        <li>
+                            <Link
+                                to="/my-page/stamps"
+                                className={classes.rest}
+                                aria-label={`ほか ${restCount} 枚をすべて見る`}
+                            >
                                 +{restCount}
-                            </span>
-                            <span className={classes.label}>
-                                ほか {restCount} 枚
-                            </span>
+                            </Link>
                         </li>
                     )}
                 </ul>

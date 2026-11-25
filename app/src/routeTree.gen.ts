@@ -22,6 +22,7 @@ import { Route as Signed_inMyPageIndexRouteImport } from './routes/_signed_in/my
 import { Route as Signed_inShopIndexRouteImport } from './routes/_signed_in/shop/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as NofooterAuthSignInIndexRouteImport } from './routes/_nofooter/auth/sign-in/index'
+import { Route as Signed_inMyPageStampsIndexRouteImport } from './routes/_signed_in/my-page/stamps/index'
 import { Route as Signed_inWalletSendIndexRouteImport } from './routes/_signed_in/wallet/send/index'
 
 const Signed_inRoute = Signed_inRouteImport.update({
@@ -89,6 +90,12 @@ const NofooterAuthSignInIndexRoute = NofooterAuthSignInIndexRouteImport.update({
   path: '/auth/sign-in/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Signed_inMyPageStampsIndexRoute =
+  Signed_inMyPageStampsIndexRouteImport.update({
+    id: '/my-page/stamps/',
+    path: '/my-page/stamps/',
+    getParentRoute: () => Signed_inRoute,
+  } as any)
 const Signed_inWalletSendIndexRoute =
   Signed_inWalletSendIndexRouteImport.update({
     id: '/wallet/send/',
@@ -109,6 +116,7 @@ export interface FileRoutesByFullPath {
   '/my-page/': typeof Signed_inMyPageIndexRoute
   '/shop/': typeof Signed_inShopIndexRoute
   '/auth/sign-in/': typeof NofooterAuthSignInIndexRoute
+  '/my-page/stamps/': typeof Signed_inMyPageStampsIndexRoute
   '/wallet/send/': typeof Signed_inWalletSendIndexRoute
 }
 export interface FileRoutesByTo {
@@ -124,6 +132,7 @@ export interface FileRoutesByTo {
   '/my-page': typeof Signed_inMyPageIndexRoute
   '/shop': typeof Signed_inShopIndexRoute
   '/auth/sign-in': typeof NofooterAuthSignInIndexRoute
+  '/my-page/stamps': typeof Signed_inMyPageStampsIndexRoute
   '/wallet/send': typeof Signed_inWalletSendIndexRoute
 }
 export interface FileRoutesById {
@@ -141,6 +150,7 @@ export interface FileRoutesById {
   '/_signed_in/my-page/': typeof Signed_inMyPageIndexRoute
   '/_signed_in/shop/': typeof Signed_inShopIndexRoute
   '/_nofooter/auth/sign-in/': typeof NofooterAuthSignInIndexRoute
+  '/_signed_in/my-page/stamps/': typeof Signed_inMyPageStampsIndexRoute
   '/_signed_in/wallet/send/': typeof Signed_inWalletSendIndexRoute
 }
 export interface FileRouteTypes {
@@ -158,6 +168,7 @@ export interface FileRouteTypes {
     | '/my-page/'
     | '/shop/'
     | '/auth/sign-in/'
+    | '/my-page/stamps/'
     | '/wallet/send/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -173,6 +184,7 @@ export interface FileRouteTypes {
     | '/my-page'
     | '/shop'
     | '/auth/sign-in'
+    | '/my-page/stamps'
     | '/wallet/send'
   id:
     | '__root__'
@@ -189,6 +201,7 @@ export interface FileRouteTypes {
     | '/_signed_in/my-page/'
     | '/_signed_in/shop/'
     | '/_nofooter/auth/sign-in/'
+    | '/_signed_in/my-page/stamps/'
     | '/_signed_in/wallet/send/'
   fileRoutesById: FileRoutesById
 }
@@ -292,6 +305,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NofooterAuthSignInIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_signed_in/my-page/stamps/': {
+      id: '/_signed_in/my-page/stamps/'
+      path: '/my-page/stamps'
+      fullPath: '/my-page/stamps/'
+      preLoaderRoute: typeof Signed_inMyPageStampsIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
     '/_signed_in/wallet/send/': {
       id: '/_signed_in/wallet/send/'
       path: '/wallet/send'
@@ -312,6 +332,7 @@ interface Signed_inRouteChildren {
   Signed_inMapIndexRoute: typeof Signed_inMapIndexRoute
   Signed_inMyPageIndexRoute: typeof Signed_inMyPageIndexRoute
   Signed_inShopIndexRoute: typeof Signed_inShopIndexRoute
+  Signed_inMyPageStampsIndexRoute: typeof Signed_inMyPageStampsIndexRoute
   Signed_inWalletSendIndexRoute: typeof Signed_inWalletSendIndexRoute
 }
 
@@ -325,6 +346,7 @@ const Signed_inRouteChildren: Signed_inRouteChildren = {
   Signed_inMapIndexRoute: Signed_inMapIndexRoute,
   Signed_inMyPageIndexRoute: Signed_inMyPageIndexRoute,
   Signed_inShopIndexRoute: Signed_inShopIndexRoute,
+  Signed_inMyPageStampsIndexRoute: Signed_inMyPageStampsIndexRoute,
   Signed_inWalletSendIndexRoute: Signed_inWalletSendIndexRoute,
 }
 
