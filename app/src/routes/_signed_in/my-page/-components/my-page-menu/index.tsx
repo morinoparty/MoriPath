@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ExternalLink } from "lucide-react";
 import { type ReactNode, useId } from "react";
 import { cx, sva } from "../../../../../../styled-system/css";
 import type {
@@ -19,6 +19,7 @@ const myPageMenuStyle = sva({
         "label",
         "chevron",
         "badge",
+        "srOnly",
     ],
     base: {
         root: {
@@ -104,6 +105,10 @@ const myPageMenuStyle = sva({
             lineHeight: "1.5",
             color: "colorPalette.fg.subtle",
         },
+        srOnly: {
+            // 見た目には出さず、スクリーンリーダーにだけ読ませる
+            srOnly: true,
+        },
     },
 });
 
@@ -111,7 +116,7 @@ export interface MyPageMenuItemProps {
     item: MyPageMenuItemData;
 }
 
-/** メニューの 1 行。href があればリンク、無ければ押せない「準備中」の行にする */
+/** メニューの 1 行。href があればリンク (external なら外部サイト)、無ければ押せない「準備中」の行にする */
 const MyPageMenuItem = ({ item }: MyPageMenuItemProps) => {
     const style = myPageMenuStyle();
     const { label, icon: Icon } = item;
@@ -124,6 +129,25 @@ const MyPageMenuItem = ({ item }: MyPageMenuItemProps) => {
                     <span className={style.label}>{label}</span>
                     <span className={style.badge}>準備中</span>
                 </div>
+            </li>
+        );
+    }
+    if (item.external === true) {
+        return (
+            <li>
+                {/* 外部サイトはルーターを通さず、新しいタブで開く。opener を渡さず参照元も送らない */}
+                <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={style.item}
+                >
+                    <Icon className={style.icon} aria-hidden />
+                    <span className={style.label}>{label}</span>
+                    {/* 新しいタブで開くことを、見た目はアイコンで、読み上げは文言で伝える */}
+                    <span className={style.srOnly}>(新しいタブで開きます)</span>
+                    <ExternalLink className={style.chevron} aria-hidden />
+                </a>
             </li>
         );
     }

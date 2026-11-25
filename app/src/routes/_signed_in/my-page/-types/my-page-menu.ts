@@ -12,6 +12,8 @@ interface MyPageMenuItemBase {
 export interface MyPageMenuLinkItem extends MyPageMenuItemBase {
     // まだ型付きルートに無いページも渡せるよう文字列で持つ
     href: string;
+    /** true なら外部サイトへのリンクとして新しいタブで開く */
+    external?: boolean;
     disabled?: never;
 }
 
@@ -19,6 +21,7 @@ export interface MyPageMenuLinkItem extends MyPageMenuItemBase {
 export interface MyPageMenuDisabledItem extends MyPageMenuItemBase {
     disabled: true;
     href?: never;
+    external?: never;
 }
 
 /** メニューの 1 行。href と disabled のどちらか一方だけを持つ */

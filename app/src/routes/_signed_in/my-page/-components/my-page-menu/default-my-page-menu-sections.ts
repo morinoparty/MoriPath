@@ -1,4 +1,5 @@
 import {
+    BookOpen,
     CalendarDays,
     LandPlot,
     LifeBuoy,
@@ -41,37 +42,50 @@ export const defaultMyPageMenuSections: readonly MyPageMenuSection[] = [
         id: "play",
         title: "あそび",
         items: [
-            // GET /api/v1/plugins/voting/sites/{player} で投票先を取得する
-            { id: "vote", label: "投票する", icon: Vote, disabled: true },
-            // GET /api/v1/plugins/minestamp/stamps でスタンプを取得する
-            { id: "stamps", label: "スタンプ帳", icon: Stamp, disabled: true },
+            // 投票は minecraft.jp のサーバーページで行うため、外部リンクにする
+            {
+                id: "vote",
+                label: "投票する",
+                icon: Vote,
+                href: "https://minecraft.jp/servers/visit.morino.party/vote",
+                external: true,
+            },
+            {
+                id: "diary",
+                label: "もりぱダイアリー",
+                icon: BookOpen,
+                href: "/diary",
+            },
+            {
+                id: "stamps",
+                label: "スタンプ帳",
+                icon: Stamp,
+                href: "/my-page/stamps",
+            },
         ],
     },
     {
         id: "land-and-shops",
         title: "土地とお店",
         items: [
-            // GET /api/v1/plugins/griefprevention/claims/{player} で保護エリアを取得する
             {
                 id: "claims",
                 label: "保護エリア",
                 icon: LandPlot,
-                disabled: true,
+                href: "/my-page/claims",
             },
-            // GET /api/v1/plugins/quickshop/users/{player}/shops でお店を取得する
-            { id: "shops", label: "お店", icon: Store, disabled: true },
+            { id: "shops", label: "お店", icon: Store, href: "/my-page/shops" },
         ],
     },
     {
         id: "support",
         title: "サポート",
         items: [
-            // GET /api/v1/plugins/moripautils/me/tickets で問い合わせを取得する
             {
                 id: "tickets",
                 label: "お問い合わせ",
                 icon: LifeBuoy,
-                disabled: true,
+                href: "/my-page/tickets",
             },
         ],
     },

@@ -22,7 +22,11 @@ import { Route as Signed_inMyPageIndexRouteImport } from './routes/_signed_in/my
 import { Route as Signed_inShopIndexRouteImport } from './routes/_signed_in/shop/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as NofooterAuthSignInIndexRouteImport } from './routes/_nofooter/auth/sign-in/index'
+import { Route as Signed_inMyPageClaimsIndexRouteImport } from './routes/_signed_in/my-page/claims/index'
+import { Route as Signed_inMyPageShopsIndexRouteImport } from './routes/_signed_in/my-page/shops/index'
 import { Route as Signed_inMyPageStampsIndexRouteImport } from './routes/_signed_in/my-page/stamps/index'
+import { Route as Signed_inMyPageTicketsIndexRouteImport } from './routes/_signed_in/my-page/tickets/index'
+import { Route as Signed_inMyPageTicketsIdRouteImport } from './routes/_signed_in/my-page/tickets/$id'
 import { Route as Signed_inWalletSendIndexRouteImport } from './routes/_signed_in/wallet/send/index'
 
 const Signed_inRoute = Signed_inRouteImport.update({
@@ -90,10 +94,34 @@ const NofooterAuthSignInIndexRoute = NofooterAuthSignInIndexRouteImport.update({
   path: '/auth/sign-in/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Signed_inMyPageClaimsIndexRoute =
+  Signed_inMyPageClaimsIndexRouteImport.update({
+    id: '/my-page/claims/',
+    path: '/my-page/claims/',
+    getParentRoute: () => Signed_inRoute,
+  } as any)
+const Signed_inMyPageShopsIndexRoute =
+  Signed_inMyPageShopsIndexRouteImport.update({
+    id: '/my-page/shops/',
+    path: '/my-page/shops/',
+    getParentRoute: () => Signed_inRoute,
+  } as any)
 const Signed_inMyPageStampsIndexRoute =
   Signed_inMyPageStampsIndexRouteImport.update({
     id: '/my-page/stamps/',
     path: '/my-page/stamps/',
+    getParentRoute: () => Signed_inRoute,
+  } as any)
+const Signed_inMyPageTicketsIndexRoute =
+  Signed_inMyPageTicketsIndexRouteImport.update({
+    id: '/my-page/tickets/',
+    path: '/my-page/tickets/',
+    getParentRoute: () => Signed_inRoute,
+  } as any)
+const Signed_inMyPageTicketsIdRoute =
+  Signed_inMyPageTicketsIdRouteImport.update({
+    id: '/my-page/tickets/$id',
+    path: '/my-page/tickets/$id',
     getParentRoute: () => Signed_inRoute,
   } as any)
 const Signed_inWalletSendIndexRoute =
@@ -115,8 +143,12 @@ export interface FileRoutesByFullPath {
   '/map/': typeof Signed_inMapIndexRoute
   '/my-page/': typeof Signed_inMyPageIndexRoute
   '/shop/': typeof Signed_inShopIndexRoute
+  '/my-page/tickets/$id': typeof Signed_inMyPageTicketsIdRoute
   '/auth/sign-in/': typeof NofooterAuthSignInIndexRoute
+  '/my-page/claims/': typeof Signed_inMyPageClaimsIndexRoute
+  '/my-page/shops/': typeof Signed_inMyPageShopsIndexRoute
   '/my-page/stamps/': typeof Signed_inMyPageStampsIndexRoute
+  '/my-page/tickets/': typeof Signed_inMyPageTicketsIndexRoute
   '/wallet/send/': typeof Signed_inWalletSendIndexRoute
 }
 export interface FileRoutesByTo {
@@ -131,8 +163,12 @@ export interface FileRoutesByTo {
   '/map': typeof Signed_inMapIndexRoute
   '/my-page': typeof Signed_inMyPageIndexRoute
   '/shop': typeof Signed_inShopIndexRoute
+  '/my-page/tickets/$id': typeof Signed_inMyPageTicketsIdRoute
   '/auth/sign-in': typeof NofooterAuthSignInIndexRoute
+  '/my-page/claims': typeof Signed_inMyPageClaimsIndexRoute
+  '/my-page/shops': typeof Signed_inMyPageShopsIndexRoute
   '/my-page/stamps': typeof Signed_inMyPageStampsIndexRoute
+  '/my-page/tickets': typeof Signed_inMyPageTicketsIndexRoute
   '/wallet/send': typeof Signed_inWalletSendIndexRoute
 }
 export interface FileRoutesById {
@@ -149,8 +185,12 @@ export interface FileRoutesById {
   '/_signed_in/map/': typeof Signed_inMapIndexRoute
   '/_signed_in/my-page/': typeof Signed_inMyPageIndexRoute
   '/_signed_in/shop/': typeof Signed_inShopIndexRoute
+  '/_signed_in/my-page/tickets/$id': typeof Signed_inMyPageTicketsIdRoute
   '/_nofooter/auth/sign-in/': typeof NofooterAuthSignInIndexRoute
+  '/_signed_in/my-page/claims/': typeof Signed_inMyPageClaimsIndexRoute
+  '/_signed_in/my-page/shops/': typeof Signed_inMyPageShopsIndexRoute
   '/_signed_in/my-page/stamps/': typeof Signed_inMyPageStampsIndexRoute
+  '/_signed_in/my-page/tickets/': typeof Signed_inMyPageTicketsIndexRoute
   '/_signed_in/wallet/send/': typeof Signed_inWalletSendIndexRoute
 }
 export interface FileRouteTypes {
@@ -167,8 +207,12 @@ export interface FileRouteTypes {
     | '/map/'
     | '/my-page/'
     | '/shop/'
+    | '/my-page/tickets/$id'
     | '/auth/sign-in/'
+    | '/my-page/claims/'
+    | '/my-page/shops/'
     | '/my-page/stamps/'
+    | '/my-page/tickets/'
     | '/wallet/send/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -183,8 +227,12 @@ export interface FileRouteTypes {
     | '/map'
     | '/my-page'
     | '/shop'
+    | '/my-page/tickets/$id'
     | '/auth/sign-in'
+    | '/my-page/claims'
+    | '/my-page/shops'
     | '/my-page/stamps'
+    | '/my-page/tickets'
     | '/wallet/send'
   id:
     | '__root__'
@@ -200,8 +248,12 @@ export interface FileRouteTypes {
     | '/_signed_in/map/'
     | '/_signed_in/my-page/'
     | '/_signed_in/shop/'
+    | '/_signed_in/my-page/tickets/$id'
     | '/_nofooter/auth/sign-in/'
+    | '/_signed_in/my-page/claims/'
+    | '/_signed_in/my-page/shops/'
     | '/_signed_in/my-page/stamps/'
+    | '/_signed_in/my-page/tickets/'
     | '/_signed_in/wallet/send/'
   fileRoutesById: FileRoutesById
 }
@@ -305,11 +357,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NofooterAuthSignInIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_signed_in/my-page/claims/': {
+      id: '/_signed_in/my-page/claims/'
+      path: '/my-page/claims'
+      fullPath: '/my-page/claims/'
+      preLoaderRoute: typeof Signed_inMyPageClaimsIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
+    '/_signed_in/my-page/shops/': {
+      id: '/_signed_in/my-page/shops/'
+      path: '/my-page/shops'
+      fullPath: '/my-page/shops/'
+      preLoaderRoute: typeof Signed_inMyPageShopsIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
     '/_signed_in/my-page/stamps/': {
       id: '/_signed_in/my-page/stamps/'
       path: '/my-page/stamps'
       fullPath: '/my-page/stamps/'
       preLoaderRoute: typeof Signed_inMyPageStampsIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
+    '/_signed_in/my-page/tickets/': {
+      id: '/_signed_in/my-page/tickets/'
+      path: '/my-page/tickets'
+      fullPath: '/my-page/tickets/'
+      preLoaderRoute: typeof Signed_inMyPageTicketsIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
+    '/_signed_in/my-page/tickets/$id': {
+      id: '/_signed_in/my-page/tickets/$id'
+      path: '/my-page/tickets/$id'
+      fullPath: '/my-page/tickets/$id'
+      preLoaderRoute: typeof Signed_inMyPageTicketsIdRouteImport
       parentRoute: typeof Signed_inRoute
     }
     '/_signed_in/wallet/send/': {
@@ -332,7 +412,11 @@ interface Signed_inRouteChildren {
   Signed_inMapIndexRoute: typeof Signed_inMapIndexRoute
   Signed_inMyPageIndexRoute: typeof Signed_inMyPageIndexRoute
   Signed_inShopIndexRoute: typeof Signed_inShopIndexRoute
+  Signed_inMyPageTicketsIdRoute: typeof Signed_inMyPageTicketsIdRoute
+  Signed_inMyPageClaimsIndexRoute: typeof Signed_inMyPageClaimsIndexRoute
+  Signed_inMyPageShopsIndexRoute: typeof Signed_inMyPageShopsIndexRoute
   Signed_inMyPageStampsIndexRoute: typeof Signed_inMyPageStampsIndexRoute
+  Signed_inMyPageTicketsIndexRoute: typeof Signed_inMyPageTicketsIndexRoute
   Signed_inWalletSendIndexRoute: typeof Signed_inWalletSendIndexRoute
 }
 
@@ -346,7 +430,11 @@ const Signed_inRouteChildren: Signed_inRouteChildren = {
   Signed_inMapIndexRoute: Signed_inMapIndexRoute,
   Signed_inMyPageIndexRoute: Signed_inMyPageIndexRoute,
   Signed_inShopIndexRoute: Signed_inShopIndexRoute,
+  Signed_inMyPageTicketsIdRoute: Signed_inMyPageTicketsIdRoute,
+  Signed_inMyPageClaimsIndexRoute: Signed_inMyPageClaimsIndexRoute,
+  Signed_inMyPageShopsIndexRoute: Signed_inMyPageShopsIndexRoute,
   Signed_inMyPageStampsIndexRoute: Signed_inMyPageStampsIndexRoute,
+  Signed_inMyPageTicketsIndexRoute: Signed_inMyPageTicketsIndexRoute,
   Signed_inWalletSendIndexRoute: Signed_inWalletSendIndexRoute,
 }
 
