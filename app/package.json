@@ -25,10 +25,12 @@
         "@tanstack/router-core": "1.171.39",
         "@tsndr/cloudflare-worker-jwt": "^3.2.3",
         "better-auth": "^1.7.27",
+        "leaflet": "^1.9.4",
         "lucide-react": "^1.77.0",
         "next-themes": "^0.4.6",
         "react": "19.3.1",
         "react-dom": "19.3.1",
+        "react-leaflet": "^5.0.0",
         "zod": "^4.6.7"
     },
     "devDependencies": {
@@ -37,6 +39,7 @@
         "@pandacss/preset-base": "^2.6.0",
         "@pandacss/preset-panda": "^2.6.0",
         "@pandacss/types": "^2.6.0",
+        "@types/leaflet": "^1.9.22",
         "@types/node": "^26.6.6",
         "@types/react": "^19.3.0",
         "@types/react-dom": "^19.3.0",

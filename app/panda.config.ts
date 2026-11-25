@@ -98,6 +98,9 @@ const config: Config = defineConfig({
         recipes: {
             button: ["*"],
             card: ["*"],
+            checkbox: ["*"],
+            iconButton: ["*"],
+            menu: ["*"],
             playerAvatar: ["*"],
             playerAvatarGroup: ["*"],
             playerMap: ["*"],

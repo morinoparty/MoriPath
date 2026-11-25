@@ -14,6 +14,7 @@ import { Route as Signed_inIndexRouteImport } from './routes/_signed_in/index'
 import { Route as Signed_inSplatRouteImport } from './routes/_signed_in/$'
 import { Route as NofooterTermsIndexRouteImport } from './routes/_nofooter/terms/index'
 import { Route as Signed_inBalanceClaimIndexRouteImport } from './routes/_signed_in/balance-claim/index'
+import { Route as Signed_inMapIndexRouteImport } from './routes/_signed_in/map/index'
 import { Route as Signed_inMyPageIndexRouteImport } from './routes/_signed_in/my-page/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as NofooterAuthSignInIndexRouteImport } from './routes/_nofooter/auth/sign-in/index'
@@ -43,6 +44,11 @@ const Signed_inBalanceClaimIndexRoute =
     path: '/balance-claim/',
     getParentRoute: () => Signed_inRoute,
   } as any)
+const Signed_inMapIndexRoute = Signed_inMapIndexRouteImport.update({
+  id: '/map/',
+  path: '/map/',
+  getParentRoute: () => Signed_inRoute,
+} as any)
 const Signed_inMyPageIndexRoute = Signed_inMyPageIndexRouteImport.update({
   id: '/my-page/',
   path: '/my-page/',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/terms/': typeof NofooterTermsIndexRoute
   '/balance-claim/': typeof Signed_inBalanceClaimIndexRoute
+  '/map/': typeof Signed_inMapIndexRoute
   '/my-page/': typeof Signed_inMyPageIndexRoute
   '/auth/sign-in/': typeof NofooterAuthSignInIndexRoute
 }
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/terms': typeof NofooterTermsIndexRoute
   '/balance-claim': typeof Signed_inBalanceClaimIndexRoute
+  '/map': typeof Signed_inMapIndexRoute
   '/my-page': typeof Signed_inMyPageIndexRoute
   '/auth/sign-in': typeof NofooterAuthSignInIndexRoute
 }
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_nofooter/terms/': typeof NofooterTermsIndexRoute
   '/_signed_in/balance-claim/': typeof Signed_inBalanceClaimIndexRoute
+  '/_signed_in/map/': typeof Signed_inMapIndexRoute
   '/_signed_in/my-page/': typeof Signed_inMyPageIndexRoute
   '/_nofooter/auth/sign-in/': typeof NofooterAuthSignInIndexRoute
 }
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/terms/'
     | '/balance-claim/'
+    | '/map/'
     | '/my-page/'
     | '/auth/sign-in/'
   fileRoutesByTo: FileRoutesByTo
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/terms'
     | '/balance-claim'
+    | '/map'
     | '/my-page'
     | '/auth/sign-in'
   id:
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/_nofooter/terms/'
     | '/_signed_in/balance-claim/'
+    | '/_signed_in/map/'
     | '/_signed_in/my-page/'
     | '/_nofooter/auth/sign-in/'
   fileRoutesById: FileRoutesById
@@ -163,6 +175,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Signed_inBalanceClaimIndexRouteImport
       parentRoute: typeof Signed_inRoute
     }
+    '/_signed_in/map/': {
+      id: '/_signed_in/map/'
+      path: '/map'
+      fullPath: '/map/'
+      preLoaderRoute: typeof Signed_inMapIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
     '/_signed_in/my-page/': {
       id: '/_signed_in/my-page/'
       path: '/my-page'
@@ -191,6 +210,7 @@ interface Signed_inRouteChildren {
   Signed_inSplatRoute: typeof Signed_inSplatRoute
   Signed_inIndexRoute: typeof Signed_inIndexRoute
   Signed_inBalanceClaimIndexRoute: typeof Signed_inBalanceClaimIndexRoute
+  Signed_inMapIndexRoute: typeof Signed_inMapIndexRoute
   Signed_inMyPageIndexRoute: typeof Signed_inMyPageIndexRoute
 }
 
@@ -198,6 +218,7 @@ const Signed_inRouteChildren: Signed_inRouteChildren = {
   Signed_inSplatRoute: Signed_inSplatRoute,
   Signed_inIndexRoute: Signed_inIndexRoute,
   Signed_inBalanceClaimIndexRoute: Signed_inBalanceClaimIndexRoute,
+  Signed_inMapIndexRoute: Signed_inMapIndexRoute,
   Signed_inMyPageIndexRoute: Signed_inMyPageIndexRoute,
 }
 
