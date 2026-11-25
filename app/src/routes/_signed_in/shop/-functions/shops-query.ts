@@ -1,7 +1,10 @@
 import { queryOptions } from "@tanstack/react-query";
 import { getShops } from "./get-shops";
 
-/** /shop のお店一覧。loader で先に取得し、画面では useQuery で読む */
+/**
+ * /shop のすべてのお店。loader は最初の画面の分 (getInitialShops) だけを待ち、
+ * 画面ではこのクエリで残りを足したうえで、開いているあいだもゆっくり取り直す
+ */
 export const shopsQueryOptions = queryOptions({
     queryKey: ["shops"],
     // 取得に失敗しても画面は出せるよう null に落とす

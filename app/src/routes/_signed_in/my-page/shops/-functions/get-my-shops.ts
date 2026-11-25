@@ -6,6 +6,7 @@ import { sortShops } from "../../../shop/-functions/filter-shops";
 import {
     getAllShops,
     getItemLang,
+    peekShopSnapshot,
 } from "../../../shop/-functions/quickshop-api";
 import { toShopListing } from "../../../shop/-functions/to-shop-listing";
 import {
@@ -65,13 +66,22 @@ async function fetchShop(shopId: number): Promise<QuickShop | null> {
     }
 }
 
-/** ID からお店を集める。まず使い回している全体の一覧から探し、無いものだけを 1 件ずつ引く */
+/**
+ * ID からお店を集める。まず使い回している全体の一覧から探し、無いものだけを 1 件ずつ引く。
+ * 全体の一覧を取り直すと数ページ分待つため、キャッシュに無いときは 1 件ずつ並行に引き、
+ * 1 件ずつでは引ききれない数のときだけ全体を取る
+ */
 async function resolveShops(shopIds: readonly number[]): Promise<QuickShop[]> {
     if (shopIds.length === 0) {
         return [];
     }
-    // 全体の一覧が取れなくても、1 件ずつ引く方で補う
-    const allShops = await getAllShops().catch(() => []);
+    const snapshot =
+        (await peekShopSnapshot()) ??
+        (shopIds.length > MAX_SHOP_LOOKUPS
+            ? // 全体の一覧が取れなくても、1 件ずつ引く方で補う
+              await getAllShops().catch(() => undefined)
+            : undefined);
+    const allShops = snapshot?.shops ?? [];
     const byId = new Map(allShops.map((shop) => [shop.shopId, shop]));
     const found = shopIds.flatMap((id) => {
         const shop = byId.get(id);

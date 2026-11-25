@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { LoaderCircle, Search } from "lucide-react";
 import { type FormEvent, useMemo, useState } from "react";
 import { sva } from "../../../../../../styled-system/css";
 import { HomeHeader } from "../../../../../components/home-header";
@@ -30,6 +30,8 @@ const shopViewStyle = sva({
         "chip",
         "list",
         "message",
+        "loading",
+        "loadingIcon",
         "more",
     ],
     base: {
@@ -127,11 +129,28 @@ const shopViewStyle = sva({
             listStyle: "none",
         },
         message: {
+            // output 要素でも使うため、段落と同じく 1 行を占めさせる
+            display: "block",
             paddingY: "8",
             textAlign: "center",
             fontSize: "14px",
             fontWeight: "medium",
             color: "colorPalette.fg.muted",
+        },
+        // 残りのお店を読み込んでいるあいだの控えめな表示 (一覧は操作できるまま)
+        loading: {
+            display: "flex",
+            alignItems: "center",
+            gap: "1.5",
+            fontSize: "12px",
+            fontWeight: "medium",
+            color: "colorPalette.fg.muted",
+        },
+        loadingIcon: {
+            flexShrink: "0",
+            width: "14px",
+            height: "14px",
+            animation: "spin",
         },
         more: {
             alignSelf: "center",
@@ -180,6 +199,8 @@ export interface ShopViewProps {
     session: SessionData;
     /** すべてのお店 (在庫のあるお店が先)。取得できなければ null */
     shops: ShopListing[] | null;
+    /** 残りのお店を読み込んでいる途中か。shops は読み込めた分だけ */
+    loadingMore?: boolean;
     /** 検索語 (URL の q) */
     query: string;
     /** 絞り込みチップ (URL の mode) */
@@ -194,6 +215,7 @@ export interface ShopViewProps {
 export const ShopView = ({
     session,
     shops,
+    loadingMore = false,
     query,
     filter,
     onQueryChange,
@@ -275,10 +297,22 @@ export const ShopView = ({
                         </button>
                     ))}
                 </fieldset>
+                {/* 検索と絞り込みは読み込めた分に効くため、続きを読んでいることだけを知らせる */}
+                {loadingMore && shops !== null && (
+                    <output className={style.loading}>
+                        <LoaderCircle
+                            className={style.loadingIcon}
+                            aria-hidden
+                        />
+                        ほかのお店を読み込んでいます
+                    </output>
+                )}
                 {shops === null ? (
-                    <p className={style.message}>
-                        お店の一覧を読み込めませんでした
-                    </p>
+                    <output className={style.message}>
+                        {loadingMore
+                            ? "お店を読み込んでいます"
+                            : "お店の一覧を読み込めませんでした"}
+                    </output>
                 ) : filteredShops.length === 0 ? (
                     <p className={style.message}>
                         {query

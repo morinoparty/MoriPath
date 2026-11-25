@@ -75,6 +75,16 @@ export const BuyingOnly: Story = {
     args: { filter: "buy" },
 };
 
+// 1 ページ目だけを出し、残りのお店を読み込んでいるところ
+export const LoadingMore: Story = {
+    args: { loadingMore: true },
+};
+
+// まだ 1 件も読み込めていないところ
+export const LoadingFirst: Story = {
+    args: { shops: null, loadingMore: true },
+};
+
 // 見つからなかったとき
 export const NoResults: Story = {
     args: { query: "netherite" },
