@@ -2,16 +2,10 @@ import { MinecraftProvider } from "@morinoparty/chlorophyll-react/components";
 import type { Meta, StoryObj } from "@storybook/react";
 import { OnlineStrip } from "@/routes/_signed_in/-components/online-strip";
 import { css } from "../../styled-system/css";
-import { craftheadAvatarUrl, samplePlayers } from "../sample-players";
+import { craftheadAvatarUrl, sampleOnlinePlayers } from "../sample-players";
 
 // Storybook で使う 5 人を、ホームと同じ並び (名前の頭文字順) で並べる
-const onlinePlayers = [
-    samplePlayers.nikomaru,
-    samplePlayers.chocolatt,
-    samplePlayers.hikighaL,
-    samplePlayers.kina1120,
-    samplePlayers.tututututu201,
-];
+const onlinePlayers = sampleOnlinePlayers;
 
 const meta: Meta<typeof OnlineStrip> = {
     title: "Index/OnlineStrip",

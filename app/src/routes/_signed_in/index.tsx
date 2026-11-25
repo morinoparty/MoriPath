@@ -71,6 +71,7 @@ function Home() {
                 latestOnlinePlayers?.map((player) => ({
                     id: player.id,
                     name: player.username,
+                    server: player.server,
                 })) ?? null
             }
         />

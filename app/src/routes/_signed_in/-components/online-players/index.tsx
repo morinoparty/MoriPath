@@ -8,6 +8,7 @@ import {
 import { XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { sva } from "../../../../../styled-system/css";
+import { groupOnlinePlayers } from "../../-functions/group-online-players";
 import type { OnlinePlayer } from "../../-types/online-player";
 import { OnlineStrip } from "../online-strip";
 
@@ -24,6 +25,10 @@ const onlinePlayersSheetStyle = sva({
         "title",
         "description",
         "close",
+        "groups",
+        "group",
+        "groupTitle",
+        "groupCount",
         "list",
     ],
     base: {
@@ -73,6 +78,29 @@ const onlinePlayersSheetStyle = sva({
             flexShrink: "0",
             bg: "colorPalette.surface.subtle",
         },
+        groups: {
+            display: "flex",
+            flexDirection: "column",
+            gap: "6",
+        },
+        group: {
+            display: "flex",
+            flexDirection: "column",
+            gap: "3",
+        },
+        // サーバー名は一覧の区切りなので、タイトルより控えめに出す
+        groupTitle: {
+            display: "flex",
+            alignItems: "baseline",
+            gap: "1.5",
+            textStyle: "sm",
+            fontWeight: "bold",
+            color: "colorPalette.fg.muted",
+        },
+        groupCount: {
+            fontWeight: "medium",
+            fontVariantNumeric: "tabular-nums",
+        },
         list: {
             display: "flex",
             flexDirection: "column",
@@ -108,25 +136,40 @@ const OnlinePlayersList = ({
         return () => clearInterval(timer);
     }, []);
 
+    // ロビー・メイン・資源の順にサーバーごとに分け、誰もいないサーバーは出さない
+    const groups = groupOnlinePlayers(players);
+
     return (
-        <ul className={style.list}>
-            {players.map((player) => (
-                <li key={player.id}>
-                    {/* フレーズは morino.party のフッターと同じく Chlorophyll の randomPhrase で作る */}
-                    <PlayerPhraseCard.Root
-                        playerId={player.id}
-                        playerName={player.name}
-                        referenceTime={referenceTime ?? now}
-                    >
-                        <PlayerPhraseCard.Avatar />
-                        <PlayerPhraseCard.Body>
-                            <PlayerPhraseCard.Phrase />
-                            <PlayerPhraseCard.Name />
-                        </PlayerPhraseCard.Body>
-                    </PlayerPhraseCard.Root>
-                </li>
+        <div className={style.groups}>
+            {groups.map((group) => (
+                <section key={group.server} className={style.group}>
+                    <h3 className={style.groupTitle}>
+                        {group.label}
+                        <span className={style.groupCount}>
+                            {group.players.length}人
+                        </span>
+                    </h3>
+                    <ul className={style.list}>
+                        {group.players.map((player) => (
+                            <li key={player.id}>
+                                {/* フレーズは morino.party のフッターと同じく Chlorophyll の randomPhrase で作る */}
+                                <PlayerPhraseCard.Root
+                                    playerId={player.id}
+                                    playerName={player.name}
+                                    referenceTime={referenceTime ?? now}
+                                >
+                                    <PlayerPhraseCard.Avatar />
+                                    <PlayerPhraseCard.Body>
+                                        <PlayerPhraseCard.Phrase />
+                                        <PlayerPhraseCard.Name />
+                                    </PlayerPhraseCard.Body>
+                                </PlayerPhraseCard.Root>
+                            </li>
+                        ))}
+                    </ul>
+                </section>
             ))}
-        </ul>
+        </div>
     );
 };
 

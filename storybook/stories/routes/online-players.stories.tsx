@@ -2,16 +2,10 @@ import { MinecraftProvider } from "@morinoparty/chlorophyll-react/components";
 import type { Meta, StoryObj } from "@storybook/react";
 import { OnlinePlayers } from "@/routes/_signed_in/-components/online-players";
 import { css } from "../../styled-system/css";
-import { craftheadAvatarUrl, samplePlayers } from "../sample-players";
+import { craftheadAvatarUrl, sampleOnlinePlayers } from "../sample-players";
 
-// Storybook で使う 5 人を、ホームと同じ並び (名前の頭文字順) で並べる
-const onlinePlayers = [
-    samplePlayers.nikomaru,
-    samplePlayers.chocolatt,
-    samplePlayers.hikighaL,
-    samplePlayers.kina1120,
-    samplePlayers.tututututu201,
-];
+// ロビー・メイン・資源に散らばった 5 人
+const onlinePlayers = sampleOnlinePlayers;
 
 // フレーズは 5 分ごとに替わるため、見た目を固定するために基準時刻をそろえる
 const fixedReferenceTime = Date.UTC(2026, 10, 25, 3, 0, 0);
@@ -55,7 +49,7 @@ export const Closed: Story = {
     },
 };
 
-// シートを開いた状態
+// シートを開いた状態。ロビー・メイン・資源の順にサーバーごとに分ける
 export const Open: Story = {
     args: {
         players: onlinePlayers,
@@ -68,6 +62,19 @@ export const Open: Story = {
 export const OpenWithOne: Story = {
     args: {
         players: onlinePlayers.slice(0, 1),
+        defaultOpen: true,
+        referenceTime: fixedReferenceTime,
+    },
+};
+
+// 名前を知らないサーバーは、既知のサーバーのあとに ID をそのまま見出しにして並べる
+export const OpenWithUnknownServer: Story = {
+    args: {
+        players: onlinePlayers.map((player) =>
+            player.name === "kina1120"
+                ? { ...player, server: "event" }
+                : player,
+        ),
         defaultOpen: true,
         referenceTime: fixedReferenceTime,
     },

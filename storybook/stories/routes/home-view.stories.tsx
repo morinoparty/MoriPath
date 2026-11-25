@@ -6,6 +6,7 @@ import { css } from "../../styled-system/css";
 import { sampleDiaryEntries } from "../sample-diary";
 import {
     craftheadAvatarUrl,
+    sampleOnlinePlayers,
     samplePlayers,
     sampleSession,
 } from "../sample-players";
@@ -50,13 +51,7 @@ export const Default: Story = {
         claimBlocks: 1240,
         voteStreak: 7,
         diaryEntries: sampleDiaryEntries,
-        onlinePlayers: [
-            samplePlayers.nikomaru,
-            samplePlayers.chocolatt,
-            samplePlayers.hikighaL,
-            samplePlayers.kina1120,
-            samplePlayers.tututututu201,
-        ],
+        onlinePlayers: sampleOnlinePlayers,
     },
 };
 

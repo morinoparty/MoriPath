@@ -4,4 +4,15 @@ export interface OnlinePlayer {
     id: string;
     /** プレイヤー名 (MCID) */
     name: string;
+    /** 遊んでいるサーバーの ID */
+    server: string;
+}
+
+/** オンライン一覧をサーバーごとに分けたまとまり */
+export interface OnlinePlayerGroup {
+    /** サーバー ID */
+    server: string;
+    /** 見出しに出すサーバー名 */
+    label: string;
+    players: OnlinePlayer[];
 }

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { PlayerServerData, ServerPlayerData } from "../types/player";
 import { getMcApiUrl } from "./player-api";
+import { findServerLabel } from "./server-labels";
 import { getServers, getServerUrl } from "./server-list";
 
 export const removeColorTags = (text: string): string => {
@@ -115,15 +116,7 @@ export async function getPlayerData(uuid: string): Promise<PlayerServerData> {
     return { uuid, server: "オフライン" };
 }
 
+// 知らないサーバーは従来どおり「オフライン」にする (to-player-presence がこの文字列で判定する)
 function getServerName(server: string): string {
-    switch (server) {
-        case "lobby":
-            return "ロビーサーバー";
-        case "main":
-            return "生活サーバー";
-        case "res":
-            return "資源サーバー";
-        default:
-            return "オフライン";
-    }
+    return findServerLabel(server) ?? "オフライン";
 }

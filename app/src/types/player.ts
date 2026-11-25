@@ -29,6 +29,12 @@ export interface ServerPlayerData {
     username: string;
 }
 
+/** いまオンラインのプレイヤーと、どのサーバーで遊んでいるか */
+export interface OnlineServerPlayerData extends ServerPlayerData {
+    /** サーバー ID (`${SERVER_URL}servers` が返す名前) */
+    server: string;
+}
+
 export interface MenuData {
     icon: React.ReactNode;
     label: string;

@@ -15,6 +15,15 @@ export const samplePlayers = {
     hikighaL: { id: "0ebbb0bf-f0d1-41a6-ac80-ca9b2f6df883", name: "hikighaL" },
 } as const;
 
+/** ホームのオンライン一覧。ホームと同じく名前の頭文字順に並べ、遊んでいるサーバーを散らす */
+export const sampleOnlinePlayers = [
+    { ...samplePlayers.nikomaru, server: "main" },
+    { ...samplePlayers.chocolatt, server: "lobby" },
+    { ...samplePlayers.hikighaL, server: "main" },
+    { ...samplePlayers.kina1120, server: "res" },
+    { ...samplePlayers.tututututu201, server: "main" },
+];
+
 /** Storybook では MC_API_URL を使えないため、アバターは crafthead.net から取得する */
 export const craftheadAvatarUrl = (playerId: string, pixelSize: number) =>
     `https://crafthead.net/avatar/${playerId}/${pixelSize}`;
