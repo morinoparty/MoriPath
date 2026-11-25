@@ -24,8 +24,12 @@ export interface SkinHead {
 export interface PortraitFrame {
     /** 位置・大きさの補間に使う、イージング後の進み具合 (0〜1) */
     eased: number;
-    /** スキンの向き (度)。1 回転して正面に戻る */
+    /** スキンの向き (度)。ポーズの向きから 1 回転して正面に戻る */
     yaw: number;
+    /** カメラの垂直角 (度)。ポーズの角度から 0 (真横) へ戻す */
+    pitch: number;
+    /** ポーズのアニメーションを続けるか。false なら腕を下ろした姿勢 (アニメーションなし) にする */
+    posing: boolean;
     /** 3D スキンの不透明度 */
     skinOpacity: number;
     /** コンパクトバーの 2D アバターの不透明度 */
@@ -81,6 +85,12 @@ export const toMaskImage = ({ start, end }: BodyMask): string =>
     start >= 1
         ? ""
         : `linear-gradient(to bottom, #000 ${(start * 100).toFixed(1)}%, transparent ${(end * 100).toFixed(1)}%)`;
+
+/**
+ * ポーズのアニメーションをやめて腕を下ろす進み具合。
+ * アニメーションを切り替えると関節が一度に戻るため、背中を向けていて胴体もマスクで消えている区間で切り替える
+ */
+export const POSE_RELEASE_AT = 0.5;
 
 /** 動く名前とバーの名前を入れ替える進み具合 (着地しきる直前) */
 export const NAME_SWAP_AT = 0.995;
@@ -192,10 +202,16 @@ export const portraitFrame = (
     {
         reducedMotion,
         headBottom = 0.4,
+        startYaw = 0,
+        startPitch = 0,
     }: {
         reducedMotion: boolean;
         /** スキン要素の高さに対する、首 (頭の下端) の位置の割合 */
         headBottom?: number;
+        /** 進み具合 0 のときのスキンの向き (ポーズの yaw、度) */
+        startYaw?: number;
+        /** 進み具合 0 のときのカメラの垂直角 (ポーズの pitch、度) */
+        startPitch?: number;
     },
 ): PortraitFrame => {
     const p = clamp01(progress);
@@ -214,7 +230,10 @@ export const portraitFrame = (
         const swap = remap(p, 0.5, 0.9);
         return {
             eased: 0,
-            yaw: 0,
+            // 回転させず、ポーズの向きのまま入れ替える
+            yaw: startYaw,
+            pitch: startPitch,
+            posing: true,
             skinOpacity: 1 - swap,
             avatarOpacity: swap,
             barOpacity: swap,
@@ -234,8 +253,11 @@ export const portraitFrame = (
     const swap = remap(p, 0.8, 1);
     return {
         eased,
-        // 1 回転して正面 (360° = 0°) で止まる。整数にして無駄な再描画を減らす
-        yaw: Math.round(eased * 360),
+        // ポーズの向きから 1 回転して正面 (360° = 0°) で止まる。整数にして無駄な再描画を減らす
+        yaw: Math.round(lerp(startYaw, 360, eased)),
+        // 見下ろす角度も同じ進み具合で真横へ戻し、バーの 2D の顔と重なる向きで着地させる
+        pitch: Math.round(lerp(startPitch, 0, eased)),
+        posing: p < POSE_RELEASE_AT,
         skinOpacity: 1 - swap,
         avatarOpacity: swap,
         barOpacity: remap(p, 0.5, 0.85),

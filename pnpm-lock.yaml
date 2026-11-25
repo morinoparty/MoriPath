@@ -170,6 +170,7 @@ catalogs:
 
 overrides:
   vite@*: npm:@voidzero-dev/vite-plus-core@1.5.1
+  skinview3d>three: ^0.187.0
 
 importers:
 
@@ -4796,9 +4797,6 @@ packages:
 
   svg-parser@2.0.4:
     resolution: {integrity: sha512-e4hG1hRwoOdRb37cIMSgzNsxyzKfayW6VOflrwvR+/bzrkyxY/31WkbgnQpgtrNp1SdpJvpUAGTa/ZoiPNDuRQ==}
-
-  three@0.156.1:
-    resolution: {integrity: sha512-kP7H0FK9d/k6t/XvQ9FO6i+QrePoDcNhwl0I02+wmUJRNSLCUIDMcfObnzQvxb37/0Uc9TDT0T1HgsRRrO6SYQ==}
 
   three@0.187.0:
     resolution: {integrity: sha512-Qiu7R+Cmh8CstZsY1uJOSWnVlfo7ZtNLV7mF8Jltk3LB3AtDu9cRZlcnRKkAk8Y4z6KKw35z7Y7Urd7jWY8etA==}
@@ -9443,7 +9441,7 @@ snapshots:
     dependencies:
       '@types/three': 0.156.0
       skinview-utils: 0.7.1
-      three: 0.156.1
+      three: 0.187.0
 
   snake-case@3.0.4:
     dependencies:
@@ -9530,8 +9528,6 @@ snapshots:
       react: 19.3.1
 
   svg-parser@2.0.4: {}
-
-  three@0.156.1: {}
 
   three@0.187.0: {}
 

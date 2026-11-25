@@ -20,8 +20,6 @@ import {
 const useIsomorphicLayoutEffect =
     typeof window === "undefined" ? useEffect : useLayoutEffect;
 
-const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
-
 /** 計測した位置。リサイズとフォント読み込みのときだけ測り直す */
 interface PortraitGeometry {
     /** アニメーションが始まるスクロール量 (ポートレート上端の文書内の位置) */
@@ -47,7 +45,24 @@ export interface UseCollapsingPortraitOptions {
     nameRef: RefObject<HTMLHeadingElement | null>;
     /** 変わったら測り直す値 (名前のフォントサイズなど) */
     measureKey?: unknown;
+    /** 動きを減らす設定 (usePrefersReducedMotion)。回転と移動をやめ、クロスフェードだけにする */
+    reducedMotion: boolean;
+    /** ポーズの向き (度)。スクロールするとここから 1 回転して正面に戻る */
+    startYaw?: number;
+    /** ポーズのカメラの垂直角 (度)。スクロールすると 0 へ戻る */
+    startPitch?: number;
 }
+
+/** SkinViewer に渡す向きとポーズ。変わったときだけ再レンダーする */
+export interface PortraitSkinView {
+    yaw: number;
+    pitch: number;
+    /** false ならポーズのアニメーションをやめて腕を下ろす */
+    posing: boolean;
+}
+
+const isSameView = (a: PortraitSkinView, b: PortraitSkinView): boolean =>
+    a.yaw === b.yaw && a.pitch === b.pitch && a.posing === b.posing;
 
 /**
  * root から見た要素の位置を、transform を無視したレイアウト上の値で求める。
@@ -69,7 +84,7 @@ const offsetWithin = (element: HTMLElement, root: HTMLElement): Point => {
 /**
  * スクロールに合わせて、ポートレートの 3D スキンと名前をコンパクトバーへ移す。
  * - 位置と大きさは ref の要素へ style.transform / opacity を直接書き込み、React の再レンダーを起こさない
- * - スキンの向き (yaw) だけは SkinViewer の prop で渡すため state で返す (整数の度が変わったときだけ更新)
+ * - スキンの向き (yaw / pitch) とポーズは SkinViewer の prop で渡すため state で返す (整数の度が変わったときだけ更新)
  * - スクロールは passive で受け、requestAnimationFrame で 1 フレーム 1 回にまとめる
  */
 /** to の文字サイズ ÷ from の文字サイズ (測れないときは 1) */
@@ -84,6 +99,9 @@ export const useCollapsingPortrait = ({
     skinHeight,
     nameRef,
     measureKey,
+    reducedMotion,
+    startYaw = 0,
+    startPitch = 0,
 }: UseCollapsingPortraitOptions) => {
     // ポートレート全体 (position: relative)。ここを基準に位置を測る
     const rootRef = useRef<HTMLDivElement>(null);
@@ -105,9 +123,15 @@ export const useCollapsingPortrait = ({
     const barDotRef = useRef<HTMLSpanElement>(null);
 
     const geometryRef = useRef<PortraitGeometry | null>(null);
-    const reducedMotionRef = useRef(false);
+    // 動きを減らす設定とポーズの向きは、update から最新の値を読む (update を作り直さない)
+    const reducedMotionRef = useRef(reducedMotion);
+    const startAngleRef = useRef({ yaw: startYaw, pitch: startPitch });
     const frameRef = useRef<number | null>(null);
-    const [yaw, setYaw] = useState(0);
+    const [skinView, setSkinView] = useState<PortraitSkinView>({
+        yaw: startYaw,
+        pitch: startPitch,
+        posing: true,
+    });
 
     // 現在のスクロール量から見た目を計算して書き込む
     const update = useCallback(() => {
@@ -126,6 +150,8 @@ export const useCollapsingPortrait = ({
             reducedMotion,
             // 首の位置 = 顔の中心 + 顔の半分
             headBottom: (skinHead.centerY + skinHead.size / 2) / skinHeight,
+            startYaw: startAngleRef.current.yaw,
+            startPitch: startAngleRef.current.pitch,
         });
         // 開始前は 0、終わった後も足し続けてバーの位置に留める
         const scrolled = Math.max(0, window.scrollY - geometry.start);
@@ -181,8 +207,13 @@ export const useCollapsingPortrait = ({
                 element.style.opacity = String(opacity);
             }
         }
-        // 向きが変わったときだけ SkinViewer を再レンダーする
-        setYaw((current) => (current === frame.yaw ? current : frame.yaw));
+        // 向きかポーズが変わったときだけ SkinViewer を再レンダーする
+        const next: PortraitSkinView = {
+            yaw: frame.yaw,
+            pitch: frame.pitch,
+            posing: frame.posing,
+        };
+        setSkinView((current) => (isSameView(current, next) ? current : next));
     }, [nameRef, skinHead, skinHeight]);
 
     // 次のフレームで 1 回だけ update する
@@ -251,19 +282,18 @@ export const useCollapsingPortrait = ({
         measure();
     }, [measure, measureKey]);
 
+    // ポーズや動きを減らす設定が変わったら、描画前に ref へ移して描き直す
+    useIsomorphicLayoutEffect(() => {
+        reducedMotionRef.current = reducedMotion;
+        startAngleRef.current = { yaw: startYaw, pitch: startPitch };
+        scheduleUpdate();
+    }, [reducedMotion, startYaw, startPitch, scheduleUpdate]);
+
     useEffect(() => {
         const root = rootRef.current;
         if (!root) {
             return;
         }
-        // 動きを減らす設定を読み、変わったら追従する
-        const media = window.matchMedia(REDUCED_MOTION_QUERY);
-        const handleMotionChange = () => {
-            reducedMotionRef.current = media.matches;
-            scheduleUpdate();
-        };
-        handleMotionChange();
-        media.addEventListener("change", handleMotionChange);
 
         // 画面幅やポートレートの大きさが変わったら測り直す
         const observer = new ResizeObserver(() => measure());
@@ -280,7 +310,6 @@ export const useCollapsingPortrait = ({
 
         return () => {
             cancelled = true;
-            media.removeEventListener("change", handleMotionChange);
             observer.disconnect();
             window.removeEventListener("resize", measure);
             window.removeEventListener("scroll", scheduleUpdate);
@@ -304,6 +333,6 @@ export const useCollapsingPortrait = ({
         barAvatarRef,
         barNameRef,
         barDotRef,
-        yaw,
+        skinView,
     };
 };

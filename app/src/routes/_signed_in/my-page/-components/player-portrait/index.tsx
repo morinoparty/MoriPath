@@ -1,20 +1,33 @@
 import {
     PlayerAvatar,
     SkinViewer,
+    type SkinViewerAnimation,
+    useMinecraftConfig,
 } from "@morinoparty/chlorophyll-react/components";
 import { CatchBoundary } from "@tanstack/react-router";
-import { memo } from "react";
+import { memo, useEffect, useLayoutEffect, useState } from "react";
 import { cx, sva } from "../../../../../../styled-system/css";
 import { useFitText } from "../../../../../lib/use-fit-text";
 import { estimateSkinHead } from "../../-functions/collapsing-portrait";
+import {
+    pickPortraitPose,
+    resolvePortraitPose,
+} from "../../-functions/portrait-pose";
 import { useCollapsingPortrait } from "../../-functions/use-collapsing-portrait";
+import { usePrefersReducedMotion } from "../../-functions/use-prefers-reduced-motion";
 import type { MyPagePlayer, PlayerPresence } from "../../-types/my-page";
+import type { PortraitPoseId } from "../../-types/portrait-pose";
+
+// SSR では useLayoutEffect が警告を出すため、サーバーでは useEffect に切り替える
+const useIsomorphicLayoutEffect =
+    typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 // 背景に敷くサーバーのスクリーンショット (public 配下)
 const WORLD_IMAGE_URL = "/castle-width.png";
 
-// 3D スキンの canvas の大きさ。最初に 1 回だけ作り、縮小は transform で行う
-const SKIN_WIDTH = 240;
+// 3D スキンの canvas の大きさ。最初に 1 回だけ作り、縮小は transform で行う。
+// 横幅は斜めのポーズで前に出した腕と持ったアイテムが切れない広さにする (顔の位置は幅の中央で変わらない)
+const SKIN_WIDTH = 360;
 const SKIN_HEIGHT = 576;
 const SKIN_HEAD = estimateSkinHead({ width: SKIN_WIDTH, height: SKIN_HEIGHT });
 
@@ -270,22 +283,35 @@ interface PortraitSkinProps {
     playerId: string;
     playerName: string;
     yaw: number;
+    pitch: number;
+    animation: SkinViewerAnimation;
+    rightHandItem: string | undefined;
     className: string;
 }
 
-// yaw が変わったときだけ再レンダーされるよう、SkinViewer を小さな部品に閉じ込める
+// 向きやポーズが変わったときだけ再レンダーされるよう、SkinViewer を小さな部品に閉じ込める
 const PortraitSkin = memo(
-    ({ playerId, playerName, yaw, className }: PortraitSkinProps) => (
+    ({
+        playerId,
+        playerName,
+        yaw,
+        pitch,
+        animation,
+        rightHandItem,
+        className,
+    }: PortraitSkinProps) => (
         <SkinViewer
             playerId={playerId}
             width={SKIN_WIDTH}
             height={SKIN_HEIGHT}
             // yaw は最初から数値で渡す (undefined から切り替えると向きが飛ぶ)
             yaw={yaw}
-            pitch={0}
+            pitch={pitch}
             autoRotate={false}
             interactive={false}
-            animation="none"
+            animation={animation}
+            // アイテムは同じ viewer の右腕に押し出したメッシュとして付く。読み込めなければ何も持たない
+            rightHandItem={rightHandItem}
             className={className}
             aria-label={`${playerName} のスキン`}
         />
@@ -296,6 +322,8 @@ export interface PlayerPortraitProps {
     player: MyPagePlayer;
     /** オンライン状況。取得できなければ null (ピルを出さない) */
     presence: PlayerPresence | null;
+    /** スキンのポーズ。省略すると表示のたびにランダムに選ぶ (Storybook では固定して確かめる) */
+    pose?: PortraitPoseId;
     className?: string;
 }
 
@@ -306,9 +334,25 @@ export interface PlayerPortraitProps {
 export const PlayerPortrait = ({
     player,
     presence,
+    pose,
     className,
 }: PlayerPortraitProps) => {
     const style = playerPortraitStyle();
+    // サーバーとクライアントで乱数がずれないよう、最初は正面で描き、描画前にクライアントで選び直す
+    const [randomPose, setRandomPose] = useState<PortraitPoseId>("front");
+    useIsomorphicLayoutEffect(() => {
+        setRandomPose(pickPortraitPose());
+    }, []);
+    // アイテムのモデル・テクスチャを解決できないと SkinViewer が例外を投げるため、そのときは持たせない
+    const minecraftConfig = useMinecraftConfig();
+    const canHoldItem = Boolean(
+        minecraftConfig.resolveModel && minecraftConfig.resolveTexture,
+    );
+    const reducedMotion = usePrefersReducedMotion();
+    const poseView = resolvePortraitPose(pose ?? randomPose, {
+        reducedMotion,
+        canHoldItem,
+    });
     // 名前は 40px を基準に、幅に収まらなければ 22px まで縮める
     const {
         containerRef: nameRef,
@@ -333,12 +377,15 @@ export const PlayerPortrait = ({
         barAvatarRef,
         barNameRef,
         barDotRef,
-        yaw,
+        skinView,
     } = useCollapsingPortrait({
         skinHead: SKIN_HEAD,
         skinHeight: SKIN_HEIGHT,
         nameRef,
         measureKey: nameFontSize,
+        reducedMotion,
+        startYaw: poseView.yaw,
+        startPitch: poseView.pitch,
     });
     const isOnline = presence?.online === true;
 
@@ -389,7 +436,13 @@ export const PlayerPortrait = ({
                         <PortraitSkin
                             playerId={player.id}
                             playerName={player.name}
-                            yaw={yaw}
+                            yaw={skinView.yaw}
+                            pitch={skinView.pitch}
+                            // 縮み始めて背中を向けたら腕を下ろし、着地する顔を正面の姿勢にそろえる
+                            animation={
+                                skinView.posing ? poseView.animation : "none"
+                            }
+                            rightHandItem={poseView.rightHandItem}
                             className={style.skinCanvas}
                         />
                     </CatchBoundary>
