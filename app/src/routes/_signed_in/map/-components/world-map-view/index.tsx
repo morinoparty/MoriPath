@@ -4,6 +4,7 @@ import { lazy, type ReactNode, Suspense } from "react";
 import { css, sva } from "../../../../../../styled-system/css";
 import type { MapPinTarget } from "../../-types/map-pin-target";
 import type {
+    MapPlayer,
     OverlayVisibility,
     SelfPlayer,
     Vec2,
@@ -14,7 +15,7 @@ import type {
 const WorldMapCanvas = lazy(() => import("../world-map-canvas"));
 
 const worldMapViewStyle = sva({
-    slots: ["root", "controls", "message"],
+    slots: ["root", "controls", "notice", "bottomControls", "message"],
     base: {
         root: {
             // ヘッダーを持たず、地図を画面いっぱいに敷く
@@ -45,6 +46,42 @@ const worldMapViewStyle = sva({
             alignItems: "flex-start",
             justifyContent: "space-between",
             gap: "3",
+            zIndex: "docked",
+            // 隙間のタップは地図に通す
+            pointerEvents: "none",
+            "& > *": {
+                pointerEvents: "auto",
+            },
+        },
+        // 操作ボタンの段の下に、中央寄せで出すお知らせ (追いかけている人など)
+        notice: {
+            position: "fixed",
+            // 上の操作ボタン (48px) の下に 8px 空ける
+            top: "calc(env(safe-area-inset-top) + 16px + 48px + 8px)",
+            left: "50%",
+            transform: "translateX(-50%)",
+            // 右上に縦に並ぶボタン (48px + 余白) と重ならないよう、左右を空けた幅の中で中央に置く
+            width: "calc(100% - 144px - env(safe-area-inset-left) - env(safe-area-inset-right))",
+            display: "flex",
+            justifyContent: "center",
+            zIndex: "docked",
+            // 札の左右の隙間のタップは地図に通す
+            pointerEvents: "none",
+            "& > *": {
+                pointerEvents: "auto",
+            },
+        },
+        // 右下の操作 (乗換案内)。上の操作ボタンと同じ幅にそろえ、浮いている TabBar の上に置く
+        bottomControls: {
+            position: "fixed",
+            // TabBar の下端 (max(24px, safe area + 8px)) + 高さ 64px + 16px の余白
+            bottom: "calc(max(24px, env(safe-area-inset-bottom) + 8px) + 64px + 16px)",
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "calc(100% - 32px - env(safe-area-inset-left) - env(safe-area-inset-right))",
+            maxWidth: "calc({sizes.md} - 32px)",
+            display: "flex",
+            justifyContent: "flex-end",
             zIndex: "docked",
             // 隙間のタップは地図に通す
             pointerEvents: "none",
@@ -83,6 +120,14 @@ export interface WorldMapViewProps {
     startControl?: ReactNode;
     /** 地図の右上に置く操作 */
     endControl?: ReactNode;
+    /** 操作ボタンの下に出すお知らせ */
+    notice?: ReactNode;
+    /** 地図の右下に置く操作 */
+    bottomEndControl?: ReactNode;
+    /** 追いかけている人 (表示中のワールドにいるときだけ) */
+    followed?: MapPlayer | null;
+    /** 地図をドラッグして、追いかけるのをやめた */
+    onFollowCancel?: () => void;
 }
 
 /** 画面いっぱいの地図と、その上に浮かぶ操作ボタン */
@@ -96,6 +141,10 @@ export const WorldMapView = ({
     onClearPin,
     startControl,
     endControl,
+    notice,
+    bottomEndControl,
+    followed,
+    onFollowCancel,
 }: WorldMapViewProps) => {
     const style = worldMapViewStyle();
     // 読み込み中は文言を出さず、スピナーだけを置く
@@ -123,6 +172,8 @@ export const WorldMapView = ({
                                 self={self}
                                 pin={pin}
                                 onClearPin={onClearPin}
+                                followed={followed}
+                                onFollowCancel={onFollowCancel}
                             />
                         </Suspense>
                     )}
@@ -132,6 +183,10 @@ export const WorldMapView = ({
                 <div className={css({ minWidth: 0 })}>{startControl}</div>
                 <div>{endControl}</div>
             </div>
+            {notice && <div className={style.notice}>{notice}</div>}
+            {bottomEndControl && (
+                <div className={style.bottomControls}>{bottomEndControl}</div>
+            )}
         </div>
     );
 };

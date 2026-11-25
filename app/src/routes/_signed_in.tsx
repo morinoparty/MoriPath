@@ -81,6 +81,7 @@ const SUB_PAGE_PREFIXES = [
     "/my-page/claims",
     "/my-page/shops",
     "/my-page/tickets",
+    "/map/transit",
 ];
 
 /** 下層ページ (タブバーを出さないページ) か */

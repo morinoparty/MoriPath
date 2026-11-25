@@ -55,3 +55,12 @@ export const Other: Story = {
         playerName: samplePlayers.chocolatt.name,
     },
 };
+
+// 地図が追いかけている人は、ブランド色の輪で囲む
+export const Followed: Story = {
+    args: {
+        playerId: samplePlayers.chocolatt.id,
+        playerName: samplePlayers.chocolatt.name,
+        isFollowed: true,
+    },
+};

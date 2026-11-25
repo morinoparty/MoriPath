@@ -23,6 +23,7 @@ import { Route as Signed_inMyPageIndexRouteImport } from './routes/_signed_in/my
 import { Route as Signed_inShopIndexRouteImport } from './routes/_signed_in/shop/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as NofooterAuthSignInIndexRouteImport } from './routes/_nofooter/auth/sign-in/index'
+import { Route as Signed_inMapTransitIndexRouteImport } from './routes/_signed_in/map/transit/index'
 import { Route as Signed_inMyPageClaimsIndexRouteImport } from './routes/_signed_in/my-page/claims/index'
 import { Route as Signed_inMyPageShopsIndexRouteImport } from './routes/_signed_in/my-page/shops/index'
 import { Route as Signed_inMyPageStampsIndexRouteImport } from './routes/_signed_in/my-page/stamps/index'
@@ -101,6 +102,12 @@ const NofooterAuthSignInIndexRoute = NofooterAuthSignInIndexRouteImport.update({
   path: '/auth/sign-in/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Signed_inMapTransitIndexRoute =
+  Signed_inMapTransitIndexRouteImport.update({
+    id: '/map/transit/',
+    path: '/map/transit/',
+    getParentRoute: () => Signed_inRoute,
+  } as any)
 const Signed_inMyPageClaimsIndexRoute =
   Signed_inMyPageClaimsIndexRouteImport.update({
     id: '/my-page/claims/',
@@ -153,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/shop/': typeof Signed_inShopIndexRoute
   '/my-page/tickets/$id': typeof Signed_inMyPageTicketsIdRoute
   '/auth/sign-in/': typeof NofooterAuthSignInIndexRoute
+  '/map/transit/': typeof Signed_inMapTransitIndexRoute
   '/my-page/claims/': typeof Signed_inMyPageClaimsIndexRoute
   '/my-page/shops/': typeof Signed_inMyPageShopsIndexRoute
   '/my-page/stamps/': typeof Signed_inMyPageStampsIndexRoute
@@ -174,6 +182,7 @@ export interface FileRoutesByTo {
   '/shop': typeof Signed_inShopIndexRoute
   '/my-page/tickets/$id': typeof Signed_inMyPageTicketsIdRoute
   '/auth/sign-in': typeof NofooterAuthSignInIndexRoute
+  '/map/transit': typeof Signed_inMapTransitIndexRoute
   '/my-page/claims': typeof Signed_inMyPageClaimsIndexRoute
   '/my-page/shops': typeof Signed_inMyPageShopsIndexRoute
   '/my-page/stamps': typeof Signed_inMyPageStampsIndexRoute
@@ -197,6 +206,7 @@ export interface FileRoutesById {
   '/_signed_in/shop/': typeof Signed_inShopIndexRoute
   '/_signed_in/my-page/tickets/$id': typeof Signed_inMyPageTicketsIdRoute
   '/_nofooter/auth/sign-in/': typeof NofooterAuthSignInIndexRoute
+  '/_signed_in/map/transit/': typeof Signed_inMapTransitIndexRoute
   '/_signed_in/my-page/claims/': typeof Signed_inMyPageClaimsIndexRoute
   '/_signed_in/my-page/shops/': typeof Signed_inMyPageShopsIndexRoute
   '/_signed_in/my-page/stamps/': typeof Signed_inMyPageStampsIndexRoute
@@ -220,6 +230,7 @@ export interface FileRouteTypes {
     | '/shop/'
     | '/my-page/tickets/$id'
     | '/auth/sign-in/'
+    | '/map/transit/'
     | '/my-page/claims/'
     | '/my-page/shops/'
     | '/my-page/stamps/'
@@ -241,6 +252,7 @@ export interface FileRouteTypes {
     | '/shop'
     | '/my-page/tickets/$id'
     | '/auth/sign-in'
+    | '/map/transit'
     | '/my-page/claims'
     | '/my-page/shops'
     | '/my-page/stamps'
@@ -263,6 +275,7 @@ export interface FileRouteTypes {
     | '/_signed_in/shop/'
     | '/_signed_in/my-page/tickets/$id'
     | '/_nofooter/auth/sign-in/'
+    | '/_signed_in/map/transit/'
     | '/_signed_in/my-page/claims/'
     | '/_signed_in/my-page/shops/'
     | '/_signed_in/my-page/stamps/'
@@ -378,6 +391,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NofooterAuthSignInIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_signed_in/map/transit/': {
+      id: '/_signed_in/map/transit/'
+      path: '/map/transit'
+      fullPath: '/map/transit/'
+      preLoaderRoute: typeof Signed_inMapTransitIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
     '/_signed_in/my-page/claims/': {
       id: '/_signed_in/my-page/claims/'
       path: '/my-page/claims'
@@ -434,6 +454,7 @@ interface Signed_inRouteChildren {
   Signed_inMyPageIndexRoute: typeof Signed_inMyPageIndexRoute
   Signed_inShopIndexRoute: typeof Signed_inShopIndexRoute
   Signed_inMyPageTicketsIdRoute: typeof Signed_inMyPageTicketsIdRoute
+  Signed_inMapTransitIndexRoute: typeof Signed_inMapTransitIndexRoute
   Signed_inMyPageClaimsIndexRoute: typeof Signed_inMyPageClaimsIndexRoute
   Signed_inMyPageShopsIndexRoute: typeof Signed_inMyPageShopsIndexRoute
   Signed_inMyPageStampsIndexRoute: typeof Signed_inMyPageStampsIndexRoute
@@ -452,6 +473,7 @@ const Signed_inRouteChildren: Signed_inRouteChildren = {
   Signed_inMyPageIndexRoute: Signed_inMyPageIndexRoute,
   Signed_inShopIndexRoute: Signed_inShopIndexRoute,
   Signed_inMyPageTicketsIdRoute: Signed_inMyPageTicketsIdRoute,
+  Signed_inMapTransitIndexRoute: Signed_inMapTransitIndexRoute,
   Signed_inMyPageClaimsIndexRoute: Signed_inMyPageClaimsIndexRoute,
   Signed_inMyPageShopsIndexRoute: Signed_inMyPageShopsIndexRoute,
   Signed_inMyPageStampsIndexRoute: Signed_inMyPageStampsIndexRoute,

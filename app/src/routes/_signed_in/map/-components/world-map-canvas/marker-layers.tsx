@@ -327,9 +327,12 @@ export const PinLayer = ({
 export const PlayersLayer = ({
     players,
     self,
+    followedId = null,
 }: {
     players: MapPlayer[];
     self: SelfPlayer | null;
+    /** 地図が追いかけている人の UUID */
+    followedId?: string | null;
 }) => {
     // UUID の表記ゆれ (ハイフンの有無) をそろえて自分を探す
     const selfUuid = self?.id ? normalizeUuid(self.id) : null;
@@ -340,17 +343,19 @@ export const PlayersLayer = ({
                 const isSelf =
                     normalizeUuid(player.uuid) === selfUuid ||
                     player.name.toLowerCase() === selfName;
+                const isFollowed = player.uuid === followedId;
                 return (
                     <PortalMarker
                         key={player.uuid}
                         position={{ x: player.x, z: player.z }}
-                        // プレイヤーは駅名やピンより上、自分はさらにその上に出す
-                        zIndexOffset={isSelf ? 2000 : 1000}
+                        // プレイヤーは駅名やピンより上、自分はさらにその上、追いかけている人は一番上に出す
+                        zIndexOffset={isFollowed ? 2500 : isSelf ? 2000 : 1000}
                     >
                         <PlayerMarker
                             playerId={player.uuid}
                             playerName={player.name}
                             isSelf={isSelf}
+                            isFollowed={isFollowed}
                         />
                     </PortalMarker>
                 );
