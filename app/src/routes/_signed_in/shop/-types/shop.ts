@@ -12,8 +12,9 @@ export const quickShopSchema = z.object({
     owner: z.string().nullish(),
     mode: z.enum(shopModes),
     stackingAmount: z.number(),
-    // 在庫 (買い取りなら空き)。古い API は無限ショップを -1、新しい API は数えられない在庫を null で返す
-    remaining: z.number().nullable(),
+    // 在庫 (買い取りなら空き)。古い API は無限ショップを -1 で返す。
+    // 新しい API (MineAuth 0.7.1〜) は数えられない在庫でキー自体を省く (explicitNulls = false) ので、null と省略の両方を受ける
+    remaining: z.number().nullish(),
     // 新しい API で無限ショップを表す。古い API には無い
     unlimited: z.boolean().optional(),
     location: z.object({
