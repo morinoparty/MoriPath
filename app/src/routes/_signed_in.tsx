@@ -43,6 +43,7 @@ const SUB_PAGE_PREFIXES = [
     "/my-page/stamps",
     "/my-page/claims",
     "/my-page/shops",
+    "/my-page/tickets",
 ];
 
 /** 下層ページ (タブバーを出さないページ) か */
