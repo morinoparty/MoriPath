@@ -1,6 +1,7 @@
 import { Menu } from "@morinoparty/chlorophyll-react/components";
-import { ChevronDown, MapPin } from "lucide-react";
+import { Check, ChevronDown, MapPin } from "lucide-react";
 import { sva } from "../../../../../../styled-system/css";
+import { checkbox } from "../../../../../../styled-system/recipes";
 import { overlayLabels } from "../../-functions/default-overlays";
 import {
     type OverlayKey,
@@ -85,7 +86,8 @@ export interface MarkerToggleMenuProps {
 /**
  * 地図に出すマーカーの種類を選ぶメニュー (地図の左上)。
  * 項目はその場でオン / オフを切り替えるだけの操作なので、フォームの Checkbox ではなく
- * Menu の CheckboxItem (menuitemcheckbox) にして、矢印キーでの移動と Enter / Space での切り替えを Ark UI に任せる
+ * Menu の CheckboxItem (menuitemcheckbox) にして、矢印キーでの移動と Enter / Space での切り替えを Ark UI に任せる。
+ * 見た目は以前と同じく、行の先頭にチェックボックスの四角を出す
  */
 export const MarkerToggleMenu = ({
     value,
@@ -93,6 +95,8 @@ export const MarkerToggleMenu = ({
     defaultOpen,
 }: MarkerToggleMenuProps) => {
     const style = markerToggleMenuStyle();
+    // 各行の先頭に、Chlorophyll の Checkbox と同じ四角を置いてオン / オフを見せる
+    const box = checkbox({ size: "md" });
 
     // 1 項目だけを切り替え、ほかの項目の状態はそのまま返す
     const handleCheckedChange = (key: OverlayKey, checked: boolean) => {
@@ -126,7 +130,20 @@ export const MarkerToggleMenu = ({
                             }
                             className={style.item}
                         >
-                            <Menu.ItemIndicator />
+                            {/* 見た目だけの四角 (状態は行の menuitemcheckbox が aria-checked で伝える) */}
+                            <span
+                                className={box.control}
+                                data-state={
+                                    value[key] ? "checked" : "unchecked"
+                                }
+                                aria-hidden
+                            >
+                                {value[key] && (
+                                    <span className={box.indicator}>
+                                        <Check />
+                                    </span>
+                                )}
+                            </span>
                             {overlayLabels[key]}
                         </Menu.CheckboxItem>
                     ))}
