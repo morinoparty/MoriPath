@@ -7,6 +7,8 @@ import { PaletteProvider } from "./palette";
 
 type ProviderProps = ColorModeProviderProps & {
     mcApiUrl: string;
+    /** mc-assets の minecraft 名前空間のベース URL。MinecraftItem のモデル・テクスチャをここから読む */
+    minecraftAssetsUrl: string;
 };
 
 // プレイヤー画像を chlorophyll 既定の取得先ではなくプレイヤー API から取得する
@@ -20,14 +22,22 @@ function createMinecraftConfig(mcApiUrl: string) {
     };
 }
 
-export function Provider({ mcApiUrl, ...props }: ProviderProps) {
+export function Provider({
+    mcApiUrl,
+    minecraftAssetsUrl,
+    ...props
+}: ProviderProps) {
     const minecraftConfig = useMemo(
         () => createMinecraftConfig(mcApiUrl),
         [mcApiUrl],
     );
     return (
         <PaletteProvider>
-            <MinecraftProvider config={minecraftConfig}>
+            {/* アバター・スキンは config、アイテムのモデル・テクスチャは assets から解決する */}
+            <MinecraftProvider
+                assets={minecraftAssetsUrl}
+                config={minecraftConfig}
+            >
                 <ColorModeProvider enableSystem={false} {...props} />
             </MinecraftProvider>
         </PaletteProvider>

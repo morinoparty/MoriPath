@@ -1,6 +1,7 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
+import type { QueryClient } from "@tanstack/react-query";
 import {
-    createRootRoute,
+    createRootRouteWithContext,
     HeadContent,
     Outlet,
     Scripts,
@@ -9,9 +10,15 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Layout } from "../components/layout";
 import { Provider } from "../components/ui/provider";
 import { getMcApiUrlFn } from "../lib/server-functions/get-mc-api-url";
+import { getMinecraftAssetsUrlFn } from "../lib/server-functions/get-mc-assets-url";
 import appCss from "../style/app.css?url";
 
-export const Route = createRootRoute({
+// loader から TanStack Query のキャッシュを温められるよう、router の context の型を宣言する
+interface RouterContext {
+    queryClient: QueryClient;
+}
+
+export const Route = createRootRouteWithContext<RouterContext>()({
     head: () => ({
         meta: [
             {
@@ -54,17 +61,26 @@ export const Route = createRootRoute({
             },
         ],
     }),
-    // MC_API_URL は deploy ごとにしか変わらないため再取得しない
-    loader: async () => ({ mcApiUrl: await getMcApiUrlFn() }),
+    // MC_API_URL / MC_ASSETS_URL は deploy ごとにしか変わらないため再取得しない
+    loader: async () => {
+        const [mcApiUrl, minecraftAssetsUrl] = await Promise.all([
+            getMcApiUrlFn(),
+            getMinecraftAssetsUrlFn(),
+        ]);
+        return { mcApiUrl, minecraftAssetsUrl };
+    },
     staleTime: Number.POSITIVE_INFINITY,
     component: RootComponent,
 });
 
 function RootComponent() {
-    const { mcApiUrl } = Route.useLoaderData();
+    const { mcApiUrl, minecraftAssetsUrl } = Route.useLoaderData();
     return (
         <RootDocument>
-            <Provider mcApiUrl={mcApiUrl}>
+            <Provider
+                mcApiUrl={mcApiUrl}
+                minecraftAssetsUrl={minecraftAssetsUrl}
+            >
                 <Layout>
                     <Outlet />
                 </Layout>

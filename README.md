@@ -68,6 +68,7 @@ cp app/.env.example app/.env
 | `AUTH_SECRET` | Secret key used for session encryption (at least 32 characters) |
 | `SERVER_URL` | Base API endpoint for Morino Party services (e.g. `https://api.morino.party/`). The server list is fetched from `${SERVER_URL}servers`, and the first reachable server in that list is used as the MineAuth server |
 | `MC_API_URL` | Player API used for player names and images |
+| `MC_ASSETS_URL` | mc-assets origin serving Minecraft models, textures and language files (`<MC_ASSETS_URL>/assets/minecraft/...`) used for item icons and item names |
 | `DIARY_API_URL` | Moritopa diary API (`workers/diary-api` in morinoparty/Moritopa) used for the home diary |
 | `DIARY_SHARED_KEY` | Bearer key for the diary API (same value as its `DIARY_SHARED_KEY` Worker secret; server-side only) |
 | `CLIENT_ID` | MineAuth OAuth2 client ID (defined as a var in `app/cloudflare.config.ts`; set it in `.env` only to override it locally). The redirect URI to register on MineAuth is `<origin>/api/auth/callback/MineAuth` |
@@ -128,7 +129,7 @@ A single workflow, `.github/workflows/deploy.yml`, runs on pull requests, on pus
 - Previews use the production Worker secrets. MineAuth sign-in may fail on preview origins, because the redirect URI `<origin>/api/auth/callback/MineAuth` is not registered for them.
 - Previews are skipped for pull requests from forks and from Dependabot, which do not receive repository secrets.
 
-Secrets are read from GitHub Actions secrets: `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` for the `cf` CLI, and `AUTH_SECRET`, `SERVER_URL`, `MC_API_URL`, `WORLD_MAP_URL`, `DIARY_API_URL` and `DIARY_SHARED_KEY`, which CI uploads as Worker secrets with `cf deploy --secrets-file`. Register them from your local `.env`:
+Secrets are read from GitHub Actions secrets: `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` for the `cf` CLI, and `AUTH_SECRET`, `SERVER_URL`, `MC_API_URL`, `MC_ASSETS_URL`, `WORLD_MAP_URL`, `DIARY_API_URL` and `DIARY_SHARED_KEY`, which CI uploads as Worker secrets with `cf deploy --secrets-file`. Register them from your local `.env`:
 
 ```bash
 gh secret set -f app/.env
