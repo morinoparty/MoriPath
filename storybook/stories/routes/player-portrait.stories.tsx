@@ -57,7 +57,7 @@ export const PoseDiagonal: Story = {
     args: { ...Online.args, pose: "diagonal" },
 };
 
-// 右腕を前に掲げてツルハシを持つ
+// 右手にツルハシを持つ。体を右へずらし、左側にツルハシを収める
 export const PosePickaxe: Story = {
     args: { ...Online.args, pose: "pickaxe" },
 };

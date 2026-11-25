@@ -30,6 +30,8 @@ export interface PortraitFrame {
     pitch: number;
     /** ポーズの強さ (0〜1)。1 でポーズのまま、0 で腕を下ろした直立。関節の角度をこの割合で補間する */
     poseWeight: number;
+    /** スキンを横へずらす量 (px)。ポーズの強さに合わせて 0 へ戻し、着地点を変えない */
+    offsetX: number;
     /** 3D スキンの不透明度 */
     skinOpacity: number;
     /** コンパクトバーの 2D アバターの不透明度 */
@@ -239,6 +241,7 @@ export const portraitFrame = (
         headBottom = 0.4,
         startYaw = 0,
         startPitch = 0,
+        startOffsetX = 0,
     }: {
         reducedMotion: boolean;
         /** スキン要素の高さに対する、首 (頭の下端) の位置の割合 */
@@ -247,6 +250,8 @@ export const portraitFrame = (
         startYaw?: number;
         /** 進み具合 0 のときのカメラの垂直角 (ポーズの pitch、度) */
         startPitch?: number;
+        /** 進み具合 0 のときのスキンの横のずれ (ポーズの offsetX、px) */
+        startOffsetX?: number;
     },
 ): PortraitFrame => {
     const p = clamp01(progress);
@@ -269,6 +274,8 @@ export const portraitFrame = (
             yaw: startYaw,
             pitch: startPitch,
             poseWeight: 1,
+            // 動かさない設定でもポーズと同じくずらしたまま置く
+            offsetX: startOffsetX,
             skinOpacity: 1 - swap,
             avatarOpacity: swap,
             barOpacity: swap,
@@ -284,6 +291,7 @@ export const portraitFrame = (
     }
 
     const eased = easeInOutSine(p);
+    const poseWeight = poseWeightAt(p);
     // 最後の 2 割で 3D スキンから 2D の顔へ入れ替える (体がバーの下にはみ出す区間を隠す)
     const swap = remap(p, 0.8, 1);
     return {
@@ -292,7 +300,9 @@ export const portraitFrame = (
         yaw: Math.round(lerp(startYaw, 360, eased)),
         // 見下ろす角度も同じ進み具合で真横へ戻し、バーの 2D の顔と重なる向きで着地させる
         pitch: Math.round(lerp(startPitch, 0, eased)),
-        poseWeight: poseWeightAt(p),
+        poseWeight,
+        // 腕を下ろすのと同じ速さで中央へ戻す (半分まで進めば 0 になり、着地点はずれない)
+        offsetX: startOffsetX * poseWeight,
         skinOpacity: 1 - swap,
         avatarOpacity: swap,
         barOpacity: remap(p, 0.5, 0.85),

@@ -51,6 +51,8 @@ export interface UseCollapsingPortraitOptions {
     startYaw?: number;
     /** ポーズのカメラの垂直角 (度)。スクロールすると 0 へ戻る */
     startPitch?: number;
+    /** ポーズのスキンの横のずれ (px)。スクロールすると関節と同じ速さで 0 へ戻る */
+    startOffsetX?: number;
 }
 
 /** SkinViewer に渡す向きとポーズ。変わったときだけ再レンダーする */
@@ -102,6 +104,7 @@ export const useCollapsingPortrait = ({
     reducedMotion,
     startYaw = 0,
     startPitch = 0,
+    startOffsetX = 0,
 }: UseCollapsingPortraitOptions) => {
     // ポートレート全体 (position: relative)。ここを基準に位置を測る
     const rootRef = useRef<HTMLDivElement>(null);
@@ -125,7 +128,11 @@ export const useCollapsingPortrait = ({
     const geometryRef = useRef<PortraitGeometry | null>(null);
     // 動きを減らす設定とポーズの向きは、update から最新の値を読む (update を作り直さない)
     const reducedMotionRef = useRef(reducedMotion);
-    const startAngleRef = useRef({ yaw: startYaw, pitch: startPitch });
+    const startAngleRef = useRef({
+        yaw: startYaw,
+        pitch: startPitch,
+        offsetX: startOffsetX,
+    });
     const frameRef = useRef<number | null>(null);
     const [skinView, setSkinView] = useState<PortraitSkinView>({
         yaw: startYaw,
@@ -152,24 +159,34 @@ export const useCollapsingPortrait = ({
             headBottom: (skinHead.centerY + skinHead.size / 2) / skinHeight,
             startYaw: startAngleRef.current.yaw,
             startPitch: startAngleRef.current.pitch,
+            startOffsetX: startAngleRef.current.offsetX,
         });
         // 開始前は 0、終わった後も足し続けてバーの位置に留める
         const scrolled = Math.max(0, window.scrollY - geometry.start);
 
         const skin = skinRef.current;
         if (skin) {
-            // 動きを減らす設定では位置を変えず、ページと一緒に流す
-            skin.style.transform = reducedMotion
-                ? ""
-                : toTransform(
-                      flipTransform({
-                          from: geometry.skinFrom,
-                          to: geometry.skinTo,
-                          scaleTo: geometry.skinScaleTo,
-                          scrolled,
-                          progress: frame.eased,
-                      }),
-                  );
+            // 動きを減らす設定ではポーズのずれだけを当て、ページと一緒に流す
+            if (reducedMotion) {
+                skin.style.transform = toTransform({
+                    x: frame.offsetX,
+                    y: 0,
+                    scale: 1,
+                });
+            } else {
+                const flip = flipTransform({
+                    from: geometry.skinFrom,
+                    to: geometry.skinTo,
+                    scaleTo: geometry.skinScaleTo,
+                    scrolled,
+                    progress: frame.eased,
+                });
+                // ポーズのずれは translate に足す (測った位置には含めず、着地点を変えない)
+                skin.style.transform = toTransform({
+                    ...flip,
+                    x: flip.x + frame.offsetX,
+                });
+            }
             skin.style.opacity = String(frame.skinOpacity);
             // 下に行くほど透明にして、縮んだ胴体が本文に重ならないようにする
             const mask = toMaskImage(frame.bodyMask);
@@ -285,9 +302,13 @@ export const useCollapsingPortrait = ({
     // ポーズや動きを減らす設定が変わったら、描画前に ref へ移して描き直す
     useIsomorphicLayoutEffect(() => {
         reducedMotionRef.current = reducedMotion;
-        startAngleRef.current = { yaw: startYaw, pitch: startPitch };
+        startAngleRef.current = {
+            yaw: startYaw,
+            pitch: startPitch,
+            offsetX: startOffsetX,
+        };
         scheduleUpdate();
-    }, [reducedMotion, startYaw, startPitch, scheduleUpdate]);
+    }, [reducedMotion, startYaw, startPitch, startOffsetX, scheduleUpdate]);
 
     useEffect(() => {
         const root = rootRef.current;

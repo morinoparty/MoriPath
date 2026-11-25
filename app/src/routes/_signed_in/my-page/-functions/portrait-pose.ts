@@ -20,12 +20,16 @@ const DIAGONAL_PITCH = 8;
 // 斜めの立ち姿で、頭をカメラ側へ少し向けて傾ける
 const DIAGONAL_HEAD_TILT: SkinViewerPose = { head: { y: -10, z: 8 } };
 
-// ツルハシを掲げる腕と、それを見上げる頭の角度 (度)。
-// 腕を水平より少し上げると、腕と直交して持つツルハシがほぼ真上を向く
-const PICKAXE_RAISE: SkinViewerPose = {
-    rightArm: { x: -80, z: 18 },
-    head: { x: -11, y: -14 },
+// ツルハシを持つ腕と頭の角度 (度)。
+// 腕は胸の高さまで軽く上げ、体の側へ少し寄せる。腕と直交して持つツルハシは顔の横で斜め上を向く。
+// 頭は見る人の方へ少し向ける
+const PICKAXE_HOLD: SkinViewerPose = {
+    rightArm: { x: -65, z: 10 },
+    head: { y: 8 },
 };
+
+// ツルハシを持つときは体を右へずらし、左側の空いた所にツルハシを収める (px)
+const PICKAXE_OFFSET_X = 45;
 
 const PORTRAIT_POSES: Record<PortraitPoseId, PortraitPose> = {
     // これまでどおり正面を向いて立つ
@@ -36,14 +40,15 @@ const PORTRAIT_POSES: Record<PortraitPoseId, PortraitPose> = {
         animation: "idle",
         joints: DIAGONAL_HEAD_TILT,
     },
-    // 右腕を前に掲げてツルハシを持つ。掲げた腕が顔に重ならないよう、左側面寄りから見る。
+    // 右手にツルハシを持つ。持った腕が顔に重ならないよう、少し左側面寄りから見る。
     // 腕は関節の角度で上げ、スクロールに合わせて少しずつ下ろせるようにする
     pickaxe: {
-        yaw: 28,
+        yaw: 20,
         pitch: DIAGONAL_PITCH,
         animation: "idle",
-        joints: PICKAXE_RAISE,
+        joints: PICKAXE_HOLD,
         rightHandItem: PORTRAIT_PICKAXE_ITEM,
+        offsetX: PICKAXE_OFFSET_X,
     },
     // 左手を振る。振る腕が手前に来るよう左側面寄りから見る
     wave: { yaw: 25, pitch: 4, animation: "wave" },

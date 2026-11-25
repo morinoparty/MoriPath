@@ -18,4 +18,6 @@ export interface PortraitPose {
     joints?: SkinViewerPose;
     /** 右手に持たせるアイテムの ID。アイテムのアセットを解決できないときは持たせない */
     rightHandItem?: string;
+    /** スクロール前にスキンを横へずらす量 (px、正の値で右)。関節の角度と同じ速さで 0 へ戻す */
+    offsetX?: number;
 }

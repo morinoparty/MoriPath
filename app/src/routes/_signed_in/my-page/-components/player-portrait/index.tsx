@@ -428,6 +428,7 @@ export const PlayerPortrait = ({
         reducedMotion,
         startYaw: poseView.yaw,
         startPitch: poseView.pitch,
+        startOffsetX: poseView.offsetX,
     });
     const isOnline = presence?.online === true;
 
