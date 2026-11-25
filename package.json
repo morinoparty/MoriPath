@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
+        "prepare": "lefthook install",
         "dev": "pnpm --filter @moripath/app dev",
         "dev:storybook": "pnpm --filter @moripath/storybook dev",
         "dev:all": "pnpx concurrently \"pnpm dev\" \"pnpm dev:storybook\"",

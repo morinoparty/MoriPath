@@ -5,3 +5,15 @@ pre-commit:
       glob: "*.{js,jsx,ts,tsx,mjs,cjs,mts,cts,json,jsonc,css}"
       run: pnpm exec vp check --fix {staged_files}
       stage_fixed: true
+
+# push する前に、push するコミットで変わったファイルを CI と同じ vp check (自動修正なし) で確かめる。
+# CI の Check で落ちる整形・lint の漏れを push の時点で止めるため
+# vp check は lint の対象 (JS / TS) が 1 つも無いと失敗するため、整形と lint を分けて走らせる
+pre-push:
+  commands:
+    vp-fmt:
+      glob: "*.{js,jsx,ts,tsx,mjs,cjs,mts,cts,json,jsonc,css}"
+      run: pnpm exec vp fmt --check {push_files}
+    vp-lint:
+      glob: "*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}"
+      run: pnpm exec vp lint {push_files}
