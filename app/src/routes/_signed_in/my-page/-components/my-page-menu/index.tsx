@@ -42,7 +42,8 @@ const myPageMenuStyle = sva({
             // 枠線・影・区切り線を持たない面のカード
             display: "flex",
             flexDirection: "column",
-            paddingY: "1",
+            // カード自体には上下の余白を持たせない。余白があると、行の押したときの面がそこまで届かず
+            // 角との間に帯が見えるため、最初と最後の行の内側に余白を移す (下の item を参照)
             bg: "colorPalette.surface.subtle",
             borderRadius: "panel",
             listStyle: "none",
@@ -57,6 +58,13 @@ const myPageMenuStyle = sva({
             minHeight: "44px",
             paddingX: "4",
             paddingY: "14px",
+            // カードの上下の余白の代わりに、最初と最後の行だけ内側を 4px 広げる
+            "li:first-child > &": {
+                paddingTop: "calc(14px + token(spacing.1))",
+            },
+            "li:last-child > &": {
+                paddingBottom: "calc(14px + token(spacing.1))",
+            },
             color: "colorPalette.fg",
             textDecoration: "none",
             transition: "background 0.15s",
