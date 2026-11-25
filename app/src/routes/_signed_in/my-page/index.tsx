@@ -5,7 +5,7 @@ import { getMyPageData } from "./-functions/get-my-page-data";
 import type { MyPageData } from "./-types/my-page";
 
 export const Route = createFileRoute("/_signed_in/my-page/")({
-    // getMyPageData はトークンとオンライン状況だけを待って返り、数値とスタンプ帳は Promise のまま届く
+    // getMyPageData はトークンを 1 回だけ取り、数値・スタンプ帳・オンライン状況をそろえてから返す (最初から完成した形で出す)
     loader: async ({ context }): Promise<MyPageData> => {
         const { playerId, presence, stats, stamps } = await getMyPageData();
         // MineAuth の name / preferred_username はどちらも MCID で、サインイン時にセッションへ入る

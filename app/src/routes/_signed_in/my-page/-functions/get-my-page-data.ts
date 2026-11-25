@@ -25,15 +25,15 @@ export interface MyPageServerData {
     /** Minecraft の UUID (アクセストークンの sub)。取得できなければ null */
     playerId: string | null;
     presence: PlayerPresence | null;
-    stats: Promise<MyPageStats>;
-    stamps: Promise<MyStamps | null>;
+    stats: MyPageStats;
+    stamps: MyStamps | null;
 }
 
 /**
  * マイページのデータをまとめて取る。
  * アクセストークンは 1 回だけ取り (更新の Set-Cookie をヘッダーより前に終えるため、ここで待つ)、
- * 数値とスタンプ帳は Promise のまま返してストリームで届いた順に描かせる。
- * オンライン状況は公開の一覧から速く取れ、ポートレートにすぐ出したいため待ってから返す
+ * マイページは最初から全部そろった形で出したいので、数値・スタンプ帳・オンライン状況を並行して取り、
+ * すべてそろってから返す (それぞれ失敗しても null に落とし、ページ全体は出す)
  */
 export const getMyPageData = createServerFn()
     // RPC として直接呼べるため、ここでもサインインを確かめる
@@ -81,7 +81,7 @@ export const getMyPageData = createServerFn()
                 voteStreak: voteValue?.dayVoteStreak ?? null,
             }),
         );
-        const presence = await timer.track(
+        const presence = timer.track(
             "presence",
             playerId
                 ? orNull(
@@ -90,6 +90,17 @@ export const getMyPageData = createServerFn()
                   )
                 : Promise.resolve(null),
         );
+        // ストリームで後から差し込まず、全部そろってから 1 度で描く
+        const [presenceValue, statsValue, stampsValue] = await Promise.all([
+            presence,
+            stats,
+            stamps,
+        ]);
         timer.finish();
-        return { playerId, presence, stats, stamps };
+        return {
+            playerId,
+            presence: presenceValue,
+            stats: statsValue,
+            stamps: stampsValue,
+        };
     });
