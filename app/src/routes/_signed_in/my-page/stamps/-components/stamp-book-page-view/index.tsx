@@ -3,7 +3,6 @@ import { RotateCw, Stamp as StampIcon } from "lucide-react";
 import { sva } from "../../../../../../../styled-system/css";
 import { SubPageBar } from "../../../../../../components/sub-page-bar";
 import { StampTile } from "../../../-components/stamp-tile";
-import { toStampLabel } from "../../../-functions/stamp-display";
 import type { MyStamps } from "../../../-types/stamp";
 
 const stampBookPageStyle = sva({
@@ -13,8 +12,6 @@ const stampBookPageStyle = sva({
         "ownedCount",
         "totalCount",
         "grid",
-        "item",
-        "name",
         "notice",
         "noticeIcon",
         "noticeText",
@@ -49,28 +46,14 @@ const stampBookPageStyle = sva({
             color: "colorPalette.fg.muted",
         },
         grid: {
-            // 端末の幅に合わせて列数を変え、名前が読める幅を保つ
+            // 端末の幅に合わせて列数を変える。390px 幅で 6 列、広い画面ではさらに増やす
+            // タイルは 44px より小さくしない
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(72px, 1fr))",
-            columnGap: "3",
-            rowGap: "4",
+            gridTemplateColumns: "repeat(auto-fill, minmax(44px, 1fr))",
+            gap: "2",
             listStyle: "none",
             margin: "0",
             padding: "0",
-        },
-        item: {
-            display: "flex",
-            flexDirection: "column",
-            gap: "1.5",
-            minWidth: "0",
-        },
-        name: {
-            // スマートフォンでは title が出ないため、長い名前も切らずにタイルの幅で折り返す
-            textStyle: "xs",
-            lineHeight: "1.4",
-            textAlign: "center",
-            color: "colorPalette.fg.muted",
-            overflowWrap: "anywhere",
         },
         notice: {
             // 空や失敗の案内は、本文の中ほどに寄せる
@@ -102,7 +85,7 @@ interface StampGridProps {
     classes: StampBookPageClasses;
 }
 
-/** 持っているスタンプの枚数と、名前つきの格子 */
+/** 持っているスタンプの枚数と、スタンプの格子 */
 const StampGrid = ({ stamps, classes }: StampGridProps) => {
     // 持っていないときは格子の代わりに一言だけ出す
     if (stamps.owned.length === 0) {
@@ -126,16 +109,11 @@ const StampGrid = ({ stamps, classes }: StampGridProps) => {
                 </span>
             </p>
             <ul className={classes.grid}>
-                {stamps.owned.map((stamp) => {
-                    const label = toStampLabel(stamp.shortCode);
-                    return (
-                        <li key={stamp.shortCode} className={classes.item}>
-                            {/* 名前はタイルの下に出すので、タイルには title を付けない */}
-                            <StampTile stamp={stamp} size="lg" />
-                            <span className={classes.name}>{label}</span>
-                        </li>
-                    );
-                })}
+                {stamps.owned.map((stamp) => (
+                    <li key={stamp.shortCode}>
+                        <StampTile stamp={stamp} size="lg" />
+                    </li>
+                ))}
             </ul>
         </>
     );
@@ -148,7 +126,7 @@ export interface StampBookPageViewProps {
     onRetry: () => void;
 }
 
-/** スタンプ帳のページ。持っているスタンプをすべて名前つきで並べる */
+/** スタンプ帳のページ。持っているスタンプをすべて並べる */
 export const StampBookPageView = ({
     stamps,
     onRetry,

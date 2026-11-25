@@ -7,12 +7,15 @@ import {
     Skeleton,
     skeletonKeys,
 } from "../../../../../components/skeleton";
-import { toStampLabel } from "../../-functions/stamp-display";
 import type { MyStamps } from "../../-types/stamp";
 import { StampTile } from "../stamp-tile";
 
-/** 1 列に並べるスタンプの最大数。残りは「+N」のタイルにまとめる */
-const VISIBLE_STAMP_COUNT = 6;
+/** 1 段に並べるタイルの数。スタンプ帳のページの格子 (390px 幅で 6〜7 列) と同じくらいの密度にする */
+const COLUMN_COUNT = 7;
+/** 並べる段の数 */
+const ROW_COUNT = 2;
+/** 並べられるタイルの数。収まらないときは最後の 1 枠を「+N」のタイルにする */
+const TILE_CAPACITY = COLUMN_COUNT * ROW_COUNT;
 
 const stampBookStyle = sva({
     slots: [
@@ -24,7 +27,6 @@ const stampBookStyle = sva({
         "moreIcon",
         "row",
         "rest",
-        "label",
         "empty",
         "tileSkeleton",
     ],
@@ -68,9 +70,9 @@ const stampBookStyle = sva({
             height: "4",
         },
         row: {
-            // 6 枚 + 「+N」の 7 枠。狭い画面ではタイルを縮めて 1 列に収める
+            // 7 列 × 2 段。狭い画面ではタイルを縮めて 7 列に収める
             display: "grid",
-            gridTemplateColumns: `repeat(${VISIBLE_STAMP_COUNT + 1}, minmax(0, 44px))`,
+            gridTemplateColumns: `repeat(${COLUMN_COUNT}, minmax(0, 44px))`,
             justifyContent: "space-between",
             gap: "1.5",
             listStyle: "none",
@@ -94,10 +96,6 @@ const stampBookStyle = sva({
                 color: "colorPalette.fg",
             },
         },
-        label: {
-            // 画面には出さず、読み上げにだけスタンプ名を渡す
-            srOnly: true,
-        },
         empty: {
             textStyle: "sm",
             color: "colorPalette.fg.muted",
@@ -117,11 +115,15 @@ export interface StampBookProps {
     className?: string;
 }
 
-/** マイページのスタンプ帳。持っているスタンプの先頭 6 枚と、残りの枚数を並べる */
+/** マイページのスタンプ帳。持っているスタンプの先頭 2 段ぶんと、残りの枚数を並べる */
 export const StampBook = ({ stamps, className }: StampBookProps) => {
     const classes = stampBookStyle();
     const titleId = useId();
-    const visible = stamps.owned.slice(0, VISIBLE_STAMP_COUNT);
+    // 全部収まるなら「+N」は出さず、収まらなければ最後の 1 枠を「+N」に譲る
+    const visible =
+        stamps.owned.length <= TILE_CAPACITY
+            ? stamps.owned
+            : stamps.owned.slice(0, TILE_CAPACITY - 1);
     const restCount = stamps.owned.length - visible.length;
 
     return (
@@ -147,16 +149,11 @@ export const StampBook = ({ stamps, className }: StampBookProps) => {
                 <p className={classes.empty}>まだスタンプがありません</p>
             ) : (
                 <ul className={classes.row}>
-                    {visible.map((stamp) => {
-                        const label = toStampLabel(stamp.shortCode);
-                        return (
-                            <li key={stamp.shortCode}>
-                                <StampTile stamp={stamp} title={label} />
-                                {/* 絵文字は読み上げると名前と食い違うことがあるため、名前だけを読ませる */}
-                                <span className={classes.label}>{label}</span>
-                            </li>
-                        );
-                    })}
+                    {visible.map((stamp) => (
+                        <li key={stamp.shortCode}>
+                            <StampTile stamp={stamp} />
+                        </li>
+                    ))}
                     {restCount > 0 && (
                         <li>
                             <Link
@@ -185,9 +182,9 @@ export const StampBookSkeleton = ({ className }: { className?: string }) => {
                     <InlineSkeleton width="4em" />
                 </span>
             </div>
-            {/* 6 枚 +「+N」の 7 枠ぶん並べる */}
+            {/* 届いた後と同じ 7 列 × 2 段ぶん並べる */}
             <div className={classes.row}>
-                {skeletonKeys(VISIBLE_STAMP_COUNT + 1).map((key) => (
+                {skeletonKeys(TILE_CAPACITY).map((key) => (
                     <Skeleton key={key} className={classes.tileSkeleton} />
                 ))}
             </div>

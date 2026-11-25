@@ -1,7 +1,9 @@
-/** 画面に出すスタンプ名。":pizza:" や "!moripa_pink.png" の記号を外す */
+/**
+ * 対応表に名前が無いスタンプの名前。":pizza:" や "!moripa_pink.png" の記号と拡張子を外す
+ */
 export const toStampLabel = (shortCode: string): string =>
     shortCode.startsWith("!")
-        ? shortCode.slice(1)
+        ? shortCode.slice(1).replace(/\.[^.]+$/, "")
         : shortCode.replace(/^:/, "").replace(/:$/, "");
 
 /**

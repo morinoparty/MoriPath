@@ -4,12 +4,24 @@ import {
     type MyStamps,
     playerStampsResponseSchema,
     type Stamp,
+    type StampEmojiEntry,
 } from "../-types/stamp";
-// 対応表はサーバー側でだけ読み、クライアントには字形だけを渡す
-import stampEmojiMap from "./stamp-emoji.gen.json";
+import { orderStamps } from "./order-stamps";
+// 対応表はサーバー側でだけ読み、クライアントには字形と名前だけを渡す
+import stampEmojiTable from "./stamp-emoji.gen.json";
 import { toStamp } from "./to-stamp";
 
-const emojiMap: Readonly<Record<string, string>> = stampEmojiMap;
+/** 生成済みの対応表 ([字形, 並び順, 名前]) を引きやすい形にする。形の崩れた行は飛ばす */
+const emojiMap: ReadonlyMap<string, StampEmojiEntry> = new Map(
+    Object.entries(stampEmojiTable).flatMap(([shortCode, row]) => {
+        const [emoji, sortIndex, label] = row;
+        return typeof emoji === "string" &&
+            typeof sortIndex === "number" &&
+            typeof label === "string"
+            ? [[shortCode, { emoji, sortIndex, label }] as const]
+            : [];
+    }),
+);
 
 // スタンプの総数はめったに変わらず、一覧は 3000 件を超えるため isolate 内でキャッシュする
 const TOTAL_CACHE_TTL_MS = 10 * 60 * 1000;
@@ -51,9 +63,11 @@ async function fetchOwnedStamps(
         throw new Error(`所持スタンプの取得に失敗しました: ${response.status}`);
     }
     const data = playerStampsResponseSchema.parse(await response.json());
-    return data.stamps
+    const stamps = data.stamps
         .map((item) => toStamp(item, emojiMap))
         .filter((stamp): stamp is Stamp => stamp !== null);
+    // マイページの先頭 6 枚とスタンプ帳のページで同じ並びになるよう、ここで一度だけ並べ替える
+    return orderStamps(stamps, emojiMap);
 }
 
 /** アクセストークンで、自分のスタンプとスタンプの総数を取る。失敗したら例外にする */

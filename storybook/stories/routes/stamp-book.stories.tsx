@@ -30,12 +30,12 @@ export default meta;
 
 type Story = StoryObj<typeof StampBook>;
 
-// 6 枚を超えた分は「+N」のタイルにまとめる
+// 7 列 × 2 段に収まらない分は、最後の 1 枠の「+N」のタイルにまとめる
 export const Default: Story = {
     args: { stamps: sampleStamps },
 };
 
-// 6 枚以下なら「+N」のタイルは出さない
+// 2 段に収まるなら「+N」のタイルは出さない
 export const Few: Story = {
     args: {
         stamps: { owned: sampleStamps.owned.slice(0, 3), total: 3405 },
@@ -48,10 +48,23 @@ export const Placeholders: Story = {
     args: {
         stamps: {
             owned: [
-                { shortCode: "!test.jpg", type: "IMAGE" },
-                { shortCode: "!moripa_pink.png", type: "IMAGE" },
-                { shortCode: ":unknown-emoji:", type: "EMOJI" },
-                { shortCode: ":pizza:", type: "EMOJI", emoji: "🍕" },
+                {
+                    shortCode: "!moripa_pink.png",
+                    type: "IMAGE",
+                    label: "moripa_pink",
+                },
+                { shortCode: "!test.jpg", type: "IMAGE", label: "test" },
+                {
+                    shortCode: ":pizza:",
+                    type: "EMOJI",
+                    emoji: "🍕",
+                    label: "ピザ",
+                },
+                {
+                    shortCode: ":unknown-emoji:",
+                    type: "EMOJI",
+                    label: "unknown-emoji",
+                },
             ],
             total: 3405,
         },
@@ -62,7 +75,7 @@ export const Empty: Story = {
     args: { stamps: { owned: [], total: 3405 } },
 };
 
-// スタンプが届くまで。見出しは先に出し、枚数と 7 枠のタイルの場所を取る
+// スタンプが届くまで。見出しは先に出し、枚数と 7 列 × 2 段のタイルの場所を取る
 export const Loading: Story = {
     args: { stamps: { owned: [], total: 0 } },
     render: () => <StampBookSkeleton />,

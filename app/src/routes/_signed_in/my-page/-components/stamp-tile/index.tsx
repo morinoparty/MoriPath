@@ -24,6 +24,8 @@ const stampTileStyle = sva({
             width: "100%",
             height: "100%",
             objectFit: "cover",
+            // 画像スタンプはドット絵なので、縮めてもぼかさない
+            imageRendering: "pixelated",
         },
     },
     variants: {
@@ -35,11 +37,11 @@ const stampTileStyle = sva({
                     "& svg": { width: "20px", height: "20px" },
                 },
             },
-            // スタンプ帳のページで格子に並べる大きなタイル
+            // スタンプ帳のページで格子に並べるタイル。44〜60px ほどの幅に合わせる
             lg: {
                 root: {
-                    fontSize: "36px",
-                    "& svg": { width: "28px", height: "28px" },
+                    fontSize: "28px",
+                    "& svg": { width: "22px", height: "22px" },
                 },
             },
         },
@@ -66,7 +68,7 @@ const StampImage = ({ src, className, onFailed }: StampImageProps) => {
         }
     }, [onFailed]);
     return (
-        // スタンプ名は呼び出し側で添えるため、画像そのものは飾りとして扱う
+        // スタンプ名はタイルの aria-label で読ませるため、画像そのものは飾りとして扱う
         <img
             ref={imageRef}
             src={src}
@@ -81,23 +83,16 @@ const StampImage = ({ src, className, onFailed }: StampImageProps) => {
 
 export interface StampTileProps {
     stamp: Stamp;
-    /** タイルの大きさ。マイページの 1 列は sm、スタンプ帳のページは lg */
+    /** タイルの大きさ。マイページの 2 段は sm、スタンプ帳のページは lg */
     size?: "sm" | "lg";
-    /** 長押しやホバーで出すスタンプ名 */
-    title?: string;
     className?: string;
 }
 
 /**
  * スタンプ 1 枚の見た目。絵文字は字形、画像は /stamp/ 配下の画像、どちらも無ければ仮のアイコン。
- * 読み上げには含めないので、スタンプ名は呼び出し側で添える
+ * 画面には名前を出さず、読み上げとホバーのツールチップにだけスタンプ名を渡す
  */
-export const StampTile = ({
-    stamp,
-    size,
-    title,
-    className,
-}: StampTileProps) => {
+export const StampTile = ({ stamp, size, className }: StampTileProps) => {
     const classes = stampTileStyle({ size });
     const [imageFailed, setImageFailed] = useState(false);
     // StampImage の effect が描画のたびに走らないよう、関数を固定する
@@ -106,7 +101,14 @@ export const StampTile = ({
         stamp.type === "IMAGE" ? toStampImagePath(stamp.shortCode) : null;
 
     return (
-        <span className={cx(classes.root, className)} title={title} aria-hidden>
+        // 絵文字は読み上げると名前と食い違うことがあるため、1 枚の画像として名前だけを読ませる
+        <span
+            className={cx(classes.root, className)}
+            // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- emoji glyphs cannot be drawn with an img element
+            role="img"
+            aria-label={stamp.label}
+            title={stamp.label}
+        >
             {imagePath && !stamp.emoji && !imageFailed ? (
                 <StampImage
                     src={imagePath}

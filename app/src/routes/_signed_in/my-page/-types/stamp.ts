@@ -29,11 +29,23 @@ export interface Stamp {
     type: StampType;
     /** 絵文字スタンプの字形。対応表に無ければ省く */
     emoji?: string;
+    /** 読み上げとツールチップに使う名前 (例: "ピザ", "moripa_pink") */
+    label: string;
+}
+
+/** 生成済みの対応表 (stamp-emoji.gen.json) の 1 件 */
+export interface StampEmojiEntry {
+    /** 完全修飾の字形 */
+    emoji: string;
+    /** よく使われる順の並び順。小さいほど先に並べる */
+    sortIndex: number;
+    /** emojibase の日本語名 (無ければ英語名) */
+    label: string;
 }
 
 /** スタンプ帳の表示に必要なデータ */
 export interface MyStamps {
-    /** 持っているスタンプ (API の並び順) */
+    /** 持っているスタンプ (画像スタンプ → よく使われる絵文字の順) */
     owned: Stamp[];
     /** サーバーにあるスタンプの総数 */
     total: number;

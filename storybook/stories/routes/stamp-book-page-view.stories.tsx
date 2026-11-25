@@ -35,7 +35,7 @@ export default meta;
 
 type Story = StoryObj<typeof StampBookPageView>;
 
-// 長い名前は折り返し、画像の無いスタンプや対応表に無い絵文字は仮のタイルにする
+// 名前は出さずにタイルだけを並べる。画像の無いスタンプや対応表に無い絵文字は仮のタイルにする
 export const Default: Story = {
     args: { stamps: manySampleStamps },
 };
