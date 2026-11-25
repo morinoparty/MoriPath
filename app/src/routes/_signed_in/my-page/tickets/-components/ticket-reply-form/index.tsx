@@ -79,6 +79,12 @@ export const TicketReplyForm = ({
                     onChange={(event) => onContentChange(event.target.value)}
                     autoresize
                 />
+                {/* 送るボタンが押せない理由を、入力欄と結び付けて読み上げさせる */}
+                {isOver && (
+                    <Field.ErrorText>
+                        {MAX_COMMENT_LENGTH}文字までです
+                    </Field.ErrorText>
+                )}
             </Field.Root>
             {errorMessage && (
                 <p className={style.error} role="alert">

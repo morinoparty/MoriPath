@@ -68,7 +68,7 @@ export const ExternalLinkItem: Story = {
                         id: "vote",
                         label: "投票する",
                         icon: Vote,
-                        href: "https://minecraft.jp/servers/visit.morino.party/vote",
+                        href: "https://minecraft.jp/servers/visit.morino.party",
                         external: true,
                     },
                     {

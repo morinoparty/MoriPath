@@ -38,6 +38,8 @@ export interface DiaryDayViewProps {
     today: string;
     /** 「次の日」で進める最後の日 */
     lastDate: string;
+    /** 「前の日」を押せるか (最初の日記より前は遡れない) */
+    canGoBack: boolean;
     result: DiaryDayResult;
     /** 日付の帯に並べる日 (古い順) */
     stripDays: DiaryStripDay[];
@@ -48,6 +50,7 @@ export const DiaryDayView = ({
     date,
     today,
     lastDate,
+    canGoBack,
     result,
     stripDays,
 }: DiaryDayViewProps) => {
@@ -56,7 +59,12 @@ export const DiaryDayView = ({
         <div className={style.root}>
             <SubPageBar title="もりぱダイアリー" backTo={BACK_TO} />
             <div className={style.dates}>
-                <DiaryDateNav date={date} today={today} lastDate={lastDate} />
+                <DiaryDateNav
+                    date={date}
+                    today={today}
+                    lastDate={lastDate}
+                    canGoBack={canGoBack}
+                />
                 <DiaryDayStrip days={stripDays} selected={date} />
             </div>
             <DiaryDayTimeline result={result} />

@@ -21,6 +21,7 @@ const meta: Meta<typeof DiaryDayView> = {
         date: "2026-11-24",
         today: sampleToday,
         lastDate: sampleToday,
+        canGoBack: true,
         result: sampleFinalizedResult,
         stripDays: sampleStripDays("2026-11-24"),
     },

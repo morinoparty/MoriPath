@@ -5,6 +5,7 @@ import {
     buildDiaryStripDays,
     DIARY_STRIP_LENGTH,
     diaryStripEnd,
+    hasDiaryBefore,
     toDiaryTermDate,
 } from "./-functions/diary-date";
 import { getDiaryByDate } from "./-functions/get-diary-by-date";
@@ -44,6 +45,12 @@ export const Route = createFileRoute("/_signed_in/diary/$date")({
             today,
             // 最新より先の日は空なので、そこで「次の日」を止める。最新が分からなければ今日で止める
             lastDate: latestDate && latestDate <= today ? latestDate : today,
+            // 最初の日記より前には遡れないようにする
+            canGoBack: hasDiaryBefore({
+                selected: date,
+                existingDates,
+                limit: DIARY_STRIP_LENGTH,
+            }),
             result,
             stripDays: buildDiaryStripDays({
                 selected: date,
@@ -56,12 +63,14 @@ export const Route = createFileRoute("/_signed_in/diary/$date")({
 });
 
 function DiaryDatePage() {
-    const { date, today, lastDate, result, stripDays } = Route.useLoaderData();
+    const { date, today, lastDate, canGoBack, result, stripDays } =
+        Route.useLoaderData();
     return (
         <DiaryDayView
             date={date}
             today={today}
             lastDate={lastDate}
+            canGoBack={canGoBack}
             result={result}
             stripDays={stripDays}
         />

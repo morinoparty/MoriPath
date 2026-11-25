@@ -1,6 +1,6 @@
 import type { ShopFilter, ShopListing } from "../-types/shop";
 
-/** 在庫があるか (無限ショップは常にある) */
+/** 在庫があるか (無限ショップは常にある。数の分からないお店も売り切れとは扱わない) */
 export const isInStock = (shop: ShopListing): boolean =>
     shop.stock === null || shop.stock > 0;
 

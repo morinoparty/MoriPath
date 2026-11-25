@@ -4,8 +4,8 @@ import { getTicketDetail } from "./-functions/get-ticket-detail";
 import { useTicketReply } from "./-functions/use-ticket-reply";
 import type { TicketDetailResult } from "./-types/ticket";
 
-// チケットの id は正の整数だけ (int64 の範囲に収まる桁数まで)
-const TICKET_ID_PATTERN = /^[1-9]\d{0,15}$/;
+// チケットの id は正の整数だけ。Number で正確に扱える 15 桁まで (16 桁は入力の検証で弾かれるため見つからない扱いにする)
+const TICKET_ID_PATTERN = /^[1-9]\d{0,14}$/;
 
 export const Route = createFileRoute("/_signed_in/my-page/tickets/$id")({
     loader: async ({

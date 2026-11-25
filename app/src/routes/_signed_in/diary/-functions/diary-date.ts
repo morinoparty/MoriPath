@@ -70,6 +70,31 @@ export const buildDiaryStripDays = ({
     });
 };
 
+/**
+ * selected より前に日記があるか (「前の日」を押せるか)。
+ * existingDates は帯の最後の日以前を新しい順に最大 limit 件取ったもの。
+ * limit 件に満たなければ最初の日記まで取れているので、その中に前の日が無ければ遡れない
+ */
+export const hasDiaryBefore = ({
+    selected,
+    existingDates,
+    limit,
+}: {
+    selected: string;
+    existingDates: string[] | null;
+    limit: number;
+}): boolean => {
+    // 一覧が取れなかったときは分からないので、遡れるままにする
+    if (!existingDates) {
+        return true;
+    }
+    if (existingDates.some((date) => date < selected)) {
+        return true;
+    }
+    // limit 件ちょうどなら、さらに古い日記が残っているかもしれない
+    return existingDates.length >= limit;
+};
+
 const labelFormat = new Intl.DateTimeFormat("ja-JP", {
     month: "long",
     day: "numeric",

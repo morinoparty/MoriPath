@@ -1,5 +1,4 @@
 import {
-    BookOpen,
     CalendarDays,
     LandPlot,
     LifeBuoy,
@@ -47,14 +46,8 @@ export const defaultMyPageMenuSections: readonly MyPageMenuSection[] = [
                 id: "vote",
                 label: "投票する",
                 icon: Vote,
-                href: "https://minecraft.jp/servers/visit.morino.party/vote",
+                href: "https://minecraft.jp/servers/visit.morino.party",
                 external: true,
-            },
-            {
-                id: "diary",
-                label: "もりぱダイアリー",
-                icon: BookOpen,
-                href: "/diary",
             },
             {
                 id: "stamps",
@@ -70,11 +63,11 @@ export const defaultMyPageMenuSections: readonly MyPageMenuSection[] = [
         items: [
             {
                 id: "claims",
-                label: "保護エリア",
+                label: "保護した土地",
                 icon: LandPlot,
                 href: "/my-page/claims",
             },
-            { id: "shops", label: "お店", icon: Store, href: "/my-page/shops" },
+            { id: "shops", label: "自分のお店", icon: Store, href: "/my-page/shops" },
         ],
     },
     {

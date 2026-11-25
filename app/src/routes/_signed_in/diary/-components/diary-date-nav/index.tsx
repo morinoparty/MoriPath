@@ -44,21 +44,34 @@ export interface DiaryDateNavProps {
     today: string;
     /** 「次の日」で進める最後の日 (最新の日記の日) */
     lastDate: string;
+    /** 「前の日」を押せるか (最初の日記より前は遡れない) */
+    canGoBack: boolean;
 }
 
 /** 前の日・次の日のボタンと、いま開いている日付 */
-export const DiaryDateNav = ({ date, today, lastDate }: DiaryDateNavProps) => {
+export const DiaryDateNav = ({
+    date,
+    today,
+    lastDate,
+    canGoBack,
+}: DiaryDateNavProps) => {
     const style = diaryDateNavStyle();
     // 最新の日より先には進めない
     const nextDate = date < lastDate ? addDays(date, 1) : null;
 
     return (
         <nav className={style.root} aria-label="日付の移動">
-            <IconButton asChild variant="ghost" aria-label="前の日">
-                <Link to="/diary/$date" params={{ date: addDays(date, -1) }}>
+            {canGoBack ? (
+                <IconButton asChild variant="ghost" aria-label="前の日">
+                    <Link to="/diary/$date" params={{ date: addDays(date, -1) }}>
+                        <ChevronLeft />
+                    </Link>
+                </IconButton>
+            ) : (
+                <IconButton variant="ghost" aria-label="前の日" disabled>
                     <ChevronLeft />
-                </Link>
-            </IconButton>
+                </IconButton>
+            )}
             <p className={style.label}>
                 <time dateTime={date} className={style.date}>
                     {formatDiaryDate(date, today)}

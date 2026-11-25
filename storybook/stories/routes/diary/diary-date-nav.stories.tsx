@@ -11,6 +11,7 @@ const meta: Meta<typeof DiaryDateNav> = {
         date: "2026-11-24",
         today: sampleToday,
         lastDate: sampleToday,
+        canGoBack: true,
     },
 };
 
@@ -28,4 +29,9 @@ export const Today: Story = {
 // 去年の日。年も出す
 export const LastYear: Story = {
     args: { date: "2025-12-31" },
+};
+
+// 最初の日記を開いているとき。「前の日」は押せない
+export const FirstDiary: Story = {
+    args: { canGoBack: false },
 };

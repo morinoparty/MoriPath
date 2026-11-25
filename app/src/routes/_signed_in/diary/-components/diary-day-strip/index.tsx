@@ -122,8 +122,10 @@ export const DiaryDayStrip = ({ days, selected }: DiaryDayStripProps) => {
                     return (
                         <li key={day.date}>
                             {isDisabled ? (
+                                // 名前を読み上げさせるため、押せないリンクとして出す
                                 <span
                                     className={style.day}
+                                    role="link"
                                     aria-disabled="true"
                                     aria-label={`${label} 日記なし`}
                                 >
