@@ -16,8 +16,12 @@ export const defaultMyPageMenuSections: readonly MyPageMenuSection[] = [
         id: "money",
         title: "おかね",
         items: [
-            // POST /api/v1/plugins/vault/send で送金できる (画面は未実装)
-            { id: "send", label: "どんぐりを送る", icon: Send, disabled: true },
+            {
+                id: "send",
+                label: "どんぐりを送る",
+                icon: Send,
+                href: "/wallet/send",
+            },
             // 取引履歴を返す API はまだ無い
             {
                 id: "history",

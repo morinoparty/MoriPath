@@ -23,19 +23,32 @@ const layoutStyle = css({
     "&[data-full-bleed]": {
         paddingBottom: "0",
     },
+    // タブバーを出さない下層ページは、本文の下に余白を足さない
+    "&[data-sub-page]": {
+        paddingBottom: "0",
+    },
 });
+
+// タブバーを出さず、戻るボタンの上部バーで移動する下層ページ
+const SUB_PAGE_PREFIXES = ["/wallet/"];
+
+/** 下層ページ (タブバーを出さないページ) か */
+const isSubPage = (pathname: string): boolean =>
+    SUB_PAGE_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 
 function SignedInLayout() {
     const { pathname } = useLocation();
     // /map は地図を画面いっぱいに敷くため、本文用の余白を外す
     const isFullBleed = resolveActiveTab(pathname) === "map";
+    const subPage = isSubPage(pathname);
     return (
         <div
             className={layoutStyle}
             data-full-bleed={isFullBleed ? "" : undefined}
+            data-sub-page={subPage ? "" : undefined}
         >
             <Outlet />
-            <TabBar />
+            {!subPage && <TabBar />}
         </div>
     );
 }
