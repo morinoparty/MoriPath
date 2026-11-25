@@ -1,9 +1,12 @@
-import { Popover } from "@ark-ui/react/popover";
-import { Checkbox } from "@morinoparty/chlorophyll-react/components";
+import { Menu } from "@morinoparty/chlorophyll-react/components";
 import { ChevronDown, MapPin } from "lucide-react";
 import { sva } from "../../../../../../styled-system/css";
 import { overlayLabels } from "../../-functions/default-overlays";
-import { overlayKeys, type OverlayVisibility } from "../../-types/world-map";
+import {
+    type OverlayKey,
+    overlayKeys,
+    type OverlayVisibility,
+} from "../../-types/world-map";
 
 const markerToggleMenuStyle = sva({
     slots: [
@@ -11,9 +14,8 @@ const markerToggleMenuStyle = sva({
         "triggerIcon",
         "triggerLabel",
         "chevron",
-        "positioner",
         "content",
-        "group",
+        "item",
     ],
     base: {
         trigger: {
@@ -57,22 +59,18 @@ const markerToggleMenuStyle = sva({
                 transform: "rotate(180deg)",
             },
         },
-        positioner: {
-            // zag は z-index をインラインで当てるため、!important で上書きする
-            zIndex: "popover!",
-        },
+        // 地図の上のクロムとそろえ、Chlorophyll の Menu の枠線を外して白い面 + 影で浮かせる
         content: {
             minWidth: "200px",
-            p: "4",
-            bg: "bg.panel",
+            p: "2",
+            borderWidth: "0",
             borderRadius: "l3",
             boxShadow: "chrome",
-            outline: "none",
         },
-        group: {
-            display: "flex",
-            flexDirection: "column",
-            gap: "3",
+        // 指でも押しやすいよう、行の高さを少し広げる
+        item: {
+            minHeight: "11",
+            fontWeight: "medium",
         },
     },
 });
@@ -84,56 +82,56 @@ export interface MarkerToggleMenuProps {
     defaultOpen?: boolean;
 }
 
-/** 地図に出すマーカーの種類を選ぶメニュー (地図の左上) */
+/**
+ * 地図に出すマーカーの種類を選ぶメニュー (地図の左上)。
+ * 項目はその場でオン / オフを切り替えるだけの操作なので、フォームの Checkbox ではなく
+ * Menu の CheckboxItem (menuitemcheckbox) にして、矢印キーでの移動と Enter / Space での切り替えを Ark UI に任せる
+ */
 export const MarkerToggleMenu = ({
     value,
     onValueChange,
     defaultOpen,
 }: MarkerToggleMenuProps) => {
     const style = markerToggleMenuStyle();
-    // Checkbox.Group はチェック済みの value の配列で扱うので、ON の項目だけを並べる
-    const checked = overlayKeys.filter((key) => value[key]);
 
-    // 配列から項目ごとの ON / OFF に戻す
-    const handleChange = (next: string[]) => {
-        const nextValue = Object.fromEntries(
-            overlayKeys.map((key) => [key, next.includes(key)]),
-        ) as OverlayVisibility;
-        onValueChange(nextValue);
+    // 1 項目だけを切り替え、ほかの項目の状態はそのまま返す
+    const handleCheckedChange = (key: OverlayKey, checked: boolean) => {
+        onValueChange({ ...value, [key]: checked });
     };
 
     return (
-        <Popover.Root
+        <Menu.Root
             defaultOpen={defaultOpen}
+            // 続けていくつも切り替えられるよう、項目を選んでもメニューを閉じない
+            closeOnSelect={false}
             positioning={{ placement: "bottom-start", gutter: 8 }}
         >
-            <Popover.Trigger className={style.trigger}>
+            <Menu.Trigger className={style.trigger}>
                 <span className={style.triggerIcon}>
                     <MapPin aria-hidden />
                 </span>
                 <span className={style.triggerLabel}>マーカー表示</span>
                 <ChevronDown className={style.chevron} aria-hidden />
-            </Popover.Trigger>
-            <Popover.Positioner className={style.positioner}>
-                <Popover.Content className={style.content}>
-                    <Checkbox.Group
-                        className={style.group}
-                        value={checked}
-                        onValueChange={handleChange}
-                        aria-label="表示するマーカー"
-                    >
-                        {overlayKeys.map((key) => (
-                            <Checkbox.Root key={key} value={key}>
-                                <Checkbox.Control />
-                                <Checkbox.Label>
-                                    {overlayLabels[key]}
-                                </Checkbox.Label>
-                                <Checkbox.HiddenInput />
-                            </Checkbox.Root>
-                        ))}
-                    </Checkbox.Group>
-                </Popover.Content>
-            </Popover.Positioner>
-        </Popover.Root>
+            </Menu.Trigger>
+            <Menu.Positioner>
+                {/* メニューの名前はトリガーの「マーカー表示」から Ark UI が aria-labelledby で付ける */}
+                <Menu.Content className={style.content}>
+                    {overlayKeys.map((key) => (
+                        <Menu.CheckboxItem
+                            key={key}
+                            value={key}
+                            checked={value[key]}
+                            onCheckedChange={(checked) =>
+                                handleCheckedChange(key, checked)
+                            }
+                            className={style.item}
+                        >
+                            <Menu.ItemIndicator />
+                            {overlayLabels[key]}
+                        </Menu.CheckboxItem>
+                    ))}
+                </Menu.Content>
+            </Menu.Positioner>
+        </Menu.Root>
     );
 };
