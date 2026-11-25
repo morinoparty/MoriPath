@@ -65,12 +65,11 @@ const stampBookPageStyle = sva({
             minWidth: "0",
         },
         name: {
-            // 長い名前は 2 行で切り、記号の多い名前もタイルの幅で折り返す
+            // スマートフォンでは title が出ないため、長い名前も切らずにタイルの幅で折り返す
             textStyle: "xs",
             lineHeight: "1.4",
             textAlign: "center",
             color: "colorPalette.fg.muted",
-            lineClamp: "2",
             overflowWrap: "anywhere",
         },
         notice: {
@@ -131,11 +130,9 @@ const StampGrid = ({ stamps, classes }: StampGridProps) => {
                     const label = toStampLabel(stamp.shortCode);
                     return (
                         <li key={stamp.shortCode} className={classes.item}>
-                            <StampTile stamp={stamp} size="lg" title={label} />
-                            {/* 名前は 2 行で切れることがあるため、全文は title で長押し・ホバー時に出す */}
-                            <span className={classes.name} title={label}>
-                                {label}
-                            </span>
+                            {/* 名前はタイルの下に出すので、タイルには title を付けない */}
+                            <StampTile stamp={stamp} size="lg" />
+                            <span className={classes.name}>{label}</span>
                         </li>
                     );
                 })}
