@@ -76,7 +76,7 @@ export const DiaryPlayers = ({
             <PlayerAvatarGroup
                 players={players}
                 size="sm"
-                aria-label="居合わせたプレイヤー"
+                aria-label="あそんでいたプレイヤー"
                 className={cx(style.avatars, className)}
             />
         );
@@ -92,7 +92,7 @@ export const DiaryPlayers = ({
             unmountOnExit
         >
             <Popover.Trigger
-                aria-label={`居合わせたプレイヤーを見る (${players.length}人)`}
+                aria-label={`あそんでいたプレイヤーを見る (${players.length}人)`}
                 className={cx(style.trigger, className)}
             >
                 {/* 読み上げは aria-label で足りるため、顔の並びは装飾として隠す */}
@@ -109,7 +109,7 @@ export const DiaryPlayers = ({
                 <Popover.Positioner>
                     <Popover.Content className={style.content}>
                         <Popover.Title>
-                            居合わせたプレイヤー ({players.length}人)
+                            あそんでいたプレイヤー ({players.length}人)
                         </Popover.Title>
                         <ul className={style.list}>
                             {players.map((player) => (
