@@ -12,6 +12,7 @@ import {
     portraitFrame,
     scrollProgress,
     type SkinHead,
+    toMaskImage,
     toTransform,
 } from "./collapsing-portrait";
 
@@ -40,6 +41,8 @@ interface PortraitGeometry {
 export interface UseCollapsingPortraitOptions {
     /** canvas の中の顔の位置と大きさ (transform-origin とスケールの基準) */
     skinHead: SkinHead;
+    /** スキン要素の高さ (px)。胴体を下から消すマスクの位置を割合にするのに使う */
+    skinHeight: number;
     /** 大きな名前の要素 (useFitText の containerRef と共有するため外から受け取る) */
     nameRef: RefObject<HTMLHeadingElement | null>;
     /** 変わったら測り直す値 (名前のフォントサイズなど) */
@@ -71,6 +74,7 @@ const offsetWithin = (element: HTMLElement, root: HTMLElement): Point => {
  */
 export const useCollapsingPortrait = ({
     skinHead,
+    skinHeight,
     nameRef,
     measureKey,
 }: UseCollapsingPortraitOptions) => {
@@ -111,7 +115,11 @@ export const useCollapsingPortrait = ({
             start: geometry.start,
             distance: geometry.distance,
         });
-        const frame = portraitFrame(progress, { reducedMotion });
+        const frame = portraitFrame(progress, {
+            reducedMotion,
+            // 首の位置 = 顔の中心 + 顔の半分
+            headBottom: (skinHead.centerY + skinHead.size / 2) / skinHeight,
+        });
         // 開始前は 0、終わった後も足し続けてバーの位置に留める
         const scrolled = Math.max(0, window.scrollY - geometry.start);
 
@@ -130,6 +138,10 @@ export const useCollapsingPortrait = ({
                       }),
                   );
             skin.style.opacity = String(frame.skinOpacity);
+            // 下に行くほど透明にして、縮んだ胴体が本文に重ならないようにする
+            const mask = toMaskImage(frame.bodyMask);
+            skin.style.maskImage = mask;
+            skin.style.setProperty("-webkit-mask-image", mask);
         }
         const name = nameRef.current;
         if (name) {
@@ -164,7 +176,7 @@ export const useCollapsingPortrait = ({
         }
         // 向きが変わったときだけ SkinViewer を再レンダーする
         setYaw((current) => (current === frame.yaw ? current : frame.yaw));
-    }, [nameRef]);
+    }, [nameRef, skinHead, skinHeight]);
 
     // 次のフレームで 1 回だけ update する
     const scheduleUpdate = useCallback(() => {

@@ -44,7 +44,40 @@ export interface PortraitFrame {
     nameOpacity: number;
     /** コンパクトバーの名前の不透明度 */
     barNameOpacity: number;
+    /** 胴体を下から消すマスク (スキン要素の高さに対する割合 0〜1)。start より上は不透明、end より下は透明 */
+    bodyMask: BodyMask;
 }
+
+/** 縦方向のフェードマスク。start >= 1 ならマスクなし */
+export interface BodyMask {
+    start: number;
+    end: number;
+}
+
+/** マスクをかけない状態 */
+export const NO_BODY_MASK: BodyMask = { start: 1, end: 1 };
+
+/**
+ * 回転して縮むにつれて、胴体を下から透明にしていくマスクを求める。
+ * 縮んだスキンの長い胴体が下の本文に重なるため、最後は首 (headBottom) より下を消し、頭だけを残す
+ */
+export const bodyFadeMask = (progress: number, headBottom: number): BodyMask => {
+    // 回転が始まってすぐ消し始め、2D の顔に入れ替わる前に消しきる
+    const fade = easeInOutSine(remap(progress, 0.05, 0.75));
+    if (fade <= 0) {
+        return NO_BODY_MASK;
+    }
+    // 透明になりきる位置は足元から首の少し下まで上がる。下に行くほど透明になる幅は徐々に狭める
+    const start = lerp(1, headBottom, fade);
+    const width = lerp(0.35, 0.12, fade);
+    return { start, end: start + width };
+};
+
+/** BodyMask を CSS の mask-image にする (マスクなしは空文字) */
+export const toMaskImage = ({ start, end }: BodyMask): string =>
+    start >= 1
+        ? ""
+        : `linear-gradient(to bottom, #000 ${(start * 100).toFixed(1)}%, transparent ${(end * 100).toFixed(1)}%)`;
 
 export const clamp01 = (value: number): number =>
     Math.min(Math.max(value, 0), 1);
@@ -150,7 +183,14 @@ export const estimateSkinHead = ({
  */
 export const portraitFrame = (
     progress: number,
-    { reducedMotion }: { reducedMotion: boolean },
+    {
+        reducedMotion,
+        headBottom = 0.4,
+    }: {
+        reducedMotion: boolean;
+        /** スキン要素の高さに対する、首 (頭の下端) の位置の割合 */
+        headBottom?: number;
+    },
 ): PortraitFrame => {
     const p = clamp01(progress);
     // グラデーション帯はバーより手前の層にあるため、バーが出る前に消しておく
@@ -177,6 +217,8 @@ export const portraitFrame = (
             badgesOpacity,
             nameOpacity: 1 - remap(p, 0.3, 0.7),
             barNameOpacity: swap,
+            // 動かさない設定では体も縮まないため、マスクで消す必要がない
+            bodyMask: NO_BODY_MASK,
         };
     }
 
@@ -196,5 +238,6 @@ export const portraitFrame = (
         badgesOpacity,
         nameOpacity: 1 - remap(p, 0.6, 0.9),
         barNameOpacity: remap(p, 0.7, 1),
+        bodyMask: bodyFadeMask(p, headBottom),
     };
 };

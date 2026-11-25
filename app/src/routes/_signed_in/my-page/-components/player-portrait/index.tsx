@@ -312,6 +312,7 @@ export const PlayerPortrait = ({
         yaw,
     } = useCollapsingPortrait({
         skinHead: SKIN_HEAD,
+        skinHeight: SKIN_HEIGHT,
         nameRef,
         measureKey: nameFontSize,
     });
