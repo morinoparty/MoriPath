@@ -31,8 +31,12 @@ const bundleStorybook = (): Plugin => ({
         );
         fs.cpSync(storybookDir, outDir, {
             recursive: true,
-            // staticDirs 経由で混入する app/public の _headers を除外する
-            filter: (src) => path.basename(src) !== "_headers",
+            // staticDirs 経由で混入する app/public の _headers と、
+            // アプリ本体の /fonts から読む同梱フォントを除外する (二重配置を避ける)
+            filter: (src) =>
+                path.basename(src) !== "_headers" &&
+                path.relative(storybookDir, src) !==
+                    path.join("fonts", "genjyuu-gothic-lp"),
         });
     },
 });

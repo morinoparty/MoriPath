@@ -50,14 +50,15 @@ export const Route = createRootRouteWithContext<RouterContext>()({
                 href: "https://fonts.googleapis.com/css2?family=Outfit:wght@600&display=swap",
             },
             {
+                // 源柔ゴシック L-P は app/public/fonts に同梱した subset を同一オリジンから配信する
                 rel: "stylesheet",
                 type: "text/css",
-                href: "https://shogo82148.github.io/genjyuugothic-subsets/GenJyuuGothicL-P-Medium/GenJyuuGothicL-P-Medium.css",
+                href: "/fonts/genjyuu-gothic-lp/Medium/GenJyuuGothicL-P-Medium.css",
             },
             {
                 rel: "stylesheet",
                 type: "text/css",
-                href: "https://shogo82148.github.io/genjyuugothic-subsets/GenJyuuGothicL-P-Bold/GenJyuuGothicL-P-Bold.css",
+                href: "/fonts/genjyuu-gothic-lp/Bold/GenJyuuGothicL-P-Bold.css",
             },
         ],
     }),
