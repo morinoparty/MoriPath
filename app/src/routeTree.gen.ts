@@ -14,6 +14,7 @@ import { Route as Signed_inIndexRouteImport } from './routes/_signed_in/index'
 import { Route as Signed_inSplatRouteImport } from './routes/_signed_in/$'
 import { Route as NofooterTermsIndexRouteImport } from './routes/_nofooter/terms/index'
 import { Route as Signed_inBalanceClaimIndexRouteImport } from './routes/_signed_in/balance-claim/index'
+import { Route as Signed_inFishingIndexRouteImport } from './routes/_signed_in/fishing/index'
 import { Route as Signed_inMapIndexRouteImport } from './routes/_signed_in/map/index'
 import { Route as Signed_inMyPageIndexRouteImport } from './routes/_signed_in/my-page/index'
 import { Route as Signed_inShopIndexRouteImport } from './routes/_signed_in/shop/index'
@@ -46,6 +47,11 @@ const Signed_inBalanceClaimIndexRoute =
     path: '/balance-claim/',
     getParentRoute: () => Signed_inRoute,
   } as any)
+const Signed_inFishingIndexRoute = Signed_inFishingIndexRouteImport.update({
+  id: '/fishing/',
+  path: '/fishing/',
+  getParentRoute: () => Signed_inRoute,
+} as any)
 const Signed_inMapIndexRoute = Signed_inMapIndexRouteImport.update({
   id: '/map/',
   path: '/map/',
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/terms/': typeof NofooterTermsIndexRoute
   '/balance-claim/': typeof Signed_inBalanceClaimIndexRoute
+  '/fishing/': typeof Signed_inFishingIndexRoute
   '/map/': typeof Signed_inMapIndexRoute
   '/my-page/': typeof Signed_inMyPageIndexRoute
   '/shop/': typeof Signed_inShopIndexRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/terms': typeof NofooterTermsIndexRoute
   '/balance-claim': typeof Signed_inBalanceClaimIndexRoute
+  '/fishing': typeof Signed_inFishingIndexRoute
   '/map': typeof Signed_inMapIndexRoute
   '/my-page': typeof Signed_inMyPageIndexRoute
   '/shop': typeof Signed_inShopIndexRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_nofooter/terms/': typeof NofooterTermsIndexRoute
   '/_signed_in/balance-claim/': typeof Signed_inBalanceClaimIndexRoute
+  '/_signed_in/fishing/': typeof Signed_inFishingIndexRoute
   '/_signed_in/map/': typeof Signed_inMapIndexRoute
   '/_signed_in/my-page/': typeof Signed_inMyPageIndexRoute
   '/_signed_in/shop/': typeof Signed_inShopIndexRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/terms/'
     | '/balance-claim/'
+    | '/fishing/'
     | '/map/'
     | '/my-page/'
     | '/shop/'
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/terms'
     | '/balance-claim'
+    | '/fishing'
     | '/map'
     | '/my-page'
     | '/shop'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/_nofooter/terms/'
     | '/_signed_in/balance-claim/'
+    | '/_signed_in/fishing/'
     | '/_signed_in/map/'
     | '/_signed_in/my-page/'
     | '/_signed_in/shop/'
@@ -200,6 +212,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Signed_inBalanceClaimIndexRouteImport
       parentRoute: typeof Signed_inRoute
     }
+    '/_signed_in/fishing/': {
+      id: '/_signed_in/fishing/'
+      path: '/fishing'
+      fullPath: '/fishing/'
+      preLoaderRoute: typeof Signed_inFishingIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
     '/_signed_in/map/': {
       id: '/_signed_in/map/'
       path: '/map'
@@ -249,6 +268,7 @@ interface Signed_inRouteChildren {
   Signed_inSplatRoute: typeof Signed_inSplatRoute
   Signed_inIndexRoute: typeof Signed_inIndexRoute
   Signed_inBalanceClaimIndexRoute: typeof Signed_inBalanceClaimIndexRoute
+  Signed_inFishingIndexRoute: typeof Signed_inFishingIndexRoute
   Signed_inMapIndexRoute: typeof Signed_inMapIndexRoute
   Signed_inMyPageIndexRoute: typeof Signed_inMyPageIndexRoute
   Signed_inShopIndexRoute: typeof Signed_inShopIndexRoute
@@ -259,6 +279,7 @@ const Signed_inRouteChildren: Signed_inRouteChildren = {
   Signed_inSplatRoute: Signed_inSplatRoute,
   Signed_inIndexRoute: Signed_inIndexRoute,
   Signed_inBalanceClaimIndexRoute: Signed_inBalanceClaimIndexRoute,
+  Signed_inFishingIndexRoute: Signed_inFishingIndexRoute,
   Signed_inMapIndexRoute: Signed_inMapIndexRoute,
   Signed_inMyPageIndexRoute: Signed_inMyPageIndexRoute,
   Signed_inShopIndexRoute: Signed_inShopIndexRoute,

@@ -1,4 +1,5 @@
 import { Menu } from "@morinoparty/chlorophyll-react/components";
+import { useLocation, useNavigate } from "@tanstack/react-router";
 import { Bell, ChevronDown } from "lucide-react";
 import type { PropsWithChildren } from "react";
 import { sva } from "../../../styled-system/css";
@@ -115,24 +116,31 @@ interface PartyOption {
     label: string;
     /** app/public に置いたアイコン画像のパス */
     icon: string;
+    /** そのパーティのトップページ */
+    href: "/" | "/fishing";
     /** まだ切り替えられないパーティ */
     disabled?: boolean;
 }
 
 // 切り替え候補のパーティ。つりのパーティはまだ移れないので選べないようにしておく
 const partyOptions: readonly PartyOption[] = [
-    { value: "mori", label: "もりのパーティ", icon: "/moripa.svg" },
+    { value: "mori", label: "もりのパーティ", icon: "/moripa.svg", href: "/" },
     {
         value: "tsuri",
         label: "つりのパーティ",
         // https://fishing.plugin.morino.party/ の favicon
         icon: "/icons/tsuri-no-party.png",
+        href: "/fishing",
+        // ページは /fishing に用意してあるが、中身ができるまでメニューからは移れないようにしておく
         disabled: true,
     },
 ];
 
-// このサイト (MoriPath) はもりのパーティのポータルなので、いまのパーティは常にもりのパーティ
-const currentParty = partyOptions[0];
+/** URL からいまのパーティを決める。/fishing 配下ならつりのパーティ、それ以外はもりのパーティ */
+export const resolveParty = (pathname: string): PartyId =>
+    pathname === "/fishing" || pathname.startsWith("/fishing/")
+        ? "tsuri"
+        : "mori";
 
 const Root = ({ children }: PropsWithChildren) => {
     const style = homeHeaderStyle();
@@ -147,6 +155,12 @@ interface ServerSwitcherProps {
 /** いまのパーティのピル。押すとパーティ (もりのパーティ / つりのパーティ) を選ぶメニューを開く */
 const ServerSwitcher = ({ defaultOpen }: ServerSwitcherProps) => {
     const style = homeHeaderStyle();
+    const { pathname } = useLocation();
+    const navigate = useNavigate();
+    const currentParty =
+        partyOptions.find(
+            (option) => option.value === resolveParty(pathname),
+        ) ?? partyOptions[0];
 
     return (
         <Menu.Root
@@ -168,7 +182,18 @@ const ServerSwitcher = ({ defaultOpen }: ServerSwitcherProps) => {
             <Menu.Positioner>
                 <Menu.Content>
                     {/* 選べるのは 1 つだけなので、選択中が aria-checked で伝わる RadioItem にする */}
-                    <Menu.RadioItemGroup value={currentParty.value}>
+                    <Menu.RadioItemGroup
+                        value={currentParty.value}
+                        // 選んだパーティのトップページへ移る (選べないパーティはここに来ない)
+                        onValueChange={({ value }) => {
+                            const next = partyOptions.find(
+                                (option) => option.value === value,
+                            );
+                            if (next && next.value !== currentParty.value) {
+                                void navigate({ to: next.href });
+                            }
+                        }}
+                    >
                         {partyOptions.map((option) => (
                             <Menu.RadioItem
                                 key={option.value}

@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet, useLocation } from "@tanstack/react-router";
 import { css } from "../../styled-system/css";
+import { resolveParty } from "../components/home-header";
 import { resolveActiveTab, TabBar } from "../components/tab-bar";
 import { authMiddleware } from "../lib/auth-middleware";
 import { getSession } from "../lib/server-functions";
@@ -27,6 +28,11 @@ const layoutStyle = css({
     "&[data-sub-page]": {
         paddingBottom: "0",
     },
+    // つりのパーティのページ (/fishing) は、タブバーを含めて中身をうみの配色にする
+    "&[data-party=tsuri]": {
+        colorPalette: "umi",
+        bg: "colorPalette.bg",
+    },
 });
 
 // タブバーを出さず、戻るボタンの上部バーで移動する下層ページ
@@ -46,6 +52,7 @@ function SignedInLayout() {
             className={layoutStyle}
             data-full-bleed={isFullBleed ? "" : undefined}
             data-sub-page={subPage ? "" : undefined}
+            data-party={resolveParty(pathname)}
         >
             <Outlet />
             {!subPage && <TabBar />}
