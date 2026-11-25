@@ -14,6 +14,8 @@ import { Route as Signed_inIndexRouteImport } from './routes/_signed_in/index'
 import { Route as Signed_inSplatRouteImport } from './routes/_signed_in/$'
 import { Route as NofooterTermsIndexRouteImport } from './routes/_nofooter/terms/index'
 import { Route as Signed_inBalanceClaimIndexRouteImport } from './routes/_signed_in/balance-claim/index'
+import { Route as Signed_inDiaryIndexRouteImport } from './routes/_signed_in/diary/index'
+import { Route as Signed_inDiaryDateRouteImport } from './routes/_signed_in/diary/$date'
 import { Route as Signed_inFishingIndexRouteImport } from './routes/_signed_in/fishing/index'
 import { Route as Signed_inMapIndexRouteImport } from './routes/_signed_in/map/index'
 import { Route as Signed_inMyPageIndexRouteImport } from './routes/_signed_in/my-page/index'
@@ -47,6 +49,16 @@ const Signed_inBalanceClaimIndexRoute =
     path: '/balance-claim/',
     getParentRoute: () => Signed_inRoute,
   } as any)
+const Signed_inDiaryIndexRoute = Signed_inDiaryIndexRouteImport.update({
+  id: '/diary/',
+  path: '/diary/',
+  getParentRoute: () => Signed_inRoute,
+} as any)
+const Signed_inDiaryDateRoute = Signed_inDiaryDateRouteImport.update({
+  id: '/diary/$date',
+  path: '/diary/$date',
+  getParentRoute: () => Signed_inRoute,
+} as any)
 const Signed_inFishingIndexRoute = Signed_inFishingIndexRouteImport.update({
   id: '/fishing/',
   path: '/fishing/',
@@ -87,9 +99,11 @@ const Signed_inWalletSendIndexRoute =
 export interface FileRoutesByFullPath {
   '/': typeof Signed_inIndexRoute
   '/$': typeof Signed_inSplatRoute
+  '/diary/$date': typeof Signed_inDiaryDateRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/terms/': typeof NofooterTermsIndexRoute
   '/balance-claim/': typeof Signed_inBalanceClaimIndexRoute
+  '/diary/': typeof Signed_inDiaryIndexRoute
   '/fishing/': typeof Signed_inFishingIndexRoute
   '/map/': typeof Signed_inMapIndexRoute
   '/my-page/': typeof Signed_inMyPageIndexRoute
@@ -100,9 +114,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/$': typeof Signed_inSplatRoute
   '/': typeof Signed_inIndexRoute
+  '/diary/$date': typeof Signed_inDiaryDateRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/terms': typeof NofooterTermsIndexRoute
   '/balance-claim': typeof Signed_inBalanceClaimIndexRoute
+  '/diary': typeof Signed_inDiaryIndexRoute
   '/fishing': typeof Signed_inFishingIndexRoute
   '/map': typeof Signed_inMapIndexRoute
   '/my-page': typeof Signed_inMyPageIndexRoute
@@ -115,9 +131,11 @@ export interface FileRoutesById {
   '/_signed_in': typeof Signed_inRouteWithChildren
   '/_signed_in/$': typeof Signed_inSplatRoute
   '/_signed_in/': typeof Signed_inIndexRoute
+  '/_signed_in/diary/$date': typeof Signed_inDiaryDateRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_nofooter/terms/': typeof NofooterTermsIndexRoute
   '/_signed_in/balance-claim/': typeof Signed_inBalanceClaimIndexRoute
+  '/_signed_in/diary/': typeof Signed_inDiaryIndexRoute
   '/_signed_in/fishing/': typeof Signed_inFishingIndexRoute
   '/_signed_in/map/': typeof Signed_inMapIndexRoute
   '/_signed_in/my-page/': typeof Signed_inMyPageIndexRoute
@@ -130,9 +148,11 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/$'
+    | '/diary/$date'
     | '/api/auth/$'
     | '/terms/'
     | '/balance-claim/'
+    | '/diary/'
     | '/fishing/'
     | '/map/'
     | '/my-page/'
@@ -143,9 +163,11 @@ export interface FileRouteTypes {
   to:
     | '/$'
     | '/'
+    | '/diary/$date'
     | '/api/auth/$'
     | '/terms'
     | '/balance-claim'
+    | '/diary'
     | '/fishing'
     | '/map'
     | '/my-page'
@@ -157,9 +179,11 @@ export interface FileRouteTypes {
     | '/_signed_in'
     | '/_signed_in/$'
     | '/_signed_in/'
+    | '/_signed_in/diary/$date'
     | '/api/auth/$'
     | '/_nofooter/terms/'
     | '/_signed_in/balance-claim/'
+    | '/_signed_in/diary/'
     | '/_signed_in/fishing/'
     | '/_signed_in/map/'
     | '/_signed_in/my-page/'
@@ -210,6 +234,20 @@ declare module '@tanstack/react-router' {
       path: '/balance-claim'
       fullPath: '/balance-claim/'
       preLoaderRoute: typeof Signed_inBalanceClaimIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
+    '/_signed_in/diary/': {
+      id: '/_signed_in/diary/'
+      path: '/diary'
+      fullPath: '/diary/'
+      preLoaderRoute: typeof Signed_inDiaryIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
+    '/_signed_in/diary/$date': {
+      id: '/_signed_in/diary/$date'
+      path: '/diary/$date'
+      fullPath: '/diary/$date'
+      preLoaderRoute: typeof Signed_inDiaryDateRouteImport
       parentRoute: typeof Signed_inRoute
     }
     '/_signed_in/fishing/': {
@@ -267,7 +305,9 @@ declare module '@tanstack/react-router' {
 interface Signed_inRouteChildren {
   Signed_inSplatRoute: typeof Signed_inSplatRoute
   Signed_inIndexRoute: typeof Signed_inIndexRoute
+  Signed_inDiaryDateRoute: typeof Signed_inDiaryDateRoute
   Signed_inBalanceClaimIndexRoute: typeof Signed_inBalanceClaimIndexRoute
+  Signed_inDiaryIndexRoute: typeof Signed_inDiaryIndexRoute
   Signed_inFishingIndexRoute: typeof Signed_inFishingIndexRoute
   Signed_inMapIndexRoute: typeof Signed_inMapIndexRoute
   Signed_inMyPageIndexRoute: typeof Signed_inMyPageIndexRoute
@@ -278,7 +318,9 @@ interface Signed_inRouteChildren {
 const Signed_inRouteChildren: Signed_inRouteChildren = {
   Signed_inSplatRoute: Signed_inSplatRoute,
   Signed_inIndexRoute: Signed_inIndexRoute,
+  Signed_inDiaryDateRoute: Signed_inDiaryDateRoute,
   Signed_inBalanceClaimIndexRoute: Signed_inBalanceClaimIndexRoute,
+  Signed_inDiaryIndexRoute: Signed_inDiaryIndexRoute,
   Signed_inFishingIndexRoute: Signed_inFishingIndexRoute,
   Signed_inMapIndexRoute: Signed_inMapIndexRoute,
   Signed_inMyPageIndexRoute: Signed_inMyPageIndexRoute,

@@ -9,8 +9,8 @@ import { sva } from "../../../../../styled-system/css";
 import { formatDiaryTime } from "../../-functions/format-diary-time";
 import type { DiaryEntry } from "../../-types/diary";
 
-// TODO(#38): ダイアリーの一覧ページができたら型付きのルートに差し替える (今は catch-all に落ちる)
-const DIARY_LIST_PATH = "/diary" as string;
+// 最新の日の日記を開くページ (/diary は最新の日付に移す)
+const DIARY_LIST_PATH = "/diary";
 
 const diarySectionStyle = sva({
     slots: [
