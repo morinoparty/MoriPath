@@ -5,9 +5,12 @@ import { MyPageError } from "./-components/my-page-error";
 import { MyPageView } from "./-components/my-page-view";
 import { getMyStamps } from "./-functions/get-my-stamps";
 import { getPlayerPresence } from "./-functions/get-player-presence";
+import { myPageSearchSchema } from "./-functions/my-page-search";
 import type { MyPageData } from "./-types/my-page";
 
 export const Route = createFileRoute("/_signed_in/my-page/")({
+    // ?pose= でポートレートのポーズを固定できる (サーバーでも同じポーズで描くので、ハイドレーションでずれない)
+    validateSearch: myPageSearchSchema,
     loader: async ({ context }): Promise<MyPageData> => {
         // UUID は userinfo の sub から取る。失敗したらセッションの名前で代用する
         const userInfoPromise = getUserInfo().catch(() => null);
@@ -50,7 +53,8 @@ export const Route = createFileRoute("/_signed_in/my-page/")({
 
 function MyPage() {
     const data = Route.useLoaderData();
-    return <MyPageView {...data} />;
+    const { pose } = Route.useSearch();
+    return <MyPageView {...data} portraitPose={pose} />;
 }
 
 function MyPageErrorBoundary() {

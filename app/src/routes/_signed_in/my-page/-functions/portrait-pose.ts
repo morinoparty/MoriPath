@@ -3,12 +3,12 @@ import type { SkinViewerPose } from "@morinoparty/chlorophyll-react/components";
 import type { PortraitPose, PortraitPoseId } from "../-types/portrait-pose";
 
 /** ランダムに選ぶ候補 (並び順は Storybook の表示順にも使う) */
-export const PORTRAIT_POSE_IDS: readonly PortraitPoseId[] = [
+export const PORTRAIT_POSE_IDS = [
     "front",
     "diagonal",
     "pickaxe",
     "torch",
-];
+] as const satisfies readonly PortraitPoseId[];
 
 /** 右手に持たせるツルハシ (Minecraft のアイテム ID) */
 export const PORTRAIT_PICKAXE_ITEM = "diamond_pickaxe";

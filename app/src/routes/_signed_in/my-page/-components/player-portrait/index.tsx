@@ -367,7 +367,7 @@ export interface PlayerPortraitProps {
     player: MyPagePlayer;
     /** オンライン状況。取得できなければ null (ピルを出さない) */
     presence: PlayerPresence | null;
-    /** スキンのポーズ。省略すると表示のたびにランダムに選ぶ (Storybook では固定して確かめる) */
+    /** スキンのポーズ。省略すると表示のたびにランダムに選ぶ (URL の ?pose= や Storybook で固定する) */
     pose?: PortraitPoseId;
     className?: string;
 }
