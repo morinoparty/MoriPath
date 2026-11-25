@@ -34,11 +34,16 @@ const toDiaryPlayers = (
 /** ダイアリー API のドキュメントを、本文のある時間だけのタイムライン (タームの順) にする */
 export const toDiaryEntries = (document: DiaryDocument): DiaryEntry[] =>
     document.entries
-        // 誰もいなかった時間などは本文が空なので出さない
-        .filter((entry) => entry.content.trim() !== "")
+        // 短い一言を優先し、まだ返さない diary-api では本文で代用する
         .map((entry) => ({
+            entry,
+            description: (entry.text ?? entry.content).trim(),
+        }))
+        // 誰もいなかった時間などは本文が空なので出さない
+        .filter(({ description }) => description !== "")
+        .map(({ entry, description }) => ({
             id: `${document.date}-${entry.hour}`,
             time: toEntryTime(document.date, entry.hour),
-            description: entry.content.trim(),
+            description,
             players: toDiaryPlayers(entry.players),
         }));

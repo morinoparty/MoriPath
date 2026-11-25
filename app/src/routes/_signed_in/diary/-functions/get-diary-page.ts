@@ -25,7 +25,10 @@ const toDayResult = (document: DiaryDocument | null): DiaryDayResult =>
               day: {
                   date: document.date,
                   // 空のまとめは無いものとして扱う
-                  summary: document.summary?.trim() || null,
+                  // Markdown を外したまとめを優先する
+                  summary:
+                      (document.summaryText ?? document.summary)?.trim() ||
+                      null,
                   entries: toDiaryEntries(document),
               },
           }

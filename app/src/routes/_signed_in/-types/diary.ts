@@ -10,7 +10,10 @@ const diaryResponsePlayerSchema = z.object({
 const diaryResponseEntrySchema = z.object({
     /** 日本時間の時 (0-23) */
     hour: z.int().min(0).max(23),
+    /** Discord 向けの本文 (Markdown)。text が無いときだけ使う */
     content: z.string(),
+    /** 画面にそのまま出せる短い一言 (Markdown なし)。古い diary-api は返さない */
+    text: z.string().optional(),
     messageCount: z.int().min(0),
     players: z.array(diaryResponsePlayerSchema),
 });
@@ -23,6 +26,8 @@ export const diaryDocumentSchema = z.object({
     generatedAt: z.iso.datetime({ offset: true }),
     isFinalized: z.boolean(),
     summary: z.string().nullish(),
+    /** summary から Markdown を外したもの。古い diary-api は返さない */
+    summaryText: z.string().nullish(),
     /** タームの順 (4 時 → 翌 3 時) に並ぶ。中身の無い時間を含むことがある */
     entries: z.array(diaryResponseEntrySchema),
 });
