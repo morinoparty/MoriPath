@@ -17,11 +17,6 @@ const playerMarkerStyle = sva({
             "& > *": {
                 boxShadow: "chrome",
             },
-            // 追いかけている人は、ブランド色の輪で囲んで見分ける
-            "&[data-followed] > *": {
-                outline: "3px solid {colors.colorPalette.solid}",
-                outlineOffset: "2px",
-            },
         },
         self: {
             // 自分は名前を付けず、白いフチの顔だけで目立たせる
@@ -42,8 +37,6 @@ export interface PlayerMarkerProps {
     playerName: string;
     /** ログイン中のプレイヤー本人か */
     isSelf?: boolean;
-    /** 地図が追いかけている人か */
-    isFollowed?: boolean;
 }
 
 /** 地図上のプレイヤー。自分は顔だけ、ほかのプレイヤーは顔と名前のチップで出す */
@@ -51,11 +44,10 @@ export const PlayerMarker = ({
     playerId,
     playerName,
     isSelf = false,
-    isFollowed = false,
 }: PlayerMarkerProps) => {
     const style = playerMarkerStyle();
     return (
-        <div className={style.root} data-followed={isFollowed ? "" : undefined}>
+        <div className={style.root}>
             {isSelf ? (
                 <span className={style.self}>
                     <PlayerAvatar

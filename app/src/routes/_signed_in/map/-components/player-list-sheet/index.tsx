@@ -6,8 +6,9 @@ import {
     PlayerAvatar,
     Spinner,
 } from "@morinoparty/chlorophyll-react/components";
-import { LocateFixed, Users, XIcon } from "lucide-react";
+import { Users, XIcon } from "lucide-react";
 import { sva } from "../../../../../../styled-system/css";
+import { SheetDragArea } from "../../../../../components/sheet-drag-area";
 import type {
     MapPlayerEntry,
     MapPlayerEntryGroup,
@@ -31,7 +32,6 @@ const playerListSheetStyle = sva({
         "body",
         "name",
         "note",
-        "followIcon",
         "message",
     ],
     base: {
@@ -131,10 +131,6 @@ const playerListSheetStyle = sva({
             _active: {
                 bg: "colorPalette.surface",
             },
-            // 追いかけている人は、ブランド色の面で示す
-            "&[aria-pressed=true]": {
-                bg: "colorPalette.surface",
-            },
             _disabled: {
                 cursor: "default",
                 opacity: 0.5,
@@ -166,12 +162,6 @@ const playerListSheetStyle = sva({
             fontWeight: "medium",
             color: "fg.muted",
         },
-        followIcon: {
-            flexShrink: "0",
-            width: "20px",
-            height: "20px",
-            color: "colorPalette.solid",
-        },
         message: {
             display: "grid",
             placeItems: "center",
@@ -188,44 +178,35 @@ export interface PlayerListSheetProps {
     groups: MapPlayerEntryGroup[];
     /** 一覧を取っているあいだ */
     isLoading?: boolean;
-    /** 追いかけている人の UUID */
-    followedId?: string | null;
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    /** 地図で追える人を選んだ */
+    /** 地図に出ている人を選んだ */
     onSelectPlayer: (
         entry: Extract<MapPlayerEntry, { status: "onMap" }>,
     ) => void;
 }
 
-/** 行の 2 行目。追いかけている人・地図に出ていない理由を出す */
-const entryNote = (entry: MapPlayerEntry, isFollowed: boolean) => {
-    if (entry.status === "offMap") {
-        return entry.reason;
-    }
-    return isFollowed ? "追いかけています" : null;
-};
+/** 行の 2 行目。地図に出ていない人だけ、その理由を出す */
+const entryNote = (entry: MapPlayerEntry) =>
+    entry.status === "offMap" ? entry.reason : null;
 
-/** 一覧の 1 行。地図で追える人だけを押せるボタンにする */
+/** 一覧の 1 行。地図に出ている人だけを押せるボタンにする */
 const PlayerRow = ({
     entry,
-    isFollowed,
     onSelectPlayer,
 }: {
     entry: MapPlayerEntry;
-    isFollowed: boolean;
     onSelectPlayer: PlayerListSheetProps["onSelectPlayer"];
 }) => {
     const style = playerListSheetStyle();
-    const note = entryNote(entry, isFollowed);
+    const note = entryNote(entry);
     const isOnMap = entry.status === "onMap";
     return (
         <button
             type="button"
             className={style.row}
-            // 地図に出ていない人は追えないので押せなくする
+            // 地図に出ていない人は位置が分からないので押せなくする
             disabled={!isOnMap}
-            aria-pressed={isOnMap ? isFollowed : undefined}
             onClick={() => {
                 if (entry.status === "onMap") {
                     onSelectPlayer(entry);
@@ -241,21 +222,17 @@ const PlayerRow = ({
                 <span className={style.name}>{entry.name}</span>
                 {note && <span className={style.note}>{note}</span>}
             </span>
-            {isFollowed && (
-                <LocateFixed aria-hidden className={style.followIcon} />
-            )}
         </button>
     );
 };
 
 /**
  * オンラインのプレイヤー一覧 (地図の右上のボタンから下に開くシート)。
- * 地図で追える人を押すと、その人の場所へ移って追いかける。追えない人は押せない行で出す
+ * 地図に出ている人を押すと、その人がいまいる場所へ地図を移す。地図に出ていない人は押せない行で出す
  */
 export const PlayerListSheet = ({
     groups,
     isLoading = false,
-    followedId = null,
     open,
     onOpenChange,
     onSelectPlayer,
@@ -286,23 +263,26 @@ export const PlayerListSheet = ({
                 <Drawer.Backdrop className={style.backdrop} />
                 <Drawer.Positioner className={style.positioner}>
                     <Drawer.Content className={style.content}>
-                        <Drawer.Handle />
-                        {/* Drawer は Ark UI の Dialog なので、見出しと閉じるボタンは Dialog の部品で Content に結び付ける */}
-                        <div className={style.header}>
-                            <Dialog.Title className={style.title}>
-                                プレイヤー
-                            </Dialog.Title>
-                            <Dialog.CloseTrigger asChild>
-                                <IconButton
-                                    variant="ghost"
-                                    shape="circle"
-                                    aria-label="閉じる"
-                                    className={style.close}
-                                >
-                                    <XIcon />
-                                </IconButton>
-                            </Dialog.CloseTrigger>
-                        </div>
+                        {/* つまみと見出しをつかんで下へ引くと閉じる */}
+                        <SheetDragArea>
+                            <Drawer.Handle />
+                            {/* Drawer は Ark UI の Dialog なので、見出しと閉じるボタンは Dialog の部品で Content に結び付ける */}
+                            <div className={style.header}>
+                                <Dialog.Title className={style.title}>
+                                    プレイヤー
+                                </Dialog.Title>
+                                <Dialog.CloseTrigger asChild>
+                                    <IconButton
+                                        variant="ghost"
+                                        shape="circle"
+                                        aria-label="閉じる"
+                                        className={style.close}
+                                    >
+                                        <XIcon />
+                                    </IconButton>
+                                </Dialog.CloseTrigger>
+                            </div>
+                        </SheetDragArea>
                         {total === 0 ? (
                             <div className={style.message}>
                                 {isLoading ? (
@@ -329,10 +309,6 @@ export const PlayerListSheet = ({
                                                 <li key={entry.id}>
                                                     <PlayerRow
                                                         entry={entry}
-                                                        isFollowed={
-                                                            entry.id ===
-                                                            followedId
-                                                        }
                                                         onSelectPlayer={
                                                             onSelectPlayer
                                                         }

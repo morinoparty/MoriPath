@@ -13,7 +13,7 @@ import { craftheadAvatarUrl, samplePlayers } from "../../sample-players";
 const { nikomaru, chocolatt, kina1120, tututututu201, hikighaL } =
     samplePlayers;
 
-// 表示中のオーバーワールドに 2 人、ネザーに 1 人、地図で追えない人が 2 人
+// 表示中のオーバーワールドに 2 人、ネザーに 1 人、地図に出ていない人が 2 人
 const sampleGroups: MapPlayerEntryGroup[] = [
     {
         key: "minecraft_overworld",
@@ -32,7 +32,7 @@ const sampleGroups: MapPlayerEntryGroup[] = [
     },
     {
         key: "off-map",
-        label: "地図で追えない人",
+        label: "地図に出ていない人",
         entries: [
             {
                 status: "offMap",
@@ -48,22 +48,17 @@ const sampleGroups: MapPlayerEntryGroup[] = [
     },
 ];
 
-/** 開閉と追いかけている人をストーリー側の state で持ち、押した結果を確かめられるようにする */
+/** 開閉をストーリー側の state で持ち、押した結果を確かめられるようにする */
 function Controlled(args: PlayerListSheetProps) {
     const [open, setOpen] = useState(args.open);
-    const [followedId, setFollowedId] = useState(args.followedId ?? null);
     return (
         <PlayerListSheet
             {...args}
             open={open}
             onOpenChange={setOpen}
-            followedId={followedId}
             onSelectPlayer={(entry) => {
                 args.onSelectPlayer(entry);
                 setOpen(false);
-                setFollowedId((current) =>
-                    current === entry.id ? null : entry.id,
-                );
             }}
         />
     );
@@ -80,7 +75,6 @@ const meta: Meta<typeof PlayerListSheet> = {
     args: {
         groups: sampleGroups,
         open: false,
-        followedId: null,
         onOpenChange: fn(),
         onSelectPlayer: fn(),
     },
@@ -114,14 +108,9 @@ type Story = StoryObj<typeof PlayerListSheet>;
 // ボタンを押すと一覧が開く
 export const Closed: Story = {};
 
-// 開いた一覧。地図で追えない人は押せない
+// 開いた一覧。地図に出ていない人は押せない
 export const Open: Story = {
     args: { open: true },
-};
-
-// tututututu201 を追いかけている
-export const Following: Story = {
-    args: { open: true, followedId: tututututu201.id },
 };
 
 // 一覧を取っているあいだ

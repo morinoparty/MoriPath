@@ -24,7 +24,7 @@ const offMapReason = (server: string): string =>
 
 /**
  * 「プレイヤー」一覧の見出しと並びを作る。
- * 表示中のワールド → ほかのワールド → 地図で追えない人の順にし、誰もいない見出しは出さない
+ * 表示中のワールド → ほかのワールド → 地図に出ていない人の順にし、誰もいない見出しは出さない
  *
  * @param mapPlayers squaremap の players.json に載っている人 (地図で位置が分かる人)
  * @param onlinePlayers ネットワーク全体のオンライン一覧。取れていなければ null (地図の人だけを出す)
@@ -45,7 +45,7 @@ export const buildMapPlayerEntries = (
         seenUuids.add(normalizeUuid(player.uuid));
         seenNames.add(player.name.toLowerCase());
         if (!isWorldId(player.world)) {
-            // /map で開けないワールドにいる人は追えない
+            // /map で開けないワールドにいる人は地図に出せない
             offMap.push({
                 status: "offMap",
                 id: player.uuid,
@@ -93,7 +93,7 @@ export const buildMapPlayerEntries = (
     if (offMap.length > 0) {
         groups.push({
             key: "off-map",
-            label: "地図で追えない人",
+            label: "地図に出ていない人",
             entries: offMap.sort(byName),
         });
     }

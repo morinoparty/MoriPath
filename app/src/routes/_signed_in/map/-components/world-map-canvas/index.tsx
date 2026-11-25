@@ -2,13 +2,7 @@
 import "./leaflet.css";
 import L from "leaflet";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-    MapContainer,
-    Popup,
-    TileLayer,
-    useMap,
-    useMapEvents,
-} from "react-leaflet";
+import { MapContainer, Popup, TileLayer, useMap } from "react-leaflet";
 import { css } from "../../../../../../styled-system/css";
 import { useBaseMarkers, useClaims } from "../../-functions/map-markers-query";
 import { useMapPlayers } from "../../-functions/use-map-players";
@@ -21,7 +15,6 @@ import {
 } from "../../-functions/world-map-coords";
 import type { MapPinTarget } from "../../-types/map-pin-target";
 import type {
-    MapPlayer,
     OverlayVisibility,
     SelfPlayer,
     Vec2,
@@ -109,99 +102,33 @@ export interface WorldMapCanvasProps {
     pin?: (MapPinTarget & { label?: string }) | null;
     /** ピンを外す (閉じるボタン) */
     onClearPin?: () => void;
-    /** 追いかけている人。表示中のワールドにいないときや追いかけていないときは null */
-    followed?: MapPlayer | null;
-    /** 地図をドラッグして、追いかけるのをやめた */
-    onFollowCancel?: () => void;
+    /** 同じ座標でももう一度中心へ飛ばしたいときに変える値 (一覧でプレイヤーを選び直したなど) */
+    recenterKey?: number;
 }
 
-/** 中心座標が変わったとき (ワールド切り替え・別のピンなど) に地図を移動させる */
+/** 中心座標が変わったとき (ワールド切り替え・別のピン・プレイヤーを選んだなど) に地図を移動させる */
 const CenterUpdater = ({
     center,
     zoom,
-    paused,
+    recenterKey,
 }: {
     center: Vec2;
     zoom: number;
-    /** プレイヤーを追いかけているあいだは、そちらに任せて動かさない */
-    paused: boolean;
+    recenterKey: number;
 }) => {
     const map = useMap();
-    // 最後に合わせた座標。初回は MapContainer の center で表示済み。
-    // 座標の値が変わったときだけ動かし、ズームだけが変わったとき (ピンを外したなど) は見ている位置をそのままにする
-    const lastCenter = useRef(center);
+    // 最後に合わせた座標と key。初回は MapContainer の center で表示済み。
+    // 座標か key が変わったときだけ動かし、ズームだけが変わったとき (ピンを外したなど) は見ている位置をそのままにする
+    const last = useRef({ ...center, recenterKey });
     const { x, z } = center;
     useEffect(() => {
-        if (lastCenter.current.x === x && lastCenter.current.z === z) return;
-        lastCenter.current = { x, z };
-        // 追いかけているあいだに変わった中心は覚えるだけにし、やめたあとで急に飛ばないようにする
-        if (paused) return;
+        const prev = last.current;
+        if (prev.x === x && prev.z === z && prev.recenterKey === recenterKey) {
+            return;
+        }
+        last.current = { x, z, recenterKey };
         map.setView(toLatLng({ x, z }), zoom);
-    }, [map, x, z, zoom, paused]);
-    return null;
-};
-
-/**
- * 追いかけているプレイヤーに地図の中心を合わせ続ける (squaremap / LiveAtlas の「フォロー」)。
- * 追い始めたときは寄せてから中心へ飛び、そのあとは位置が届くたびにズームを変えずに動かす。
- * 地図をドラッグ・ズームしたら追いかけるのをやめる
- */
-const FollowController = ({
-    target,
-    onCancel,
-}: {
-    target: MapPlayer | null;
-    onCancel?: () => void;
-}) => {
-    const map = useMap();
-    // いま中心に合わせている人。別の人に替わったら、寄せ直してから中心に置く
-    const followingId = useRef<string | null>(null);
-    // 追い始めに自分で寄せている最中か。そのときの zoomstart は利用者の操作ではないので無視する
-    const isEngaging = useRef(false);
-    // 利用者の操作でやめた人。URL から player が外れるまで (画面の移動は非同期) に届いた位置で地図を動かさない
-    const cancelledId = useRef<string | null>(null);
-    const cancelByUser = () => {
-        if (followingId.current === null || isEngaging.current) return;
-        cancelledId.current = followingId.current;
-        followingId.current = null;
-        onCancel?.();
-    };
-    useMapEvents({
-        // panTo ではドラッグもズームも起きないので、ここに来るのは利用者の操作 (ピンチを含む) だけ
-        dragstart: cancelByUser,
-        zoomstart: cancelByUser,
-        // 矢印キーでの移動は dragstart を出さないので、キー入力で見分ける
-        keydown: (event) => {
-            if (event.originalEvent.key.startsWith("Arrow")) {
-                cancelByUser();
-            }
-        },
-    });
-    const uuid = target?.uuid ?? null;
-    const x = target?.x;
-    const z = target?.z;
-    useEffect(() => {
-        if (uuid === null || x === undefined || z === undefined) {
-            followingId.current = null;
-            cancelledId.current = null;
-            return;
-        }
-        // やめた人の位置が、URL が変わるまでのあいだに届いても追わない
-        if (uuid === cancelledId.current) return;
-        const position = toLatLng({ x, z });
-        if (followingId.current !== uuid) {
-            followingId.current = uuid;
-            // 縮小して見ていたら、まわりの建物が分かる縮尺まで寄せる。拡大していればそのままにする
-            // animate: false なので zoomstart はこの呼び出しの中で同期的に来る
-            isEngaging.current = true;
-            map.setView(position, Math.max(map.getZoom(), DEFAULT_ZOOM), {
-                animate: false,
-            });
-            isEngaging.current = false;
-            return;
-        }
-        map.panTo(position);
-    }, [map, uuid, x, z]);
+    }, [map, x, z, zoom, recenterKey]);
     return null;
 };
 
@@ -240,8 +167,7 @@ export const WorldMapCanvas = ({
     self,
     pin = null,
     onClearPin,
-    followed = null,
-    onFollowCancel,
+    recenterKey = 0,
 }: WorldMapCanvasProps) => {
     // CRS と renderer は地図の生成時にしか渡せないので 1 度だけ作る
     const crs = useMemo(() => createMinecraftCrs(), []);
@@ -253,18 +179,12 @@ export const WorldMapCanvas = ({
     // 保護範囲以外は開いたときに (SSR なら loader で) 取り、保護範囲は表示を ON にしたときだけ取る
     const markers = useBaseMarkers(world);
     const claims = useClaims(world, overlays.claims);
-    // 「プレイヤー」を隠していても、追いかけている人の位置は取り続ける
-    const players = useMapPlayers(
-        baseUrl,
-        overlays.players || followed !== null,
-    );
-    // 表示中のワールドにいるプレイヤーだけを出す。「プレイヤー」を隠しているときは追いかけている人だけを出す
+    const players = useMapPlayers(baseUrl, overlays.players);
+    // 表示中のワールドにいるプレイヤーだけを出す
     const worldPlayers =
-        players.data?.players.filter(
-            (player) =>
-                player.world === world &&
-                (overlays.players || player.uuid === followed?.uuid),
-        ) ?? [];
+        (overlays.players &&
+            players.data?.players.filter((player) => player.world === world)) ||
+        [];
     // タップされた路線・保護範囲と、そのワールド。ポップアップは 1 つだけ出す
     const [selection, setSelection] = useState<{
         world: WorldId;
@@ -297,9 +217,8 @@ export const WorldMapCanvas = ({
             <CenterUpdater
                 center={center}
                 zoom={pin ? PIN_ZOOM : DEFAULT_ZOOM}
-                paused={followed !== null}
+                recenterKey={recenterKey}
             />
-            <FollowController target={followed} onCancel={onFollowCancel} />
             <TileLayer
                 // ワールドを切り替えたらタイルを作り直す
                 key={world}
@@ -347,11 +266,7 @@ export const WorldMapCanvas = ({
                     variant="banner"
                 />
             )}
-            <PlayersLayer
-                players={worldPlayers}
-                self={self}
-                followedId={followed?.uuid ?? null}
-            />
+            <PlayersLayer players={worldPlayers} self={self} />
             {pin && (
                 <PortalMarker
                     position={pin}

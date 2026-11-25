@@ -6,7 +6,7 @@ export const isWorldId = (world: string): world is WorldId =>
     (worldIds as readonly string[]).includes(world);
 
 /**
- * URL の player (名前か UUID) に当たるプレイヤーを探す。
+ * 名前か UUID に当たるプレイヤーを探す。
  * UUID はハイフンの有無、名前は大文字・小文字の違いを無視する
  */
 export const findMapPlayer = (

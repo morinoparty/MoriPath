@@ -4,7 +4,6 @@ import { lazy, type ReactNode, Suspense } from "react";
 import { css, sva } from "../../../../../../styled-system/css";
 import type { MapPinTarget } from "../../-types/map-pin-target";
 import type {
-    MapPlayer,
     OverlayVisibility,
     SelfPlayer,
     Vec2,
@@ -15,7 +14,7 @@ import type {
 const WorldMapCanvas = lazy(() => import("../world-map-canvas"));
 
 const worldMapViewStyle = sva({
-    slots: ["root", "controls", "notice", "bottomControls", "message"],
+    slots: ["root", "controls", "bottomControls", "message"],
     base: {
         root: {
             // ヘッダーを持たず、地図を画面いっぱいに敷く
@@ -48,24 +47,6 @@ const worldMapViewStyle = sva({
             gap: "3",
             zIndex: "docked",
             // 隙間のタップは地図に通す
-            pointerEvents: "none",
-            "& > *": {
-                pointerEvents: "auto",
-            },
-        },
-        // 操作ボタンの段の下に、中央寄せで出すお知らせ (追いかけている人など)
-        notice: {
-            position: "fixed",
-            // 上の操作ボタン (48px) の下に 8px 空ける
-            top: "calc(env(safe-area-inset-top) + 16px + 48px + 8px)",
-            left: "50%",
-            transform: "translateX(-50%)",
-            // 右上に縦に並ぶボタン (48px + 余白) と重ならないよう、左右を空けた幅の中で中央に置く
-            width: "calc(100% - 144px - env(safe-area-inset-left) - env(safe-area-inset-right))",
-            display: "flex",
-            justifyContent: "center",
-            zIndex: "docked",
-            // 札の左右の隙間のタップは地図に通す
             pointerEvents: "none",
             "& > *": {
                 pointerEvents: "auto",
@@ -120,14 +101,10 @@ export interface WorldMapViewProps {
     startControl?: ReactNode;
     /** 地図の右上に置く操作 */
     endControl?: ReactNode;
-    /** 操作ボタンの下に出すお知らせ */
-    notice?: ReactNode;
     /** 地図の右下に置く操作 */
     bottomEndControl?: ReactNode;
-    /** 追いかけている人 (表示中のワールドにいるときだけ) */
-    followed?: MapPlayer | null;
-    /** 地図をドラッグして、追いかけるのをやめた */
-    onFollowCancel?: () => void;
+    /** 同じ座標でももう一度中心へ飛ばしたいときに変える値 */
+    recenterKey?: number;
 }
 
 /** 画面いっぱいの地図と、その上に浮かぶ操作ボタン */
@@ -141,10 +118,8 @@ export const WorldMapView = ({
     onClearPin,
     startControl,
     endControl,
-    notice,
     bottomEndControl,
-    followed,
-    onFollowCancel,
+    recenterKey,
 }: WorldMapViewProps) => {
     const style = worldMapViewStyle();
     // 読み込み中は文言を出さず、スピナーだけを置く
@@ -172,8 +147,7 @@ export const WorldMapView = ({
                                 self={self}
                                 pin={pin}
                                 onClearPin={onClearPin}
-                                followed={followed}
-                                onFollowCancel={onFollowCancel}
+                                recenterKey={recenterKey}
                             />
                         </Suspense>
                     )}
@@ -183,7 +157,6 @@ export const WorldMapView = ({
                 <div className={css({ minWidth: 0 })}>{startControl}</div>
                 <div>{endControl}</div>
             </div>
-            {notice && <div className={style.notice}>{notice}</div>}
             {bottomEndControl && (
                 <div className={style.bottomControls}>{bottomEndControl}</div>
             )}

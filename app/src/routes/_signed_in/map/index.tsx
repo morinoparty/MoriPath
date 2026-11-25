@@ -1,10 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { css } from "../../../../styled-system/css";
 import { getUserInfo } from "../-functions/get-userinfo";
 import { onlinePlayersQueryOptions } from "../-functions/online-players-query";
-import { FollowIndicator } from "./-components/follow-indicator";
 import { MarkerToggleMenu } from "./-components/marker-toggle-menu";
 import { PlayerListSheet } from "./-components/player-list-sheet";
 import { TransitButton } from "./-components/transit-button";
@@ -12,7 +11,7 @@ import { WorldMapView } from "./-components/world-map-view";
 import { WorldSwitcher } from "./-components/world-switcher";
 import { buildMapPlayerEntries } from "./-functions/build-map-player-entries";
 import { defaultOverlays } from "./-functions/default-overlays";
-import { findMapPlayer, isWorldId } from "./-functions/find-map-player";
+import { findMapPlayer } from "./-functions/find-map-player";
 import { getWorldMapUrlFn } from "./-functions/get-world-map-url";
 import { baseMarkersQueryOptions } from "./-functions/map-markers-query";
 import { parseMapPin } from "./-functions/map-pin-param";
@@ -86,14 +85,13 @@ function MapPage() {
     const selfName = userInfo?.preferred_username ?? session?.user.name ?? null;
     const self = selfName ? { id: userInfo?.sub ?? "", name: selfName } : null;
 
-    // 追いかけるプレイヤー (URL の player)。共有した URL でも同じ人を追える
-    const followKey = search.player ?? null;
     const [isPlayerListOpen, setPlayerListOpen] = useState(false);
-    // 位置は地図と同じキャッシュから取る。「プレイヤー」を隠していても、追いかけている間と一覧を開いている間は取る
+    // 一覧で選んだ人へ飛ぶたびに増やす。同じ人を選び直したときも、いまの位置へ地図を戻す
+    const [recenterKey, setRecenterKey] = useState(0);
+    // 位置は地図と同じキャッシュから取る。「プレイヤー」を隠していても、一覧を開いている間は取る
     const players = useMapPlayers(
         worldMapUrl ?? "",
-        worldMapUrl !== null &&
-            (overlays.players || followKey !== null || isPlayerListOpen),
+        worldMapUrl !== null && (overlays.players || isPlayerListOpen),
     );
     // 地図に出ていない人 (ほかのサーバー・隠れている人) も一覧に出すため、開いている間だけネットワーク全体の一覧を取る
     const onlinePlayers = useQuery({
@@ -109,58 +107,32 @@ function MapPage() {
             ),
         [players.data, onlinePlayers.data, search.world],
     );
-    const followedPlayer =
-        followKey && players.data
-            ? findMapPlayer(players.data.players, followKey)
-            : null;
-    // 地図に渡すのは表示中のワールドにいるときだけ (別のワールドなら下の effect でワールドを移る)
-    const followedInWorld =
-        followedPlayer?.world === search.world ? followedPlayer : null;
-
-    // 追いかけている人が別のワールドへ移ったら、地図もそのワールドへ移る (squaremap と同じ)
-    const followedWorld =
-        followedPlayer && isWorldId(followedPlayer.world)
-            ? followedPlayer.world
-            : null;
-    useEffect(() => {
-        if (followKey === null || followedWorld === null) return;
-        if (followedWorld === search.world) return;
-        void navigate({
-            search: { world: followedWorld, player: followKey },
-            replace: true,
-        });
-    }, [followKey, followedWorld, search.world, navigate]);
-
-    const stopFollowing = () => {
-        // player だけを外す。中心の座標は変えず、いま見ている場所のままにする
-        void navigate({
-            search: (prev) => ({ ...prev, player: undefined }),
-            replace: true,
-        });
-    };
 
     const selectPlayer = (
         entry: Extract<MapPlayerEntry, { status: "onMap" }>,
     ) => {
         setPlayerListOpen(false);
-        // 追いかけている人をもう一度押したら、やめる
-        if (followedPlayer?.uuid === entry.id) {
-            stopFollowing();
-            return;
-        }
+        // 選んだ時点の位置へ飛ぶだけにし、その後の移動は追わない
+        const player = players.data
+            ? findMapPlayer(players.data.players, entry.id)
+            : null;
+        if (!player) return;
+        // 飛んだ先にその人が見えるよう、プレイヤーのマーカーを出す
+        setOverlays((current) => ({ ...current, players: true }));
+        setRecenterKey((current) => current + 1);
         void navigate({
-            // 同じワールドならピンなどはそのまま残し、別のワールドなら座標とピンを外してそのワールドへ移る
-            search: (prev) =>
-                prev.world === entry.world
-                    ? { ...prev, player: entry.name }
-                    : { world: entry.world, player: entry.name },
+            // ピンは外し、その人がいるワールドの位置を中心にする
+            search: {
+                world: entry.world,
+                x: Math.floor(player.x),
+                z: Math.floor(player.z),
+            },
             replace: true,
         });
     };
 
     const changeWorld = (world: WorldId) => {
-        // 別のワールドではその座標に意味がないので、座標とピンは外してスポーン地点に戻す。
-        // 自分でワールドを選んだら、追いかけるのもやめる
+        // 別のワールドではその座標に意味がないので、座標とピンは外してスポーン地点に戻す
         void navigate({ search: { world }, replace: true });
     };
 
@@ -172,7 +144,6 @@ function MapPage() {
                 world: search.world,
                 x: pin.x,
                 z: pin.z,
-                player: search.player,
             },
             replace: true,
         });
@@ -187,8 +158,7 @@ function MapPage() {
             self={self}
             pin={pin}
             onClearPin={clearPin}
-            followed={followedInWorld}
-            onFollowCancel={stopFollowing}
+            recenterKey={recenterKey}
             startControl={
                 <MarkerToggleMenu
                     value={overlays}
@@ -204,23 +174,11 @@ function MapPage() {
                     <PlayerListSheet
                         groups={playerGroups}
                         isLoading={players.isLoading || onlinePlayers.isLoading}
-                        followedId={followedPlayer?.uuid ?? null}
                         open={isPlayerListOpen}
                         onOpenChange={setPlayerListOpen}
                         onSelectPlayer={selectPlayer}
                     />
                 </div>
-            }
-            notice={
-                followKey !== null && (
-                    <FollowIndicator
-                        playerId={followedPlayer?.uuid}
-                        playerName={followedPlayer?.name ?? followKey}
-                        // 位置を取れたのに地図で開けるワールドに見当たらないときだけ「見当たらない」と出す (取得中は出さない)
-                        isMissing={players.isSuccess && followedWorld === null}
-                        onDismiss={stopFollowing}
-                    />
-                )
             }
             bottomEndControl={<TransitButton />}
         />

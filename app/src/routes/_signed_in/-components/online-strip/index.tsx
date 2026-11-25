@@ -1,4 +1,4 @@
-import { PlayerAvatarGroup } from "@morinoparty/chlorophyll-react/components";
+import { PlayerAvatar } from "@morinoparty/chlorophyll-react/components";
 import { ChevronRightIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 import { css, cx, sva } from "../../../../../styled-system/css";
@@ -9,11 +9,11 @@ import {
 } from "../../../../components/skeleton";
 import type { OnlinePlayer } from "../../-types/online-player";
 
-// 帯に顔を並べる最大人数。超えた分は「+N」にまとめる
-const MAX_VISIBLE_AVATARS = 3;
+// 読み込み中に並べておく顔の数。帯の幅に収まる程度にする
+const SKELETON_AVATAR_COUNT = 5;
 
 const onlineStripStyle = sva({
-    slots: ["root", "count", "live", "label", "chevron"],
+    slots: ["root", "count", "live", "label", "faces", "face", "chevron"],
     base: {
         root: {
             display: "flex",
@@ -22,21 +22,19 @@ const onlineStripStyle = sva({
             width: "full",
             minHeight: "11",
             paddingY: "2",
-            paddingLeft: "2.5",
-            paddingRight: "3.5",
+            paddingLeft: "3.5",
+            paddingRight: "3",
             bg: "colorPalette.surface.subtle",
             borderRadius: "full",
             color: "colorPalette.fg",
             textAlign: "start",
-            // アバターの縁取りを帯の地ではなく画面の地の色にして、顔どうしの境目を出す
-            "--player-avatar-group-ring-color": "{colors.colorPalette.bg}",
         },
+        // 人数は顔が何人いても縮めず、帯の左に固定する
         count: {
             display: "flex",
-            flex: "1",
+            flexShrink: "0",
             alignItems: "center",
             gap: "1.5",
-            minWidth: "0",
         },
         // いま遊んでいる人がいることを示す小さな点
         live: {
@@ -51,6 +49,30 @@ const onlineStripStyle = sva({
             fontWeight: "bold",
             lineHeight: "1.4",
             whiteSpace: "nowrap",
+        },
+        // 全員の顔を重ねずに並べ、帯に入りきらない分は横にスクロールして見せる
+        faces: {
+            display: "flex",
+            flex: "1",
+            alignItems: "center",
+            gap: "1.5",
+            minWidth: "0",
+            // 縁取りが切れないよう、上下と左に縁取りの太さぶんの余白を取る
+            padding: "0.5",
+            overflowX: "auto",
+            overscrollBehaviorX: "contain",
+            scrollbarWidth: "none",
+            "&::-webkit-scrollbar": { display: "none" },
+            // 右端で顔をふんわり消して、まだ続きがあることを示す
+            maskImage:
+                "linear-gradient(to right, black calc(100% - 2.5rem), transparent)",
+        },
+        face: {
+            flexShrink: "0",
+            borderRadius: "full",
+            // 縁取りを画面の地の色にして、顔と帯の地の境目を出す
+            outline: "2px solid",
+            outlineColor: "colorPalette.bg",
         },
         chevron: {
             flexShrink: "0",
@@ -116,56 +138,54 @@ export const OnlineStrip = ({
             {...buttonProps}
             className={cx(style.root, className)}
         >
-            {/* 読み上げは aria-label で足りるため、顔の並びは装飾として隠す */}
-            <PlayerAvatarGroup
-                players={players}
-                max={MAX_VISIBLE_AVATARS}
-                size="sm"
-                aria-hidden
-            />
             <span className={style.count}>
                 <span className={style.live} />
                 <span className={style.label}>{count}人がプレイ中</span>
+            </span>
+            {/* 読み上げは aria-label で足りるため、顔の並びは装飾として隠す */}
+            <span className={style.faces} aria-hidden>
+                {players.map((player) => (
+                    <span key={player.id} className={style.face}>
+                        <PlayerAvatar
+                            playerId={player.id}
+                            playerName={player.name}
+                            size="sm"
+                            decorative
+                        />
+                    </span>
+                ))}
             </span>
             <ChevronRightIcon className={style.chevron} aria-hidden />
         </button>
     );
 };
 
-// 顔の並び (sm は 32px) と同じ大きさの丸を、PlayerAvatarGroup のように少し重ねる
-const skeletonAvatarsStyle = css({
-    display: "flex",
-    flexShrink: "0",
-    "& > * + *": { marginLeft: "-2" },
-});
-
+// 顔の並び (sm は 32px) と同じ大きさの丸
 const skeletonAvatarStyle = css({
+    flexShrink: "0",
     width: "8",
     height: "8",
-    // 重なりの境目を出すため、本物の顔と同じく画面の地の色で縁取る
-    outline: "2px solid",
-    outlineColor: "colorPalette.bg",
 });
 
-/** オンライン一覧が届くまでの帯。顔の並びと人数の文字の場所を取り、届いても高さを変えない */
+/** オンライン一覧が届くまでの帯。人数の文字と顔の並びの場所を取り、届いても高さを変えない */
 export const OnlineStripSkeleton = ({ className }: { className?: string }) => {
     // variant を付けず基本の形だけにする (押せる帯と同じ余白で、ホバーの色は付けない)
     const style = onlineStripStyle();
     return (
         <div className={cx(style.root, className)}>
-            <span className={skeletonAvatarsStyle}>
-                {skeletonKeys(MAX_VISIBLE_AVATARS).map((key) => (
+            <span className={style.count}>
+                <span className={style.label}>
+                    <InlineSkeleton width="7em" />
+                </span>
+            </span>
+            <span className={style.faces}>
+                {skeletonKeys(SKELETON_AVATAR_COUNT).map((key) => (
                     <Skeleton
                         key={key}
                         variant="circle"
                         className={skeletonAvatarStyle}
                     />
                 ))}
-            </span>
-            <span className={style.count}>
-                <span className={style.label}>
-                    <InlineSkeleton width="6em" />
-                </span>
             </span>
         </div>
     );

@@ -34,9 +34,6 @@ export const mapSearchSchema = z.object({
         .transform(normalizeMapPinLabel)
         .optional()
         .catch(undefined),
-    // 追いかけるプレイヤー (名前か UUID)。数字だけの名前も数値にされるので文字列に戻す。
-    // UUID (ハイフンあり 36 文字) より長い値や空の値は無視する
-    player: z.coerce.string().trim().min(1).max(36).optional().catch(undefined),
 });
 
 export type MapSearch = z.infer<typeof mapSearchSchema>;

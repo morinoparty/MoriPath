@@ -36,14 +36,19 @@ export default meta;
 
 type Story = StoryObj<typeof OnlineStrip>;
 
-// 4 人以上いるときは 3 人の顔と「+N」にまとめる
-export const Many: Story = {
-    args: { players: onlinePlayers },
+// 帯に入りきらない人数。右端で顔が消え、横にスクロールして全員を見られる
+export const Crowded: Story = {
+    args: {
+        // 5 人を使い回して 12 人に見せる。key が重ならないよう id に「#番号」を付ける
+        players: Array.from({ length: 12 }, (_, index) => {
+            const player = onlinePlayers[index % onlinePlayers.length];
+            return { ...player, id: `${player.id}#${index}` };
+        }),
+    },
 };
 
-// ちょうど 3 人なら「+N」は出さない
-export const Three: Story = {
-    args: { players: onlinePlayers.slice(0, 3) },
+export const Many: Story = {
+    args: { players: onlinePlayers },
 };
 
 export const One: Story = {

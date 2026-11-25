@@ -8,6 +8,7 @@ import {
 import { XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { sva } from "../../../../../styled-system/css";
+import { SheetDragArea } from "../../../../components/sheet-drag-area";
 import { groupOnlinePlayers } from "../../-functions/group-online-players";
 import type { OnlinePlayer } from "../../-types/online-player";
 import { OnlineStrip } from "../online-strip";
@@ -185,28 +186,33 @@ const OnlinePlayersSheet = ({
             <Drawer.Backdrop className={style.backdrop} />
             <Drawer.Positioner className={style.positioner}>
                 <Drawer.Content className={style.content}>
-                    <Drawer.Handle />
-                    {/* Drawer は Ark UI の Dialog なので、見出しと説明・閉じるボタンは Dialog の部品で Content に結び付ける */}
-                    <div className={style.header}>
-                        <div className={style.heading}>
-                            <Dialog.Title className={style.title}>
-                                こんな人たちも遊んでる
-                            </Dialog.Title>
-                            <Dialog.Description className={style.description}>
-                                {players.length}人がプレイ中
-                            </Dialog.Description>
+                    {/* つまみと見出しをつかんで下へ引くと閉じる */}
+                    <SheetDragArea>
+                        <Drawer.Handle />
+                        {/* Drawer は Ark UI の Dialog なので、見出しと説明・閉じるボタンは Dialog の部品で Content に結び付ける */}
+                        <div className={style.header}>
+                            <div className={style.heading}>
+                                <Dialog.Title className={style.title}>
+                                    こんな人たちも遊んでる
+                                </Dialog.Title>
+                                <Dialog.Description
+                                    className={style.description}
+                                >
+                                    {players.length}人がプレイ中
+                                </Dialog.Description>
+                            </div>
+                            <Dialog.CloseTrigger asChild>
+                                <IconButton
+                                    variant="ghost"
+                                    shape="circle"
+                                    aria-label="閉じる"
+                                    className={style.close}
+                                >
+                                    <XIcon />
+                                </IconButton>
+                            </Dialog.CloseTrigger>
                         </div>
-                        <Dialog.CloseTrigger asChild>
-                            <IconButton
-                                variant="ghost"
-                                shape="circle"
-                                aria-label="閉じる"
-                                className={style.close}
-                            >
-                                <XIcon />
-                            </IconButton>
-                        </Dialog.CloseTrigger>
-                    </div>
+                    </SheetDragArea>
                     <OnlinePlayersList
                         players={players}
                         referenceTime={referenceTime}

@@ -1,6 +1,6 @@
 import type { WorldId } from "./world-map";
 
-/** 「プレイヤー」一覧の 1 人分。地図で追える人と、地図に出ていない人を分ける */
+/** 「プレイヤー」一覧の 1 人分。地図に出ている人と、地図に出ていない人を分ける */
 export type MapPlayerEntry =
     | {
           status: "onMap";

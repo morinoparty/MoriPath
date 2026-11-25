@@ -8,6 +8,8 @@ const transitButtonStyle = css({
     width: "56px",
     height: "56px",
     boxShadow: "chrome",
+    // 森や草原のタイルは緑が多く、ブランド色の面だけだと地図に溶けるため、白い縁で地図から切り離す
+    outline: "3px solid {colors.bg.panel}",
     "& svg": {
         width: "26px",
         height: "26px",

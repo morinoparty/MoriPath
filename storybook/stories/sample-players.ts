@@ -24,9 +24,12 @@ export const sampleOnlinePlayers = [
     { ...samplePlayers.tututututu201, server: "main" },
 ];
 
-/** Storybook では MC_API_URL を使えないため、アバターは crafthead.net から取得する */
+/**
+ * Storybook では MC_API_URL を使えないため、アバターは crafthead.net から取得する。
+ * 同じ人を使い回して人数を増やすときは id に「#番号」を付けて一意にするため、その部分は外す
+ */
 export const craftheadAvatarUrl = (playerId: string, pixelSize: number) =>
-    `https://crafthead.net/avatar/${playerId}/${pixelSize}`;
+    `https://crafthead.net/avatar/${playerId.split("#")[0]}/${pixelSize}`;
 
 /** _NIKOMARU でログインしている状態のセッション */
 export const sampleSession: SessionData = {

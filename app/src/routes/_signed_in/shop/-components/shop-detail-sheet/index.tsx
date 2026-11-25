@@ -4,6 +4,7 @@ import { Button, Drawer } from "@morinoparty/chlorophyll-react/components";
 import { Link } from "@tanstack/react-router";
 import { MapPin } from "lucide-react";
 import { sva } from "../../../../../../styled-system/css";
+import { SheetDragArea } from "../../../../../components/sheet-drag-area";
 import { mapPinSearch } from "../../../map/-functions/map-pin-param";
 import { worldLabels } from "../../../map/-functions/world-labels";
 import {
@@ -201,19 +202,22 @@ const ShopDetail = ({ shop }: { shop: ShopListing }) => {
 
     return (
         <>
-            <Drawer.Handle />
-            <div className={style.head}>
-                <ShopItemIcon itemId={shop.itemId} size="lg" />
-                <div className={style.heading}>
-                    {/* Drawer.Title は余白付きの見た目を持つため、Ark UI の Dialog.Title で見出しだけを結び付ける */}
-                    <Dialog.Title className={style.title}>
-                        {itemWithAmount(shop)}
-                    </Dialog.Title>
-                    <span className={style.mode}>
-                        {shopModeLabels[shop.mode]}
-                    </span>
+            {/* つまみと見出しをつかんで下へ引くと閉じる */}
+            <SheetDragArea>
+                <Drawer.Handle />
+                <div className={style.head}>
+                    <ShopItemIcon itemId={shop.itemId} size="lg" />
+                    <div className={style.heading}>
+                        {/* Drawer.Title は余白付きの見た目を持つため、Ark UI の Dialog.Title で見出しだけを結び付ける */}
+                        <Dialog.Title className={style.title}>
+                            {itemWithAmount(shop)}
+                        </Dialog.Title>
+                        <span className={style.mode}>
+                            {shopModeLabels[shop.mode]}
+                        </span>
+                    </div>
                 </div>
-            </div>
+            </SheetDragArea>
             <dl className={style.facts}>
                 <div className={style.fact}>
                     <dt className={style.factLabel}>ねだん</dt>
