@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { authMiddleware } from "../../../../lib/auth-middleware";
 import { z } from "zod";
 import { getDiaryApiConfig } from "../../../../lib/diary-api";
 import { diaryDatesInputSchema } from "../-types/diary-day";
@@ -22,6 +23,8 @@ const cache = new Map<string, { value: string[]; expiresAt: number }>();
  * 一覧の API が無い・失敗したときは null を返し、帯は日記の有無を出さずに表示する
  */
 export const getDiaryDates = createServerFn()
+    // ページの読み込みとは別に RPC として直接呼べるため、ここでもサインインを確かめる
+    .middleware([authMiddleware])
     .validator(diaryDatesInputSchema)
     .handler(async ({ data }): Promise<string[] | null> => {
         const config = getDiaryApiConfig();

@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { authMiddleware } from "../../../lib/auth-middleware";
 import { getDiaryApiConfig } from "../../../lib/diary-api";
 import type { DiaryEntry } from "../-types/diary";
 import { fetchDiaryDocument } from "./fetch-diary-document";
@@ -8,7 +9,10 @@ import { toDiaryEntries } from "./to-diary-entries";
  * 「きょうのもりぱダイアリー」を取得する (タームの順)。
  * 取得できないときは null を返し、ホームの他の表示を巻き込まない
  */
-export const getDiaryEntries = createServerFn().handler(
+export const getDiaryEntries = createServerFn()
+    // ページの読み込みとは別に RPC として直接呼べるため、ここでもサインインを確かめる
+    .middleware([authMiddleware])
+    .handler(
     async (): Promise<DiaryEntry[] | null> => {
         const config = getDiaryApiConfig();
         if (!config) {

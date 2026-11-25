@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { authMiddleware } from "../../../../lib/auth-middleware";
 import { getDiaryApiConfig } from "../../../../lib/diary-api";
 import { fetchDiaryDocument } from "../../-functions/fetch-diary-document";
 import { toDiaryEntries } from "../../-functions/to-diary-entries";
@@ -12,6 +13,8 @@ import {
  * 日記が無い日は empty、取れなかったときは unavailable にして画面の移動は止めない
  */
 export const getDiaryByDate = createServerFn()
+    // ページの読み込みとは別に RPC として直接呼べるため、ここでもサインインを確かめる
+    .middleware([authMiddleware])
     .validator(diaryByDateInputSchema)
     .handler(async ({ data }): Promise<DiaryDayResult> => {
         const config = getDiaryApiConfig();

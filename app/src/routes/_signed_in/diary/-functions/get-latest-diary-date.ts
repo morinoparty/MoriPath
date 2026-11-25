@@ -1,9 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
+import { authMiddleware } from "../../../../lib/auth-middleware";
 import { getDiaryApiConfig } from "../../../../lib/diary-api";
 import { fetchDiaryDocument } from "../../-functions/fetch-diary-document";
 
 /** いちばん新しいダイアリーの日付。まだ無い・取れないときは null */
-export const getLatestDiaryDate = createServerFn().handler(
+export const getLatestDiaryDate = createServerFn()
+    // ページの読み込みとは別に RPC として直接呼べるため、ここでもサインインを確かめる
+    .middleware([authMiddleware])
+    .handler(
     async (): Promise<string | null> => {
         const config = getDiaryApiConfig();
         if (!config) {
