@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { getMinecraftAssetsUrl } from "../../../../lib/mc-assets";
-import { getMcApiUrl } from "../../../../lib/player-api";
 import { getServerUrl } from "../../../../lib/server-list";
 import {
     readSharedCache,
@@ -37,15 +36,6 @@ const SHOPS_SHARED_MAX_AGE_S = 24 * 60 * 60;
 const SHOPS_SHARED_KEY = "quickshop-shops";
 // アイテム名の辞書は Minecraft のバージョンを上げるまで変わらない
 const LANG_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
-// プレイヤー名はめったに変わらない。引けなかった UUID は早めに引き直す
-const OWNER_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
-const OWNER_MISS_CACHE_TTL_MS = 10 * 60 * 1000;
-// 持ち主の名前を同時に引く数
-const OWNER_LOOKUP_CONCURRENCY = 8;
-// 引けた名前を isolate 間で共有する。共有キャッシュを読み直す間隔と残す長さ
-const OWNER_SHARED_KEY = "quickshop-owner-names";
-const OWNER_SHARED_SYNC_MS = 5 * 60 * 1000;
-const OWNER_SHARED_MAX_AGE_S = 24 * 60 * 60;
 
 /** 組み立て済みのお店の一覧 */
 export interface ShopSnapshot {
@@ -62,11 +52,6 @@ let shopsMemory: ShopSnapshot | undefined;
 // 裏の取り直しを始めた時刻 (同じ isolate で重ねないため)
 let shopsRefreshStartedAt = 0;
 let langCache: { value: ItemLang; expiresAt: number } | undefined;
-const ownerNameCache = new Map<
-    string,
-    { name: string | null; expiresAt: number }
->();
-let ownerSharedSyncedAt = 0;
 
 /** お店の一覧 API を 1 ページ取る。cursor より大きい ID のお店が返る */
 async function fetchShopPage(cursor: number): Promise<ShopPageResult> {
@@ -102,12 +87,16 @@ async function readShopSnapshot(): Promise<ShopSnapshot | undefined> {
         return shopsMemory;
     }
     const shared = await readSharedCache<ShopSnapshot>(SHOPS_SHARED_KEY);
-    if (
-        shared &&
-        (!shopsMemory || shared.value.fetchedAt > shopsMemory.fetchedAt)
-    ) {
+    const fromShared =
+        shared !== undefined &&
+        (!shopsMemory || shared.value.fetchedAt > shopsMemory.fetchedAt);
+    if (fromShared) {
         shopsMemory = shared.value;
     }
+    // 共有キャッシュが効いているか (workers.dev で Cache API が使えるか) をログで確かめられるようにする
+    console.info(
+        `お店の一覧のキャッシュ: ${fromShared ? "shared" : shopsMemory ? "memory" : "none"}${shopsMemory ? ` (${Math.round((now - shopsMemory.fetchedAt) / 1000)} 秒前)` : ""}`,
+    );
     return shopsMemory;
 }
 
@@ -125,7 +114,8 @@ async function refreshShopSnapshot(
     const snapshot: ShopSnapshot = {
         shops,
         segmentStarts: toSegmentStarts(shops, SEGMENT_SIZE),
-        fetchedAt: startedAt,
+        // 欠けた一覧は古いものとして扱い、次のリクエストで取り直させる
+        fetchedAt: partial ? startedAt - SHOPS_FRESH_MS : startedAt,
     };
     console.info(
         `お店の一覧を ${Date.now() - startedAt}ms で取り直しました (${shops.length} 件${partial ? "、一部欠け" : ""})`,
@@ -201,154 +191,4 @@ export async function getItemLang(): Promise<ItemLang | null> {
         console.warn("アイテム名の辞書 (en_us.json) を取得できません:", error);
         return null;
     }
-}
-
-// mc-api のプレイヤー情報。名前の持ち方の違い ({ name } / { username } / { data.player.username }) を吸収する
-const mcApiPlayerSchema = z.union([
-    z.object({ name: z.string().min(1) }).transform((value) => value.name),
-    z
-        .object({ username: z.string().min(1) })
-        .transform((value) => value.username),
-    z
-        .object({
-            data: z.object({
-                player: z.object({ username: z.string().min(1) }),
-            }),
-        })
-        .transform((value) => value.data.player.username),
-]);
-
-/** mc-api で UUID からプレイヤー名を引く。見つからなければ null */
-async function fetchOwnerName(uuid: string): Promise<string | null> {
-    const response = await fetch(
-        `${getMcApiUrl()}/v1/players/${encodeURIComponent(uuid)}`,
-        { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) },
-    );
-    if (!response.ok) {
-        return null;
-    }
-    const parsed = mcApiPlayerSchema.safeParse(await response.json());
-    if (!parsed.success) {
-        // 形が想定と違うと全員が UUID 表示になるため、気づけるようにログに残す
-        console.warn(`mc-api の応答から ${uuid} の名前を読めません`);
-        return null;
-    }
-    return parsed.data;
-}
-
-/** 他の isolate が引いた名前を共有キャッシュから取り込む (しばらくは読み直さない) */
-async function syncSharedOwnerNames(): Promise<void> {
-    const now = Date.now();
-    if (now - ownerSharedSyncedAt < OWNER_SHARED_SYNC_MS) {
-        return;
-    }
-    ownerSharedSyncedAt = now;
-    const shared =
-        await readSharedCache<Record<string, string>>(OWNER_SHARED_KEY);
-    if (!shared) {
-        return;
-    }
-    for (const [uuid, name] of Object.entries(shared.value)) {
-        // この isolate で引いた名前のほうが新しいので上書きしない
-        if (!ownerNameCache.get(uuid)?.name) {
-            ownerNameCache.set(uuid, {
-                name,
-                expiresAt: shared.savedAt + OWNER_CACHE_TTL_MS,
-            });
-        }
-    }
-}
-
-/** 引けている名前を共有キャッシュに書き戻す */
-async function saveSharedOwnerNames(): Promise<void> {
-    const now = Date.now();
-    const names: Record<string, string> = {};
-    for (const [uuid, entry] of ownerNameCache) {
-        if (entry.name && entry.expiresAt > now) {
-            names[uuid] = entry.name;
-        }
-    }
-    await writeSharedCache(
-        OWNER_SHARED_KEY,
-        { value: names, savedAt: now },
-        OWNER_SHARED_MAX_AGE_S,
-    );
-}
-
-/** キャッシュに無い持ち主の名前を、上限つきで引いてキャッシュに入れる */
-async function lookupOwnerNames(uuids: readonly string[]): Promise<void> {
-    const now = Date.now();
-    const queue = [...uuids];
-    // 同時接続数を抑えるため、少数のワーカーで順に引く
-    const worker = async () => {
-        for (let uuid = queue.shift(); uuid; uuid = queue.shift()) {
-            try {
-                const name = await fetchOwnerName(uuid);
-                ownerNameCache.set(uuid, {
-                    name,
-                    expiresAt:
-                        now +
-                        (name ? OWNER_CACHE_TTL_MS : OWNER_MISS_CACHE_TTL_MS),
-                });
-            } catch (error) {
-                // 通信の失敗はキャッシュせず、次のリクエストで引き直す
-                console.warn(`持ち主 ${uuid} の名前を引けません:`, error);
-            }
-        }
-    };
-    await Promise.all(Array.from({ length: OWNER_LOOKUP_CONCURRENCY }, worker));
-    // 引けた名前は他の isolate でも使えるようにする
-    await saveSharedOwnerNames();
-}
-
-export interface ResolveOwnerNamesOptions {
-    /**
-     * このリクエストで新たに引く上限。Workers のサブリクエスト数の上限
-     * (お店のページと共有キャッシュの読み書きも数える) に余裕を残す
-     */
-    maxLookups: number;
-    /** 引き終わるのを待つ最大の時間。過ぎたら残りは裏で引き、次のリクエストで使う */
-    waitMs: number;
-}
-
-/**
- * 持ち主の UUID → プレイヤー名の対応を作る。
- * キャッシュに無いものは上限つきで引き、待ちきれなかった分や引けなかったものは対応に含めない
- */
-export async function resolveOwnerNames(
-    uuids: readonly string[],
-    { maxLookups, waitMs }: ResolveOwnerNamesOptions,
-): Promise<Map<string, string>> {
-    await syncSharedOwnerNames();
-    const now = Date.now();
-    const unique = [...new Set(uuids)];
-    const pending = unique.filter((uuid) => {
-        const cached = ownerNameCache.get(uuid);
-        return !cached || cached.expiresAt <= now;
-    });
-    if (pending.length > 0) {
-        if (pending.length > maxLookups) {
-            // 残りは次のリクエストで引く (それまでは UUID の先頭で表示する)
-            console.warn(
-                `持ち主の名前を ${maxLookups} 件だけ引き、${pending.length - maxLookups} 件は次回に回します`,
-            );
-        }
-        const lookups = lookupOwnerNames(pending.slice(0, maxLookups));
-        // 待ちきれなかった分も応答のあとで引き終え、キャッシュに入れておく
-        runInBackground(lookups);
-        if (waitMs > 0) {
-            await Promise.race([
-                lookups.catch(() => undefined),
-                new Promise((resolve) => setTimeout(resolve, waitMs)),
-            ]);
-        }
-    }
-    const names = new Map<string, string>();
-    for (const uuid of unique) {
-        const name = ownerNameCache.get(uuid)?.name;
-        if (name) {
-            names.set(uuid, name);
-        }
-    }
-    return names;
 }

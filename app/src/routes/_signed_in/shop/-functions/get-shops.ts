@@ -7,8 +7,6 @@ import {
     getAllShops,
     getItemLang,
     peekShopSnapshot,
-    resolveOwnerNames,
-    type ResolveOwnerNamesOptions,
 } from "./quickshop-api";
 import { toShopListing } from "./to-shop-listing";
 
@@ -22,43 +20,14 @@ export interface InitialShops {
     fetchedAt: number;
 }
 
-// 最初の画面では名前を待たない。お店は 1 ページ分しか取らないため、引く数には余裕がある
-const INITIAL_OWNER_LOOKUP: ResolveOwnerNamesOptions = {
-    maxLookups: 40,
-    waitMs: 0,
-};
-// 残りのお店を待つあいだは少しだけ名前も待つ。全ページを取り直す場合に備え、引く数は抑える
-const FULL_OWNER_LOOKUP: ResolveOwnerNamesOptions = {
-    maxLookups: 25,
-    waitMs: 800,
-};
-
-/** API のお店を画面用の形にし、持ち主の名前を入れて並べる */
-async function toListings(
+/**
+ * API のお店を画面用の形にして並べる。持ち主の名前はブラウザが表示する行の分だけ引くため、
+ * ここでは UUID の先頭を仮の名前に入れたまま返す
+ */
+const toListings = (
     shops: readonly QuickShop[],
     lang: ItemLang | null,
-    ownerLookup: ResolveOwnerNamesOptions,
-): Promise<ShopListing[]> {
-    const listings = shops.map((shop) => toShopListing(shop, lang));
-    const ownerNames = await resolveOwnerNames(
-        listings.flatMap((shop) => (shop.owner ? [shop.owner.id] : [])),
-        ownerLookup,
-    );
-    return sortShops(
-        listings.map((shop) =>
-            shop.owner
-                ? {
-                      ...shop,
-                      owner: {
-                          ...shop.owner,
-                          name:
-                              ownerNames.get(shop.owner.id) ?? shop.owner.name,
-                      },
-                  }
-                : shop,
-        ),
-    );
-}
+): ShopListing[] => sortShops(shops.map((shop) => toShopListing(shop, lang)));
 
 /**
  * 最初の画面に出すお店。キャッシュ済みの一覧があればそれを (古くなりかけでも) すべて返し、
@@ -71,11 +40,7 @@ export const getInitialShops = createServerFn().handler(
         const snapshot = await peekShopSnapshot();
         if (snapshot) {
             return {
-                shops: await toListings(
-                    snapshot.shops,
-                    await langPromise,
-                    INITIAL_OWNER_LOOKUP,
-                ),
+                shops: toListings(snapshot.shops, await langPromise),
                 complete: true,
                 fetchedAt: snapshot.fetchedAt,
             };
@@ -86,7 +51,7 @@ export const getInitialShops = createServerFn().handler(
             langPromise,
         ]);
         return {
-            shops: await toListings(page.shops, lang, INITIAL_OWNER_LOOKUP),
+            shops: toListings(page.shops, lang),
             complete: !page.hasMore,
             fetchedAt,
         };
@@ -103,6 +68,6 @@ export const getShops = createServerFn().handler(
             getAllShops(),
             getItemLang(),
         ]);
-        return toListings(snapshot.shops, lang, FULL_OWNER_LOOKUP);
+        return toListings(snapshot.shops, lang);
     },
 );

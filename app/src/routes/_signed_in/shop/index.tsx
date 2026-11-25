@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback } from "react";
+import { OwnerNameProvider } from "./-components/owner-name";
 import { ShopView } from "./-components/shop-view";
 import { getInitialShops, type InitialShops } from "./-functions/get-shops";
 import { shopSearchSchema } from "./-functions/shop-search";
@@ -69,14 +70,17 @@ function ShopPage() {
     };
 
     return (
-        <ShopView
-            session={session}
-            shops={shops}
-            loadingMore={isPlaceholderData || isPending}
-            query={q ?? ""}
-            filter={mode ?? "all"}
-            onQueryChange={changeQuery}
-            onFilterChange={changeFilter}
-        />
+        // 持ち主の名前は、表示した行の分だけブラウザで引く
+        <OwnerNameProvider>
+            <ShopView
+                session={session}
+                shops={shops}
+                loadingMore={isPlaceholderData || isPending}
+                query={q ?? ""}
+                filter={mode ?? "all"}
+                onQueryChange={changeQuery}
+                onFilterChange={changeFilter}
+            />
+        </OwnerNameProvider>
     );
 }

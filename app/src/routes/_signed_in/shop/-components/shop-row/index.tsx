@@ -9,6 +9,7 @@ import {
     stockLabel,
 } from "../../-functions/format-shop";
 import type { ShopListing } from "../../-types/shop";
+import { OwnerName } from "../owner-name";
 import { ShopItemIcon } from "../shop-item-icon";
 
 const shopRowStyle = sva({
@@ -132,10 +133,6 @@ export const ShopOwnerHead = ({ owner }: { owner: ShopListing["owner"] }) => {
     return <img src={avatarUrl(owner.id, 32)} alt="" loading="lazy" />;
 };
 
-/** 持ち主の表示名。運営のお店は「運営」 */
-export const ownerDisplayName = (owner: ShopListing["owner"]): string =>
-    owner?.name ?? "運営";
-
 export interface ShopRowProps extends Omit<
     ComponentProps<"button">,
     "children"
@@ -161,7 +158,7 @@ export const ShopRow = ({ shop, className, ...props }: ShopRowProps) => {
                         <ShopOwnerHead owner={shop.owner} />
                     </span>
                     <span className={style.ownerName}>
-                        {ownerDisplayName(shop.owner)}
+                        <OwnerName owner={shop.owner} />
                     </span>
                 </span>
             </span>

@@ -19,6 +19,9 @@ import {
 const FETCH_TIMEOUT_MS = 5000;
 // 一覧に無かったお店を 1 件ずつ引く上限。Workers のサブリクエスト数に余裕を残す
 const MAX_SHOP_LOOKUPS = 20;
+// キャッシュに一覧が無いとき、これより多ければ 1 件ずつではなく全体を取る。
+// API は同時に 4 件ほどしかさばけないため、これを超えると区間に分けた全体の取得と変わらない
+const PER_SHOP_LOOKUP_LIMIT = 8;
 
 // GET /api/v1/plugins/quickshop/users/{player}/shops の応答。
 // spec ではお店の ID の配列だが、お店そのものを返す形に変わっても読めるようにしておく
@@ -77,7 +80,7 @@ async function resolveShops(shopIds: readonly number[]): Promise<QuickShop[]> {
     }
     const snapshot =
         (await peekShopSnapshot()) ??
-        (shopIds.length > MAX_SHOP_LOOKUPS
+        (shopIds.length > PER_SHOP_LOOKUP_LIMIT
             ? // 全体の一覧が取れなくても、1 件ずつ引く方で補う
               await getAllShops().catch(() => undefined)
             : undefined);

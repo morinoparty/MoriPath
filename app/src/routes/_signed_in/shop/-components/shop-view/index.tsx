@@ -315,9 +315,12 @@ export const ShopView = ({
                     </output>
                 ) : filteredShops.length === 0 ? (
                     <p className={style.message}>
-                        {query
-                            ? `「${query}」のお店は見つかりませんでした`
-                            : "お店がありません"}
+                        {loadingMore
+                            ? // 読み込めた分に無いだけで、残りにあるかもしれない
+                              "ほかのお店を読み込んでいます"
+                            : query
+                              ? `「${query}」のお店は見つかりませんでした`
+                              : "お店がありません"}
                     </p>
                 ) : (
                     <>

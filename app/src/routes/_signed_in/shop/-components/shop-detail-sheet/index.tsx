@@ -13,8 +13,9 @@ import {
     stockHeading,
 } from "../../-functions/format-shop";
 import type { ShopListing } from "../../-types/shop";
+import { OwnerName } from "../owner-name";
 import { ShopItemIcon } from "../shop-item-icon";
-import { ownerDisplayName, ShopOwnerHead } from "../shop-row";
+import { ShopOwnerHead } from "../shop-row";
 
 const shopDetailSheetStyle = sva({
     slots: [
@@ -242,7 +243,7 @@ const ShopDetail = ({ shop }: { shop: ShopListing }) => {
                         <ShopOwnerHead owner={shop.owner} />
                     </span>
                     <span className={style.rowText}>
-                        {ownerDisplayName(shop.owner)} のお店
+                        <OwnerName owner={shop.owner} /> のお店
                     </span>
                 </div>
                 <div className={style.row}>
