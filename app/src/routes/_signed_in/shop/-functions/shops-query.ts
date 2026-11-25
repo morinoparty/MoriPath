@@ -2,8 +2,8 @@ import { queryOptions } from "@tanstack/react-query";
 import { getShops } from "./get-shops";
 
 /**
- * /shop のすべてのお店。loader は最初の画面の分 (getInitialShops) だけを待ち、
- * 画面ではこのクエリで残りを足したうえで、開いているあいだもゆっくり取り直す
+ * /shop のすべてのお店。そろうまでは画面にスケルトンを出し、そろったら一度に並べる。
+ * 開いているあいだもゆっくり取り直す
  */
 export const shopsQueryOptions = queryOptions({
     queryKey: ["shops"],

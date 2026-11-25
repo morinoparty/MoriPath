@@ -4,11 +4,15 @@ import {
 } from "@morinoparty/chlorophyll-react/components";
 import { Package } from "lucide-react";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { cva } from "../../../../../../styled-system/css";
+import { css, cva } from "../../../../../../styled-system/css";
+import { Skeleton } from "../../../../../components/skeleton";
 import { itemRenderSlots } from "../../-functions/item-render-slots";
 
 // 画面に入ったものだけを描く (先読みすると WebGL コンテキストの上限に早く届くため)
 const VISIBLE_ROOT_MARGIN = "0px";
+
+// 描き始めてもアイテムが出てこないとき (対応していない形など) に、スケルトンをやめるまでの時間
+const PLACEHOLDER_TIMEOUT_MS = 5000;
 
 const shopItemIconStyle = cva({
     base: {
@@ -20,6 +24,8 @@ const shopItemIconStyle = cva({
         bg: "bg.panel",
         // MinecraftItem の大きさに合わせて置く場所を空けておき、読み込み前後で行の高さを変えない
         "& > *": { flexShrink: "0" },
+        // アイテムが描かれたら (スケルトンのほかに中身ができたら) スケルトンを外す
+        "& > [data-placeholder]:not(:only-child)": { display: "none" },
     },
     variants: {
         size: {
@@ -40,6 +46,9 @@ const shopItemIconStyle = cva({
     },
     defaultVariants: { size: "md" },
 });
+
+// タイルいっぱいの場所取り。角丸はタイルに合わせる
+const placeholderStyle = css({ borderRadius: "inherit" });
 
 const fallbackIconStyle = cva({
     base: { color: "colorPalette.fg.muted" },
@@ -100,16 +109,41 @@ export const ShopItemIcon = ({ itemId, size = "md" }: ShopItemIconProps) => {
         // サーバーでは描かない (Canvas はクライアントでだけ作る)
         () => false,
     );
+    const isRendering = canRenderItem && (hasSlot || size === "lg");
+    // MinecraftItem は読み込み中も対応していない形でも何も返さないため、
+    // 描き始めてから一定時間でスケルトンをやめ、ずっと明滅し続けないようにする
+    const [gaveUp, setGaveUp] = useState(false);
+    // 画面から外れて描くのをやめたら、次に描くときに備えてスケルトンを戻す
+    if (!isRendering && gaveUp) {
+        setGaveUp(false);
+    }
+    useEffect(() => {
+        if (!isRendering) {
+            return;
+        }
+        const timer = setTimeout(() => setGaveUp(true), PLACEHOLDER_TIMEOUT_MS);
+        return () => clearTimeout(timer);
+    }, [isRendering]);
 
     return (
         <div ref={ref} className={shopItemIconStyle({ size })} aria-hidden>
             {canRenderItem ? (
-                (hasSlot || size === "lg") && (
-                    <MinecraftItem
-                        id={itemId}
-                        size={size === "lg" ? "md" : "sm"}
-                    />
-                )
+                <>
+                    {isRendering && (
+                        <MinecraftItem
+                            id={itemId}
+                            size={size === "lg" ? "md" : "sm"}
+                        />
+                    )}
+                    {/* 画面に入るのを待つあいだも、描いている途中もスケルトンを出す */}
+                    {!gaveUp && (
+                        <Skeleton
+                            variant="rect"
+                            className={placeholderStyle}
+                            data-placeholder=""
+                        />
+                    )}
+                </>
             ) : (
                 <Package className={fallbackIconStyle({ size })} />
             )}

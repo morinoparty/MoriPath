@@ -1,15 +1,19 @@
-import { LoaderCircle, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { type FormEvent, useMemo, useState } from "react";
 import { sva } from "../../../../../../styled-system/css";
 import { HomeHeader } from "../../../../../components/home-header";
+import { skeletonKeys } from "../../../../../components/skeleton";
 import type { SessionData } from "../../../../../lib/server-functions";
 import { filterShops } from "../../-functions/filter-shops";
 import type { ShopFilter, ShopListing } from "../../-types/shop";
 import { ShopDetailSheet } from "../shop-detail-sheet";
-import { ShopRow } from "../shop-row";
+import { ShopRow, ShopRowSkeleton } from "../shop-row";
 
 // 一度に並べる行数。アイテムの描画は重いため、続きは「もっと見る」で足す
 const PAGE_SIZE = 40;
+
+// 読み込み中に並べるスケルトンの行数 (スマホの 1 画面ぶん)
+const SKELETON_ROWS = 8;
 
 // 絞り込みチップの並びと表示名
 const filterOptions: readonly { value: ShopFilter; label: string }[] = [
@@ -30,8 +34,7 @@ const shopViewStyle = sva({
         "chip",
         "list",
         "message",
-        "loading",
-        "loadingIcon",
+        "status",
         "more",
     ],
     base: {
@@ -129,7 +132,6 @@ const shopViewStyle = sva({
             listStyle: "none",
         },
         message: {
-            // output 要素でも使うため、段落と同じく 1 行を占めさせる
             display: "block",
             paddingY: "8",
             textAlign: "center",
@@ -137,21 +139,8 @@ const shopViewStyle = sva({
             fontWeight: "medium",
             color: "colorPalette.fg.muted",
         },
-        // 残りのお店を読み込んでいるあいだの控えめな表示 (一覧は操作できるまま)
-        loading: {
-            display: "flex",
-            alignItems: "center",
-            gap: "1.5",
-            fontSize: "12px",
-            fontWeight: "medium",
-            color: "colorPalette.fg.muted",
-        },
-        loadingIcon: {
-            flexShrink: "0",
-            width: "14px",
-            height: "14px",
-            animation: "spin",
-        },
+        // スケルトンを出しているあいだの、読み上げ用の文
+        status: { srOnly: true },
         more: {
             alignSelf: "center",
             height: "40px",
@@ -199,8 +188,8 @@ export interface ShopViewProps {
     session: SessionData;
     /** すべてのお店 (在庫のあるお店が先)。取得できなければ null */
     shops: ShopListing[] | null;
-    /** 残りのお店を読み込んでいる途中か。shops は読み込めた分だけ */
-    loadingMore?: boolean;
+    /** すべてのお店を読み込んでいる途中か。そろうまで一覧の代わりにスケルトンを並べる */
+    loading?: boolean;
     /** 検索語 (URL の q) */
     query: string;
     /** 絞り込みチップ (URL の mode) */
@@ -215,7 +204,7 @@ export interface ShopViewProps {
 export const ShopView = ({
     session,
     shops,
-    loadingMore = false,
+    loading = false,
     query,
     filter,
     onQueryChange,
@@ -297,30 +286,29 @@ export const ShopView = ({
                         </button>
                     ))}
                 </fieldset>
-                {/* 検索と絞り込みは読み込めた分に効くため、続きを読んでいることだけを知らせる */}
-                {loadingMore && shops !== null && (
-                    <output className={style.loading}>
-                        <LoaderCircle
-                            className={style.loadingIcon}
-                            aria-hidden
-                        />
-                        ほかのお店を読み込んでいます
-                    </output>
-                )}
-                {shops === null ? (
-                    <output className={style.message}>
-                        {loadingMore
-                            ? "お店を読み込んでいます"
-                            : "お店の一覧を読み込めませんでした"}
-                    </output>
+                {loading ? (
+                    // そろうまでは一部だけを出さず、一覧の形のスケルトンを並べる
+                    <>
+                        <output className={style.status}>
+                            お店を読み込んでいます
+                        </output>
+                        <ul className={style.list}>
+                            {skeletonKeys(SKELETON_ROWS).map((key) => (
+                                <li key={key} aria-hidden>
+                                    <ShopRowSkeleton />
+                                </li>
+                            ))}
+                        </ul>
+                    </>
+                ) : shops === null ? (
+                    <p className={style.message}>
+                        お店の一覧を読み込めませんでした
+                    </p>
                 ) : filteredShops.length === 0 ? (
                     <p className={style.message}>
-                        {loadingMore
-                            ? // 読み込めた分に無いだけで、残りにあるかもしれない
-                              "ほかのお店を読み込んでいます"
-                            : query
-                              ? `「${query}」のお店は見つかりませんでした`
-                              : "お店がありません"}
+                        {query
+                            ? `「${query}」のお店は見つかりませんでした`
+                            : "お店がありません"}
                     </p>
                 ) : (
                     <>

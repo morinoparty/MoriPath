@@ -67,11 +67,6 @@ async function fetchShopPage(cursor: number): Promise<ShopPageResult> {
     };
 }
 
-/** お店の一覧の 1 ページ目だけを取る。残りを待たずに画面を出すときに使う */
-export async function fetchFirstShopPage(): Promise<ShopPageResult> {
-    return fetchShopPage(0);
-}
-
 /**
  * isolate のメモリに持っている一覧 (古さは問わない)。
  * Cache API は呼び出しごとに課金されるため使わず、isolate をまたいだ共有はしない

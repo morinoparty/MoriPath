@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLoaderData } from "@tanstack/react-router";
 import { createContext, type ReactNode, useContext } from "react";
 import { css } from "../../../../../../styled-system/css";
+import { InlineSkeleton } from "../../../../../components/skeleton";
 import { playerNameQueryOptions } from "../../-functions/player-names";
 import type { ShopListing } from "../../-types/shop";
 
@@ -10,24 +11,26 @@ export interface OwnerNameProps {
     owner: ShopListing["owner"];
 }
 
-// 名前が届くまでの場所取り。文字の高さと名前くらいの幅の淡い帯にして、届いたときに行がずれないようにする
-const pendingStyle = css({
-    display: "inline-block",
-    width: "6em",
-    height: "1em",
-    verticalAlign: "middle",
-    borderRadius: "full",
-    bg: "colorPalette.surface",
-});
+// 名前が届くまでの帯の幅。Minecraft の名前 (3〜16 文字) のよくある長さに合わせる
+const PENDING_NAME_WIDTH = "6em";
 
 // mc-api に登録されていない (名前を引けない) 持ち主
 const UNKNOWN_OWNER = "名前不明";
+
+/** 名前が届くまでの場所取り。文字の高さの帯にして、届いたときに行がずれないようにする */
+export const OwnerNameSkeleton = () => (
+    <>
+        <InlineSkeleton width={PENDING_NAME_WIDTH} />
+        {/* 帯は読み上げないため、読み込み中であることだけを伝える */}
+        <span className={css({ srOnly: true })}>読み込み中</span>
+    </>
+);
 
 /** 一覧に入っている名前をそのまま出す (Storybook や、名前が分かっている画面向け) */
 const StaticOwnerName = ({ owner }: OwnerNameProps) =>
     owner ? (owner.name ?? UNKNOWN_OWNER) : "運営";
 
-/** mc-api から名前を引いて出す。届くまでは淡い帯で場所だけ取る */
+/** mc-api から名前を引いて出す。届くまでは名前くらいの幅のスケルトンで場所だけ取る */
 const ResolvedOwnerName = ({ owner }: OwnerNameProps) => {
     const { mcApiUrl } = useLoaderData({ from: "__root__" });
     const { data: name, isPending } = useQuery({
@@ -45,7 +48,7 @@ const ResolvedOwnerName = ({ owner }: OwnerNameProps) => {
         return name;
     }
     if (isPending) {
-        return <span className={pendingStyle} aria-label="読み込み中" />;
+        return <OwnerNameSkeleton />;
     }
     return UNKNOWN_OWNER;
 };

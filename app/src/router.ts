@@ -20,6 +20,9 @@ export function getRouter() {
         routeTree,
         context: { queryClient },
         defaultPreload: "intent",
+        // pendingComponent (スケルトン) は、すぐ終わる読み込みでは出さず、出したら点滅しない長さだけ残す
+        defaultPendingMs: 250,
+        defaultPendingMinMs: 400,
     });
     setupRouterSsrQueryIntegration({
         router,

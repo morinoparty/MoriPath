@@ -2,6 +2,7 @@ import { useMinecraftConfig } from "@morinoparty/chlorophyll-react/components";
 import { Store } from "lucide-react";
 import type { ComponentProps } from "react";
 import { sva } from "../../../../../../styled-system/css";
+import { InlineSkeleton, Skeleton } from "../../../../../components/skeleton";
 import { isInStock } from "../../-functions/filter-shops";
 import {
     formatPrice,
@@ -15,6 +16,7 @@ import { ShopItemIcon } from "../shop-item-icon";
 const shopRowStyle = sva({
     slots: [
         "root",
+        "iconSkeleton",
         "info",
         "itemName",
         "owner",
@@ -46,6 +48,18 @@ const shopRowStyle = sva({
             _hover: { bg: "colorPalette.surface.hover" },
             // 在庫の無いお店は一段沈める
             "&[data-sold-out]": { opacity: "0.55" },
+            // スケルトンの行は押せないため、指の形と hover をやめる
+            "&[data-skeleton]": {
+                cursor: "default",
+                _hover: { bg: "colorPalette.surface.subtle" },
+            },
+        },
+        // スケルトンの行のアイテムのタイル (ShopItemIcon の md と同じ大きさ)
+        iconSkeleton: {
+            flexShrink: "0",
+            width: "48px",
+            height: "48px",
+            borderRadius: "control",
         },
         info: {
             display: "flex",
@@ -172,5 +186,37 @@ export const ShopRow = ({ shop, className, ...props }: ShopRowProps) => {
                 <span className={style.stock}>{stockLabel(shop)}</span>
             </span>
         </button>
+    );
+};
+
+/**
+ * 読み込み中のお店の 1 行。本物の行と同じ枠と文字の大きさに帯を置き、届いたときに高さを変えない。
+ * 押せないただの場所取りなので、読み上げない
+ */
+export const ShopRowSkeleton = () => {
+    const style = shopRowStyle();
+    return (
+        <div className={style.root} data-skeleton="" aria-hidden>
+            <Skeleton variant="rect" className={style.iconSkeleton} />
+            <span className={style.info}>
+                <span className={style.itemName}>
+                    <InlineSkeleton width="8em" />
+                </span>
+                <span className={style.owner}>
+                    <Skeleton variant="rect" className={style.ownerHead} />
+                    <span className={style.ownerName}>
+                        <InlineSkeleton width="6em" />
+                    </span>
+                </span>
+            </span>
+            <span className={style.price}>
+                <span className={style.priceValue}>
+                    <InlineSkeleton width="3em" />
+                </span>
+                <span className={style.stock}>
+                    <InlineSkeleton width="4em" />
+                </span>
+            </span>
+        </div>
     );
 };

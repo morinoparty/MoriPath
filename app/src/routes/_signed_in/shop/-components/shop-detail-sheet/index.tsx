@@ -4,6 +4,7 @@ import { Button, Drawer } from "@morinoparty/chlorophyll-react/components";
 import { Link } from "@tanstack/react-router";
 import { MapPin } from "lucide-react";
 import { sva } from "../../../../../../styled-system/css";
+import { mapPinSearch } from "../../../map/-functions/map-pin-param";
 import { worldLabels } from "../../../map/-functions/world-labels";
 import {
     formatCoordinates,
@@ -258,11 +259,14 @@ const ShopDetail = ({ shop }: { shop: ShopListing }) => {
                 <Button asChild intent="primary" size="lg">
                     <Link
                         to="/map"
-                        search={{
+                        // お店の位置にピンを立て、アイテム名を添える
+                        search={mapPinSearch({
                             world: location.worldId,
+                            type: "shop",
                             x: location.x,
                             z: location.z,
-                        }}
+                            label: shop.itemName,
+                        })}
                         className={style.action}
                     >
                         マップで見る

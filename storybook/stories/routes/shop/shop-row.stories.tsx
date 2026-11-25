@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ShopRow } from "@/routes/_signed_in/shop/-components/shop-row";
+import {
+    ShopRow,
+    ShopRowSkeleton,
+} from "@/routes/_signed_in/shop/-components/shop-row";
 import { css } from "../../../styled-system/css";
 import { sampleShopList, sampleShops } from "../../sample-shops";
 import { withShopProviders } from "./shop-decorator";
@@ -64,6 +67,30 @@ export const List: Story = {
                     <ShopRow shop={shop} />
                 </li>
             ))}
+        </ul>
+    ),
+};
+
+// 読み込み中の行。本物の行と高さがそろっていることを並べて確かめる
+export const Skeleton: Story = {
+    render: () => (
+        <ul
+            className={css({
+                display: "flex",
+                flexDirection: "column",
+                gap: "2",
+                listStyle: "none",
+            })}
+        >
+            <li>
+                <ShopRow shop={sampleShops.cobblestone} />
+            </li>
+            <li>
+                <ShopRowSkeleton />
+            </li>
+            <li>
+                <ShopRowSkeleton />
+            </li>
         </ul>
     ),
 };
