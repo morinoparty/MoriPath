@@ -1,17 +1,13 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { toDiaryTermDate } from "./-functions/diary-date";
-import { getLatestDiaryDate } from "./-functions/get-latest-diary-date";
 
-// /diary はいちばん新しい日記の日 (/diary/YYYY-MM-DD) に移す
+// /diary は今日 (/diary/YYYY-MM-DD) に移す。サーバーには問い合わせず、すぐ移る。
+// 今日の日記がまだ無く前の日が最新のときは、/diary/$date の画面が最新の日へ移す
 export const Route = createFileRoute("/_signed_in/diary/")({
-    loader: async () => {
-        const today = toDiaryTermDate(new Date());
-        const latest = await getLatestDiaryDate().catch(() => null);
-        // 最新が取れない・時計のずれで未来になっているときは今日を開く (/diary/$date から戻されてループしないように)
-        const date = latest && latest <= today ? latest : today;
+    beforeLoad: () => {
         throw redirect({
             to: "/diary/$date",
-            params: { date },
+            params: { date: toDiaryTermDate(new Date()) },
             replace: true,
         });
     },

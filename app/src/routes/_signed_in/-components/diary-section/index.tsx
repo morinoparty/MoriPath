@@ -1,15 +1,13 @@
 import { Timeline } from "@morinoparty/chlorophyll-react/components";
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
-import type { PropsWithChildren } from "react";
+import { type PropsWithChildren, useState } from "react";
 import { sva } from "../../../../../styled-system/css";
 import { InlineSkeleton, skeletonKeys } from "../../../../components/skeleton";
 import { formatDiaryTime } from "../../-functions/format-diary-time";
 import type { DiaryEntry } from "../../-types/diary";
+import { toDiaryTermDate } from "../../diary/-functions/diary-date";
 import { DiaryPlayers } from "../diary-players";
-
-// 最新の日の日記を開くページ (/diary は最新の日付に移す)
-const DIARY_LIST_PATH = "/diary";
 
 const diarySectionStyle = sva({
     slots: [
@@ -91,10 +89,17 @@ const Root = ({ children }: PropsWithChildren) => {
 
 const Header = () => {
     const style = diarySectionStyle();
+    // /diary を経由せず今日の日を直接開き、リダイレクトの往復を省く (触れたときの先読みも効く)
+    // 描くたびに時刻を読まないよう、最初の描画で決めた日を使う
+    const [today] = useState(() => toDiaryTermDate(new Date()));
     return (
         <div className={style.header}>
             <h2 className={style.title}>きょうのもりぱダイアリー</h2>
-            <Link to={DIARY_LIST_PATH} className={style.moreLink}>
+            <Link
+                to="/diary/$date"
+                params={{ date: today }}
+                className={style.moreLink}
+            >
                 すべて見る
                 <ChevronRight className={style.moreIcon} aria-hidden />
             </Link>

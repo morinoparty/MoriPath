@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { DiaryDayTimeline } from "@/routes/_signed_in/diary/-components/diary-day-timeline";
+import {
+    DiaryDayTimeline,
+    DiaryDayTimelineSkeleton,
+} from "@/routes/_signed_in/diary/-components/diary-day-timeline";
 import {
     sampleFinalizedResult,
     sampleTodayResult,
@@ -44,4 +47,9 @@ export const Empty: Story = {
 
 export const Unavailable: Story = {
     args: { result: { kind: "unavailable" } },
+};
+
+// 届くまでの場所取り。まとめの面と、時間帯ごとのタイムラインの形をとる
+export const Skeleton: Story = {
+    render: () => <DiaryDayTimelineSkeleton />,
 };

@@ -117,3 +117,39 @@ export const formatDiaryDate = (date: string, today: string): string => {
             : labelWithYearFormat;
     return format.format(parseDate(date));
 };
+
+/** 日付の移動と帯に渡す値 */
+export interface DiaryNavState {
+    /** 「次の日」で進める最後の日 */
+    lastDate: string;
+    /** 「前の日」を押せるか */
+    canGoBack: boolean;
+    /** 帯に並べる日 (古い順) */
+    stripDays: DiaryStripDay[];
+}
+
+/**
+ * 開いた日と、分かっている日記の日から、日付の移動と帯の状態を作る。
+ * 値が null (まだ取れていない・取れなかった) なら、押せる側に倒して移動を止めない
+ */
+export const buildDiaryNavState = ({
+    selected,
+    today,
+    existingDates,
+    latestDate,
+}: {
+    selected: string;
+    today: string;
+    existingDates: string[] | null;
+    latestDate: string | null;
+}): DiaryNavState => ({
+    // 最新より先の日は空なので、そこで「次の日」を止める。最新が分からなければ今日で止める
+    lastDate: latestDate && latestDate <= today ? latestDate : today,
+    // 最初の日記より前には遡れないようにする
+    canGoBack: hasDiaryBefore({
+        selected,
+        existingDates,
+        limit: DIARY_STRIP_LENGTH,
+    }),
+    stripDays: buildDiaryStripDays({ selected, today, existingDates }),
+});

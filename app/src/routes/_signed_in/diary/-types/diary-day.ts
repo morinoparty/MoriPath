@@ -4,15 +4,9 @@ import type { DiaryEntry } from "../../-types/diary";
 /** URL やダイアリー API に渡す日付 (タームの開始日 YYYY-MM-DD)。2 月 30 日のような無い日は弾く */
 export const diaryDateSchema = z.iso.date();
 
-/** getDiaryByDate の入力 */
-export const diaryByDateInputSchema = z.object({
+/** getDiaryPage の入力 */
+export const diaryPageInputSchema = z.object({
     date: diaryDateSchema,
-});
-
-/** getDiaryDates の入力。before はその日を含まない */
-export const diaryDatesInputSchema = z.object({
-    before: diaryDateSchema,
-    limit: z.int().min(1).max(100),
 });
 
 /** 1 日分のダイアリー */
@@ -51,4 +45,14 @@ export interface DiaryEntryGroup {
     id: "morning" | "daytime" | "evening" | "night";
     label: string;
     entries: DiaryEntry[];
+}
+
+/** /diary/$date の 1 画面分のデータ (getDiaryPage の結果) */
+export interface DiaryPageData {
+    /** 開いた日のダイアリー */
+    result: DiaryDayResult;
+    /** 帯の範囲で日記のある日 (新しい順)。一覧を取れなかったときは null */
+    existingDates: string[] | null;
+    /** いちばん新しい日記の日。まだ無い・取れないときは null */
+    latestDate: string | null;
 }

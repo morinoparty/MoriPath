@@ -5,8 +5,10 @@ import { type DiaryDocument, diaryDocumentSchema } from "../-types/diary";
 const FETCH_TIMEOUT_MS = 3000;
 // API の Cache-Control (private, max-age=60) に合わせて isolate 内で使い回す
 const CACHE_TTL_MS = 60 * 1000;
+// まとめの付いた (締まった) 日はもう変わらないため、長く使い回す
+const CLOSED_DAY_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 // 日付を遡るたびに増え続けないよう、覚えておく日数に上限を設ける
-const MAX_CACHE_ENTRIES = 32;
+const MAX_CACHE_ENTRIES = 64;
 
 // Workers ではリクエストをまたいで Promise を共有できないため、取得し終えた値だけを持つ
 const cache = new Map<
@@ -16,8 +18,13 @@ const cache = new Map<
 
 /** 取得した値を覚える。上限を超えたら古いものから捨てる (Map は追加順に並ぶ) */
 const remember = (key: string, value: DiaryDocument | null, now: number) => {
+    // "latest" は翌日に別の日を指すので、締まっていても短くする
+    const ttl =
+        key !== "latest" && value?.summary?.trim()
+            ? CLOSED_DAY_CACHE_TTL_MS
+            : CACHE_TTL_MS;
     cache.delete(key);
-    cache.set(key, { value, expiresAt: now + CACHE_TTL_MS });
+    cache.set(key, { value, expiresAt: now + ttl });
     for (const oldest of cache.keys()) {
         if (cache.size <= MAX_CACHE_ENTRIES) {
             break;
@@ -58,5 +65,9 @@ export async function fetchDiaryDocument(
     }
     const value = diaryDocumentSchema.parse(await response.json());
     remember(target, value, now);
+    // 最新はその日付でも引かれる (/diary/今日) ので、日付のほうにも覚えておく
+    if (target === "latest") {
+        remember(value.date, value, now);
+    }
     return value;
 }

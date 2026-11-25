@@ -1,17 +1,29 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { Await, createFileRoute, redirect } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { DiaryDayView } from "./-components/diary-day-view";
 import {
-    addDays,
-    buildDiaryStripDays,
-    DIARY_STRIP_LENGTH,
+    buildDiaryNavState,
     diaryStripEnd,
-    hasDiaryBefore,
     toDiaryTermDate,
 } from "./-functions/diary-date";
-import { getDiaryByDate } from "./-functions/get-diary-by-date";
-import { getDiaryDates } from "./-functions/get-diary-dates";
-import { getLatestDiaryDate } from "./-functions/get-latest-diary-date";
-import { diaryDateSchema, type DiaryDayResult } from "./-types/diary-day";
+import { getDiaryPage } from "./-functions/get-diary-page";
+import {
+    type KnownDiaryDates,
+    readKnownDiaryDates,
+    rememberDiaryDates,
+} from "./-functions/known-diary-dates";
+import {
+    diaryDateSchema,
+    type DiaryDayResult,
+    type DiaryPageData,
+} from "./-types/diary-day";
+
+// 取得に失敗したときの 1 画面分。日付の移動は使えるままにする
+const UNAVAILABLE_PAGE: DiaryPageData = {
+    result: { kind: "unavailable" },
+    existingDates: null,
+    latestDate: null,
+};
 
 export const Route = createFileRoute("/_signed_in/diary/$date")({
     beforeLoad: ({ params }) => {
@@ -24,47 +36,49 @@ export const Route = createFileRoute("/_signed_in/diary/$date")({
         }
         return { date: date.data, today };
     },
-    loader: async ({ context: { date, today } }) => {
-        // 帯に並べる範囲の日記のある日を取る (before は含まないので最後の日の翌日を渡す)
+    // 取得は待たずに Promise のまま渡し、日付の移動と帯をすぐ出す (タイムラインだけ届くまで場所取り)
+    loader: ({ context: { date, today } }) => {
         const stripEnd = diaryStripEnd(date, today);
-        // どれかが取れなくても画面は出し、日付の移動は使えるようにする
-        const [result, existingDates, latestDate] = await Promise.all([
-            getDiaryByDate({ data: { date } }).catch((): DiaryDayResult => ({
-                kind: "unavailable",
-            })),
-            getDiaryDates({
-                data: {
-                    before: addDays(stripEnd, 1),
-                    limit: DIARY_STRIP_LENGTH,
-                },
-            }).catch(() => null),
-            getLatestDiaryDate().catch(() => null),
-        ]);
-        return {
-            date,
-            today,
-            // 最新より先の日は空なので、そこで「次の日」を止める。最新が分からなければ今日で止める
-            lastDate: latestDate && latestDate <= today ? latestDate : today,
-            // 最初の日記より前には遡れないようにする
-            canGoBack: hasDiaryBefore({
-                selected: date,
-                existingDates,
-                limit: DIARY_STRIP_LENGTH,
-            }),
-            result,
-            stripDays: buildDiaryStripDays({
-                selected: date,
-                today,
-                existingDates,
-            }),
-        };
+        const page = getDiaryPage({ data: { date } }).catch(
+            (error: unknown): DiaryPageData => {
+                console.warn(`${date} のダイアリーを取得できません:`, error);
+                return UNAVAILABLE_PAGE;
+            },
+        );
+        // 次に日を移るとき、届くまでの帯の印や「次の日」を今の値で出せるよう覚えておく
+        void page.then((value) => rememberDiaryDates(stripEnd, value));
+        return { date, today, known: readKnownDiaryDates(stripEnd), page };
     },
+    // 一度開いた日に戻ったときは、取り直さずにすぐ出す (サーバー側も同じ長さでキャッシュしている)
+    staleTime: 60 * 1000,
+    // サインインの確認を待つ間も、押した直後から同じ形の場所取りを出す。
+    // 場所取りと届いた画面は同じ形なので、短く切り替わっても点滅しない
+    pendingMs: 0,
+    pendingMinMs: 0,
+    pendingComponent: DiaryDatePending,
     component: DiaryDatePage,
 });
 
-function DiaryDatePage() {
-    const { date, today, lastDate, canGoBack, result, stripDays } =
-        Route.useLoaderData();
+interface DiaryDateContentProps {
+    date: string;
+    today: string;
+    known: KnownDiaryDates;
+    /** その日のダイアリー。null なら読み込み中 */
+    result: DiaryDayResult | null;
+}
+
+/** 開いた日の画面。分かっている日記の日から、日付の移動と帯を作る */
+const DiaryDateContent = ({
+    date,
+    today,
+    known,
+    result,
+}: DiaryDateContentProps) => {
+    const { lastDate, canGoBack, stripDays } = buildDiaryNavState({
+        selected: date,
+        today,
+        ...known,
+    });
     return (
         <DiaryDayView
             date={date}
@@ -73,6 +87,88 @@ function DiaryDatePage() {
             canGoBack={canGoBack}
             result={result}
             stripDays={stripDays}
+        />
+    );
+};
+
+/**
+ * 今日を開いたのに今日の日記がまだ無く、前の日の日記が最新のときは、そちらへ移す。
+ * ホームの「すべて見る」は今日を開くため、4 時を過ぎて最初の記録が届く前に押したときに働く
+ */
+const useMoveToLatest = (date: string, today: string, page: DiaryPageData) => {
+    const navigate = Route.useNavigate();
+    const latestDate = page.latestDate;
+    const shouldMove =
+        date === today &&
+        page.result.kind === "empty" &&
+        latestDate !== null &&
+        latestDate < date;
+    useEffect(() => {
+        if (shouldMove && latestDate) {
+            void navigate({
+                to: "/diary/$date",
+                params: { date: latestDate },
+                replace: true,
+            });
+        }
+    }, [shouldMove, latestDate, navigate]);
+};
+
+interface DiaryDateLoadedProps {
+    date: string;
+    today: string;
+    page: DiaryPageData;
+}
+
+const DiaryDateLoaded = ({ date, today, page }: DiaryDateLoadedProps) => {
+    useMoveToLatest(date, today, page);
+    return (
+        <DiaryDateContent
+            date={date}
+            today={today}
+            known={page}
+            result={page.result}
+        />
+    );
+};
+
+function DiaryDatePage() {
+    const { date, today, known, page } = Route.useLoaderData();
+    return (
+        // 日ごとに待ち直すよう key を日付にする (同じ枠のままだと前の日を出し続ける)
+        <Await
+            key={date}
+            promise={page}
+            fallback={
+                <DiaryDateContent
+                    date={date}
+                    today={today}
+                    known={known}
+                    result={null}
+                />
+            }
+        >
+            {(value) => (
+                <DiaryDateLoaded date={date} today={today} page={value} />
+            )}
+        </Await>
+    );
+}
+
+/** サインインの確認を待つ間の画面。URL の日付から、届いたあとと同じ形で場所取りする */
+function DiaryDatePending() {
+    const { date: param } = Route.useParams();
+    // 描くたびに時刻を読まないよう、最初の描画で決めた今日を使う
+    const [today] = useState(() => toDiaryTermDate(new Date()));
+    const parsed = diaryDateSchema.safeParse(param);
+    // 読めない日付はこのあと /diary に移るので、その間は今日の形で待つ
+    const date = parsed.success && parsed.data <= today ? parsed.data : today;
+    return (
+        <DiaryDateContent
+            date={date}
+            today={today}
+            known={readKnownDiaryDates(diaryStripEnd(date, today))}
+            result={null}
         />
     );
 }

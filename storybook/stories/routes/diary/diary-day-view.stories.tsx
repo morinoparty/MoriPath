@@ -69,3 +69,12 @@ export const LongAgo: Story = {
         stripDays: sampleStripDays("2026-10-01", []),
     },
 };
+
+// 日を移った直後。日付の移動と帯はすぐ出し、タイムラインだけ届くまで場所取りする
+export const Loading: Story = {
+    args: {
+        date: "2026-11-23",
+        result: null,
+        stripDays: sampleStripDays("2026-11-23"),
+    },
+};
