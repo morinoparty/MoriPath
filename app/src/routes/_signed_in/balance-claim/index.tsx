@@ -1,21 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getMyClaims, getVaultBalance } from "../-functions";
 import { ClaimPurchaseView } from "./-components/claim-purchase-view";
-import { getClaimBlockPrice } from "./-functions/get-claim-block-price";
+import { CLAIM_BLOCK_PRICE } from "./-functions/claim-block-price";
 import { useClaimPurchase } from "./-functions/use-claim-purchase";
 
 export const Route = createFileRoute("/_signed_in/balance-claim/")({
     loader: async () => {
         // どれかが取れなくても画面は出し、取れなかった値は null にして「—」や非表示にする
-        const [balance, claims, unitPrice] = await Promise.all([
+        const [balance, claims] = await Promise.all([
             getVaultBalance().catch(() => null),
             getMyClaims().catch(() => null),
-            getClaimBlockPrice().catch(() => null),
         ]);
         return {
             balance,
             remainingClaimBlocks: claims?.remainingClaimBlocks ?? null,
-            unitPrice,
+            // 単価は API が無いため、サーバーの設定に合わせた定数を使う
+            unitPrice: CLAIM_BLOCK_PRICE,
         };
     },
     component: BalanceClaimPage,
