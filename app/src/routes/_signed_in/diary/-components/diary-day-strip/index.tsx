@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useLayoutEffect, useRef } from "react";
-import { sva } from "../../../../../../styled-system/css";
+import { css, sva } from "../../../../../../styled-system/css";
 import type { DiaryStripDay } from "../../-types/diary-day";
 
 const diaryDayStripStyle = sva({
@@ -122,14 +122,18 @@ export const DiaryDayStrip = ({ days, selected }: DiaryDayStripProps) => {
                     return (
                         <li key={day.date}>
                             {isDisabled ? (
-                                // 名前を読み上げさせるため、押せないリンクとして出す
-                                <span
-                                    className={style.day}
-                                    role="link"
-                                    aria-disabled="true"
-                                    aria-label={`${label} 日記なし`}
-                                >
-                                    {content}
+                                // 押せない日は、ただの文字として出す。見た目の数字は隠し、読み上げ用の文で日付と「日記なし」を伝える
+                                <span className={style.day}>
+                                    <span
+                                        aria-hidden
+                                        // 中身の並び (曜日・日付) は外側の flex のまま保つ
+                                        className={css({ display: "contents" })}
+                                    >
+                                        {content}
+                                    </span>
+                                    <span className={css({ srOnly: true })}>
+                                        {`${label} 日記なし`}
+                                    </span>
                                 </span>
                             ) : (
                                 <Link
