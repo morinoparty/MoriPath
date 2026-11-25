@@ -7,14 +7,20 @@ export const getOnlinePlayers = createServerFn().handler(async () => {
 
     const players = await Promise.all(
         servers.map((server) =>
-            fetch(
-                `${getServerUrl(server)}/api/v1/commons/server/players`,
-                {},
-            ).then((res) => res.json() as Promise<ServerPlayerData[]>),
+            fetch(`${getServerUrl(server)}/api/v1/commons/server/players`, {})
+                .then((res) => res.json() as Promise<ServerPlayerData[]>)
+                // 落ちているサーバーが 1 台あっても、ほかのサーバーの人数は出す
+                .catch(() => [] as ServerPlayerData[]),
         ),
     ).then((results) => results.flat());
 
-    players.sort((a, b) => {
+    // サーバー間の移動中に同じ人が 2 か所に出ることがあるため、UUID で 1 人にまとめる
+    // (アバターの一覧は id を React の key に使う)
+    const uniquePlayers = [
+        ...new Map(players.map((player) => [player.id, player])).values(),
+    ];
+
+    uniquePlayers.sort((a, b) => {
         const aFirstCharacter = a.username.toLowerCase().charAt(0);
         const bFirstCharacter = b.username.toLowerCase().charAt(0);
         if (aFirstCharacter === bFirstCharacter) {
@@ -23,7 +29,7 @@ export const getOnlinePlayers = createServerFn().handler(async () => {
         return aFirstCharacter < bFirstCharacter ? -1 : 1;
     });
 
-    return players;
+    return uniquePlayers;
 });
 
 export type OnlinePlayersData = Awaited<ReturnType<typeof getOnlinePlayers>>;

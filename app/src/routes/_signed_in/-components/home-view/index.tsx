@@ -2,8 +2,10 @@ import { sva } from "../../../../../styled-system/css";
 import { HomeHeader } from "../../../../components/home-header";
 import type { SessionData } from "../../../../lib/server-functions";
 import type { DiaryEntry } from "../../-types/diary";
+import type { OnlinePlayer } from "../../-types/online-player";
 import { BalanceTile } from "../balance-tile";
 import { DiarySection } from "../diary-section";
+import { OnlinePlayers } from "../online-players";
 import { SkinCard } from "../skin-card";
 
 // ホームのダイアリーに出す件数 (新しいほうから)
@@ -68,6 +70,8 @@ export interface HomeViewProps {
     voteStreak: number | null;
     /** ダイアリーの記録 (タームの順)。取得できなければ null */
     diaryEntries: DiaryEntry[] | null;
+    /** いまオンラインのプレイヤー。取得できなければ null (帯ごと出さない) */
+    onlinePlayers: OnlinePlayer[] | null;
 }
 
 /** ホーム画面の見た目。データの取得はルートの loader が行う */
@@ -78,6 +82,7 @@ export const HomeView = ({
     claimBlocks,
     voteStreak,
     diaryEntries,
+    onlinePlayers,
 }: HomeViewProps) => {
     const style = homeViewStyle();
     // ホームでは最新の数件だけを時刻順に見せ、続きは一覧ページに任せる
@@ -88,6 +93,8 @@ export const HomeView = ({
             <HomeHeader.Builted session={session} />
             <div className={style.body}>
                 <h1 className={style.title}>もりのパーティ</h1>
+                {/* 人数が取れなかったときに「誰もいない」と誤って伝えないよう、帯ごと出さない */}
+                {onlinePlayers && <OnlinePlayers players={onlinePlayers} />}
                 <div className={style.hero}>
                     <SkinCard playerId={player.id} playerName={player.name} />
                     <div className={style.balances}>

@@ -50,6 +50,26 @@ export const Default: Story = {
         claimBlocks: 1240,
         voteStreak: 7,
         diaryEntries: sampleDiaryEntries,
+        onlinePlayers: [
+            samplePlayers.nikomaru,
+            samplePlayers.chocolatt,
+            samplePlayers.hikighaL,
+            samplePlayers.kina1120,
+            samplePlayers.tututututu201,
+        ],
+    },
+};
+
+// サーバーに誰もいないとき
+export const NobodyOnline: Story = {
+    args: {
+        session: sampleSession,
+        player: samplePlayers.nikomaru,
+        balance: 12480,
+        claimBlocks: 1240,
+        voteStreak: 7,
+        diaryEntries: sampleDiaryEntries,
+        onlinePlayers: [],
     },
 };
 
@@ -62,5 +82,6 @@ export const Unavailable: Story = {
         claimBlocks: null,
         voteStreak: null,
         diaryEntries: null,
+        onlinePlayers: null,
     },
 };
