@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { getUserInfo } from "../-functions/get-userinfo";
 import { MarkerToggleMenu } from "./-components/marker-toggle-menu";
 import { WorldMapView } from "./-components/world-map-view";
 import { WorldSwitcher } from "./-components/world-switcher";
@@ -11,14 +12,21 @@ import type { Vec2, WorldId } from "./-types/world-map";
 
 export const Route = createFileRoute("/_signed_in/map/")({
     validateSearch: mapSearchSchema,
-    // squaremap の URL は deploy ごとにしか変わらないため再取得しない
-    loader: async () => ({ worldMapUrl: await getWorldMapUrlFn() }),
+    loader: async () => {
+        const [worldMapUrl, userInfo] = await Promise.all([
+            getWorldMapUrlFn(),
+            // 自分のマーカーを UUID で見分けるため、userinfo の sub を取る。失敗しても地図は出す
+            getUserInfo().catch(() => null),
+        ]);
+        return { worldMapUrl, userInfo };
+    },
+    // squaremap の URL もログイン中のプレイヤーもページを開いているあいだは変わらないため再取得しない
     staleTime: Number.POSITIVE_INFINITY,
     component: MapPage,
 });
 
 function MapPage() {
-    const { worldMapUrl } = Route.useLoaderData();
+    const { worldMapUrl, userInfo } = Route.useLoaderData();
     const search = Route.useSearch();
     const { session } = Route.useRouteContext();
     const navigate = Route.useNavigate();
@@ -38,10 +46,10 @@ function MapPage() {
         return settings.data?.spawn ?? null;
     }, [search.x, search.z, settings.data, settings.isError]);
 
-    // 自分のマーカーを見分けるため、ログイン中のプレイヤーを渡す
-    const self = session?.user
-        ? { id: session.user.id, name: session.user.name }
-        : null;
+    // 自分のマーカーを見分けるため、ログイン中のプレイヤーを渡す。
+    // セッションの user.id は Minecraft の UUID ではないので、UUID は userinfo の sub から取る
+    const selfName = userInfo?.preferred_username ?? session?.user.name ?? null;
+    const self = selfName ? { id: userInfo?.sub ?? "", name: selfName } : null;
 
     const changeWorld = (world: WorldId) => {
         // 別のワールドではその座標に意味がないので、座標は外してスポーン地点に戻す

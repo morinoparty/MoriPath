@@ -223,7 +223,7 @@ export const PlayersLayer = ({
     self: SelfPlayer | null;
 }) => {
     // UUID の表記ゆれ (ハイフンの有無) をそろえて自分を探す
-    const selfUuid = self ? normalizeUuid(self.id) : null;
+    const selfUuid = self?.id ? normalizeUuid(self.id) : null;
     const selfName = self?.name.toLowerCase();
     return (
         <>
