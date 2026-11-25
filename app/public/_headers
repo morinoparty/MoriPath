@@ -1,3 +1,9 @@
 # https://developers.cloudflare.com/workers/static-assets/headers
 /_next/static/*
   Cache-Control: public,max-age=31536000,immutable
+# 源柔ゴシック L-P: woff2 はファイル名に内容ハッシュを含むため長期キャッシュする
+/fonts/genjyuu-gothic-lp/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+# CSS はファイル名が固定のため 1 日で再検証する
+/fonts/genjyuu-gothic-lp/*.css
+  Cache-Control: public, max-age=86400

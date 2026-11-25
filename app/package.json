@@ -11,11 +11,12 @@
         "preview": "vp build && vp preview",
         "deploy": "cf deploy",
         "cf-typegen": "cf workers types",
+        "generate:stamp-emoji": "node scripts/generate-stamp-emoji.mjs",
         "typecheck": "tsc --noEmit -p tsconfig.cloudflare.json && tsc --noEmit -p tsconfig.node.json"
     },
     "dependencies": {
         "@ark-ui/react": "^5.39.3",
-        "@morinoparty/chlorophyll-react": "^0.5.2",
+        "@morinoparty/chlorophyll-react": "^0.9.0",
         "@tanstack/react-devtools": "^0.10.15",
         "@tanstack/react-query": "^5.108.3",
         "@tanstack/react-router": "1.170.46",
@@ -25,10 +26,12 @@
         "@tanstack/router-core": "1.171.39",
         "@tsndr/cloudflare-worker-jwt": "^3.2.3",
         "better-auth": "^1.7.27",
+        "leaflet": "^1.9.4",
         "lucide-react": "^1.77.0",
         "next-themes": "^0.4.6",
         "react": "19.3.1",
         "react-dom": "19.3.1",
+        "react-leaflet": "^5.0.0",
         "zod": "^4.6.7"
     },
     "devDependencies": {
@@ -37,12 +40,14 @@
         "@pandacss/preset-base": "^2.6.0",
         "@pandacss/preset-panda": "^2.6.0",
         "@pandacss/types": "^2.6.0",
+        "@types/leaflet": "^1.9.22",
         "@types/node": "^26.6.6",
         "@types/react": "^19.3.0",
         "@types/react-dom": "^19.3.0",
         "@vitejs/plugin-react": "^6.3.0",
         "autoprefixer": "^10.7.0",
         "cf": "1.0.0-beta.32",
+        "emojibase-data": "18.0.0",
         "typescript": "^7.0.2",
         "vite-plugin-svgr": "^5.2.0",
         "vite-plus": "catalog:"

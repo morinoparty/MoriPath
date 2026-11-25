@@ -13,10 +13,23 @@ import { Route as Signed_inRouteImport } from './routes/_signed_in'
 import { Route as Signed_inIndexRouteImport } from './routes/_signed_in/index'
 import { Route as Signed_inSplatRouteImport } from './routes/_signed_in/$'
 import { Route as NofooterTermsIndexRouteImport } from './routes/_nofooter/terms/index'
+import { Route as NofooterUnavailableIndexRouteImport } from './routes/_nofooter/unavailable/index'
 import { Route as Signed_inBalanceClaimIndexRouteImport } from './routes/_signed_in/balance-claim/index'
+import { Route as Signed_inDiaryIndexRouteImport } from './routes/_signed_in/diary/index'
+import { Route as Signed_inDiaryDateRouteImport } from './routes/_signed_in/diary/$date'
+import { Route as Signed_inFishingIndexRouteImport } from './routes/_signed_in/fishing/index'
+import { Route as Signed_inMapIndexRouteImport } from './routes/_signed_in/map/index'
 import { Route as Signed_inMyPageIndexRouteImport } from './routes/_signed_in/my-page/index'
+import { Route as Signed_inShopIndexRouteImport } from './routes/_signed_in/shop/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as NofooterAuthSignInIndexRouteImport } from './routes/_nofooter/auth/sign-in/index'
+import { Route as Signed_inMapTransitIndexRouteImport } from './routes/_signed_in/map/transit/index'
+import { Route as Signed_inMyPageClaimsIndexRouteImport } from './routes/_signed_in/my-page/claims/index'
+import { Route as Signed_inMyPageShopsIndexRouteImport } from './routes/_signed_in/my-page/shops/index'
+import { Route as Signed_inMyPageStampsIndexRouteImport } from './routes/_signed_in/my-page/stamps/index'
+import { Route as Signed_inMyPageTicketsIndexRouteImport } from './routes/_signed_in/my-page/tickets/index'
+import { Route as Signed_inMyPageTicketsIdRouteImport } from './routes/_signed_in/my-page/tickets/$id'
+import { Route as Signed_inWalletSendIndexRouteImport } from './routes/_signed_in/wallet/send/index'
 
 const Signed_inRoute = Signed_inRouteImport.update({
   id: '/_signed_in',
@@ -37,15 +50,46 @@ const NofooterTermsIndexRoute = NofooterTermsIndexRouteImport.update({
   path: '/terms/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NofooterUnavailableIndexRoute =
+  NofooterUnavailableIndexRouteImport.update({
+    id: '/_nofooter/unavailable/',
+    path: '/unavailable/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const Signed_inBalanceClaimIndexRoute =
   Signed_inBalanceClaimIndexRouteImport.update({
     id: '/balance-claim/',
     path: '/balance-claim/',
     getParentRoute: () => Signed_inRoute,
   } as any)
+const Signed_inDiaryIndexRoute = Signed_inDiaryIndexRouteImport.update({
+  id: '/diary/',
+  path: '/diary/',
+  getParentRoute: () => Signed_inRoute,
+} as any)
+const Signed_inDiaryDateRoute = Signed_inDiaryDateRouteImport.update({
+  id: '/diary/$date',
+  path: '/diary/$date',
+  getParentRoute: () => Signed_inRoute,
+} as any)
+const Signed_inFishingIndexRoute = Signed_inFishingIndexRouteImport.update({
+  id: '/fishing/',
+  path: '/fishing/',
+  getParentRoute: () => Signed_inRoute,
+} as any)
+const Signed_inMapIndexRoute = Signed_inMapIndexRouteImport.update({
+  id: '/map/',
+  path: '/map/',
+  getParentRoute: () => Signed_inRoute,
+} as any)
 const Signed_inMyPageIndexRoute = Signed_inMyPageIndexRouteImport.update({
   id: '/my-page/',
   path: '/my-page/',
+  getParentRoute: () => Signed_inRoute,
+} as any)
+const Signed_inShopIndexRoute = Signed_inShopIndexRouteImport.update({
+  id: '/shop/',
+  path: '/shop/',
   getParentRoute: () => Signed_inRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
@@ -58,71 +102,192 @@ const NofooterAuthSignInIndexRoute = NofooterAuthSignInIndexRouteImport.update({
   path: '/auth/sign-in/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Signed_inMapTransitIndexRoute =
+  Signed_inMapTransitIndexRouteImport.update({
+    id: '/map/transit/',
+    path: '/map/transit/',
+    getParentRoute: () => Signed_inRoute,
+  } as any)
+const Signed_inMyPageClaimsIndexRoute =
+  Signed_inMyPageClaimsIndexRouteImport.update({
+    id: '/my-page/claims/',
+    path: '/my-page/claims/',
+    getParentRoute: () => Signed_inRoute,
+  } as any)
+const Signed_inMyPageShopsIndexRoute =
+  Signed_inMyPageShopsIndexRouteImport.update({
+    id: '/my-page/shops/',
+    path: '/my-page/shops/',
+    getParentRoute: () => Signed_inRoute,
+  } as any)
+const Signed_inMyPageStampsIndexRoute =
+  Signed_inMyPageStampsIndexRouteImport.update({
+    id: '/my-page/stamps/',
+    path: '/my-page/stamps/',
+    getParentRoute: () => Signed_inRoute,
+  } as any)
+const Signed_inMyPageTicketsIndexRoute =
+  Signed_inMyPageTicketsIndexRouteImport.update({
+    id: '/my-page/tickets/',
+    path: '/my-page/tickets/',
+    getParentRoute: () => Signed_inRoute,
+  } as any)
+const Signed_inMyPageTicketsIdRoute =
+  Signed_inMyPageTicketsIdRouteImport.update({
+    id: '/my-page/tickets/$id',
+    path: '/my-page/tickets/$id',
+    getParentRoute: () => Signed_inRoute,
+  } as any)
+const Signed_inWalletSendIndexRoute =
+  Signed_inWalletSendIndexRouteImport.update({
+    id: '/wallet/send/',
+    path: '/wallet/send/',
+    getParentRoute: () => Signed_inRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof Signed_inIndexRoute
   '/$': typeof Signed_inSplatRoute
+  '/diary/$date': typeof Signed_inDiaryDateRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/terms/': typeof NofooterTermsIndexRoute
+  '/unavailable/': typeof NofooterUnavailableIndexRoute
   '/balance-claim/': typeof Signed_inBalanceClaimIndexRoute
+  '/diary/': typeof Signed_inDiaryIndexRoute
+  '/fishing/': typeof Signed_inFishingIndexRoute
+  '/map/': typeof Signed_inMapIndexRoute
   '/my-page/': typeof Signed_inMyPageIndexRoute
+  '/shop/': typeof Signed_inShopIndexRoute
+  '/my-page/tickets/$id': typeof Signed_inMyPageTicketsIdRoute
   '/auth/sign-in/': typeof NofooterAuthSignInIndexRoute
+  '/map/transit/': typeof Signed_inMapTransitIndexRoute
+  '/my-page/claims/': typeof Signed_inMyPageClaimsIndexRoute
+  '/my-page/shops/': typeof Signed_inMyPageShopsIndexRoute
+  '/my-page/stamps/': typeof Signed_inMyPageStampsIndexRoute
+  '/my-page/tickets/': typeof Signed_inMyPageTicketsIndexRoute
+  '/wallet/send/': typeof Signed_inWalletSendIndexRoute
 }
 export interface FileRoutesByTo {
   '/$': typeof Signed_inSplatRoute
   '/': typeof Signed_inIndexRoute
+  '/diary/$date': typeof Signed_inDiaryDateRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/terms': typeof NofooterTermsIndexRoute
+  '/unavailable': typeof NofooterUnavailableIndexRoute
   '/balance-claim': typeof Signed_inBalanceClaimIndexRoute
+  '/diary': typeof Signed_inDiaryIndexRoute
+  '/fishing': typeof Signed_inFishingIndexRoute
+  '/map': typeof Signed_inMapIndexRoute
   '/my-page': typeof Signed_inMyPageIndexRoute
+  '/shop': typeof Signed_inShopIndexRoute
+  '/my-page/tickets/$id': typeof Signed_inMyPageTicketsIdRoute
   '/auth/sign-in': typeof NofooterAuthSignInIndexRoute
+  '/map/transit': typeof Signed_inMapTransitIndexRoute
+  '/my-page/claims': typeof Signed_inMyPageClaimsIndexRoute
+  '/my-page/shops': typeof Signed_inMyPageShopsIndexRoute
+  '/my-page/stamps': typeof Signed_inMyPageStampsIndexRoute
+  '/my-page/tickets': typeof Signed_inMyPageTicketsIndexRoute
+  '/wallet/send': typeof Signed_inWalletSendIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_signed_in': typeof Signed_inRouteWithChildren
   '/_signed_in/$': typeof Signed_inSplatRoute
   '/_signed_in/': typeof Signed_inIndexRoute
+  '/_signed_in/diary/$date': typeof Signed_inDiaryDateRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_nofooter/terms/': typeof NofooterTermsIndexRoute
+  '/_nofooter/unavailable/': typeof NofooterUnavailableIndexRoute
   '/_signed_in/balance-claim/': typeof Signed_inBalanceClaimIndexRoute
+  '/_signed_in/diary/': typeof Signed_inDiaryIndexRoute
+  '/_signed_in/fishing/': typeof Signed_inFishingIndexRoute
+  '/_signed_in/map/': typeof Signed_inMapIndexRoute
   '/_signed_in/my-page/': typeof Signed_inMyPageIndexRoute
+  '/_signed_in/shop/': typeof Signed_inShopIndexRoute
+  '/_signed_in/my-page/tickets/$id': typeof Signed_inMyPageTicketsIdRoute
   '/_nofooter/auth/sign-in/': typeof NofooterAuthSignInIndexRoute
+  '/_signed_in/map/transit/': typeof Signed_inMapTransitIndexRoute
+  '/_signed_in/my-page/claims/': typeof Signed_inMyPageClaimsIndexRoute
+  '/_signed_in/my-page/shops/': typeof Signed_inMyPageShopsIndexRoute
+  '/_signed_in/my-page/stamps/': typeof Signed_inMyPageStampsIndexRoute
+  '/_signed_in/my-page/tickets/': typeof Signed_inMyPageTicketsIndexRoute
+  '/_signed_in/wallet/send/': typeof Signed_inWalletSendIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/$'
+    | '/diary/$date'
     | '/api/auth/$'
     | '/terms/'
+    | '/unavailable/'
     | '/balance-claim/'
+    | '/diary/'
+    | '/fishing/'
+    | '/map/'
     | '/my-page/'
+    | '/shop/'
+    | '/my-page/tickets/$id'
     | '/auth/sign-in/'
+    | '/map/transit/'
+    | '/my-page/claims/'
+    | '/my-page/shops/'
+    | '/my-page/stamps/'
+    | '/my-page/tickets/'
+    | '/wallet/send/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/$'
     | '/'
+    | '/diary/$date'
     | '/api/auth/$'
     | '/terms'
+    | '/unavailable'
     | '/balance-claim'
+    | '/diary'
+    | '/fishing'
+    | '/map'
     | '/my-page'
+    | '/shop'
+    | '/my-page/tickets/$id'
     | '/auth/sign-in'
+    | '/map/transit'
+    | '/my-page/claims'
+    | '/my-page/shops'
+    | '/my-page/stamps'
+    | '/my-page/tickets'
+    | '/wallet/send'
   id:
     | '__root__'
     | '/_signed_in'
     | '/_signed_in/$'
     | '/_signed_in/'
+    | '/_signed_in/diary/$date'
     | '/api/auth/$'
     | '/_nofooter/terms/'
+    | '/_nofooter/unavailable/'
     | '/_signed_in/balance-claim/'
+    | '/_signed_in/diary/'
+    | '/_signed_in/fishing/'
+    | '/_signed_in/map/'
     | '/_signed_in/my-page/'
+    | '/_signed_in/shop/'
+    | '/_signed_in/my-page/tickets/$id'
     | '/_nofooter/auth/sign-in/'
+    | '/_signed_in/map/transit/'
+    | '/_signed_in/my-page/claims/'
+    | '/_signed_in/my-page/shops/'
+    | '/_signed_in/my-page/stamps/'
+    | '/_signed_in/my-page/tickets/'
+    | '/_signed_in/wallet/send/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   Signed_inRoute: typeof Signed_inRouteWithChildren
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   NofooterTermsIndexRoute: typeof NofooterTermsIndexRoute
+  NofooterUnavailableIndexRoute: typeof NofooterUnavailableIndexRoute
   NofooterAuthSignInIndexRoute: typeof NofooterAuthSignInIndexRoute
 }
 
@@ -156,6 +321,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NofooterTermsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_nofooter/unavailable/': {
+      id: '/_nofooter/unavailable/'
+      path: '/unavailable'
+      fullPath: '/unavailable/'
+      preLoaderRoute: typeof NofooterUnavailableIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_signed_in/balance-claim/': {
       id: '/_signed_in/balance-claim/'
       path: '/balance-claim'
@@ -163,11 +335,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Signed_inBalanceClaimIndexRouteImport
       parentRoute: typeof Signed_inRoute
     }
+    '/_signed_in/diary/': {
+      id: '/_signed_in/diary/'
+      path: '/diary'
+      fullPath: '/diary/'
+      preLoaderRoute: typeof Signed_inDiaryIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
+    '/_signed_in/diary/$date': {
+      id: '/_signed_in/diary/$date'
+      path: '/diary/$date'
+      fullPath: '/diary/$date'
+      preLoaderRoute: typeof Signed_inDiaryDateRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
+    '/_signed_in/fishing/': {
+      id: '/_signed_in/fishing/'
+      path: '/fishing'
+      fullPath: '/fishing/'
+      preLoaderRoute: typeof Signed_inFishingIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
+    '/_signed_in/map/': {
+      id: '/_signed_in/map/'
+      path: '/map'
+      fullPath: '/map/'
+      preLoaderRoute: typeof Signed_inMapIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
     '/_signed_in/my-page/': {
       id: '/_signed_in/my-page/'
       path: '/my-page'
       fullPath: '/my-page/'
       preLoaderRoute: typeof Signed_inMyPageIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
+    '/_signed_in/shop/': {
+      id: '/_signed_in/shop/'
+      path: '/shop'
+      fullPath: '/shop/'
+      preLoaderRoute: typeof Signed_inShopIndexRouteImport
       parentRoute: typeof Signed_inRoute
     }
     '/api/auth/$': {
@@ -184,21 +391,94 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NofooterAuthSignInIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_signed_in/map/transit/': {
+      id: '/_signed_in/map/transit/'
+      path: '/map/transit'
+      fullPath: '/map/transit/'
+      preLoaderRoute: typeof Signed_inMapTransitIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
+    '/_signed_in/my-page/claims/': {
+      id: '/_signed_in/my-page/claims/'
+      path: '/my-page/claims'
+      fullPath: '/my-page/claims/'
+      preLoaderRoute: typeof Signed_inMyPageClaimsIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
+    '/_signed_in/my-page/shops/': {
+      id: '/_signed_in/my-page/shops/'
+      path: '/my-page/shops'
+      fullPath: '/my-page/shops/'
+      preLoaderRoute: typeof Signed_inMyPageShopsIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
+    '/_signed_in/my-page/stamps/': {
+      id: '/_signed_in/my-page/stamps/'
+      path: '/my-page/stamps'
+      fullPath: '/my-page/stamps/'
+      preLoaderRoute: typeof Signed_inMyPageStampsIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
+    '/_signed_in/my-page/tickets/': {
+      id: '/_signed_in/my-page/tickets/'
+      path: '/my-page/tickets'
+      fullPath: '/my-page/tickets/'
+      preLoaderRoute: typeof Signed_inMyPageTicketsIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
+    '/_signed_in/my-page/tickets/$id': {
+      id: '/_signed_in/my-page/tickets/$id'
+      path: '/my-page/tickets/$id'
+      fullPath: '/my-page/tickets/$id'
+      preLoaderRoute: typeof Signed_inMyPageTicketsIdRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
+    '/_signed_in/wallet/send/': {
+      id: '/_signed_in/wallet/send/'
+      path: '/wallet/send'
+      fullPath: '/wallet/send/'
+      preLoaderRoute: typeof Signed_inWalletSendIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
   }
 }
 
 interface Signed_inRouteChildren {
   Signed_inSplatRoute: typeof Signed_inSplatRoute
   Signed_inIndexRoute: typeof Signed_inIndexRoute
+  Signed_inDiaryDateRoute: typeof Signed_inDiaryDateRoute
   Signed_inBalanceClaimIndexRoute: typeof Signed_inBalanceClaimIndexRoute
+  Signed_inDiaryIndexRoute: typeof Signed_inDiaryIndexRoute
+  Signed_inFishingIndexRoute: typeof Signed_inFishingIndexRoute
+  Signed_inMapIndexRoute: typeof Signed_inMapIndexRoute
   Signed_inMyPageIndexRoute: typeof Signed_inMyPageIndexRoute
+  Signed_inShopIndexRoute: typeof Signed_inShopIndexRoute
+  Signed_inMyPageTicketsIdRoute: typeof Signed_inMyPageTicketsIdRoute
+  Signed_inMapTransitIndexRoute: typeof Signed_inMapTransitIndexRoute
+  Signed_inMyPageClaimsIndexRoute: typeof Signed_inMyPageClaimsIndexRoute
+  Signed_inMyPageShopsIndexRoute: typeof Signed_inMyPageShopsIndexRoute
+  Signed_inMyPageStampsIndexRoute: typeof Signed_inMyPageStampsIndexRoute
+  Signed_inMyPageTicketsIndexRoute: typeof Signed_inMyPageTicketsIndexRoute
+  Signed_inWalletSendIndexRoute: typeof Signed_inWalletSendIndexRoute
 }
 
 const Signed_inRouteChildren: Signed_inRouteChildren = {
   Signed_inSplatRoute: Signed_inSplatRoute,
   Signed_inIndexRoute: Signed_inIndexRoute,
+  Signed_inDiaryDateRoute: Signed_inDiaryDateRoute,
   Signed_inBalanceClaimIndexRoute: Signed_inBalanceClaimIndexRoute,
+  Signed_inDiaryIndexRoute: Signed_inDiaryIndexRoute,
+  Signed_inFishingIndexRoute: Signed_inFishingIndexRoute,
+  Signed_inMapIndexRoute: Signed_inMapIndexRoute,
   Signed_inMyPageIndexRoute: Signed_inMyPageIndexRoute,
+  Signed_inShopIndexRoute: Signed_inShopIndexRoute,
+  Signed_inMyPageTicketsIdRoute: Signed_inMyPageTicketsIdRoute,
+  Signed_inMapTransitIndexRoute: Signed_inMapTransitIndexRoute,
+  Signed_inMyPageClaimsIndexRoute: Signed_inMyPageClaimsIndexRoute,
+  Signed_inMyPageShopsIndexRoute: Signed_inMyPageShopsIndexRoute,
+  Signed_inMyPageStampsIndexRoute: Signed_inMyPageStampsIndexRoute,
+  Signed_inMyPageTicketsIndexRoute: Signed_inMyPageTicketsIndexRoute,
+  Signed_inWalletSendIndexRoute: Signed_inWalletSendIndexRoute,
 }
 
 const Signed_inRouteWithChildren = Signed_inRoute._addFileChildren(
@@ -209,6 +489,7 @@ const rootRouteChildren: RootRouteChildren = {
   Signed_inRoute: Signed_inRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   NofooterTermsIndexRoute: NofooterTermsIndexRoute,
+  NofooterUnavailableIndexRoute: NofooterUnavailableIndexRoute,
   NofooterAuthSignInIndexRoute: NofooterAuthSignInIndexRoute,
 }
 export const routeTree = rootRouteImport

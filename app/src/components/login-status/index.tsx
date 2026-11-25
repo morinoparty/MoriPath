@@ -1,11 +1,13 @@
 import type { PropsWithChildren } from "react";
 import { createContext, useContext } from "react";
-import { sva } from "../../../styled-system/css";
+import { cx, sva } from "../../../styled-system/css";
 import type { SessionData } from "../../lib/server-functions";
 import { UserMenu } from "../user-menu";
 
 interface LoginStatusProps {
     session: SessionData;
+    /** 既定の 44px 枠を置き換えたいときのクラス (HomeHeader など) */
+    className?: string;
 }
 
 interface LoginStatusContextValue {
@@ -43,7 +45,11 @@ const loginStatusStyle = sva({
     },
 });
 
-const Root = ({ session, children }: PropsWithChildren<LoginStatusProps>) => {
+const Root = ({
+    session,
+    className,
+    children,
+}: PropsWithChildren<LoginStatusProps>) => {
     const style = loginStatusStyle();
 
     if (!session?.user) {
@@ -52,18 +58,23 @@ const Root = ({ session, children }: PropsWithChildren<LoginStatusProps>) => {
 
     return (
         <LoginStatusContext.Provider value={{ session }}>
-            <div className={style.root}>{children}</div>
+            <div className={cx(style.root, className)}>{children}</div>
         </LoginStatusContext.Provider>
     );
 };
 
-const Avatar = () => {
+interface AvatarProps {
+    /** 大きさや角丸を差し替えたいときのクラス */
+    className?: string;
+}
+
+const Avatar = ({ className }: AvatarProps) => {
     const { session } = useLoginStatusContext();
     const style = loginStatusStyle();
 
     return (
         <img
-            className={style.avatar}
+            className={cx(style.avatar, className)}
             src={
                 session?.user?.image ??
                 "https://crafthead.net/avatar/Steve/128.png"

@@ -3,10 +3,16 @@ import { getRequest } from "@tanstack/react-start/server";
 import { betterAuth } from "better-auth";
 import { genericOAuth } from "better-auth/plugins";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
+import { AuthServerUnavailableError } from "./auth-server-unavailable";
+import {
+    ACCESS_TOKEN_TIMEOUT_MS,
+    AUTH_HANDLER_TIMEOUT_MS,
+    withTimeout,
+} from "./mineauth-timeout";
 import { getAuthServerUrl } from "./server-list";
 
 // プラグイン込みのエンドポイント型を保つため buildAuth の戻り値から推論する
-type Auth = Awaited<ReturnType<typeof buildAuth>>;
+export type Auth = Awaited<ReturnType<typeof buildAuth>>;
 
 // origin ごとに動かすため、origin と認証サーバーの組でインスタンスをメモ化する
 const authCache = new Map<string, Promise<Auth>>();
@@ -66,10 +72,41 @@ export async function getAuth(): Promise<Auth> {
     const origin = new URL(getRequest().url).origin;
     const authServerUrl = await getAuthServerUrl();
     const cacheKey = `${origin}|${authServerUrl}`;
-    let auth = authCache.get(cacheKey);
-    if (!auth) {
-        auth = buildAuth(origin, authServerUrl);
-        authCache.set(cacheKey, auth);
+    let pending = authCache.get(cacheKey);
+    if (!pending) {
+        pending = buildAuth(origin, authServerUrl);
+        authCache.set(cacheKey, pending);
+    }
+    const auth = await pending;
+    // 初期化で MineAuth の discovery を取りに行き、Better Auth はそこに上限を設けないため、ここで区切る
+    try {
+        await withTimeout(
+            auth.$context,
+            AUTH_HANDLER_TIMEOUT_MS,
+            () => new AuthServerUnavailableError(),
+        );
+    } catch (error) {
+        // 止まったままのインスタンスを使い回さないよう、次のリクエストで作り直す
+        if (authCache.get(cacheKey) === pending) {
+            authCache.delete(cacheKey);
+        }
+        throw error;
     }
     return auth;
+}
+
+/**
+ * MineAuth のアクセストークン。失効していれば refresh token で更新する。
+ * 更新先の MineAuth が応答しないときに待ち続けないよう、上限を過ぎたら例外にする
+ */
+export async function getMineAuthAccessToken(headers: Headers) {
+    const auth = await getAuth();
+    return withTimeout(
+        auth.api.getAccessToken({
+            body: { useAccountCookie: true },
+            headers,
+        }),
+        ACCESS_TOKEN_TIMEOUT_MS,
+        () => new Error("アクセストークンの取得が時間内に終わりませんでした"),
+    );
 }

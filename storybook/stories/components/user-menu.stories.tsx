@@ -38,7 +38,7 @@ type Story = StoryObj;
 
 export const Default: Story = {
     render: () => (
-        <UserMenu.Root session={mockSession}>
+        <UserMenu.Root session={mockSession} defaultOpen>
             <UserMenu.Trigger>
                 <img
                     src="https://crafthead.net/avatar/389b1a68-f647-4dd0-a421-61b6c22fdebe"

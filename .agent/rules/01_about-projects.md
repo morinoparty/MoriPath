@@ -34,5 +34,5 @@
 ### インフラ・CI
 
 - **Cloudflare Workers** — `cf deploy` による高速エッジデプロイ
-- **GitHub Actions** — `deploy.yml` で check / typecheck / ビルド / dry-run を行い、`main` ブランチへの push で本番デプロイ。PR では本番に deploy しない Worker Version を upload し、PR の最新 commit を指す `pr-<番号>` の URL と、その commit に固定した Version の URL を PR にコメント (PR の head commit をビルド)
+- **GitHub Actions** — `deploy.yml` で check / typecheck / ビルド / dry-run を行い、`main` ブランチへの push で本番デプロイ。PR では Cloudflare の Preview (`pr-<番号>`) に deploy し、PR の最新 commit を指す Preview の URL と、その deploy に固定した URL を PR にコメント (PR の head commit をビルド。Version URL と違い Workers Logs にログが残る)
 - **pnpm ワークスペース** — `app` と `storybook` の 2 パッケージ構成

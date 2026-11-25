@@ -1,0 +1,87 @@
+import { getServerUrl } from "../../../../lib/server-list";
+import {
+    allStampsResponseSchema,
+    type MyStamps,
+    playerStampsResponseSchema,
+    type Stamp,
+    type StampEmojiEntry,
+} from "../-types/stamp";
+import { orderStamps } from "./order-stamps";
+// 対応表はサーバー側でだけ読み、クライアントには字形と名前だけを渡す
+import { MINEAUTH_API_TIMEOUT_MS } from "../../../../lib/mineauth-timeout";
+import stampEmojiTable from "./stamp-emoji.gen.json";
+import { toStamp } from "./to-stamp";
+
+/** 生成済みの対応表 ([字形, 並び順, 名前]) を引きやすい形にする。形の崩れた行は飛ばす */
+const emojiMap: ReadonlyMap<string, StampEmojiEntry> = new Map(
+    Object.entries(stampEmojiTable).flatMap(([shortCode, row]) => {
+        const [emoji, sortIndex, label] = row;
+        return typeof emoji === "string" &&
+            typeof sortIndex === "number" &&
+            typeof label === "string"
+            ? [[shortCode, { emoji, sortIndex, label }] as const]
+            : [];
+    }),
+);
+
+// スタンプの総数はめったに変わらず、一覧は 3000 件を超えるため isolate 内でキャッシュする
+const TOTAL_CACHE_TTL_MS = 10 * 60 * 1000;
+
+// Workers ではリクエストをまたいで Promise を共有できないため、取得し終えた値だけを持つ
+let totalCache: { value: number; expiresAt: number } | undefined;
+
+async function fetchStampTotal(mainServerUrl: string): Promise<number> {
+    // 総数は認証なしで取れる全スタンプの一覧から数える
+    const response = await fetch(
+        `${mainServerUrl}/api/v1/plugins/minestamp/stamps/all`,
+        { signal: AbortSignal.timeout(MINEAUTH_API_TIMEOUT_MS) },
+    );
+    if (!response.ok) {
+        throw new Error(`スタンプ一覧の取得に失敗しました: ${response.status}`);
+    }
+    return allStampsResponseSchema.parse(await response.json()).stamps.length;
+}
+
+async function getStampTotal(mainServerUrl: string): Promise<number> {
+    const now = Date.now();
+    if (totalCache && totalCache.expiresAt > now) {
+        return totalCache.value;
+    }
+    // 失敗は例外のまま返してキャッシュせず、次のリクエストで取り直す
+    const value = await fetchStampTotal(mainServerUrl);
+    totalCache = { value, expiresAt: now + TOTAL_CACHE_TTL_MS };
+    return value;
+}
+
+async function fetchOwnedStamps(
+    mainServerUrl: string,
+    accessToken: string,
+): Promise<Stamp[]> {
+    const response = await fetch(
+        `${mainServerUrl}/api/v1/plugins/minestamp/stamps`,
+        {
+            headers: { Authorization: `Bearer ${accessToken}` },
+            signal: AbortSignal.timeout(MINEAUTH_API_TIMEOUT_MS),
+        },
+    );
+    if (!response.ok) {
+        throw new Error(`所持スタンプの取得に失敗しました: ${response.status}`);
+    }
+    const data = playerStampsResponseSchema.parse(await response.json());
+    const stamps = data.stamps
+        .map((item) => toStamp(item, emojiMap))
+        .filter((stamp): stamp is Stamp => stamp !== null);
+    // マイページの先頭 6 枚とスタンプ帳のページで同じ並びになるよう、ここで一度だけ並べ替える
+    return orderStamps(stamps, emojiMap);
+}
+
+/** アクセストークンで、自分のスタンプとスタンプの総数を取る。失敗したら例外にする */
+export async function fetchMyStamps(accessToken: string): Promise<MyStamps> {
+    // MineStamp は main サーバーにのみ存在する
+    const mainServerUrl = getServerUrl("main");
+    const [owned, total] = await Promise.all([
+        fetchOwnedStamps(mainServerUrl, accessToken),
+        getStampTotal(mainServerUrl),
+    ]);
+    return { owned, total };
+}

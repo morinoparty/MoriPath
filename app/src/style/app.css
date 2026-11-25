@@ -1,1 +1,2 @@
-@layer reset, base, tokens, recipes, utilities;
+/* leaflet は /map の地図ライブラリの CSS。リセットより後・Panda のスタイルより前に置き、地図側で上書きできるようにする */
+@layer reset, base, leaflet, tokens, recipes, utilities;

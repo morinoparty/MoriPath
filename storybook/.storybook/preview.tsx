@@ -3,6 +3,7 @@ import type { Decorator, Preview } from "@storybook/react-vite";
 import { ThemeProvider } from "next-themes";
 import { useEffect } from "react";
 import { themes } from "storybook/theming";
+import { AppToaster } from "@/components/toaster";
 import { PaletteProvider } from "@/components/ui/palette";
 import { css } from "../styled-system/css";
 import { registerAPCACheck } from "./a11y";
@@ -114,6 +115,8 @@ const preview: Preview = {
                         <div className={css({ bg: "bg" })}>
                             <Story />
                         </div>
+                        {/* アプリの Provider と同じく、toast を出す場所を 1 つ置く */}
+                        <AppToaster />
                     </ThemeProvider>
                 </PaletteProvider>
             );
