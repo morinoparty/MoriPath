@@ -61,7 +61,10 @@ export const NO_BODY_MASK: BodyMask = { start: 1, end: 1 };
  * 回転して縮むにつれて、胴体を下から透明にしていくマスクを求める。
  * 縮んだスキンの長い胴体が下の本文に重なるため、最後は首 (headBottom) より下を消し、頭だけを残す
  */
-export const bodyFadeMask = (progress: number, headBottom: number): BodyMask => {
+export const bodyFadeMask = (
+    progress: number,
+    headBottom: number,
+): BodyMask => {
     // 回転が始まってすぐ消し始め、2D の顔に入れ替わる前に消しきる
     const fade = easeInOutSine(remap(progress, 0.05, 0.75));
     if (fade <= 0) {
