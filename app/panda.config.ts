@@ -25,6 +25,20 @@ export const textStyles: TextStyles = defineTextStyles({
     },
 });
 
+// 表示名 (プレイヤー名など大きく見せる英字) 用の書体。
+// Outfit は __root.tsx / Storybook の preview-head.html で外部 CSS として読み込む
+const displayTextStyles: TextStyles = defineTextStyles({
+    display: {
+        description: "The display text style - used for large player names",
+        value: {
+            fontFamily: "display",
+            fontWeight: "600",
+            lineHeight: "1.05",
+            letterSpacing: "-0.01em",
+        },
+    },
+});
+
 const globalCss = defineGlobalStyles({
     "*::selection": {
         bg: "colorPalette.5",
@@ -57,11 +71,39 @@ const config: Config = defineConfig({
 
     include: ["./src/**/*.{ts,tsx,js,jsx}"],
 
+    theme: {
+        extend: {
+            tokens: {
+                fonts: {
+                    // 英字は Outfit、和文は本文と同じ源柔ゴシックにフォールバックする
+                    display: {
+                        value: "'Outfit', 'GenJyuuGothicLP', BlinkMacSystemFont, 'Noto Sans JP', -apple-system, Segoe UI, Roboto, Helvetica Neue, sans-serif",
+                    },
+                },
+            },
+            semanticTokens: {
+                shadows: {
+                    // TabBar などページの上に浮かぶ白いクロム用の影 (カードには使わない)
+                    chrome: {
+                        value: "0 8px 24px 0 rgb(0 0 0 / 0.12)",
+                    },
+                },
+            },
+            textStyles: displayTextStyles,
+        },
+    },
+
     // chlorophyll の variant は静的抽出できないため全 variant を生成する
     staticCss: {
         recipes: {
             button: ["*"],
+            card: ["*"],
+            playerAvatar: ["*"],
+            playerAvatarGroup: ["*"],
             playerMap: ["*"],
+            skinViewer: ["*"],
+            stat: ["*"],
+            timeline: ["*"],
         },
     },
 

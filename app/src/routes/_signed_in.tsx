@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { css } from "../../styled-system/css";
-import { Navbar } from "../components/navbar";
+import { TabBar } from "../components/tab-bar";
 import { authMiddleware } from "../lib/auth-middleware";
 import { getSession } from "../lib/server-functions";
 
@@ -20,11 +20,12 @@ function SignedInLayout() {
         <div
             className={css({
                 minHeight: "100vh",
-                paddingBottom: "100px",
+                // 浮いている TabBar (高さ 64px + 下端からの余白) に本文が隠れないようにする
+                paddingBottom: "calc(120px + env(safe-area-inset-bottom))",
             })}
         >
             <Outlet />
-            <Navbar />
+            <TabBar />
         </div>
     );
 }

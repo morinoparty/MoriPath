@@ -19,7 +19,9 @@ export const Route = createRootRoute({
             },
             {
                 name: "viewport",
-                content: "width=device-width, initial-scale=1",
+                // viewport-fit=cover で env(safe-area-inset-*) を有効にし、TabBar をホームインジケーターの上に置く
+                content:
+                    "width=device-width, initial-scale=1, viewport-fit=cover",
             },
             {
                 title: "MoriPath - もりのパーティ ポータルアプリ",
@@ -34,6 +36,11 @@ export const Route = createRootRoute({
             {
                 rel: "stylesheet",
                 href: "https://api.fontshare.com/v2/css?f[]=satoshi@1&display=swap",
+            },
+            {
+                // 表示名 (fonts.display) 用の Outfit SemiBold
+                rel: "stylesheet",
+                href: "https://fonts.googleapis.com/css2?family=Outfit:wght@600&display=swap",
             },
             {
                 rel: "stylesheet",
