@@ -7,11 +7,14 @@ export const PORTRAIT_POSE_IDS: readonly PortraitPoseId[] = [
     "front",
     "diagonal",
     "pickaxe",
-    "wave",
+    "torch",
 ];
 
 /** 右手に持たせるツルハシ (Minecraft のアイテム ID) */
 export const PORTRAIT_PICKAXE_ITEM = "diamond_pickaxe";
+
+/** 左手に持たせる松明 (Minecraft のアイテム ID) */
+export const PORTRAIT_TORCH_ITEM = "torch";
 
 // 斜めの角度は Figma の /me のポートレートに合わせる (右側面が見え、少し見下ろす)
 const DIAGONAL_YAW = -30;
@@ -30,6 +33,17 @@ const PICKAXE_HOLD: SkinViewerPose = {
 
 // ツルハシを持つときは体を右へずらし、左側の空いた所にツルハシを収める (px)
 const PICKAXE_OFFSET_X = 45;
+
+// 松明を掲げる左腕と頭の角度 (度)。
+// 腕を水平より少し上げて体の外へ開き、腕と直交して持つ松明を顔の横で上へ向ける (炎の面がカメラに向く)。
+// 頭は見る人の方へ少し向ける
+const TORCH_HOLD: SkinViewerPose = {
+    leftArm: { x: -100, z: 28 },
+    head: { y: 8 },
+};
+
+// 松明を持つときは体を左へずらし、右側の空いた所に松明を収める (px)
+const TORCH_OFFSET_X = -40;
 
 const PORTRAIT_POSES: Record<PortraitPoseId, PortraitPose> = {
     // これまでどおり正面を向いて立つ
@@ -50,8 +64,15 @@ const PORTRAIT_POSES: Record<PortraitPoseId, PortraitPose> = {
         rightHandItem: PORTRAIT_PICKAXE_ITEM,
         offsetX: PICKAXE_OFFSET_X,
     },
-    // 左手を振る。振る腕が手前に来るよう左側面寄りから見る
-    wave: { yaw: 25, pitch: 4, animation: "wave" },
+    // 左手に松明を掲げる。掲げた腕と松明が手前に来るよう左側面寄りから見る
+    torch: {
+        yaw: 15,
+        pitch: DIAGONAL_PITCH,
+        animation: "idle",
+        joints: TORCH_HOLD,
+        leftHandItem: PORTRAIT_TORCH_ITEM,
+        offsetX: TORCH_OFFSET_X,
+    },
 };
 
 /** random (0 以上 1 未満) からポーズを 1 つ選ぶ */
@@ -67,8 +88,7 @@ export const pickPortraitPose = (
 
 /**
  * ポーズの見た目を求める。
- * - 動きを減らす設定では動かさない (アニメーションを止める。関節の角度で作る姿勢はそのまま)。
- *   手を振るポーズはアニメーションでしか作れないため、斜めの立ち姿にする
+ * - 動きを減らす設定では動かさない (アニメーションを止める。関節の角度で作る姿勢はそのまま)
  * - アイテムのアセットを解決できないときは、アイテムを持たずに同じポーズをとる
  */
 export const resolvePortraitPose = (
@@ -78,11 +98,11 @@ export const resolvePortraitPose = (
         canHoldItem,
     }: { reducedMotion: boolean; canHoldItem: boolean },
 ): PortraitPose => {
-    const pose =
-        PORTRAIT_POSES[reducedMotion && id === "wave" ? "diagonal" : id];
+    const pose = PORTRAIT_POSES[id];
     return {
         ...pose,
         animation: reducedMotion ? "none" : pose.animation,
         rightHandItem: canHoldItem ? pose.rightHandItem : undefined,
+        leftHandItem: canHoldItem ? pose.leftHandItem : undefined,
     };
 };

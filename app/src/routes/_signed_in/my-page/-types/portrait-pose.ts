@@ -4,7 +4,7 @@ import type {
 } from "@morinoparty/chlorophyll-react/components";
 
 /** ポートレートのスキンの立ち方。開くたびにどれか 1 つをランダムに選ぶ */
-export type PortraitPoseId = "front" | "diagonal" | "pickaxe" | "wave";
+export type PortraitPoseId = "front" | "diagonal" | "pickaxe" | "torch";
 
 /** 1 つのポーズの見た目 (SkinViewer に渡す値) */
 export interface PortraitPose {
@@ -18,6 +18,8 @@ export interface PortraitPose {
     joints?: SkinViewerPose;
     /** 右手に持たせるアイテムの ID。アイテムのアセットを解決できないときは持たせない */
     rightHandItem?: string;
+    /** 左手に持たせるアイテムの ID。アイテムのアセットを解決できないときは持たせない */
+    leftHandItem?: string;
     /** スクロール前にスキンを横へずらす量 (px、正の値で右)。関節の角度と同じ速さで 0 へ戻す */
     offsetX?: number;
 }

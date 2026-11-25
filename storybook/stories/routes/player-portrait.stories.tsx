@@ -16,7 +16,7 @@ const meta: Meta<typeof PlayerPortrait> = {
     },
     decorators: [
         // Storybook では MC_API_URL を使えないため crafthead.net から取得する。
-        // ツルハシは STORYBOOK_MC_ASSETS_URL があるときだけ持たせる (無ければ持たずに同じポーズをとる)
+        // ツルハシと松明は STORYBOOK_MC_ASSETS_URL があるときだけ持たせる (無ければ持たずに同じポーズをとる)
         (Story) => (
             <MinecraftProvider
                 assets={sampleMinecraftAssetsUrl}
@@ -62,9 +62,9 @@ export const PosePickaxe: Story = {
     args: { ...Online.args, pose: "pickaxe" },
 };
 
-// 左手を振る
-export const PoseWave: Story = {
-    args: { ...Online.args, pose: "wave" },
+// 左手に松明を掲げる。体を左へずらし、右側に松明を収める
+export const PoseTorch: Story = {
+    args: { ...Online.args, pose: "torch" },
 };
 
 // 実際のページと同じく、表示のたびにポーズをランダムに選ぶ

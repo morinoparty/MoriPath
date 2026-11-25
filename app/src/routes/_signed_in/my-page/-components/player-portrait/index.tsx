@@ -309,6 +309,7 @@ interface PortraitSkinProps {
     /** ポーズの強さ (1 でポーズのまま、0 で直立) */
     poseWeight: number;
     rightHandItem: string | undefined;
+    leftHandItem: string | undefined;
     className: string;
 }
 
@@ -326,6 +327,7 @@ const PortraitSkin = memo(
         joints,
         poseWeight,
         rightHandItem,
+        leftHandItem,
         className,
     }: PortraitSkinProps) => {
         // 関節の角度を直立から補間する。poseWeight が同じ間は同じオブジェクトを渡す
@@ -351,8 +353,9 @@ const PortraitSkin = memo(
                 animation={animation}
                 animationWeight={poseWeight}
                 pose={pose}
-                // アイテムは同じ viewer の右腕に押し出したメッシュとして付く。読み込めなければ何も持たない
+                // アイテムは同じ viewer の腕に押し出したメッシュとして付く。読み込めなければ何も持たない
                 rightHandItem={rightHandItem}
+                leftHandItem={leftHandItem}
                 className={className}
                 aria-label={`${playerName} のスキン`}
             />
@@ -486,6 +489,7 @@ export const PlayerPortrait = ({
                             joints={poseView.joints}
                             poseWeight={skinView.poseWeight}
                             rightHandItem={poseView.rightHandItem}
+                            leftHandItem={poseView.leftHandItem}
                             className={style.skinCanvas}
                         />
                     </CatchBoundary>
