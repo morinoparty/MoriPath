@@ -1,9 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import {
     StampBook,
     StampBookSkeleton,
 } from "@/routes/_signed_in/my-page/-components/stamp-book";
 import { css } from "../../styled-system/css";
+import { mockClipboard } from "../mock-clipboard";
 import { sampleStamps } from "../sample-stamps";
 
 const meta: Meta<typeof StampBook> = {
@@ -68,6 +70,73 @@ export const Placeholders: Story = {
             ],
             total: 3405,
         },
+    },
+};
+
+// タイルを押すと shortCode をそのまま写し、写した shortCode を toast で知らせる
+export const CopyShortCode: Story = {
+    args: { stamps: sampleStamps },
+    play: async ({ canvasElement }) => {
+        const writeText = fn(async (_text: string) => {});
+        const restore = mockClipboard({ writeText });
+        try {
+            const canvas = within(canvasElement);
+            // toast は Portal で body に出るため、body から探す
+            const page = within(canvasElement.ownerDocument.body);
+            await userEvent.click(
+                canvas.getByRole("button", { name: "きらきら" }),
+            );
+            await expect(writeText).toHaveBeenCalledWith(":sparkles:");
+            // 出てくるときは透明から始まるため、表示し終わるまで待つ
+            await waitFor(async () =>
+                expect(
+                    await page.findByText(":sparkles: をコピーしました"),
+                ).toBeVisible(),
+            );
+            // 画像スタンプは「!」と拡張子つきの shortCode を写し、前の toast と入れ替える
+            await userEvent.click(
+                canvas.getByRole("button", { name: "moripa_pink" }),
+            );
+            await expect(writeText).toHaveBeenLastCalledWith(
+                "!moripa_pink.png",
+            );
+            // 出てくるときは透明から始まるため、表示し終わるまで待つ
+            await waitFor(async () =>
+                expect(
+                    await page.findByText("!moripa_pink.png をコピーしました"),
+                ).toBeVisible(),
+            );
+        } finally {
+            restore();
+        }
+    },
+};
+
+// Clipboard API も execCommand も使えないときは、写せなかったことだけを知らせる
+export const CopyFailed: Story = {
+    args: { stamps: sampleStamps },
+    play: async ({ canvasElement }) => {
+        const restore = mockClipboard({
+            writeText: fn(async (_text: string) => {
+                throw new Error("denied");
+            }),
+            execCommand: () => false,
+        });
+        try {
+            const canvas = within(canvasElement);
+            const page = within(canvasElement.ownerDocument.body);
+            await userEvent.click(
+                canvas.getByRole("button", { name: "きらきら" }),
+            );
+            // 出てくるときは透明から始まるため、表示し終わるまで待つ
+            await waitFor(async () =>
+                expect(
+                    await page.findByText("コピーできませんでした"),
+                ).toBeVisible(),
+            );
+        } finally {
+            restore();
+        }
     },
 };
 

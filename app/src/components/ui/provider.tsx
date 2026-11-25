@@ -2,6 +2,7 @@
 
 import { MinecraftProvider } from "@morinoparty/chlorophyll-react/components";
 import { useMemo } from "react";
+import { AppToaster } from "../toaster";
 import { ColorModeProvider, type ColorModeProviderProps } from "./color-mode";
 import { PaletteProvider } from "./palette";
 
@@ -39,6 +40,8 @@ export function Provider({
                 config={minecraftConfig}
             >
                 <ColorModeProvider enableSystem={false} {...props} />
+                {/* toast はページをまたいで出すため、ここに 1 つだけ置く */}
+                <AppToaster />
             </MinecraftProvider>
         </PaletteProvider>
     );
