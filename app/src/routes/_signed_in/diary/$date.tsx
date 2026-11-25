@@ -51,7 +51,8 @@ export const Route = createFileRoute("/_signed_in/diary/$date")({
     },
     // 一度開いた日に戻ったときは、取り直さずにすぐ出す (サーバー側も同じ長さでキャッシュしている)
     staleTime: 60 * 1000,
-    // サインインの確認を待つ間も、押した直後から同じ形の場所取りを出す。
+    // この日の確認 (beforeLoad) に入ったらすぐ場所取りを出す。親 (_signed_in) のサインイン確認が
+    // 終わるまでは出せない (router が子の待ち表示を始めるのはその後) 。
     // 場所取りと届いた画面は同じ形なので、短く切り替わっても点滅しない
     pendingMs: 0,
     pendingMinMs: 0,
@@ -95,7 +96,11 @@ const DiaryDateContent = ({
  * 今日を開いたのに今日の日記がまだ無く、前の日の日記が最新のときは、そちらへ移す。
  * ホームの「すべて見る」は今日を開くため、4 時を過ぎて最初の記録が届く前に押したときに働く
  */
-const useMoveToLatest = (date: string, today: string, page: DiaryPageData) => {
+const useMoveToLatest = (
+    date: string,
+    today: string,
+    page: DiaryPageData,
+): boolean => {
     const navigate = Route.useNavigate();
     const latestDate = page.latestDate;
     const shouldMove =
@@ -112,6 +117,7 @@ const useMoveToLatest = (date: string, today: string, page: DiaryPageData) => {
             });
         }
     }, [shouldMove, latestDate, navigate]);
+    return shouldMove;
 };
 
 interface DiaryDateLoadedProps {
@@ -121,13 +127,14 @@ interface DiaryDateLoadedProps {
 }
 
 const DiaryDateLoaded = ({ date, today, page }: DiaryDateLoadedProps) => {
-    useMoveToLatest(date, today, page);
+    const isMoving = useMoveToLatest(date, today, page);
     return (
         <DiaryDateContent
             date={date}
             today={today}
             known={page}
-            result={page.result}
+            // 最新の日へ移る間は「日記はありません」を一瞬出さず、場所取りのままにする
+            result={isMoving ? null : page.result}
         />
     );
 };

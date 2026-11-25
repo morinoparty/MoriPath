@@ -5,7 +5,7 @@ import { type DiaryDocument, diaryDocumentSchema } from "../-types/diary";
 const FETCH_TIMEOUT_MS = 3000;
 // API の Cache-Control (private, max-age=60) に合わせて isolate 内で使い回す
 const CACHE_TTL_MS = 60 * 1000;
-// まとめの付いた (締まった) 日はもう変わらないため、長く使い回す
+// 締まってまとめの付いた日はもう変わらないため、長く使い回す
 const CLOSED_DAY_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 // 日付を遡るたびに増え続けないよう、覚えておく日数に上限を設ける
 const MAX_CACHE_ENTRIES = 64;
@@ -18,9 +18,10 @@ const cache = new Map<
 
 /** 取得した値を覚える。上限を超えたら古いものから捨てる (Map は追加順に並ぶ) */
 const remember = (key: string, value: DiaryDocument | null, now: number) => {
-    // "latest" は翌日に別の日を指すので、締まっていても短くする
+    // "latest" は翌日に別の日を指すので、締まっていても短くする。
+    // 締まった (isFinalized) うえにまとめまで付いた日だけを、もう変わらないものとして扱う
     const ttl =
-        key !== "latest" && value?.summary?.trim()
+        key !== "latest" && value?.isFinalized && value.summary?.trim()
             ? CLOSED_DAY_CACHE_TTL_MS
             : CACHE_TTL_MS;
     cache.delete(key);
