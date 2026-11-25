@@ -12,8 +12,8 @@ import { buildMarkersUrl } from "./world-map-coords";
 
 // squaremap は数分おきにしかマーカーを書き出さないので、isolate 内で数分使い回す
 const CACHE_TTL_MS = 3 * 60 * 1000;
-// オーバーワールドの markers.json は数 MB あるため、余裕を持たせる
-const FETCH_TIMEOUT_MS = 10 * 1000;
+// /map の loader はこの取得を待つため、squaremap が遅いときは早めにあきらめて画面側の再取得に任せる (数 MB あるので少し長め)
+const FETCH_TIMEOUT_MS = 5 * 1000;
 
 /** 1 ワールド分の変換済みマーカー。JSON 文字列のまま持ち、そのまま返す */
 interface CompactMarkerStrings {
