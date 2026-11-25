@@ -45,3 +45,29 @@ export const Compound: Story = {
         </HomeHeader.Root>
     ),
 };
+
+// 左上のパーティ切り替えを開いた状態。つりのパーティはまだ選べない
+export const PartySwitcherOpen: Story = {
+    render: () => (
+        <HomeHeader.Root>
+            <HomeHeader.ServerSwitcher defaultOpen />
+            <HomeHeader.Actions>
+                <HomeHeader.NotificationButton />
+                <HomeHeader.Avatar session={sampleSession} />
+            </HomeHeader.Actions>
+        </HomeHeader.Root>
+    ),
+};
+
+// 右上の顔アイコンのメニューを開いた状態
+export const UserMenuOpen: Story = {
+    render: () => (
+        <HomeHeader.Root>
+            <HomeHeader.ServerSwitcher />
+            <HomeHeader.Actions>
+                <HomeHeader.NotificationButton />
+                <HomeHeader.Avatar session={sampleSession} defaultOpen />
+            </HomeHeader.Actions>
+        </HomeHeader.Root>
+    ),
+};

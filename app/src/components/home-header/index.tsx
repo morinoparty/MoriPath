@@ -1,20 +1,17 @@
-import { Menu } from "@ark-ui/react/menu";
-import { Bell, Check, ChevronDown } from "lucide-react";
+import { Menu } from "@morinoparty/chlorophyll-react/components";
+import { Bell, ChevronDown } from "lucide-react";
 import type { PropsWithChildren } from "react";
 import { sva } from "../../../styled-system/css";
 import type { SessionData } from "../../lib/server-functions";
 import { LoginStatus } from "../login-status";
-import { type Palette, usePalette } from "../ui/palette";
 
 const homeHeaderStyle = sva({
     slots: [
         "root",
         "switcher",
-        "logo",
+        "partyIcon",
         "chevron",
-        "menuContent",
-        "menuItem",
-        "menuCheck",
+        "indicator",
         "actions",
         "iconButton",
         "avatarFrame",
@@ -28,57 +25,45 @@ const homeHeaderStyle = sva({
             paddingX: "6",
             paddingY: "2",
         },
-        // ロゴ + 下向き矢印のピル。ページの地より一段明るい面に載せる
+        // いまのパーティ (アイコン + 名前 + 下向き矢印) のピル。ページの地より一段明るい面に載せる
         switcher: {
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "6px",
-            padding: "6px 10px 6px 8px",
+            gap: "2",
+            height: "40px",
+            paddingLeft: "2.5",
+            paddingRight: "3",
             bg: "colorPalette.surface.subtle",
-            color: "colorPalette.fg",
             borderRadius: "full",
-            cursor: "pointer",
+            fontSize: "sm",
+            fontWeight: "bold",
+            whiteSpace: "nowrap",
             transition: "background 0.15s",
             _hover: {
                 bg: "colorPalette.surface.hover",
             },
         },
-        logo: {
-            width: "24px",
-            height: "28px",
+        // パーティのアイコン。トリガーと項目の先頭で同じ大きさにそろえる
+        partyIcon: {
+            flexShrink: "0",
+            width: "20px",
+            height: "20px",
             objectFit: "contain",
+            // 選べない項目では、灰色になるラベルに合わせてアイコンも薄くする
+            "[data-disabled] > &": {
+                opacity: "0.5",
+            },
         },
         chevron: {
             width: "16px",
             height: "16px",
-        },
-        // ポップオーバーは浮かせる要素なので白い面 + 影にする
-        menuContent: {
-            minWidth: "160px",
-            padding: "1",
-            bg: "bg.panel",
-            color: "colorPalette.fg",
-            borderRadius: "popover",
-            boxShadow: "floating",
-            zIndex: "dropdown",
-            outline: "none",
-        },
-        menuItem: {
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "2",
-            padding: "6px 8px",
-            fontSize: "sm",
-            borderRadius: "item",
-            cursor: "pointer",
-            _highlighted: {
-                bg: "colorPalette.surface.hover",
+            transition: "transform 0.15s",
+            // 開いているあいだは上向きにする
+            "[data-state=open] > &": {
+                transform: "rotate(180deg)",
             },
         },
-        menuCheck: {
-            width: "16px",
-            height: "16px",
+        // 項目の先頭はパーティのアイコンにするので、選択中の印は行末に寄せる
+        indicator: {
+            marginLeft: "auto",
         },
         actions: {
             display: "flex",
@@ -123,62 +108,87 @@ const homeHeaderStyle = sva({
     },
 });
 
-// 切り替え候補のパレット。ラベルは短く、メニュー内でのみ表示する
-const paletteOptions: readonly { value: Palette; label: string }[] = [
-    { value: "mori", label: "もり" },
-    { value: "umi", label: "うみ" },
+type PartyId = "mori" | "tsuri";
+
+interface PartyOption {
+    value: PartyId;
+    label: string;
+    /** app/public に置いたアイコン画像のパス */
+    icon: string;
+    /** まだ切り替えられないパーティ */
+    disabled?: boolean;
+}
+
+// 切り替え候補のパーティ。つりのパーティはまだ移れないので選べないようにしておく
+const partyOptions: readonly PartyOption[] = [
+    { value: "mori", label: "もりのパーティ", icon: "/moripa.svg" },
+    {
+        value: "tsuri",
+        label: "つりのパーティ",
+        // https://fishing.plugin.morino.party/ の favicon
+        icon: "/icons/tsuri-no-party.png",
+        disabled: true,
+    },
 ];
+
+// このサイト (MoriPath) はもりのパーティのポータルなので、いまのパーティは常にもりのパーティ
+const currentParty = partyOptions[0];
 
 const Root = ({ children }: PropsWithChildren) => {
     const style = homeHeaderStyle();
     return <header className={style.root}>{children}</header>;
 };
 
-/** ロゴのピル。押すとカラーパレット (もり / うみ) を選ぶメニューを開く */
-const ServerSwitcher = () => {
+interface ServerSwitcherProps {
+    /** Storybook で開いた状態を見せるため */
+    defaultOpen?: boolean;
+}
+
+/** いまのパーティのピル。押すとパーティ (もりのパーティ / つりのパーティ) を選ぶメニューを開く */
+const ServerSwitcher = ({ defaultOpen }: ServerSwitcherProps) => {
     const style = homeHeaderStyle();
-    const { palette, setPalette } = usePalette();
 
     return (
         <Menu.Root
-            onSelect={({ value }) => {
-                // メニューの値はパレット名なので、候補にあるものだけ反映する
-                const option = paletteOptions.find((o) => o.value === value);
-                if (option) {
-                    setPalette(option.value);
-                }
-            }}
+            defaultOpen={defaultOpen}
+            positioning={{ placement: "bottom-start", gutter: 8 }}
         >
-            <Menu.Trigger
-                className={style.switcher}
-                aria-label="テーマを切り替え"
-            >
+            {/* 名前はピルに見えている「もりのパーティ」から付く。メニューも aria-labelledby でこの名前を引き継ぐ */}
+            <Menu.Trigger className={style.switcher}>
                 <img
-                    className={style.logo}
-                    src="/moripa.svg"
+                    className={style.partyIcon}
+                    src={currentParty.icon}
                     alt=""
-                    width={24}
-                    height={28}
+                    width={20}
+                    height={20}
                 />
+                {currentParty.label}
                 <ChevronDown className={style.chevron} aria-hidden />
             </Menu.Trigger>
             <Menu.Positioner>
-                <Menu.Content className={style.menuContent}>
-                    {paletteOptions.map((option) => (
-                        <Menu.Item
-                            key={option.value}
-                            value={option.value}
-                            className={style.menuItem}
-                        >
-                            {option.label}
-                            {palette === option.value && (
-                                <Check
-                                    className={style.menuCheck}
-                                    aria-hidden
+                <Menu.Content>
+                    {/* 選べるのは 1 つだけなので、選択中が aria-checked で伝わる RadioItem にする */}
+                    <Menu.RadioItemGroup value={currentParty.value}>
+                        {partyOptions.map((option) => (
+                            <Menu.RadioItem
+                                key={option.value}
+                                value={option.value}
+                                disabled={option.disabled}
+                            >
+                                <img
+                                    className={style.partyIcon}
+                                    src={option.icon}
+                                    alt=""
+                                    width={20}
+                                    height={20}
                                 />
-                            )}
-                        </Menu.Item>
-                    ))}
+                                {option.label}
+                                <Menu.ItemIndicator
+                                    className={style.indicator}
+                                />
+                            </Menu.RadioItem>
+                        ))}
+                    </Menu.RadioItemGroup>
                 </Menu.Content>
             </Menu.Positioner>
         </Menu.Root>
@@ -206,14 +216,16 @@ const NotificationButton = () => {
 
 interface AvatarProps {
     session: SessionData;
+    /** Storybook で開いた状態を見せるため */
+    defaultOpen?: boolean;
 }
 
 /** 自分の顔アイコン。押すとプロフィール / 設定 / ログアウトのメニューを開く */
-const Avatar = ({ session }: AvatarProps) => {
+const Avatar = ({ session, defaultOpen }: AvatarProps) => {
     const style = homeHeaderStyle();
     return (
         <LoginStatus.Root session={session} className={style.avatarFrame}>
-            <LoginStatus.Menu.Root session={session}>
+            <LoginStatus.Menu.Root session={session} defaultOpen={defaultOpen}>
                 <LoginStatus.Menu.Trigger>
                     <LoginStatus.Avatar className={style.avatar} />
                 </LoginStatus.Menu.Trigger>

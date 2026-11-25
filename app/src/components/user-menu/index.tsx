@@ -1,15 +1,16 @@
-import { Menu } from "@ark-ui/react/menu";
+import { Menu } from "@morinoparty/chlorophyll-react/components";
 import { Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { LogOutIcon, Settings, UserIcon } from "lucide-react";
 import type { PropsWithChildren } from "react";
 import { createContext, useContext } from "react";
-import { css, sva } from "../../../styled-system/css";
 import { getAuth } from "../../lib/auth";
 import type { SessionData } from "../../lib/server-functions";
 
 export interface UserMenuProps {
     session: SessionData;
+    /** Storybook で開いた状態を見せるため */
+    defaultOpen?: boolean;
 }
 
 interface UserMenuContextValue {
@@ -28,61 +29,25 @@ const useUserMenuContext = () => {
     return context;
 };
 
-// Ark UI の Menu はヘッドレスなので、パネルと項目の見た目をここで持つ
-const userMenuStyle = sva({
-    slots: ["content", "groupLabel", "separator", "item", "itemRow"],
-    base: {
-        content: {
-            minWidth: "160px",
-            padding: "1",
-            bgColor: "bg.panel",
-            color: "fg",
-            border: "1px solid",
-            borderColor: "border",
-            borderRadius: "md",
-            boxShadow: "overlay",
-            zIndex: "dropdown",
-            outline: "none",
-        },
-        groupLabel: {
-            padding: "6px 8px",
-            fontSize: "sm",
-            fontWeight: "bold",
-            color: "fg.muted",
-        },
-        separator: {
-            marginY: "1",
-            border: "none",
-            borderTop: "1px solid",
-            borderColor: "border.muted",
-        },
-        item: {
-            display: "block",
-            width: "100%",
-            padding: "6px 8px",
-            fontSize: "sm",
-            borderRadius: "sm",
-            cursor: "pointer",
-            _highlighted: {
-                bgColor: "colorPalette.surface.hover",
-            },
-        },
-        itemRow: {
-            display: "flex",
-            alignItems: "center",
-            gap: "2",
-        },
-    },
-});
-
-const Root = ({ session, children }: PropsWithChildren<UserMenuProps>) => {
+// 見た目は Chlorophyll の Menu レシピに任せ、ここでは項目の中身と動作だけを持つ
+const Root = ({
+    session,
+    defaultOpen,
+    children,
+}: PropsWithChildren<UserMenuProps>) => {
     if (!session?.user) {
         return null;
     }
 
     return (
         <UserMenuContext.Provider value={{ session }}>
-            <Menu.Root>{children}</Menu.Root>
+            {/* 画面の右上の顔アイコンから開くので、右端をそろえて画面外にはみ出さないようにする */}
+            <Menu.Root
+                defaultOpen={defaultOpen}
+                positioning={{ placement: "bottom-end", gutter: 8 }}
+            >
+                {children}
+            </Menu.Root>
         </UserMenuContext.Provider>
     );
 };
@@ -101,16 +66,15 @@ export interface ContentProps {
 
 const Content = ({ children }: ContentProps) => {
     const { session } = useUserMenuContext();
-    const style = userMenuStyle();
 
     return (
         <Menu.Positioner>
-            <Menu.Content className={style.content}>
+            <Menu.Content>
+                {/* 誰としてログインしているかを見出しで示す */}
                 <Menu.ItemGroup>
-                    <Menu.ItemGroupLabel className={style.groupLabel}>
+                    <Menu.ItemGroupLabel>
                         {session?.user?.name}
                     </Menu.ItemGroupLabel>
-                    <Menu.Separator className={style.separator} />
                     {children}
                 </Menu.ItemGroup>
             </Menu.Content>
@@ -119,28 +83,23 @@ const Content = ({ children }: ContentProps) => {
 };
 
 const ProfileItem = () => {
-    const style = userMenuStyle();
     return (
-        <Menu.Item value="profile" className={style.item} asChild>
+        // 遷移はリンクに任せるため、項目そのものを Link として描画する
+        <Menu.Item value="profile" asChild>
             <Link to="/my-page">
-                <span className={style.itemRow}>
-                    <UserIcon size={16} />
-                    <span>プロフィール</span>
-                </span>
+                <UserIcon size={16} aria-hidden />
+                プロフィール
             </Link>
         </Menu.Item>
     );
 };
 
 const SettingsItem = () => {
-    const style = userMenuStyle();
     return (
-        <Menu.Item value="settings" className={style.item} asChild>
+        <Menu.Item value="settings" asChild>
             <Link to="/my-page">
-                <span className={style.itemRow}>
-                    <Settings size={16} />
-                    <span>設定</span>
-                </span>
+                <Settings size={16} aria-hidden />
+                設定
             </Link>
         </Menu.Item>
     );
@@ -155,36 +114,23 @@ const signOutAction = createServerFn().handler(async ({ request }: any) => {
 });
 
 const LogoutItem = () => {
-    const style = userMenuStyle();
-    const handleLogout = async (e: React.MouseEvent) => {
-        e.preventDefault();
+    // サインアウトしたら、ログイン前の状態で描き直すために再読み込みする
+    const handleLogout = async () => {
         await signOutAction();
         window.location.reload();
     };
 
     return (
-        <Menu.Item value="logout" className={style.item} asChild>
-            <button
-                type="button"
-                onClick={handleLogout}
-                className={css({
-                    background: "none",
-                    border: "none",
-                    textAlign: "left",
-                })}
-            >
-                <span className={style.itemRow}>
-                    <LogOutIcon size={16} />
-                    <span>ログアウト</span>
-                </span>
-            </button>
+        // 破壊的な操作なので Chlorophyll の danger 表示にする。クリックでも Enter でも onSelect が呼ばれる
+        <Menu.Item value="logout" variant="danger" onSelect={handleLogout}>
+            <LogOutIcon size={16} aria-hidden />
+            ログアウト
         </Menu.Item>
     );
 };
 
 const Separator = () => {
-    const style = userMenuStyle();
-    return <Menu.Separator className={style.separator} />;
+    return <Menu.Separator />;
 };
 
 export const UserMenu = {
