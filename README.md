@@ -120,13 +120,13 @@ The app is deployed with the `cf` CLI as the Worker `moripath` and served only o
 A single workflow, `.github/workflows/deploy.yml`, runs on pull requests, on push to `main` and on manual dispatch. Every run executes `check:ci`, `typecheck`, the Storybook build (with the Vite Task cache restored from the GitHub Actions cache), `vp build` and `cf deploy --prebuilt --mode production --dry-run`. Then:
 
 - **Push to `main`**: deploys to production with `cf deploy --prebuilt --mode production --secrets-file`.
-- **Pull requests**: uploads a Worker Version with `cf workers versions create` (not deployed to production) and gives it the preview alias `pr-<N>`. PR runs check out and build the PR head commit (not the merge commit), so each upload matches one commit. This yields two preview URLs:
-  - the PR alias URL (`pr-<N>`), which always points to the latest commit of the PR
-  - the Version URL, which stays pinned to that commit
+- **Pull requests**: deploys a [Cloudflare Preview](https://developers.cloudflare.com/workers/previews/) named `pr-<N>` with `cf previews deploy` (not production). The app is rebuilt as a Preview build (`CLOUDFLARE_PREVIEW_BUILD=true vp build`) first. PR runs check out and build the PR head commit (not the merge commit), so each deploy matches one commit. This yields two preview URLs:
+  - the Preview URL (`https://pr-<N>-moripath.morinoparty.workers.dev`), which always points to the latest deploy of the PR
+  - the deployment URL (`https://<deployment id>-moripath.morinoparty.workers.dev`), which stays pinned to that commit
 
-  Storybook is served under `/storybook/` on both. The URLs, the Worker Version ID and the head commit are posted as a PR comment, which is edited in place on later pushes, and are also written to the run's job summary.
-- A re-run of an older run whose head is no longer the PR head skips the upload and the comment, so the PR alias does not go back to old code.
-- Previews use the production Worker secrets. MineAuth sign-in may fail on preview origins, because the redirect URI `<origin>/api/auth/callback/MineAuth` is not registered for them.
+  Storybook is served under `/storybook/` on both. The URLs, the Preview deployment ID and the head commit are posted as a PR comment, which is edited in place on later pushes, and are also written to the run's job summary. Unlike Version URLs, Previews keep their logs in Workers Logs (observability comes from `cloudflare.config.ts`).
+- A re-run of an older run whose head is no longer the PR head skips the deploy and the comment, so the Preview does not go back to old code.
+- Previews use the production Worker secrets. `cf previews deploy` cannot take a secrets file, so CI writes them into the Previews Base settings of the Worker before deploying. A new Preview receives them when it is created, and later deploys of the same Preview keep the secrets of its previous deploy (delete the Preview with `cf previews delete pr-<N> --worker moripath` to pick up rotated secrets). MineAuth sign-in may fail on preview origins, because the redirect URI `<origin>/api/auth/callback/MineAuth` is not registered for them.
 - Previews are skipped for pull requests from forks and from Dependabot, which do not receive repository secrets.
 
 Secrets are read from GitHub Actions secrets: `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` for the `cf` CLI, and `AUTH_SECRET`, `SERVER_URL`, `MC_API_URL`, `MC_ASSETS_URL`, `WORLD_MAP_URL`, `DIARY_API_URL` and `DIARY_SHARED_KEY`, which CI uploads as Worker secrets with `cf deploy --secrets-file`. Register them from your local `.env`:

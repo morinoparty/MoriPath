@@ -36,4 +36,4 @@
 ## `.github/`
 
 - `workflows/` — GitHub Actions ワークフロー
-  - `deploy.yml` — PR・`main` への push・手動実行でのチェックとビルド。`main` への push で本番デプロイ、PR では preview 用の Worker Version を upload して URL をコメント
+  - `deploy.yml` — PR・`main` への push・手動実行でのチェックとビルド。`main` への push で本番デプロイ、PR では Cloudflare の Preview に deploy して URL をコメント

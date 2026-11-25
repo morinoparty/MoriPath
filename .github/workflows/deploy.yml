@@ -2,13 +2,14 @@
 #
 # PR・main への push・手動実行で check / typecheck / build / dry-run を行い、
 # main への push のときだけ本番 deploy する。
-# PR では本番に deploy しない Worker Version を preview alias (pr-<番号>) 付きで upload し、
-# PR (最新の commit) と commit 固定の 2 つの URL を PR にコメントする。
+# PR では Cloudflare の Preview (pr-<番号>) に deploy し、
+# PR (最新の commit) と deploy 固定の 2 つの URL を PR にコメントする。
+# Version URL と違い、Preview は Workers Logs にログが残る。
 # 必要な secret:
 #   CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID … cf CLI 用 (Worker には渡さない)
 #   AUTH_SECRET, SERVER_URL, MC_API_URL, MC_ASSETS_URL,
 #   WORLD_MAP_URL, DIARY_API_URL,
-#   DIARY_SHARED_KEY                            … Worker secret (--secrets-file で渡す)
+#   DIARY_SHARED_KEY                            … Worker secret (本番は --secrets-file、Preview は Base 設定で渡す)
 name: Deploy
 
 on:
@@ -95,42 +96,38 @@ jobs:
         working-directory: app
         run: vp exec cf deploy --prebuilt --mode production --dry-run
 
-      # PR の preview。本番には deploy せず、Worker Version だけを upload して
-      # preview alias (pr-<番号>) を付ける。
-      # secret は本番と同じ値を --secrets-file でこの Version にだけ渡す。
-      # 引き継ぎに任せると、本番にまだ無い secret (新しく追加したもの) を解決できず upload が失敗する。
+      # PR の preview。本番には deploy せず、Cloudflare の Preview (pr-<番号>) に deploy する。
+      # Version URL (versions create --preview-alias) は Workers Logs にログが残らないため、Preview を使う。
+      # Preview は本番の設定を引き継がないので、observability は cloudflare.config.ts の値がそのまま Preview にも付く。
       # fork と Dependabot の PR には repository secrets が渡されないのでスキップする
       - if: >-
           github.event_name == 'pull_request'
           && github.event.pull_request.head.repo.full_name == github.repository
           && github.actor != 'dependabot[bot]'
         id: preview
-        name: Upload preview version
+        name: Deploy preview
         working-directory: app
         run: |
-          # 古い run の再実行で alias を古いコードに戻さないよう、PR の head が進んでいたら upload しない
+          # 古い run の再実行で Preview を古いコードに戻さないよう、PR の head が進んでいたら deploy しない
           current_head="$(gh api "repos/${GH_REPO}/pulls/${PR_NUMBER}" --jq .head.sha)"
           if [ "$current_head" != "$HEAD_SHA" ]; then
-            echo "::notice::PR の head が ${current_head::8} に進んでいるため、${HEAD_SHA::8} の preview は upload しません"
+            echo "::notice::PR の head が ${current_head::8} に進んでいるため、${HEAD_SHA::8} の preview は deploy しません"
             echo "stale=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           short_sha="${HEAD_SHA::8}"
-          alias="pr-${PR_NUMBER}"
-          # URL は 2 つ得られる。
-          #   alias (pr-<番号>)          … その PR の最新 commit を指し続ける
-          #   Version (<Version ID 8 桁>) … この commit の upload に固定される
-          # commit SHA は数字で始まることがあり、英小文字始まりが必要な alias には使えないため、
-          # commit に固定した URL には Version の URL を使う
-          # cf は upload 結果を ND-JSON で WRANGLER_OUTPUT_FILE_PATH に書き出す
-          export WRANGLER_OUTPUT_FILE_PATH="$RUNNER_TEMP/cf-output.ndjson"
-          rm -f "$WRANGLER_OUTPUT_FILE_PATH"
-          # 空の secret で upload しないよう、揃っていなければ止める
+          preview_name="pr-${PR_NUMBER}"
+
+          # Preview には --secrets-file を渡せない。新しい Preview は作られたときに
+          # Previews Base 設定の secret を受け取るため、本番と同じ値を Base 設定に入れておく。
+          # 既にある Preview の次の deploy は、前の deploy の secret を引き継ぐ
+          # 空の secret を入れないよう、揃っていなければ止める
           : "${AUTH_SECRET:?}" "${SERVER_URL:?}" "${MC_API_URL:?}" "${MC_ASSETS_URL:?}" "${WORLD_MAP_URL:?}" \
             "${DIARY_API_URL:?}" "${DIARY_SHARED_KEY:?}"
-          secrets_file="$RUNNER_TEMP/worker-secrets.json"
-          # 失敗しても secret のファイルを残さない
-          trap 'rm -f "$secrets_file"' EXIT
+          base_config_body="$RUNNER_TEMP/previews-base-config.json"
+          base_config_result="$RUNNER_TEMP/previews-base-config-result.json"
+          # 失敗しても secret を含むファイルを残さない
+          trap 'rm -f "$base_config_body" "$base_config_result"' EXIT
           jq -n \
             --arg AUTH_SECRET "$AUTH_SECRET" \
             --arg SERVER_URL "$SERVER_URL" \
@@ -139,33 +136,52 @@ jobs:
             --arg WORLD_MAP_URL "$WORLD_MAP_URL" \
             --arg DIARY_API_URL "$DIARY_API_URL" \
             --arg DIARY_SHARED_KEY "$DIARY_SHARED_KEY" \
-            '$ARGS.named' > "$secrets_file"
-          vp exec cf workers versions create --prebuilt --mode production \
-            --preview-alias "$alias" --tag "$alias" \
-            --message "PR #${PR_NUMBER} (${short_sha})" \
-            --secrets-file "$secrets_file"
-          result="$(jq -c 'select(.type == "version-upload")' "$WRANGLER_OUTPUT_FILE_PATH" | tail -n 1)"
-          printf '%s\n' "$result"
-          version_id="$(jq -r '.version_id // empty' <<<"$result")"
-          pr_url="$(jq -r '.preview_alias_url // empty' <<<"$result")"
-          version_url="$(jq -r '.preview_url // empty' <<<"$result")"
-          if [ -z "$version_id" ]; then
-            echo "::error::cf の出力から Worker Version ID を取得できませんでした"
+            '{previews_base_config: {env: ($ARGS.named | map_values({type: "secret_text", text: .}))}}' \
+            > "$base_config_body"
+          # cf に Base 設定の secret を入れるコマンドが無いため、cf が内部で使う API を直接呼ぶ (merge-patch なので他の設定は残る)
+          status="$(curl -sS -o "$base_config_result" -w '%{http_code}' -X PATCH \
+            "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/workers/${WORKER_NAME}" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H "Content-Type: application/merge-patch+json" \
+            --data-binary "@${base_config_body}")"
+          # 応答には設定が含まれるので、本文は出さずに成否とエラーだけを見る
+          if [ "$status" != "200" ] || [ "$(jq -r '.success' "$base_config_result")" != "true" ]; then
+            echo "::error::Previews Base 設定の secret を更新できませんでした (HTTP ${status})"
+            jq -c '.errors // empty' "$base_config_result" || true
             exit 1
           fi
-          # preview URL は Worker の preview_urls が有効なときだけ返る
-          if [ -z "$pr_url" ] || [ -z "$version_url" ]; then
-            echo "::warning::cf の出力に preview URL がありません"
+
+          # cf は deploy 結果を ND-JSON で WRANGLER_OUTPUT_FILE_PATH に書き出す
+          export WRANGLER_OUTPUT_FILE_PATH="$RUNNER_TEMP/cf-output.ndjson"
+          rm -f "$WRANGLER_OUTPUT_FILE_PATH"
+          # Preview 用の Build Output (buildContext.isPreview) が要るので、Preview としてビルドし直す
+          CLOUDFLARE_PREVIEW_BUILD=true vp build
+          vp exec cf previews deploy --prebuilt --mode production --preview-name "$preview_name"
+          result="$(jq -c 'select(.type == "preview")' "$WRANGLER_OUTPUT_FILE_PATH" | tail -n 1)"
+          printf '%s\n' "$result"
+          deployment_id="$(jq -r '.deployment_id // empty' <<<"$result")"
+          # URL は 2 つ得られる。
+          #   Preview (pr-<番号>)   … その PR の最新の deploy を指し続ける
+          #   Deployment (<ID>)    … この commit の deploy に固定される
+          pr_url="$(jq -r '.preview_urls[0] // empty' <<<"$result")"
+          deployment_url="$(jq -r '.deployment_urls[0] // empty' <<<"$result")"
+          if [ -z "$deployment_id" ]; then
+            echo "::error::cf の出力から Preview の deployment ID を取得できませんでした"
+            exit 1
+          fi
+          if [ -z "$pr_url" ] || [ -z "$deployment_url" ]; then
+            echo "::warning::cf の出力に Preview の URL がありません"
           fi
           {
             echo "short_sha=${short_sha}"
-            echo "version_id=${version_id}"
+            echo "deployment_id=${deployment_id}"
             echo "pr_url=${pr_url}"
-            echo "version_url=${version_url}"
+            echo "deployment_url=${deployment_url}"
           } >> "$GITHUB_OUTPUT"
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          WORKER_NAME: moripath
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -193,11 +209,11 @@ jobs:
               echo "| 🌐 PR #${PR_NUMBER} (latest) | ${PR_URL} |"
               echo "| 📚 Storybook (latest) | ${PR_URL}/storybook/ |"
             fi
-            if [ -n "$VERSION_URL" ]; then
-              echo "| 📌 Commit \`${SHORT_SHA}\` | ${VERSION_URL} |"
-              echo "| 📚 Storybook (\`${SHORT_SHA}\`) | ${VERSION_URL}/storybook/ |"
+            if [ -n "$DEPLOYMENT_URL" ]; then
+              echo "| 📌 Commit \`${SHORT_SHA}\` | ${DEPLOYMENT_URL} |"
+              echo "| 📚 Storybook (\`${SHORT_SHA}\`) | ${DEPLOYMENT_URL}/storybook/ |"
             fi
-            echo "| 🧩 Worker Version | \`${VERSION_ID}\` |"
+            echo "| 🧩 Preview deployment | \`${DEPLOYMENT_ID}\` |"
             echo "| 🔖 Head commit | [\`${SHORT_SHA}\`](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${HEAD_SHA}) |"
             echo
             echo "> [!NOTE]"
@@ -213,9 +229,9 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           SHORT_SHA: ${{ steps.preview.outputs.short_sha }}
-          VERSION_ID: ${{ steps.preview.outputs.version_id }}
+          DEPLOYMENT_ID: ${{ steps.preview.outputs.deployment_id }}
           PR_URL: ${{ steps.preview.outputs.pr_url }}
-          VERSION_URL: ${{ steps.preview.outputs.version_url }}
+          DEPLOYMENT_URL: ${{ steps.preview.outputs.deployment_url }}
 
       # 本番 deploy は main への push のときだけ
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
