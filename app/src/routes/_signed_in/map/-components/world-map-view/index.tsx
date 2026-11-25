@@ -22,7 +22,14 @@ const worldMapViewStyle = sva({
             // Leaflet のペインは z-index 400〜1000 を使うので、ここで重なりを閉じて TabBar を上に保つ
             isolation: "isolate",
             zIndex: "base",
-            bg: "colorPalette.bg.subtle",
+            // タイルの無いところ (読み込み前・範囲外) の色。ネザーとエンドはゲームの空と同じ暗い色にし、
+            // 明るい面がタイルの縁に見えないようにする。下の地図 (world-map-canvas) も同じ変数で塗る
+            "--map-void": "{colors.colorPalette.bg.subtle}",
+            // ネザーの霧の色 (Minecraft の nether_wastes の fog_color 0x330808)
+            "&[data-world=minecraft_the_nether]": { "--map-void": "#330808" },
+            // エンドの空は黒
+            "&[data-world=minecraft_the_end]": { "--map-void": "#000000" },
+            bg: "var(--map-void)",
         },
         controls: {
             // ステータスバーの下に、左右 16px を空けて操作ボタンを並べる
@@ -92,7 +99,7 @@ export const WorldMapView = ({
     );
 
     return (
-        <div className={style.root}>
+        <div className={style.root} data-world={world}>
             {baseUrl === null ? (
                 <p className={style.message}>マップを表示できません</p>
             ) : (

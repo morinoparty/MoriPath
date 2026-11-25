@@ -43,8 +43,8 @@ const mapStyle = css({
     inset: 0,
     // Leaflet のペイン (z-index 400〜) を地図の中に閉じ込め、上に浮かぶ操作ボタンより下にする
     zIndex: 0,
-    // タイルの読み込み前・範囲外は淡い面で埋める
-    bg: "colorPalette.bg.subtle",
+    // タイルの読み込み前・範囲外は、ワールドごとの色 (world-map-view の --map-void) で埋める
+    bg: "var(--map-void, {colors.colorPalette.bg.subtle})",
     // Leaflet の CSS が当てる欧文フォントではなく、アプリの本文と同じ書体で駅名などを描く
     "&.leaflet-container": {
         fontFamily: "inherit",
