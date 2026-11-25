@@ -1,13 +1,11 @@
-import {
-    PlayerAvatarGroup,
-    Timeline,
-} from "@morinoparty/chlorophyll-react/components";
+import { Timeline } from "@morinoparty/chlorophyll-react/components";
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 import type { PropsWithChildren } from "react";
 import { sva } from "../../../../../styled-system/css";
 import { formatDiaryTime } from "../../-functions/format-diary-time";
 import type { DiaryEntry } from "../../-types/diary";
+import { DiaryPlayers } from "../diary-players";
 
 // 最新の日の日記を開くページ (/diary は最新の日付に移す)
 const DIARY_LIST_PATH = "/diary";
@@ -22,7 +20,6 @@ const diarySectionStyle = sva({
         "time",
         "description",
         "meta",
-        "avatars",
         "empty",
     ],
     base: {
@@ -79,10 +76,6 @@ const diarySectionStyle = sva({
             height: "0",
             overflow: "visible",
         },
-        avatars: {
-            // 重なった顔の間のリングをページの地色にして、切り抜いたように見せる
-            "--player-avatar-group-ring-color": "{colors.colorPalette.bg}",
-        },
         empty: {
             textStyle: "sm",
             color: "colorPalette.fg.muted",
@@ -136,16 +129,10 @@ const Entries = ({ entries }: EntriesProps) => {
                         <Timeline.Description className={style.description}>
                             {entry.description}
                         </Timeline.Description>
-                        {/* 居合わせたプレイヤーがいるときだけ右端に顔を並べる */}
+                        {/* 居合わせたプレイヤーがいるときだけ右端に顔を並べる。「+N」を押すと全員を見られる */}
                         {entry.players.length > 0 && (
                             <Timeline.Meta className={style.meta}>
-                                <PlayerAvatarGroup
-                                    players={entry.players}
-                                    max={3}
-                                    size="sm"
-                                    aria-label="居合わせたプレイヤー"
-                                    className={style.avatars}
-                                />
+                                <DiaryPlayers players={entry.players} />
                             </Timeline.Meta>
                         )}
                     </Timeline.Content>
