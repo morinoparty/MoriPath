@@ -1,4 +1,7 @@
-import type { SkinViewerAnimation } from "@morinoparty/chlorophyll-react/components";
+import type {
+    SkinViewerAnimation,
+    SkinViewerPose,
+} from "@morinoparty/chlorophyll-react/components";
 
 /** ポートレートのスキンの立ち方。開くたびにどれか 1 つをランダムに選ぶ */
 export type PortraitPoseId = "front" | "diagonal" | "pickaxe" | "wave";
@@ -11,6 +14,8 @@ export interface PortraitPose {
     pitch: number;
     /** 再生するアニメーション */
     animation: SkinViewerAnimation;
+    /** アニメーションの上から指定する関節の角度 (度)。スクロールに合わせて直立へ補間する */
+    joints?: SkinViewerPose;
     /** 右手に持たせるアイテムの ID。アイテムのアセットを解決できないときは持たせない */
     rightHandItem?: string;
 }

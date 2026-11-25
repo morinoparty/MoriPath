@@ -1,14 +1,19 @@
 import {
+    interpolateSkinViewerPose,
     PlayerAvatar,
     SkinViewer,
     type SkinViewerAnimation,
+    type SkinViewerPose,
     useMinecraftConfig,
 } from "@morinoparty/chlorophyll-react/components";
 import { CatchBoundary } from "@tanstack/react-router";
-import { memo, useEffect, useLayoutEffect, useState } from "react";
+import { memo, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { cx, sva } from "../../../../../../styled-system/css";
 import { useFitText } from "../../../../../lib/use-fit-text";
-import { estimateSkinHead } from "../../-functions/collapsing-portrait";
+import {
+    estimateSkinHead,
+    zoomForTallerCanvas,
+} from "../../-functions/collapsing-portrait";
 import {
     pickPortraitPose,
     resolvePortraitPose,
@@ -19,9 +24,6 @@ import type { MyPagePlayer, PlayerPresence } from "../../-types/my-page";
 import type { PortraitPoseId } from "../../-types/portrait-pose";
 
 // SSR では useLayoutEffect が警告を出すため、サーバーでは useEffect に切り替える
-
-// Chlorophyll の SkinViewer が skinview3d と同じ three で手持ちアイテムを作れるようになったら true にする
-const HELD_ITEMS_SUPPORTED = false;
 const useIsomorphicLayoutEffect =
     typeof window === "undefined" ? useEffect : useLayoutEffect;
 
@@ -31,8 +33,22 @@ const WORLD_IMAGE_URL = "/castle-width.png";
 // 3D スキンの canvas の大きさ。最初に 1 回だけ作り、縮小は transform で行う。
 // 横幅は斜めのポーズで前に出した腕と持ったアイテムが切れない広さにする (顔の位置は幅の中央で変わらない)
 const SKIN_WIDTH = 440;
-const SKIN_HEIGHT = 576;
-const SKIN_HEAD = estimateSkinHead({ width: SKIN_WIDTH, height: SKIN_HEIGHT });
+// canvas の上端 (ポートレートの上端から)。この余白の分だけ canvas を上下に広げ、
+// 掲げたツルハシの先が canvas の上端で切れないようにする
+const SKIN_TOP = 34;
+const SKIN_HEADROOM = SKIN_TOP;
+const SKIN_BASE_HEIGHT = 576;
+const SKIN_HEIGHT = SKIN_BASE_HEIGHT + SKIN_HEADROOM * 2;
+// 広げてもスキンの大きさと顔の位置 (画面上) が変わらないよう、カメラを引く
+const SKIN_ZOOM = zoomForTallerCanvas({
+    baseHeight: SKIN_BASE_HEIGHT,
+    height: SKIN_HEIGHT,
+});
+const SKIN_HEAD = estimateSkinHead({
+    width: SKIN_WIDTH,
+    height: SKIN_HEIGHT,
+    zoom: SKIN_ZOOM,
+});
 
 // ポートレートとコンパクトバーの高さ (ステータスバー分の safe-area を除く)。
 // 差がアニメーションに使うスクロール量になる
@@ -111,7 +127,7 @@ const playerPortraitStyle = sva({
         skin: {
             // 中央に置いた canvas を JS で translate + scale する (transform-origin は顔の中心)
             position: "absolute",
-            top: "calc(34px + env(safe-area-inset-top))",
+            top: `calc(${SKIN_TOP - SKIN_HEADROOM}px + env(safe-area-inset-top))`,
             left: `calc(50% - ${SKIN_WIDTH / 2}px)`,
             width: `${SKIN_WIDTH}px`,
             height: `${SKIN_HEIGHT}px`,
@@ -288,9 +304,16 @@ interface PortraitSkinProps {
     yaw: number;
     pitch: number;
     animation: SkinViewerAnimation;
+    /** ポーズの関節の角度 (度)。poseWeight の割合で直立から補間する */
+    joints: SkinViewerPose | undefined;
+    /** ポーズの強さ (1 でポーズのまま、0 で直立) */
+    poseWeight: number;
     rightHandItem: string | undefined;
     className: string;
 }
+
+// 直立 (すべての関節が 0 度)
+const REST_POSE: SkinViewerPose = {};
 
 // 向きやポーズが変わったときだけ再レンダーされるよう、SkinViewer を小さな部品に閉じ込める
 const PortraitSkin = memo(
@@ -300,25 +323,41 @@ const PortraitSkin = memo(
         yaw,
         pitch,
         animation,
+        joints,
+        poseWeight,
         rightHandItem,
         className,
-    }: PortraitSkinProps) => (
-        <SkinViewer
-            playerId={playerId}
-            width={SKIN_WIDTH}
-            height={SKIN_HEIGHT}
-            // yaw は最初から数値で渡す (undefined から切り替えると向きが飛ぶ)
-            yaw={yaw}
-            pitch={pitch}
-            autoRotate={false}
-            interactive={false}
-            animation={animation}
-            // アイテムは同じ viewer の右腕に押し出したメッシュとして付く。読み込めなければ何も持たない
-            rightHandItem={rightHandItem}
-            className={className}
-            aria-label={`${playerName} のスキン`}
-        />
-    ),
+    }: PortraitSkinProps) => {
+        // 関節の角度を直立から補間する。poseWeight が同じ間は同じオブジェクトを渡す
+        const pose = useMemo(
+            () =>
+                joints
+                    ? interpolateSkinViewerPose(REST_POSE, joints, poseWeight)
+                    : undefined,
+            [joints, poseWeight],
+        );
+        return (
+            <SkinViewer
+                playerId={playerId}
+                width={SKIN_WIDTH}
+                height={SKIN_HEIGHT}
+                zoom={SKIN_ZOOM}
+                // yaw は最初から数値で渡す (undefined から切り替えると向きが飛ぶ)
+                yaw={yaw}
+                pitch={pitch}
+                autoRotate={false}
+                interactive={false}
+                // アニメーションは止めずに強さだけを下げ、腕を途中で跳ねさせずに直立へ戻す
+                animation={animation}
+                animationWeight={poseWeight}
+                pose={pose}
+                // アイテムは同じ viewer の右腕に押し出したメッシュとして付く。読み込めなければ何も持たない
+                rightHandItem={rightHandItem}
+                className={className}
+                aria-label={`${playerName} のスキン`}
+            />
+        );
+    },
 );
 
 export interface PlayerPortraitProps {
@@ -346,14 +385,11 @@ export const PlayerPortrait = ({
     useIsomorphicLayoutEffect(() => {
         setRandomPose(pickPortraitPose());
     }, []);
-    // アイテムのモデル・テクスチャを解決できないと SkinViewer が例外を投げるため、そのときは持たせない。
-    // また、いまの Chlorophyll はアイテムを skinview3d と別の three で作るため、持たせると描画が止まる。
-    // three を 1 つに揃えるため skinview3d の three を上書きすると、今度は skinview3d の後片付け (fxaaPass) が落ちるので、
-    // Chlorophyll 側で直るまではアイテムを持たせない (ポーズの腕の形だけ出す)
+    // アイテムのモデル・テクスチャを解決できないと SkinViewer が例外を投げるため、そのときは持たせない
     const minecraftConfig = useMinecraftConfig();
-    const canHoldItem =
-        HELD_ITEMS_SUPPORTED &&
-        Boolean(minecraftConfig.resolveModel && minecraftConfig.resolveTexture);
+    const canHoldItem = Boolean(
+        minecraftConfig.resolveModel && minecraftConfig.resolveTexture,
+    );
     const reducedMotion = usePrefersReducedMotion();
     const poseView = resolvePortraitPose(pose ?? randomPose, {
         reducedMotion,
@@ -444,10 +480,10 @@ export const PlayerPortrait = ({
                             playerName={player.name}
                             yaw={skinView.yaw}
                             pitch={skinView.pitch}
-                            // 縮み始めて背中を向けたら腕を下ろし、着地する顔を正面の姿勢にそろえる
-                            animation={
-                                skinView.posing ? poseView.animation : "none"
-                            }
+                            // 縮むにつれて腕と頭を直立へ戻し、着地する顔を正面の姿勢にそろえる
+                            animation={poseView.animation}
+                            joints={poseView.joints}
+                            poseWeight={skinView.poseWeight}
                             rightHandItem={poseView.rightHandItem}
                             className={style.skinCanvas}
                         />

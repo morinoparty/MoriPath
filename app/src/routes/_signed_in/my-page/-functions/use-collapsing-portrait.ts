@@ -57,12 +57,12 @@ export interface UseCollapsingPortraitOptions {
 export interface PortraitSkinView {
     yaw: number;
     pitch: number;
-    /** false ならポーズのアニメーションをやめて腕を下ろす */
-    posing: boolean;
+    /** ポーズの強さ (1 でポーズのまま、0 で腕を下ろした直立) */
+    poseWeight: number;
 }
 
 const isSameView = (a: PortraitSkinView, b: PortraitSkinView): boolean =>
-    a.yaw === b.yaw && a.pitch === b.pitch && a.posing === b.posing;
+    a.yaw === b.yaw && a.pitch === b.pitch && a.poseWeight === b.poseWeight;
 
 /**
  * root から見た要素の位置を、transform を無視したレイアウト上の値で求める。
@@ -130,7 +130,7 @@ export const useCollapsingPortrait = ({
     const [skinView, setSkinView] = useState<PortraitSkinView>({
         yaw: startYaw,
         pitch: startPitch,
-        posing: true,
+        poseWeight: 1,
     });
 
     // 現在のスクロール量から見た目を計算して書き込む
@@ -211,7 +211,7 @@ export const useCollapsingPortrait = ({
         const next: PortraitSkinView = {
             yaw: frame.yaw,
             pitch: frame.pitch,
-            posing: frame.posing,
+            poseWeight: frame.poseWeight,
         };
         setSkinView((current) => (isSameView(current, next) ? current : next));
     }, [nameRef, skinHead, skinHeight]);

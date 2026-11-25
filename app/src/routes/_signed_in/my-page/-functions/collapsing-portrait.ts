@@ -28,8 +28,8 @@ export interface PortraitFrame {
     yaw: number;
     /** カメラの垂直角 (度)。ポーズの角度から 0 (真横) へ戻す */
     pitch: number;
-    /** ポーズのアニメーションを続けるか。false なら腕を下ろした姿勢 (アニメーションなし) にする */
-    posing: boolean;
+    /** ポーズの強さ (0〜1)。1 でポーズのまま、0 で腕を下ろした直立。関節の角度をこの割合で補間する */
+    poseWeight: number;
     /** 3D スキンの不透明度 */
     skinOpacity: number;
     /** コンパクトバーの 2D アバターの不透明度 */
@@ -87,8 +87,8 @@ export const toMaskImage = ({ start, end }: BodyMask): string =>
         : `linear-gradient(to bottom, #000 ${(start * 100).toFixed(1)}%, transparent ${(end * 100).toFixed(1)}%)`;
 
 /**
- * ポーズのアニメーションをやめて腕を下ろす進み具合。
- * アニメーションを切り替えると関節が一度に戻るため、背中を向けていて胴体もマスクで消えている区間で切り替える
+ * ポーズから直立へ戻しきる進み具合。
+ * 0 からここまでで関節の角度を少しずつ戻し、途中で腕が跳ねないようにする
  */
 export const POSE_RELEASE_AT = 0.5;
 
@@ -108,6 +108,16 @@ export const remap = (value: number, start: number, end: number): number =>
 /** 動き出しと止まり際をなめらかにするイージング */
 export const easeInOutSine = (t: number): number =>
     (1 - Math.cos(Math.PI * clamp01(t))) / 2;
+
+// ポーズの強さを丸める単位。スクロールのたびに SkinViewer を再レンダーしないよう、1% 刻みにする
+const POSE_WEIGHT_STEP = 100;
+
+/** 進み具合からポーズの強さ (1 → 0) を求める。戻し始めと戻し終わりをなめらかにする */
+export const poseWeightAt = (progress: number): number =>
+    Math.round(
+        (1 - easeInOutSine(remap(progress, 0, POSE_RELEASE_AT))) *
+            POSE_WEIGHT_STEP,
+    ) / POSE_WEIGHT_STEP;
 
 /**
  * スクロール量から進み具合 (0〜1) を求める。
@@ -157,9 +167,37 @@ export const flipTransform = ({
 export const toTransform = ({ x, y, scale }: FlipTransform): string =>
     `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
 
-// skinview3d の既定値 (Chlorophyll の SkinViewer は fov / zoom を渡していない)
+// skinview3d の既定値 (Chlorophyll の SkinViewer で fov / zoom を省略したときの値)
 const SKINVIEW_FOV_DEG = 50;
 const SKINVIEW_ZOOM = 0.9;
+
+// skinview3d のカメラ距離 (viewer.adjustCameraDistance と同じ式。10〜256 に丸める)
+const skinCameraDistance = (tanHalfFov: number, zoom: number): number =>
+    Math.min(Math.max(4.5 + 16.5 / tanHalfFov / zoom, 10), 256);
+
+/**
+ * canvas を縦に広げても、スキンが同じ大きさで描かれる zoom を求める。
+ * 縦の画角は canvas の高さに対して固定なので、高さを広げた分だけカメラを引き、顔の面での 1 単位あたりの px を保つ
+ */
+export const zoomForTallerCanvas = ({
+    baseHeight,
+    height,
+    fov = SKINVIEW_FOV_DEG,
+    zoom = SKINVIEW_ZOOM,
+}: {
+    /** 元の canvas の高さ (px) */
+    baseHeight: number;
+    /** 広げた canvas の高さ (px) */
+    height: number;
+    fov?: number;
+    zoom?: number;
+}): number => {
+    const tanHalfFov = Math.tan((fov * Math.PI) / 180 / 2);
+    // 顔の面 (原点から手前に 4) までの距離を高さの比で伸ばす
+    const faceDistance =
+        ((skinCameraDistance(tanHalfFov, zoom) - 4) * height) / baseHeight;
+    return 16.5 / tanHalfFov / (faceDistance + 4 - 4.5);
+};
 
 /**
  * skinview3d のカメラ配置から、canvas の中で顔が描かれる位置と大きさを求める。
@@ -179,10 +217,7 @@ export const estimateSkinHead = ({
     zoom?: number;
 }): SkinHead => {
     const tanHalfFov = Math.tan((fov * Math.PI) / 180 / 2);
-    const distance = Math.min(
-        Math.max(4.5 + 16.5 / tanHalfFov / zoom, 10),
-        256,
-    );
+    const distance = skinCameraDistance(tanHalfFov, zoom);
     // 顔の面 (カメラから distance - 4 の距離) での 1 ブロック単位あたりの px
     const pxPerUnit = height / (2 * (distance - 4) * tanHalfFov);
     return {
@@ -233,7 +268,7 @@ export const portraitFrame = (
             // 回転させず、ポーズの向きのまま入れ替える
             yaw: startYaw,
             pitch: startPitch,
-            posing: true,
+            poseWeight: 1,
             skinOpacity: 1 - swap,
             avatarOpacity: swap,
             barOpacity: swap,
@@ -257,7 +292,7 @@ export const portraitFrame = (
         yaw: Math.round(lerp(startYaw, 360, eased)),
         // 見下ろす角度も同じ進み具合で真横へ戻し、バーの 2D の顔と重なる向きで着地させる
         pitch: Math.round(lerp(startPitch, 0, eased)),
-        posing: p < POSE_RELEASE_AT,
+        poseWeight: poseWeightAt(p),
         skinOpacity: 1 - swap,
         avatarOpacity: swap,
         barOpacity: remap(p, 0.5, 0.85),
