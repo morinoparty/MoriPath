@@ -34,6 +34,10 @@ export interface PortraitFrame {
     barOpacity: number;
     /** ポートレート下端のグラデーション帯の不透明度 */
     bandOpacity: number;
+    /** ポートレートの層にある同じ帯 (バーより奥) のぼかしの不透明度 */
+    heroBlurOpacity: number;
+    /** ポートレートの層にある同じ帯 (バーより奥) の色の不透明度 */
+    heroTintOpacity: number;
     /** オンライン・サーバーのピルの不透明度 */
     badgesOpacity: number;
     /** 大きな名前の不透明度 */
@@ -151,6 +155,10 @@ export const portraitFrame = (
     const p = clamp01(progress);
     // グラデーション帯はバーより手前の層にあるため、バーが出る前に消しておく
     const bandOpacity = 1 - remap(p, 0.25, 0.7);
+    // 奥の帯のぼかしは手前の帯が消え始める前に出しきる。半透明のまま重ねると下端が透け、背景の切れ目が見える
+    const heroBlurOpacity = remap(p, 0.1, 0.25);
+    // 色は手前の帯と足して 1 枚分になるよう入れ替え、重なった区間だけ帯が濃くなるのを防ぐ
+    const heroTintOpacity = 1 - bandOpacity;
     // ピルは名前より先に消し、名前だけがバーへ移るようにする
     const badgesOpacity = 1 - remap(p, 0, 0.35);
 
@@ -164,6 +172,8 @@ export const portraitFrame = (
             avatarOpacity: swap,
             barOpacity: swap,
             bandOpacity,
+            heroBlurOpacity,
+            heroTintOpacity,
             badgesOpacity,
             nameOpacity: 1 - remap(p, 0.3, 0.7),
             barNameOpacity: swap,
@@ -181,6 +191,8 @@ export const portraitFrame = (
         avatarOpacity: swap,
         barOpacity: remap(p, 0.5, 0.85),
         bandOpacity,
+        heroBlurOpacity,
+        heroTintOpacity,
         badgesOpacity,
         nameOpacity: 1 - remap(p, 0.6, 0.9),
         barNameOpacity: remap(p, 0.7, 1),

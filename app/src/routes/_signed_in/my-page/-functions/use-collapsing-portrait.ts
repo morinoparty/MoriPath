@@ -82,8 +82,10 @@ export const useCollapsingPortrait = ({
     const skinRef = useRef<HTMLDivElement>(null);
     const badgesRef = useRef<HTMLDivElement>(null);
     const bandRef = useRef<HTMLDivElement>(null);
-    // バーより奥にある同じ帯。手前の帯が消える間に入れ替え、ポートレート下端の切れ目を見せない
-    const heroBandRef = useRef<HTMLDivElement>(null);
+    // バーより奥にある同じ帯。ぼかしは手前の帯が消え始める前に出しきり、ポートレート下端の切れ目を見せない
+    const heroBlurRef = useRef<HTMLDivElement>(null);
+    // 奥の帯の色。手前の帯の色と入れ替えて、重ねても 1 枚分の濃さに保つ
+    const heroTintRef = useRef<HTMLDivElement>(null);
     // コンパクトバー
     const barRef = useRef<HTMLDivElement>(null);
     const barBackgroundRef = useRef<HTMLDivElement>(null);
@@ -148,7 +150,8 @@ export const useCollapsingPortrait = ({
         const opacities: [HTMLElement | null, number][] = [
             [badgesRef.current, frame.badgesOpacity],
             [bandRef.current, frame.bandOpacity],
-            [heroBandRef.current, 1 - frame.bandOpacity],
+            [heroBlurRef.current, frame.heroBlurOpacity],
+            [heroTintRef.current, frame.heroTintOpacity],
             [barBackgroundRef.current, frame.barOpacity],
             [barAvatarRef.current, frame.avatarOpacity],
             [barNameRef.current, frame.barNameOpacity],
@@ -277,7 +280,8 @@ export const useCollapsingPortrait = ({
         skinRef,
         badgesRef,
         bandRef,
-        heroBandRef,
+        heroBlurRef,
+        heroTintRef,
         barRef,
         barBackgroundRef,
         barAvatarRef,

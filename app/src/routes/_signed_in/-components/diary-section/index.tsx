@@ -21,6 +21,7 @@ const diarySectionStyle = sva({
         "moreIcon",
         "time",
         "description",
+        "meta",
         "avatars",
         "empty",
     ],
@@ -61,10 +62,22 @@ const diarySectionStyle = sva({
             fontWeight: "bold",
             color: "colorPalette.fg",
         },
-        // 本文も読み物として fg で出す
+        // 本文も読み物として fg で出す。デザインでは顔の列の下まで横幅いっぱいに使う
         description: {
+            gridColumn: "1 / -1",
+            // 時刻の行からはみ出す顔 (上下 6px ずつ) と重ならないよう、レシピ既定より少し空ける。
+            // 顔の有無で間隔が変わらないよう、全項目で同じ値にする
+            mt: "2",
             textStyle: "md",
             color: "colorPalette.fg",
+        },
+        // 顔は時刻の行だけに置き、本文の幅を狭めない (レシピ既定は 3 行にまたがる)
+        meta: {
+            gridRow: "1",
+            alignSelf: "center",
+            // 高さを 0 にして 32px の顔で時刻の行を広げず、顔を時刻の行の中心に揃える
+            height: "0",
+            overflow: "visible",
         },
         avatars: {
             // 重なった顔の間のリングをページの地色にして、切り抜いたように見せる
@@ -125,7 +138,7 @@ const Entries = ({ entries }: EntriesProps) => {
                         </Timeline.Description>
                         {/* 居合わせたプレイヤーがいるときだけ右端に顔を並べる */}
                         {entry.players.length > 0 && (
-                            <Timeline.Meta>
+                            <Timeline.Meta className={style.meta}>
                                 <PlayerAvatarGroup
                                     players={entry.players}
                                     max={3}

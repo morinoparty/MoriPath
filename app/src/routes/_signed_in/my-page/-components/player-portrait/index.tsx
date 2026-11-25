@@ -302,7 +302,8 @@ export const PlayerPortrait = ({
         skinRef,
         badgesRef,
         bandRef,
-        heroBandRef,
+        heroBlurRef,
+        heroTintRef,
         barRef,
         barBackgroundRef,
         barAvatarRef,
@@ -327,10 +328,15 @@ export const PlayerPortrait = ({
                 />
                 <div className={style.wash} />
                 {/* 手前の帯が消えた後も、背景の下端を本文の地へなじませる (最初は手前の帯と重ならないよう隠す) */}
-                <div ref={heroBandRef} className={style.heroBand}>
-                    <div className={style.bandBlur} />
-                    <div className={style.bandTint} />
-                </div>
+                {/* 不透明度は層ごとに当てる (包む要素に当てるとぼかしが背景を拾えなくなる) */}
+                <div
+                    ref={heroBlurRef}
+                    className={cx(style.bandBlur, style.heroBand)}
+                />
+                <div
+                    ref={heroTintRef}
+                    className={cx(style.bandTint, style.heroBand)}
+                />
             </div>
 
             <div className={style.overlay}>
