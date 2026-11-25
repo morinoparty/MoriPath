@@ -8,9 +8,8 @@ const FETCH_TIMEOUT_MS = 3000;
 // API の Cache-Control (private, max-age=60) に合わせて isolate 内で使い回す
 const CACHE_TTL_MS = 60 * 1000;
 
-let cache:
-    | { value: Promise<DiaryEntry[] | null>; expiresAt: number }
-    | undefined;
+// Workers ではリクエストをまたいで Promise を共有できないため、取得し終えた値だけを持つ
+let cache: { value: DiaryEntry[] | null; expiresAt: number } | undefined;
 
 /** 最新のダイアリーを取得する。まだ無ければ null */
 async function fetchLatestDiary(
@@ -42,19 +41,15 @@ export const getDiaryEntries = createServerFn().handler(
         }
 
         const now = Date.now();
-        if (!cache || cache.expiresAt <= now) {
-            const value = fetchLatestDiary(config);
-            // 失敗した Promise はキャッシュせず、次のリクエストで取り直す
-            value.catch(() => {
-                if (cache?.value === value) {
-                    cache = undefined;
-                }
-            });
-            cache = { value, expiresAt: now + CACHE_TTL_MS };
+        if (cache && cache.expiresAt > now) {
+            return cache.value;
         }
 
         try {
-            return await cache.value;
+            const value = await fetchLatestDiary(config);
+            // 失敗はキャッシュせず、次のリクエストで取り直す
+            cache = { value, expiresAt: now + CACHE_TTL_MS };
+            return value;
         } catch (error) {
             console.warn("ダイアリーを取得できません:", error);
             return null;
