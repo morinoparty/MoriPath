@@ -82,6 +82,9 @@ export const toMaskImage = ({ start, end }: BodyMask): string =>
         ? ""
         : `linear-gradient(to bottom, #000 ${(start * 100).toFixed(1)}%, transparent ${(end * 100).toFixed(1)}%)`;
 
+/** 動く名前とバーの名前を入れ替える進み具合 (着地しきる直前) */
+export const NAME_SWAP_AT = 0.995;
+
 export const clamp01 = (value: number): number =>
     Math.min(Math.max(value, 0), 1);
 
@@ -203,7 +206,8 @@ export const portraitFrame = (
     // 色は手前の帯と足して 1 枚分になるよう入れ替え、重なった区間だけ帯が濃くなるのを防ぐ
     const heroTintOpacity = 1 - bandOpacity;
     // ピルは名前より先に消し、名前だけがバーへ移るようにする
-    const badgesOpacity = 1 - remap(p, 0, 0.35);
+    // 動き出したらすぐ消し、上がってくるスキンや名前と重ならないようにする
+    const badgesOpacity = 1 - remap(p, 0, 0.15);
 
     if (reducedMotion) {
         // 動かさずに、大きい表示とバーを入れ替える
@@ -239,8 +243,10 @@ export const portraitFrame = (
         heroBlurOpacity,
         heroTintOpacity,
         badgesOpacity,
-        nameOpacity: 1 - remap(p, 0.6, 0.9),
-        barNameOpacity: remap(p, 0.7, 1),
+        // 名前は 1 つの要素だけを動かし、バーの名前にぴったり重なったところで一度に入れ替える。
+        // 半透明どうしを重ねるクロスフェードにすると、ずれた 2 つの名前が見えてしまうため
+        nameOpacity: p < NAME_SWAP_AT ? 1 : 0,
+        barNameOpacity: p < NAME_SWAP_AT ? 0 : 1,
         bodyMask: bodyFadeMask(p, headBottom),
     };
 };

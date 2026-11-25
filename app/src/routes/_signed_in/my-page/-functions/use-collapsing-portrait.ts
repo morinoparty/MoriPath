@@ -72,6 +72,13 @@ const offsetWithin = (element: HTMLElement, root: HTMLElement): Point => {
  * - スキンの向き (yaw) だけは SkinViewer の prop で渡すため state で返す (整数の度が変わったときだけ更新)
  * - スクロールは passive で受け、requestAnimationFrame で 1 フレーム 1 回にまとめる
  */
+/** to の文字サイズ ÷ from の文字サイズ (測れないときは 1) */
+const fontSizeRatio = (to: HTMLElement, from: HTMLElement): number => {
+    const toSize = Number.parseFloat(getComputedStyle(to).fontSize);
+    const fromSize = Number.parseFloat(getComputedStyle(from).fontSize);
+    return toSize > 0 && fromSize > 0 ? toSize / fromSize : 1;
+};
+
 export const useCollapsingPortrait = ({
     skinHead,
     skinHeight,
@@ -232,11 +239,9 @@ export const useCollapsingPortrait = ({
                 y: nameOffset.y,
             },
             nameTo: { x: barNameRect.left, y: barNameRect.top },
-            // 行の高さの比 = フォントサイズの比 (どちらも line-height 1.05)
-            nameScaleTo:
-                name.offsetHeight > 0
-                    ? barNameRect.height / name.offsetHeight
-                    : 1,
+            // 文字の大きさの比で縮める。箱の高さの比だと行の高さや余白の差で着地点がずれ、
+            // 入れ替えの瞬間に名前が跳ねて見えるため
+            nameScaleTo: fontSizeRatio(barName, name),
         };
         scheduleUpdate();
     }, [skinHead, nameRef, scheduleUpdate]);

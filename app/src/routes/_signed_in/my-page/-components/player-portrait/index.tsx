@@ -2,6 +2,7 @@ import {
     PlayerAvatar,
     SkinViewer,
 } from "@morinoparty/chlorophyll-react/components";
+import { CatchBoundary } from "@tanstack/react-router";
 import { memo } from "react";
 import { cx, sva } from "../../../../../../styled-system/css";
 import { useFitText } from "../../../../../lib/use-fit-text";
@@ -34,6 +35,7 @@ const playerPortraitStyle = sva({
         "overlay",
         "skin",
         "skinCanvas",
+        "skinFallback",
         "heroBand",
         "bandBlur",
         "bandTint",
@@ -105,6 +107,21 @@ const playerPortraitStyle = sva({
             borderRadius: "0",
             // OrbitControls が付ける touch-action: none を打ち消し、スマホで縦スクロールできるようにする
             touchAction: "pan-y !important",
+        },
+        skinFallback: {
+            // WebGL が使えないときは、3D の顔があるはずの位置に同じ大きさの顔アイコンを置く
+            position: "absolute",
+            left: `${SKIN_HEAD.centerX - SKIN_HEAD.size / 2}px`,
+            top: `${SKIN_HEAD.centerY - SKIN_HEAD.size / 2}px`,
+            width: `${SKIN_HEAD.size}px`,
+            height: `${SKIN_HEAD.size}px`,
+            overflow: "hidden",
+            borderRadius: "control",
+            // PlayerAvatar は 48px (md) なので、顔の大きさまで広げる
+            "& > *": {
+                transform: `scale(${SKIN_HEAD.size / 48})`,
+                transformOrigin: "0 0",
+            },
         },
         heroBand: {
             opacity: 0,
@@ -190,9 +207,16 @@ const playerPortraitStyle = sva({
         barBackground: {
             // 半透明の地 + ぼかし。スクロールに合わせて JS で不透明度を上げる
             position: "absolute",
-            inset: "0",
+            top: "0",
+            left: "0",
+            right: "0",
+            // バーの下端でぼかしと色を切ると境目が線に見えるため、下へ 28px 伸ばして
+            // マスクで色とぼかしを一緒に溶かす
+            bottom: "-28px",
             bg: "color-mix(in srgb, {colors.colorPalette.bg} 80%, transparent)",
             backdropFilter: "blur(10px)",
+            maskImage:
+                "linear-gradient(to bottom, #000 calc(100% - 28px), transparent)",
             opacity: 0,
         },
         barContent: {
@@ -348,12 +372,27 @@ export const PlayerPortrait = ({
                         transformOrigin: `${SKIN_HEAD.centerX}px ${SKIN_HEAD.centerY}px`,
                     }}
                 >
-                    <PortraitSkin
-                        playerId={player.id}
-                        playerName={player.name}
-                        yaw={yaw}
-                        className={style.skinCanvas}
-                    />
+                    {/* WebGL を作れない環境では SkinViewer の effect が例外を投げるため、ページ全体を巻き込まないよう囲う */}
+                    <CatchBoundary
+                        getResetKey={() => player.id}
+                        errorComponent={() => (
+                            <div className={style.skinFallback}>
+                                <PlayerAvatar
+                                    playerId={player.id}
+                                    playerName={player.name}
+                                    size="md"
+                                    decorative
+                                />
+                            </div>
+                        )}
+                    >
+                        <PortraitSkin
+                            playerId={player.id}
+                            playerName={player.name}
+                            yaw={yaw}
+                            className={style.skinCanvas}
+                        />
+                    </CatchBoundary>
                 </div>
                 <div ref={bandRef}>
                     <div className={style.bandBlur} />
