@@ -1,5 +1,5 @@
 import { Search } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { type FormEvent, useMemo, useState } from "react";
 import { sva } from "../../../../../../styled-system/css";
 import { HomeHeader } from "../../../../../components/home-header";
 import type { SessionData } from "../../../../../lib/server-functions";
@@ -10,8 +10,6 @@ import { ShopRow } from "../shop-row";
 
 // 一度に並べる行数。アイテムの描画は重いため、続きは「もっと見る」で足す
 const PAGE_SIZE = 40;
-// 入力のたびに URL を書き換えないよう、打ち終わるまで待つ時間
-const SEARCH_DEBOUNCE_MS = 250;
 
 // 絞り込みチップの並びと表示名
 const filterOptions: readonly { value: ShopFilter; label: string }[] = [
@@ -151,8 +149,11 @@ const shopViewStyle = sva({
     },
 });
 
-/** 入力をそのまま画面に映しつつ、親への通知だけを遅らせる検索欄の状態 */
-const useDebouncedSearch = (
+/**
+ * 検索欄の状態。打っているあいだは入力欄だけを書き換え、
+ * Enter (スマホの「検索」キー) か、フォーカスが外れたときに検索語として親へ送る
+ */
+const useSearchDraft = (
     query: string,
     onQueryChange: (query: string) => void,
 ) => {
@@ -166,17 +167,13 @@ const useDebouncedSearch = (
             setDraft(query);
         }
     }
-    useEffect(() => {
-        if (draft.trim() === query) {
-            return;
+    // 入力欄の値を検索語として確定する (変わっていなければ URL を書き換えない)
+    const commit = (value: string = draft) => {
+        if (value.trim() !== query) {
+            onQueryChange(value);
         }
-        const timer = setTimeout(
-            () => onQueryChange(draft),
-            SEARCH_DEBOUNCE_MS,
-        );
-        return () => clearTimeout(timer);
-    }, [draft, query, onQueryChange]);
-    return [draft, setDraft] as const;
+    };
+    return { draft, setDraft, commit };
 };
 
 export interface ShopViewProps {
@@ -204,7 +201,14 @@ export const ShopView = ({
     defaultSelectedShop,
 }: ShopViewProps) => {
     const style = shopViewStyle();
-    const [draft, setDraft] = useDebouncedSearch(query, onQueryChange);
+    const search = useSearchDraft(query, onQueryChange);
+    // Enter で確定したら、スマホのキーボードを閉じるためにフォーカスも外す (blur でも確定するが二重には送らない)
+    const submitSearch = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        search.commit();
+        const input = event.currentTarget.querySelector("input");
+        input?.blur();
+    };
     // 表示件数は検索語とチップの組ごとに持ち、条件が変わったら先頭の数件に戻す
     const listKey = `${filter}:${query}`;
     const [paging, setPaging] = useState({ key: listKey, count: PAGE_SIZE });
@@ -233,17 +237,30 @@ export const ShopView = ({
             <HomeHeader.Builted session={session} />
             <div className={style.body}>
                 <h1 className={style.title}>おみせ</h1>
-                <label className={style.search}>
-                    <Search className={style.searchIcon} aria-hidden />
-                    <input
-                        type="search"
-                        className={style.searchInput}
-                        placeholder="アイテムを探す"
-                        aria-label="アイテムを探す"
-                        value={draft}
-                        onChange={(event) => setDraft(event.target.value)}
-                    />
-                </label>
+                {/* <search> で検索欄だと伝え、中の form で Enter / スマホの「検索」キーを確定にする */}
+                <search>
+                    <form onSubmit={submitSearch}>
+                        <label className={style.search}>
+                            <Search className={style.searchIcon} aria-hidden />
+                            <input
+                                type="search"
+                                enterKeyHint="search"
+                                className={style.searchInput}
+                                placeholder="アイテムを探す"
+                                aria-label="アイテムを探す"
+                                value={search.draft}
+                                onChange={(event) => {
+                                    search.setDraft(event.target.value);
+                                    // ✕ で空にしたときは、確定を待たずに一覧を元に戻す
+                                    if (event.target.value === "") {
+                                        search.commit("");
+                                    }
+                                }}
+                                onBlur={() => search.commit()}
+                            />
+                        </label>
+                    </form>
+                </search>
                 <fieldset aria-label="お店の種類" className={style.filters}>
                     {filterOptions.map((option) => (
                         <button
