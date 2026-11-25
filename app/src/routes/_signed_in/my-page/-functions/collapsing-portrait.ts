@@ -65,8 +65,8 @@ export const bodyFadeMask = (
     progress: number,
     headBottom: number,
 ): BodyMask => {
-    // 回転が始まってすぐ消し始め、2D の顔に入れ替わる前に消しきる
-    const fade = easeInOutSine(remap(progress, 0.05, 0.75));
+    // 回転が始まってすぐ消し始め、縮んだ胴が大きな名前に重なる前 (6 割) に消しきる
+    const fade = easeInOutSine(remap(progress, 0.05, 0.6));
     if (fade <= 0) {
         return NO_BODY_MASK;
     }
