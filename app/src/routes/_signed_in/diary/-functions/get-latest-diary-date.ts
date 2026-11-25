@@ -7,8 +7,7 @@ import { fetchDiaryDocument } from "../../-functions/fetch-diary-document";
 export const getLatestDiaryDate = createServerFn()
     // ページの読み込みとは別に RPC として直接呼べるため、ここでもサインインを確かめる
     .middleware([authMiddleware])
-    .handler(
-    async (): Promise<string | null> => {
+    .handler(async (): Promise<string | null> => {
         const config = getDiaryApiConfig();
         if (!config) {
             return null;
@@ -22,5 +21,4 @@ export const getLatestDiaryDate = createServerFn()
             console.warn("最新のダイアリーを取得できません:", error);
             return null;
         }
-    },
-);
+    });

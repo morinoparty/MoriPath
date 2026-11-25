@@ -12,8 +12,7 @@ import { toDiaryEntries } from "./to-diary-entries";
 export const getDiaryEntries = createServerFn()
     // ページの読み込みとは別に RPC として直接呼べるため、ここでもサインインを確かめる
     .middleware([authMiddleware])
-    .handler(
-    async (): Promise<DiaryEntry[] | null> => {
+    .handler(async (): Promise<DiaryEntry[] | null> => {
         const config = getDiaryApiConfig();
         if (!config) {
             return null;
@@ -26,7 +25,6 @@ export const getDiaryEntries = createServerFn()
             console.warn("ダイアリーを取得できません:", error);
             return null;
         }
-    },
-);
+    });
 
 export type DiaryEntriesData = Awaited<ReturnType<typeof getDiaryEntries>>;

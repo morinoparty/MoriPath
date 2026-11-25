@@ -67,7 +67,12 @@ export const defaultMyPageMenuSections: readonly MyPageMenuSection[] = [
                 icon: LandPlot,
                 href: "/my-page/claims",
             },
-            { id: "shops", label: "自分のお店", icon: Store, href: "/my-page/shops" },
+            {
+                id: "shops",
+                label: "自分のお店",
+                icon: Store,
+                href: "/my-page/shops",
+            },
         ],
     },
     {

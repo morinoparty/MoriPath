@@ -63,7 +63,10 @@ export const DiaryDateNav = ({
         <nav className={style.root} aria-label="日付の移動">
             {canGoBack ? (
                 <IconButton asChild variant="ghost" aria-label="前の日">
-                    <Link to="/diary/$date" params={{ date: addDays(date, -1) }}>
+                    <Link
+                        to="/diary/$date"
+                        params={{ date: addDays(date, -1) }}
+                    >
                         <ChevronLeft />
                     </Link>
                 </IconButton>
