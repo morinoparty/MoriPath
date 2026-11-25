@@ -36,7 +36,14 @@ const layoutStyle = css({
 });
 
 // タブバーを出さず、戻るボタンの上部バーで移動する下層ページ
-const SUB_PAGE_PREFIXES = ["/wallet/", "/balance-claim", "/diary", "/my-page/stamps"];
+const SUB_PAGE_PREFIXES = [
+    "/wallet/",
+    "/balance-claim",
+    "/diary",
+    "/my-page/stamps",
+    "/my-page/claims",
+    "/my-page/shops",
+];
 
 /** 下層ページ (タブバーを出さないページ) か */
 const isSubPage = (pathname: string): boolean =>
