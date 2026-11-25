@@ -23,6 +23,10 @@ export default defineConfig({
             MC_API_URL: bindings.secret(),
             // ワールドマップ (squaremap) のタイル・マーカー・プレイヤー位置の取得元
             WORLD_MAP_URL: bindings.secret(),
+            // もりとぱの AI 日記 (moritopa diary-api) の取得元
+            DIARY_API_URL: bindings.secret(),
+            // diary-api の Bearer 認証に使う共有鍵 (サーバー間通信専用)
+            DIARY_SHARED_KEY: bindings.secret(),
             ASSETS: bindings.assets(),
         },
     },

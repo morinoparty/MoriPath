@@ -6,6 +6,9 @@ import { BalanceTile } from "../balance-tile";
 import { DiarySection } from "../diary-section";
 import { SkinCard } from "../skin-card";
 
+// ホームのダイアリーに出す件数 (新しいほうから)
+const HOME_DIARY_LIMIT = 3;
+
 const homeViewStyle = sva({
     slots: ["root", "body", "title", "hero", "balances"],
     base: {
@@ -63,7 +66,8 @@ export interface HomeViewProps {
     claimBlocks: number | null;
     /** 連続投票日数。取得できなければ null */
     voteStreak: number | null;
-    diaryEntries: DiaryEntry[];
+    /** ダイアリーの記録 (タームの順)。取得できなければ null */
+    diaryEntries: DiaryEntry[] | null;
 }
 
 /** ホーム画面の見た目。データの取得はルートの loader が行う */
@@ -76,6 +80,8 @@ export const HomeView = ({
     diaryEntries,
 }: HomeViewProps) => {
     const style = homeViewStyle();
+    // ホームでは最新の数件だけを時刻順に見せ、続きは一覧ページに任せる
+    const recentDiaryEntries = (diaryEntries ?? []).slice(-HOME_DIARY_LIMIT);
 
     return (
         <div className={style.root}>
@@ -96,7 +102,7 @@ export const HomeView = ({
                 </div>
                 <DiarySection.Root>
                     <DiarySection.Header />
-                    <DiarySection.Entries entries={diaryEntries} />
+                    <DiarySection.Entries entries={recentDiaryEntries} />
                 </DiarySection.Root>
             </div>
         </div>

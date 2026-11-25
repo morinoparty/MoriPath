@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_signed_in/")({
                 getMyClaims().catch(() => null),
                 // getVoteStats は失敗時に null を返すため catch 不要
                 getVoteStats(),
-                getDiaryEntries().catch(() => []),
+                getDiaryEntries().catch(() => null),
                 getUserInfo().catch(() => null),
             ]);
         return { balance, claims, voteStats, diaryEntries, userInfo };

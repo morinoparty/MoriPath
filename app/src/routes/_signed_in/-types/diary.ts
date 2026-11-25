@@ -1,6 +1,37 @@
+import { z } from "zod";
+
+/** ダイアリー API のプレイヤー。uuid は Bot が mc-api で解決できたときだけ入る */
+const diaryResponsePlayerSchema = z.object({
+    name: z.string().min(1),
+    uuid: z.string().min(1).optional(),
+});
+
+/** ダイアリー API の 1 時間ぶんの記録 */
+const diaryResponseEntrySchema = z.object({
+    /** 日本時間の時 (0-23) */
+    hour: z.int().min(0).max(23),
+    content: z.string(),
+    messageCount: z.int().min(0),
+    players: z.array(diaryResponsePlayerSchema),
+});
+
+/** GET /v1/diaries/latest・/v1/diaries/:date の応答 (moritopa の diary-api と同じ形) */
+export const diaryDocumentSchema = z.object({
+    version: z.literal(1),
+    /** ターム (04:00 JST 〜 翌 03:59 JST) の開始日 YYYY-MM-DD */
+    date: z.iso.date(),
+    generatedAt: z.iso.datetime({ offset: true }),
+    isFinalized: z.boolean(),
+    summary: z.string().nullish(),
+    /** タームの順 (4 時 → 翌 3 時) に並ぶ。中身の無い時間を含むことがある */
+    entries: z.array(diaryResponseEntrySchema),
+});
+
+export type DiaryDocument = z.infer<typeof diaryDocumentSchema>;
+
 /** ダイアリーに登場するプレイヤー (PlayerAvatarGroup の players にそのまま渡せる形) */
 export interface DiaryPlayer {
-    /** UUID (ハイフン区切り) */
+    /** UUID (ハイフン区切り)。解決できなかったプレイヤーは名前 */
     id: string;
     name: string;
 }
