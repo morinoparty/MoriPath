@@ -14,7 +14,7 @@ import { getMinecraftAssetsUrlFn } from "../lib/server-functions/get-mc-assets-u
 import appCss from "../style/app.css?url";
 
 // loader から TanStack Query のキャッシュを温められるよう、router の context の型を宣言する
-interface RouterContext {
+export interface RouterContext {
     queryClient: QueryClient;
 }
 
