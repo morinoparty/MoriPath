@@ -158,13 +158,16 @@ const useDebouncedSearch = (
 ) => {
     const [draft, setDraft] = useState(query);
     const [syncedQuery, setSyncedQuery] = useState(query);
-    // 戻る・進むなどで URL 側の検索語が変わったら、描画中に入力欄も合わせる
+    // 戻る・進むなどで URL 側の検索語が変わったら、描画中に入力欄も合わせる。
+    // URL には前後の空白を詰めて入るため、入力欄から送った値と同じなら打ちかけの空白を消さない
     if (query !== syncedQuery) {
         setSyncedQuery(query);
-        setDraft(query);
+        if (query !== draft.trim()) {
+            setDraft(query);
+        }
     }
     useEffect(() => {
-        if (draft === query) {
+        if (draft.trim() === query) {
             return;
         }
         const timer = setTimeout(

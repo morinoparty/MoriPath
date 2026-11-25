@@ -3,11 +3,12 @@ import {
     useMinecraftConfig,
 } from "@morinoparty/chlorophyll-react/components";
 import { Package } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { cva } from "../../../../../../styled-system/css";
+import { itemRenderSlots } from "../../-functions/item-render-slots";
 
-// 画面の外にあるアイコンも、少し手前から用意しておく
-const VISIBLE_ROOT_MARGIN = "200px 0px";
+// 画面に入ったものだけを描く (先読みすると WebGL コンテキストの上限に早く届くため)
+const VISIBLE_ROOT_MARGIN = "0px";
 
 const shopItemIconStyle = cva({
     base: {
@@ -60,32 +61,50 @@ export interface ShopItemIconProps {
 /**
  * お店のアイテムのタイル。
  * ブロックは 1 つずつ WebGL の Canvas で描かれ、ブラウザが同時に持てる数に限りがあるため、
- * 画面の近くにあるあいだだけ MinecraftItem を置く
+ * 画面に入っていて、かつ同時に描く数の枠 (item-render-slots) を取れたあいだだけ MinecraftItem を置く
  */
 export const ShopItemIcon = ({ itemId, size = "md" }: ShopItemIconProps) => {
     const ref = useRef<HTMLDivElement>(null);
-    const [isNearViewport, setIsNearViewport] = useState(false);
+    // 枠を見分けるための、このアイコン固有の印
+    const [token] = useState(() => Symbol(itemId));
     // assets が設定されていない環境 (Storybook など) では MinecraftItem が投げるため、代わりのアイコンを出す
     const { resolveModel, resolveTexture } = useMinecraftConfig();
     const canRenderItem = Boolean(resolveModel && resolveTexture);
 
     useEffect(() => {
         const element = ref.current;
-        if (!element || !canRenderItem) {
+        // 詳細シートの大きなアイコンは枠を使わずに描く (上限はその 1 つ分を残してある)
+        if (!element || !canRenderItem || size === "lg") {
             return;
         }
         const observer = new IntersectionObserver(
-            ([entry]) => setIsNearViewport(entry?.isIntersecting ?? false),
+            ([entry]) => {
+                // 画面に入ったら枠を求め、出たら返す
+                if (entry?.isIntersecting) {
+                    itemRenderSlots.request(token);
+                } else {
+                    itemRenderSlots.release(token);
+                }
+            },
             { rootMargin: VISIBLE_ROOT_MARGIN },
         );
         observer.observe(element);
-        return () => observer.disconnect();
-    }, [canRenderItem]);
+        return () => {
+            observer.disconnect();
+            itemRenderSlots.release(token);
+        };
+    }, [canRenderItem, size, token]);
+    const hasSlot = useSyncExternalStore(
+        itemRenderSlots.subscribe,
+        () => itemRenderSlots.has(token),
+        // サーバーでは描かない (Canvas はクライアントでだけ作る)
+        () => false,
+    );
 
     return (
         <div ref={ref} className={shopItemIconStyle({ size })} aria-hidden>
             {canRenderItem ? (
-                isNearViewport && (
+                (hasSlot || size === "lg") && (
                     <MinecraftItem
                         id={itemId}
                         size={size === "lg" ? "md" : "sm"}

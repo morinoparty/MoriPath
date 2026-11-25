@@ -108,7 +108,20 @@ export async function getItemLang(): Promise<ItemLang | null> {
     }
 }
 
-const mcApiPlayerSchema = z.object({ name: z.string().min(1) });
+// mc-api のプレイヤー情報。名前の持ち方の違い ({ name } / { username } / { data.player.username }) を吸収する
+const mcApiPlayerSchema = z.union([
+    z.object({ name: z.string().min(1) }).transform((value) => value.name),
+    z
+        .object({ username: z.string().min(1) })
+        .transform((value) => value.username),
+    z
+        .object({
+            data: z.object({
+                player: z.object({ username: z.string().min(1) }),
+            }),
+        })
+        .transform((value) => value.data.player.username),
+]);
 
 /** mc-api で UUID からプレイヤー名を引く。見つからなければ null */
 async function fetchOwnerName(uuid: string): Promise<string | null> {
@@ -120,7 +133,12 @@ async function fetchOwnerName(uuid: string): Promise<string | null> {
         return null;
     }
     const parsed = mcApiPlayerSchema.safeParse(await response.json());
-    return parsed.success ? parsed.data.name : null;
+    if (!parsed.success) {
+        // 形が想定と違うと全員が UUID 表示になるため、気づけるようにログに残す
+        console.warn(`mc-api の応答から ${uuid} の名前を読めません`);
+        return null;
+    }
+    return parsed.data;
 }
 
 /**
