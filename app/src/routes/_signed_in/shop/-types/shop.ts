@@ -53,8 +53,8 @@ export const quickShopPageSchema = z.object({
 export interface ShopOwner {
     /** Minecraft の UUID */
     id: string;
-    /** プレイヤー名。引けなければ UUID の先頭 */
-    name: string;
+    /** プレイヤー名。一覧の時点では分からず、画面で mc-api から引くので null のことがある */
+    name: string | null;
 }
 
 /** 画面に出すお店 1 件。API の形から表示に要るものだけを抜き出したもの */

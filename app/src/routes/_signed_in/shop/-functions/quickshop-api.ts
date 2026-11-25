@@ -1,11 +1,7 @@
 import { z } from "zod";
 import { getMinecraftAssetsUrl } from "../../../../lib/mc-assets";
+import { runInBackground } from "../../../../lib/run-in-background";
 import { getServerUrl } from "../../../../lib/server-list";
-import {
-    readSharedCache,
-    runInBackground,
-    writeSharedCache,
-} from "../../../../lib/shared-cache";
 import { type QuickShop, quickShopPageSchema } from "../-types/shop";
 import type { ItemLang } from "./item-name";
 import {
@@ -31,9 +27,6 @@ const SHOPS_FRESH_MS = 60 * 1000;
 const SHOPS_STALE_MS = 10 * 60 * 1000;
 // 同じ isolate で裏の取り直しを重ねない間隔
 const SHOPS_REFRESH_GUARD_MS = 30 * 1000;
-// 共有キャッシュに一覧を残しておく長さ。古すぎて使えなくなっても、区間の目安として読む
-const SHOPS_SHARED_MAX_AGE_S = 24 * 60 * 60;
-const SHOPS_SHARED_KEY = "quickshop-shops";
 // アイテム名の辞書は Minecraft のバージョンを上げるまで変わらない
 const LANG_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
@@ -79,28 +72,15 @@ export async function fetchFirstShopPage(): Promise<ShopPageResult> {
     return fetchShopPage(0);
 }
 
-/** isolate のキャッシュと共有キャッシュのうち新しいほうの一覧 (古さは問わない) */
+/**
+ * isolate のメモリに持っている一覧 (古さは問わない)。
+ * Cache API は呼び出しごとに課金されるため使わず、isolate をまたいだ共有はしない
+ */
 async function readShopSnapshot(): Promise<ShopSnapshot | undefined> {
-    const now = Date.now();
-    // isolate に新しい一覧があれば、共有キャッシュは読まない
-    if (shopsMemory && now - shopsMemory.fetchedAt < SHOPS_FRESH_MS) {
-        return shopsMemory;
-    }
-    const shared = await readSharedCache<ShopSnapshot>(SHOPS_SHARED_KEY);
-    const fromShared =
-        shared !== undefined &&
-        (!shopsMemory || shared.value.fetchedAt > shopsMemory.fetchedAt);
-    if (fromShared) {
-        shopsMemory = shared.value;
-    }
-    // 共有キャッシュが効いているか (workers.dev で Cache API が使えるか) をログで確かめられるようにする
-    console.info(
-        `お店の一覧のキャッシュ: ${fromShared ? "shared" : shopsMemory ? "memory" : "none"}${shopsMemory ? ` (${Math.round((now - shopsMemory.fetchedAt) / 1000)} 秒前)` : ""}`,
-    );
     return shopsMemory;
 }
 
-/** 一覧を API から取り直し、isolate と共有キャッシュに入れる */
+/** 一覧を API から取り直し、isolate のメモリに入れる */
 async function refreshShopSnapshot(
     previous: ShopSnapshot | undefined,
 ): Promise<ShopSnapshot> {
@@ -121,16 +101,6 @@ async function refreshShopSnapshot(
         `お店の一覧を ${Date.now() - startedAt}ms で取り直しました (${shops.length} 件${partial ? "、一部欠け" : ""})`,
     );
     shopsMemory = snapshot;
-    // 欠けた一覧は他の isolate に配らず、次のリクエストで取り直させる
-    if (!partial) {
-        runInBackground(
-            writeSharedCache(
-                SHOPS_SHARED_KEY,
-                { value: snapshot, savedAt: snapshot.fetchedAt },
-                SHOPS_SHARED_MAX_AGE_S,
-            ),
-        );
-    }
     return snapshot;
 }
 

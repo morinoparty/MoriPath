@@ -2,9 +2,6 @@ import { toWorldId } from "../../map/-functions/world-id";
 import type { QuickShop, ShopListing } from "../-types/shop";
 import { type ItemLang, toItemName } from "./item-name";
 
-/** UUID の先頭 8 文字。名前を引けなかった持ち主の仮の名前に使う */
-export const shortUuid = (uuid: string): string => uuid.slice(0, 8);
-
 /** 在庫を、無限 (null)・分からない (undefined)・個数に読み分ける */
 const toStock = (shop: QuickShop): number | null | undefined => {
     // 新しい API は unlimited で、古い API は -1 などの負の値で無限ショップを表す
@@ -15,7 +12,7 @@ const toStock = (shop: QuickShop): number | null | undefined => {
     return shop.remaining ?? undefined;
 };
 
-/** API のお店を画面用の形にする。持ち主の名前はまだ引かず、UUID の先頭を仮に入れておく */
+/** API のお店を画面用の形にする。持ち主の名前はまだ引かない */
 export const toShopListing = (
     shop: QuickShop,
     lang: ItemLang | null,
@@ -36,9 +33,8 @@ export const toShopListing = (
         stock: stock ?? null,
         // 分からない在庫を無限と取り違えないよう、null とは別に印を付ける
         ...(stock === undefined && { stockUnknown: true }),
-        owner: shop.owner
-            ? { id: shop.owner, name: shortUuid(shop.owner) }
-            : null,
+        // 名前は画面で mc-api からまとめて引くので、ここでは UUID だけを持つ
+        owner: shop.owner ? { id: shop.owner, name: null } : null,
         location: {
             world: shop.location.world,
             worldId: toWorldId(shop.location.world),

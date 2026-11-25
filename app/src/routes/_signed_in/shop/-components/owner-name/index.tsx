@@ -10,26 +10,44 @@ export interface OwnerNameProps {
     owner: ShopListing["owner"];
 }
 
-// 名前がまだ届いていないあいだの仮の名前 (UUID の先頭) を控えめに出す
-const pendingStyle = css({ color: "colorPalette.fg.muted" });
+// 名前が届くまでの場所取り。文字の高さと名前くらいの幅の淡い帯にして、届いたときに行がずれないようにする
+const pendingStyle = css({
+    display: "inline-block",
+    width: "6em",
+    height: "1em",
+    verticalAlign: "middle",
+    borderRadius: "full",
+    bg: "colorPalette.surface",
+});
+
+// mc-api に登録されていない (名前を引けない) 持ち主
+const UNKNOWN_OWNER = "名前不明";
 
 /** 一覧に入っている名前をそのまま出す (Storybook や、名前が分かっている画面向け) */
-const StaticOwnerName = ({ owner }: OwnerNameProps) => owner?.name ?? "運営";
+const StaticOwnerName = ({ owner }: OwnerNameProps) =>
+    owner ? (owner.name ?? UNKNOWN_OWNER) : "運営";
 
-/** mc-api から名前を引いて出す。届くまでは一覧に入っている仮の名前を出す */
+/** mc-api から名前を引いて出す。届くまでは淡い帯で場所だけ取る */
 const ResolvedOwnerName = ({ owner }: OwnerNameProps) => {
     const { mcApiUrl } = useLoaderData({ from: "__root__" });
-    const { data: name } = useQuery({
+    const { data: name, isPending } = useQuery({
         ...playerNameQueryOptions(mcApiUrl, owner?.id ?? ""),
-        enabled: owner !== null,
+        enabled: owner !== null && owner.name === null,
     });
     if (!owner) {
         return "運営";
     }
+    // 一覧の時点で名前が分かっているとき (自分のお店など) はそれを使う
+    if (owner.name) {
+        return owner.name;
+    }
     if (name) {
         return name;
     }
-    return <span className={pendingStyle}>{owner.name}</span>;
+    if (isPending) {
+        return <span className={pendingStyle} aria-label="読み込み中" />;
+    }
+    return UNKNOWN_OWNER;
 };
 
 // mc-api から名前を引くか。既定では一覧の名前をそのまま出し、OwnerNameProvider の中だけで引く
