@@ -19,9 +19,6 @@ catalog:
 overrides:
     # 依存が参照する vite も Vite+ のコアに揃え、vite が二重に入らないようにする
     vite@*: "catalog:"
-    # skinview3d の three (^0.156) を Chlorophyll の three (^0.187) に揃える。
-    # 2 つに分かれると、手に持たせたアイテムのメッシュを skinview3d の描画で扱えず描画が止まる
-    skinview3d>three: ^0.187.0
 
 peerDependencyRules:
     # vite-plus-core の版番号は各プラグインの peer 範囲 (vite ^8 など) に一致しないため許可する

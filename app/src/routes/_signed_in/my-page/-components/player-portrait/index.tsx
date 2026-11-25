@@ -19,6 +19,9 @@ import type { MyPagePlayer, PlayerPresence } from "../../-types/my-page";
 import type { PortraitPoseId } from "../../-types/portrait-pose";
 
 // SSR では useLayoutEffect が警告を出すため、サーバーでは useEffect に切り替える
+
+// Chlorophyll の SkinViewer が skinview3d と同じ three で手持ちアイテムを作れるようになったら true にする
+const HELD_ITEMS_SUPPORTED = false;
 const useIsomorphicLayoutEffect =
     typeof window === "undefined" ? useEffect : useLayoutEffect;
 
@@ -343,11 +346,14 @@ export const PlayerPortrait = ({
     useIsomorphicLayoutEffect(() => {
         setRandomPose(pickPortraitPose());
     }, []);
-    // アイテムのモデル・テクスチャを解決できないと SkinViewer が例外を投げるため、そのときは持たせない
+    // アイテムのモデル・テクスチャを解決できないと SkinViewer が例外を投げるため、そのときは持たせない。
+    // また、いまの Chlorophyll はアイテムを skinview3d と別の three で作るため、持たせると描画が止まる。
+    // three を 1 つに揃えるため skinview3d の three を上書きすると、今度は skinview3d の後片付け (fxaaPass) が落ちるので、
+    // Chlorophyll 側で直るまではアイテムを持たせない (ポーズの腕の形だけ出す)
     const minecraftConfig = useMinecraftConfig();
-    const canHoldItem = Boolean(
-        minecraftConfig.resolveModel && minecraftConfig.resolveTexture,
-    );
+    const canHoldItem =
+        HELD_ITEMS_SUPPORTED &&
+        Boolean(minecraftConfig.resolveModel && minecraftConfig.resolveTexture);
     const reducedMotion = usePrefersReducedMotion();
     const poseView = resolvePortraitPose(pose ?? randomPose, {
         reducedMotion,
