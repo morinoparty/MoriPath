@@ -4,6 +4,7 @@ import { TabBar } from "@/components/tab-bar";
 import { MyPageView } from "@/routes/_signed_in/my-page/-components/my-page-view";
 import { css } from "../../styled-system/css";
 import { craftheadAvatarUrl, samplePlayers } from "../sample-players";
+import { sampleStamps } from "../sample-stamps";
 
 const meta: Meta<typeof MyPageView> = {
     title: "MyPage/MyPageView",
@@ -47,15 +48,18 @@ export const Default: Story = {
         player: samplePlayers.nikomaru,
         presence: { online: true, serverName: "資源サーバー" },
         stats: { balance: 12480, claimBlocks: 1240, voteStreak: 7 },
+        stamps: sampleStamps,
     },
 };
 
-// 投票状況などを取得できなかった値は表示しない
+// 投票状況やスタンプなど、取得できなかった値は表示しない
 export const PartialData: Story = {
     args: {
         player: samplePlayers.tututututu201,
         presence: null,
         stats: { balance: 320, claimBlocks: null, voteStreak: null },
+        // スタンプを取得できなければスタンプ帳ごと隠す
+        stamps: null,
     },
 };
 
@@ -65,5 +69,6 @@ export const LongestName: Story = {
         player: { id: samplePlayers.nikomaru.id, name: "mmmmmmmmmmmmmmmm" },
         presence: { online: true, serverName: "生活サーバー" },
         stats: { balance: 12480, claimBlocks: 1240, voteStreak: 7 },
+        stamps: sampleStamps,
     },
 };

@@ -1,3 +1,5 @@
+import type { MyStamps } from "./stamp";
+
 /** マイページに表示するプレイヤー。id はスキンとアバターの取得に使う */
 export interface MyPagePlayer {
     /** Minecraft の UUID (取得できなければ MCID) */
@@ -28,4 +30,6 @@ export interface MyPageData {
     player: MyPagePlayer;
     presence: PlayerPresence | null;
     stats: MyPageStats;
+    /** スタンプ帳。取得できなければ null にしてセクションごと隠す */
+    stamps: MyStamps | null;
 }

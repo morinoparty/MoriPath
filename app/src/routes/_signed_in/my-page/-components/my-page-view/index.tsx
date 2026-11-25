@@ -4,6 +4,7 @@ import type { MyPageMenuSection } from "../../-types/my-page-menu";
 import { MyPageMenu } from "../my-page-menu";
 import { MyPageStats } from "../my-page-stats";
 import { PlayerPortrait, PORTRAIT_COLLAPSE_DISTANCE } from "../player-portrait";
+import { StampBook } from "../stamp-book";
 
 const rootStyle = css({
     // 本文が短くても、ポートレートが縮みきるまでスクロールできる高さを確保する
@@ -28,12 +29,14 @@ export const MyPageView = ({
     player,
     presence,
     stats,
+    stamps,
     menuSections,
 }: MyPageViewProps) => (
     <div className={rootStyle}>
         <PlayerPortrait player={player} presence={presence} />
         <div className={bodyStyle}>
             <MyPageStats stats={stats} />
+            {stamps && <StampBook stamps={stamps} />}
             <MyPageMenu sections={menuSections} />
         </div>
     </div>

@@ -11,6 +11,7 @@
         "preview": "vp build && vp preview",
         "deploy": "cf deploy",
         "cf-typegen": "cf workers types",
+        "generate:stamp-emoji": "node scripts/generate-stamp-emoji.mjs",
         "typecheck": "tsc --noEmit -p tsconfig.cloudflare.json && tsc --noEmit -p tsconfig.node.json"
     },
     "dependencies": {
@@ -46,6 +47,7 @@
         "@vitejs/plugin-react": "^6.3.0",
         "autoprefixer": "^10.7.0",
         "cf": "1.0.0-beta.32",
+        "emojibase-data": "18.0.0",
         "typescript": "^7.0.2",
         "vite-plugin-svgr": "^5.2.0",
         "vite-plus": "catalog:"
