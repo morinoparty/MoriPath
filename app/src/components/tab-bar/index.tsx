@@ -44,7 +44,7 @@ const tabBarStyle = sva({
             left: "50%",
             transform: "translateX(-50%)",
             // 下端から 52px 浮かせる。ホームインジケーターがある端末ではその上に余白を確保する
-            bottom: "max(52px, calc(env(safe-area-inset-bottom) + 16px))",
+            bottom: "max(24px, calc(env(safe-area-inset-bottom) + 8px))",
             zIndex: "sticky",
             display: "flex",
             alignItems: "center",

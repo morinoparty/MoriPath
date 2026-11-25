@@ -113,7 +113,8 @@ const homeHeaderStyle = sva({
         avatar: {
             width: "40px",
             height: "40px",
-            borderRadius: "control",
+            // preset の radius が md なので control だと 6px で角ばる。40px の顔には 12px を当てる
+            borderRadius: "xl",
             border: "2px solid",
             borderColor: "bg.panel",
             imageRendering: "pixelated",

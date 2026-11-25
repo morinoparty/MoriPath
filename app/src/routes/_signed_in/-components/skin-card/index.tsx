@@ -89,7 +89,7 @@ export const SkinCard = ({ playerId, playerName }: SkinCardProps) => {
                         // スクロールの邪魔をしないよう、回転も操作もしない静止ポーズにする
                         autoRotate={false}
                         interactive={false}
-                        yaw={20}
+                        yaw={0}
                         pitch={5}
                         animation="idle"
                         className={style.viewer}
