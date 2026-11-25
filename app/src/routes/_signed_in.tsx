@@ -3,18 +3,41 @@ import { css } from "../../styled-system/css";
 import { resolveParty } from "../components/home-header";
 import { resolveActiveTab, TabBar } from "../components/tab-bar";
 import { authMiddleware } from "../lib/auth-middleware";
-import { getSession } from "../lib/server-functions";
+import { getSession, type SessionData } from "../lib/server-functions";
 
 export const Route = createFileRoute("/_signed_in")({
     server: {
         middleware: [authMiddleware],
     },
-    beforeLoad: async () => {
-        const session = await getSession();
-        return { session };
-    },
+    beforeLoad: async () => ({ session: await getSessionForNavigation() }),
     component: SignedInLayout,
 });
+
+// ブラウザで画面を移るたびにセッションをサーバーへ聞き直すと、その往復が終わるまで
+// 次のページ (スケルトンを含む) が出ない。表示に使うセッションはブラウザで少しのあいだ覚えておく。
+// 各サーバー関数の認可は authMiddleware / アクセストークンでそれぞれ確かめるので、ここを使い回しても権限は広がらない
+const CLIENT_SESSION_TTL_MS = 5 * 60 * 1000;
+let clientSession:
+    | { value: NonNullable<SessionData>; fetchedAt: number }
+    | undefined;
+
+/** 画面の移動で使うセッション。サーバーでは毎回、ブラウザでは覚えている間はそれを返す */
+async function getSessionForNavigation(): Promise<SessionData> {
+    if (typeof window === "undefined") {
+        return getSession();
+    }
+    const now = Date.now();
+    if (
+        clientSession &&
+        now - clientSession.fetchedAt < CLIENT_SESSION_TTL_MS
+    ) {
+        return clientSession.value;
+    }
+    const session = await getSession();
+    // サインアウトしている (null) ときは覚えない。サインアウトの操作はページを読み込み直すので、この値も消える
+    clientSession = session ? { value: session, fetchedAt: now } : undefined;
+    return session;
+}
 
 const layoutStyle = css({
     minHeight: "100vh",
