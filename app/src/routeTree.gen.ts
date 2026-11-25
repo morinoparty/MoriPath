@@ -16,6 +16,7 @@ import { Route as NofooterTermsIndexRouteImport } from './routes/_nofooter/terms
 import { Route as Signed_inBalanceClaimIndexRouteImport } from './routes/_signed_in/balance-claim/index'
 import { Route as Signed_inMapIndexRouteImport } from './routes/_signed_in/map/index'
 import { Route as Signed_inMyPageIndexRouteImport } from './routes/_signed_in/my-page/index'
+import { Route as Signed_inShopIndexRouteImport } from './routes/_signed_in/shop/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as NofooterAuthSignInIndexRouteImport } from './routes/_nofooter/auth/sign-in/index'
 
@@ -54,6 +55,11 @@ const Signed_inMyPageIndexRoute = Signed_inMyPageIndexRouteImport.update({
   path: '/my-page/',
   getParentRoute: () => Signed_inRoute,
 } as any)
+const Signed_inShopIndexRoute = Signed_inShopIndexRouteImport.update({
+  id: '/shop/',
+  path: '/shop/',
+  getParentRoute: () => Signed_inRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/balance-claim/': typeof Signed_inBalanceClaimIndexRoute
   '/map/': typeof Signed_inMapIndexRoute
   '/my-page/': typeof Signed_inMyPageIndexRoute
+  '/shop/': typeof Signed_inShopIndexRoute
   '/auth/sign-in/': typeof NofooterAuthSignInIndexRoute
 }
 export interface FileRoutesByTo {
@@ -83,6 +90,7 @@ export interface FileRoutesByTo {
   '/balance-claim': typeof Signed_inBalanceClaimIndexRoute
   '/map': typeof Signed_inMapIndexRoute
   '/my-page': typeof Signed_inMyPageIndexRoute
+  '/shop': typeof Signed_inShopIndexRoute
   '/auth/sign-in': typeof NofooterAuthSignInIndexRoute
 }
 export interface FileRoutesById {
@@ -95,6 +103,7 @@ export interface FileRoutesById {
   '/_signed_in/balance-claim/': typeof Signed_inBalanceClaimIndexRoute
   '/_signed_in/map/': typeof Signed_inMapIndexRoute
   '/_signed_in/my-page/': typeof Signed_inMyPageIndexRoute
+  '/_signed_in/shop/': typeof Signed_inShopIndexRoute
   '/_nofooter/auth/sign-in/': typeof NofooterAuthSignInIndexRoute
 }
 export interface FileRouteTypes {
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/balance-claim/'
     | '/map/'
     | '/my-page/'
+    | '/shop/'
     | '/auth/sign-in/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/balance-claim'
     | '/map'
     | '/my-page'
+    | '/shop'
     | '/auth/sign-in'
   id:
     | '__root__'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/_signed_in/balance-claim/'
     | '/_signed_in/map/'
     | '/_signed_in/my-page/'
+    | '/_signed_in/shop/'
     | '/_nofooter/auth/sign-in/'
   fileRoutesById: FileRoutesById
 }
@@ -189,6 +201,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Signed_inMyPageIndexRouteImport
       parentRoute: typeof Signed_inRoute
     }
+    '/_signed_in/shop/': {
+      id: '/_signed_in/shop/'
+      path: '/shop'
+      fullPath: '/shop/'
+      preLoaderRoute: typeof Signed_inShopIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -212,6 +231,7 @@ interface Signed_inRouteChildren {
   Signed_inBalanceClaimIndexRoute: typeof Signed_inBalanceClaimIndexRoute
   Signed_inMapIndexRoute: typeof Signed_inMapIndexRoute
   Signed_inMyPageIndexRoute: typeof Signed_inMyPageIndexRoute
+  Signed_inShopIndexRoute: typeof Signed_inShopIndexRoute
 }
 
 const Signed_inRouteChildren: Signed_inRouteChildren = {
@@ -220,6 +240,7 @@ const Signed_inRouteChildren: Signed_inRouteChildren = {
   Signed_inBalanceClaimIndexRoute: Signed_inBalanceClaimIndexRoute,
   Signed_inMapIndexRoute: Signed_inMapIndexRoute,
   Signed_inMyPageIndexRoute: Signed_inMyPageIndexRoute,
+  Signed_inShopIndexRoute: Signed_inShopIndexRoute,
 }
 
 const Signed_inRouteWithChildren = Signed_inRoute._addFileChildren(
