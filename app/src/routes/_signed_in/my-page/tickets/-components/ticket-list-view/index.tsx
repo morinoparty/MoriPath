@@ -2,10 +2,17 @@ import { Button } from "@morinoparty/chlorophyll-react/components";
 import { Link } from "@tanstack/react-router";
 import { ChevronRight, Inbox } from "lucide-react";
 import { sva } from "../../../../../../../styled-system/css";
+import {
+    InlineSkeleton,
+    skeletonKeys,
+} from "../../../../../../components/skeleton";
 import { SubPageBar } from "../../../../../../components/sub-page-bar";
 import { formatTicketTime } from "../../-functions/format-ticket-time";
 import type { Ticket } from "../../-types/ticket";
 import { TicketStatusBadge } from "../ticket-status-badge";
+
+// 読み込み中に並べるスケルトンのカードの数
+const LOADING_ITEMS = 3;
 
 const ticketListStyle = sva({
     slots: [
@@ -21,6 +28,8 @@ const ticketListStyle = sva({
         "state",
         "stateIcon",
         "stateText",
+        "skeletonItem",
+        "status",
     ],
     base: {
         root: {
@@ -99,6 +108,13 @@ const ticketListStyle = sva({
             flexShrink: "0",
             color: "colorPalette.fg.muted",
         },
+        // スケルトンのカードは押せないため、hover で色を変えない
+        skeletonItem: {
+            _hover: { bg: "colorPalette.surface.subtle" },
+            _active: { bg: "colorPalette.surface.subtle" },
+        },
+        // スケルトンを出しているあいだの、読み上げ用の文
+        status: { srOnly: true },
         // 空のときと読み込めなかったときの表示
         state: {
             display: "flex",
@@ -127,17 +143,52 @@ const ticketListStyle = sva({
 export interface TicketListViewProps {
     /** 新しい順のお問い合わせ。読み込めなかったときは null */
     tickets: readonly Ticket[] | null;
+    /** loader を待っている途中か。一覧の代わりにスケルトンのカードを並べる */
+    loading?: boolean;
     /** 読み込めなかったときの再読み込み */
     onRetry: () => void;
 }
 
 /** 自分のお問い合わせの一覧。1 件ずつ面のカードにして、詳細へのリンクにする */
-export const TicketListView = ({ tickets, onRetry }: TicketListViewProps) => {
+export const TicketListView = ({
+    tickets,
+    loading = false,
+    onRetry,
+}: TicketListViewProps) => {
     const style = ticketListStyle();
     return (
         <div className={style.root}>
             <SubPageBar title="お問い合わせ" backTo="/my-page" />
-            {tickets === null ? (
+            {loading ? (
+                <>
+                    <output className={style.status}>
+                        お問い合わせを読み込んでいます
+                    </output>
+                    <ul className={style.list}>
+                        {skeletonKeys(LOADING_ITEMS).map((key) => (
+                            <li key={key} aria-hidden>
+                                {/* 本物のカードと同じ枠と文字の大きさに帯を置き、届いたときに高さを変えない */}
+                                <div
+                                    className={`${style.item} ${style.skeletonItem}`}
+                                >
+                                    <div className={style.body}>
+                                        <div className={style.meta}>
+                                            <span className={style.category}>
+                                                <InlineSkeleton width="8em" />
+                                            </span>
+                                        </div>
+                                        <p className={style.content}>
+                                            <InlineSkeleton width="100%" />
+                                            <br />
+                                            <InlineSkeleton width="60%" />
+                                        </p>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </>
+            ) : tickets === null ? (
                 <div className={style.state} role="alert">
                     <p className={style.stateText}>読み込めませんでした</p>
                     <Button intent="secondary" onClick={onRetry}>

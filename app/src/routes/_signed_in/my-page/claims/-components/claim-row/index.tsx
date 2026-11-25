@@ -1,7 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { LandPlot } from "lucide-react";
 import { sva } from "../../../../../../../styled-system/css";
+import {
+    InlineSkeleton,
+    Skeleton,
+} from "../../../../../../components/skeleton";
 import { formatNumber } from "../../../../../../lib/format-number";
+import { mapPinSearch } from "../../../../map/-functions/map-pin-param";
 import { worldLabels } from "../../../../map/-functions/world-labels";
 import type { MyClaim } from "../../-types/my-claim";
 
@@ -9,6 +14,7 @@ const claimRowStyle = sva({
     slots: [
         "root",
         "icon",
+        "iconSkeleton",
         "info",
         "world",
         "detail",
@@ -49,6 +55,13 @@ const claimRowStyle = sva({
             bg: "colorPalette.bg",
             color: "colorPalette.fg.muted",
             "& > svg": { width: "22px", height: "22px" },
+        },
+        // スケルトンの行のアイコンのタイル (icon と同じ大きさ)
+        iconSkeleton: {
+            flexShrink: "0",
+            width: "48px",
+            height: "48px",
+            borderRadius: "control",
         },
         info: {
             display: "flex",
@@ -128,14 +141,37 @@ export const ClaimRow = ({ claim }: ClaimRowProps) => {
     return (
         <Link
             to="/map"
-            search={{
+            // 土地の中心にピンを立てる
+            search={mapPinSearch({
                 world: claim.worldId,
+                type: "claim",
                 x: claim.center.x,
                 z: claim.center.z,
-            }}
+            })}
             className={style.root}
         >
             {content}
         </Link>
+    );
+};
+
+/** 読み込み中の土地の 1 行。本物の行と同じ枠と文字の大きさに帯を置き、届いたときに高さを変えない */
+export const ClaimRowSkeleton = () => {
+    const style = claimRowStyle();
+    return (
+        <div className={style.root} aria-hidden>
+            <Skeleton variant="rect" className={style.iconSkeleton} />
+            <span className={style.info}>
+                <span className={style.world}>
+                    <InlineSkeleton width="6em" />
+                </span>
+                <span className={style.detail}>
+                    <InlineSkeleton width="11em" />
+                </span>
+            </span>
+            <span className={style.areaValue}>
+                <InlineSkeleton width="3em" />
+            </span>
+        </div>
     );
 };

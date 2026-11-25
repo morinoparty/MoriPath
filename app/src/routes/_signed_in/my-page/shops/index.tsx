@@ -23,6 +23,8 @@ export const Route = createFileRoute("/_signed_in/my-page/shops/")({
         };
     },
     component: MyShopsPage,
+    // お店を待つあいだは、一覧の形のスケルトンを先に出す
+    pendingComponent: () => <MyShopsView shops={null} loading />,
 });
 
 function MyShopsPage() {

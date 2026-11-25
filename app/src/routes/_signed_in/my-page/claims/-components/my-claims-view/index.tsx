@@ -1,10 +1,17 @@
 import { Button } from "@morinoparty/chlorophyll-react/components";
 import { Link } from "@tanstack/react-router";
 import { sva } from "../../../../../../../styled-system/css";
+import {
+    InlineSkeleton,
+    skeletonKeys,
+} from "../../../../../../components/skeleton";
 import { SubPageBar } from "../../../../../../components/sub-page-bar";
 import { formatNumber } from "../../../../../../lib/format-number";
 import type { MyClaimsPageData } from "../../-types/my-claim";
-import { ClaimRow } from "../claim-row";
+import { ClaimRow, ClaimRowSkeleton } from "../claim-row";
+
+// 読み込み中に並べるスケルトンの行数
+const LOADING_ROWS = 3;
 
 const myClaimsViewStyle = sva({
     slots: [
@@ -14,9 +21,11 @@ const myClaimsViewStyle = sva({
         "statLabel",
         "statValue",
         "statUnit",
+        "statSkeleton",
         "buy",
         "list",
         "message",
+        "status",
     ],
     base: {
         root: {
@@ -59,6 +68,10 @@ const myClaimsViewStyle = sva({
             fontWeight: "bold",
             color: "colorPalette.fg",
         },
+        // 数字の行の高さの中で、帯を上下の真ん中に置く
+        statSkeleton: { alignSelf: "center" },
+        // スケルトンを出しているあいだの、読み上げ用の文
+        status: { srOnly: true },
         statUnit: {
             fontSize: "12px",
             fontWeight: "medium",
@@ -88,10 +101,12 @@ const myClaimsViewStyle = sva({
 export interface MyClaimsViewProps {
     /** 保護ブロックと保護している土地。取れなかったときは null */
     data: MyClaimsPageData | null;
+    /** loader を待っている途中か。数字と一覧の代わりにスケルトンを出す */
+    loading?: boolean;
 }
 
 /** 保護している土地の画面。残りの保護ブロックと、土地の一覧を縦に並べる */
-export const MyClaimsView = ({ data }: MyClaimsViewProps) => {
+export const MyClaimsView = ({ data, loading = false }: MyClaimsViewProps) => {
     const style = myClaimsViewStyle();
     return (
         <div className={style.root}>
@@ -100,7 +115,16 @@ export const MyClaimsView = ({ data }: MyClaimsViewProps) => {
                 <div className={style.stat}>
                     <span className={style.statLabel}>保護ブロック</span>
                     <span className={style.statValue}>
-                        {data ? formatNumber(data.remainingClaimBlocks) : "—"}
+                        {loading ? (
+                            <InlineSkeleton
+                                width="4em"
+                                className={style.statSkeleton}
+                            />
+                        ) : data ? (
+                            formatNumber(data.remainingClaimBlocks)
+                        ) : (
+                            "—"
+                        )}
                         {data && (
                             <span className={style.statUnit}>ブロック</span>
                         )}
@@ -112,7 +136,20 @@ export const MyClaimsView = ({ data }: MyClaimsViewProps) => {
                     </Link>
                 </Button>
             </div>
-            {data === null ? (
+            {loading ? (
+                <>
+                    <output className={style.status}>
+                        土地を読み込んでいます
+                    </output>
+                    <ul className={style.list}>
+                        {skeletonKeys(LOADING_ROWS).map((key) => (
+                            <li key={key} aria-hidden>
+                                <ClaimRowSkeleton />
+                            </li>
+                        ))}
+                    </ul>
+                </>
+            ) : data === null ? (
                 <p className={style.message}>
                     土地の情報を読み込めませんでした
                 </p>

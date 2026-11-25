@@ -8,6 +8,8 @@ export const Route = createFileRoute("/_signed_in/my-page/claims/")({
         data: await getMyClaimList().catch(() => null),
     }),
     component: MyClaimsPage,
+    // 土地を待つあいだは、数字と一覧の形のスケルトンを先に出す
+    pendingComponent: () => <MyClaimsView data={null} loading />,
 });
 
 function MyClaimsPage() {

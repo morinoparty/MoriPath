@@ -45,3 +45,8 @@ export const Empty: Story = {
 export const LoadFailed: Story = {
     args: { data: null },
 };
+
+// loader を待っているあいだ (pendingComponent) のスケルトン
+export const Loading: Story = {
+    args: { data: null, loading: true },
+};

@@ -8,6 +8,10 @@ export const Route = createFileRoute("/_signed_in/my-page/tickets/")({
         tickets: await getMyTickets().catch(() => null),
     }),
     component: TicketListPage,
+    // お問い合わせを待つあいだは、一覧の形のスケルトンを先に出す
+    pendingComponent: () => (
+        <TicketListView tickets={null} loading onRetry={() => {}} />
+    ),
 });
 
 function TicketListPage() {

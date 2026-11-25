@@ -31,3 +31,8 @@ export const Empty: Story = {
 export const LoadError: Story = {
     args: { tickets: null },
 };
+
+// loader を待っているあいだ (pendingComponent) のスケルトン
+export const Loading: Story = {
+    args: { tickets: null, loading: true },
+};
