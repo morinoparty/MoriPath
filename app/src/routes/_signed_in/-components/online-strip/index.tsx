@@ -71,6 +71,8 @@ const onlineStripStyle = sva({
             },
         },
         face: {
+            // インラインのままだと行の高さぶん縦に伸び、縁が顔より大きくなって顔が上に寄るため、顔の大きさに合わせる
+            display: "flex",
             flexShrink: "0",
             borderRadius: "full",
             // PlayerAvatar は角丸の四角なので、縁取りと同じ真円に切りそろえる
