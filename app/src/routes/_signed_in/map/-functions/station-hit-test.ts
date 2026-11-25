@@ -7,6 +7,9 @@ import { distanceToPolyline } from "./numbering-colors";
 export const MIN_STATION_HIT_RADIUS = 22;
 // 拡大したときの当たり判定の半径の上限 (px)。大きな駅が周りの路線や保護範囲のタップを奪わないようにする
 export const MAX_STATION_HIT_RADIUS = 32;
+// 札・点に触れたとみなす最小の半分の大きさ (px)。縮小時の点 (10px) は指より小さく、
+// 駅の中心を通る路線に近さで負けて押せなくなるため、指先の大きさ (約 22px) までは駅に触れたことにする
+const MIN_FOOTPRINT_HALF = 11;
 
 /** 地図に描いた駅の札・点の大きさ (px、中心からの半分の幅と高さ) */
 export interface StationFootprint {
@@ -67,7 +70,11 @@ export const hitTestStation = ({
         const dx = (tap.x - station.point.x) * pxPerBlock;
         const dz = (tap.z - station.point.z) * pxPerBlock;
         const centerPx = Math.hypot(dx, dz);
-        const gapPx = distanceToBox(dx, dz, footprintOf(station));
+        const footprint = footprintOf(station);
+        const gapPx = distanceToBox(dx, dz, {
+            halfWidth: Math.max(footprint.halfWidth, MIN_FOOTPRINT_HALF),
+            halfHeight: Math.max(footprint.halfHeight, MIN_FOOTPRINT_HALF),
+        });
         const hitRadius = Math.min(
             Math.max(station.radius * pxPerBlock, MIN_STATION_HIT_RADIUS),
             MAX_STATION_HIT_RADIUS,

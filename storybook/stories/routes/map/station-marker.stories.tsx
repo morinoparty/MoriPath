@@ -55,7 +55,7 @@ export const Badges: Story = {
     args: { detail: "badges" },
 };
 
-// さらに縮小すると点だけ (地図側の当たり判定は半径 22px を保つ)
+// さらに縮小すると点だけ (地図側の当たり判定は半径 22px、路線と重なる所では中心から 11px までを駅にする)
 export const Dot: Story = {
     args: { detail: "dot" },
 };
