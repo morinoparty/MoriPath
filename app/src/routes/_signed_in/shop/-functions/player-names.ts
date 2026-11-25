@@ -1,65 +1,64 @@
 import { queryOptions } from "@tanstack/react-query";
 import { z } from "zod";
+import { toDashedUuid } from "../../../../lib/uuid";
 
 // mc-api の一括取得 (POST /v1/players/lookup) が受け付ける 1 回あたりの件数
 const BATCH_LIMIT = 100;
 // プレイヤー名はめったに変わらないため、一度引いたら長めに使い回す
 const PLAYER_NAME_STALE_MS = 60 * 60 * 1000;
-// 一覧の行が多くても待たされないよう、1 件ごとの取得には時間の上限を設ける
+// 一括取得が遅いときに名前の表示をいつまでも待たせない
 const FETCH_TIMEOUT_MS = 5000;
 
-// mc-api のプレイヤー情報。名前の持ち方の違い ({ name } / { username } / { data.player.username }) を吸収する
-const mcApiPlayerSchema = z.union([
-    z.object({ name: z.string().min(1) }).transform((value) => value.name),
-    z
-        .object({ username: z.string().min(1) })
-        .transform((value) => value.username),
-    z
-        .object({
-            data: z.object({
-                player: z.object({ username: z.string().min(1) }),
-            }),
-        })
-        .transform((value) => value.data.player.username),
-]);
-
-/** mc-api で UUID 1 件の名前を引く。いないプレイヤーなら null、通信の失敗は例外にする */
-async function fetchPlayerName(
-    mcApiUrl: string,
-    uuid: string,
-): Promise<string | null> {
-    const response = await fetch(
-        `${mcApiUrl}/v1/players/${encodeURIComponent(uuid)}`,
-        { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) },
-    );
-    if (response.status === 404) {
-        return null;
-    }
-    if (!response.ok) {
-        throw new Error(`mc-api が ${response.status} を返しました`);
-    }
-    const parsed = mcApiPlayerSchema.safeParse(await response.json());
-    return parsed.success ? parsed.data : null;
-}
+// POST /v1/players/lookup の応答。名前以外 (skin など) は使わないので読まない。
+// プレイヤーが登録されていなければ null、登録済みでも名前をまだ取得していなければ name が null
+const lookupResponseSchema = z.object({
+    players: z.record(
+        z.string(),
+        z.object({ name: z.string().nullable() }).nullable(),
+    ),
+});
 
 /**
- * UUID (最大 BATCH_LIMIT 件) → 名前をまとめて引く。いないプレイヤーは null、引けなかった UUID は結果に含めない。
- * いまは 1 件ずつの GET を並べているが、mc-api の POST /v1/players/lookup
- * (body { ids }、応答 { players: { [id]: { name, ... } | null } }) に切り替えるときはこの関数だけを書き換えればよい
+ * UUID (最大 BATCH_LIMIT 件) → 名前を mc-api の POST /v1/players/lookup で 1 回で引く。
+ * 登録されていないプレイヤーは null。名前がまだ無いプレイヤーと通信に失敗した分は結果に含めない
  */
 async function fetchPlayerNames(
     mcApiUrl: string,
     uuids: readonly string[],
 ): Promise<Map<string, string | null>> {
-    const results = await Promise.allSettled(
-        uuids.map((uuid) => fetchPlayerName(mcApiUrl, uuid)),
-    );
     const names = new Map<string, string | null>();
-    results.forEach((result, index) => {
-        if (result.status === "fulfilled") {
-            names.set(uuids[index], result.value);
+    // 形のおかしい ID が 1 件でもあると全体が 400 になるため、UUID にそろえられたものだけを送る
+    const idByUuid = new Map<string, string>();
+    for (const uuid of uuids) {
+        const id = toDashedUuid(uuid);
+        if (id) {
+            idByUuid.set(uuid, id);
+        } else {
+            names.set(uuid, null);
         }
+    }
+    if (idByUuid.size === 0) {
+        return names;
+    }
+    const response = await fetch(`${mcApiUrl}/v1/players/lookup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: [...new Set(idByUuid.values())] }),
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     });
+    if (!response.ok) {
+        throw new Error(`mc-api が ${response.status} を返しました`);
+    }
+    const { players } = lookupResponseSchema.parse(await response.json());
+    // 応答は送った ID の文字列そのままのキーで返る
+    for (const [uuid, id] of idByUuid) {
+        const player = players[id];
+        if (player === null) {
+            names.set(uuid, null);
+        } else if (player?.name) {
+            names.set(uuid, player.name);
+        }
+    }
     return names;
 }
 
@@ -88,7 +87,7 @@ function flushQueue(mcApiUrl: string): void {
                     for (const waiter of queue.get(uuid) ?? []) {
                         const name = names.get(uuid);
                         if (name === undefined) {
-                            // 引けなかった行だけをエラーにし、クエリの再試行に任せる
+                            // 引けなかった行 (名前がまだ無いものを含む) だけをエラーにし、クエリの再試行に任せる
                             waiter.reject(
                                 new Error(`${uuid} の名前を引けません`),
                             );
