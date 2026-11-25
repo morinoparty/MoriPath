@@ -20,6 +20,7 @@ export const Route = createFileRoute("/_signed_in/map/")({
 function MapPage() {
     const { worldMapUrl } = Route.useLoaderData();
     const search = Route.useSearch();
+    const { session } = Route.useRouteContext();
     const navigate = Route.useNavigate();
     const settings = useWorldSettings(worldMapUrl, search.world);
     // 表示するマーカーの種類は画面の中だけで持つ (URL を汚さない)
@@ -37,6 +38,11 @@ function MapPage() {
         return settings.data?.spawn ?? null;
     }, [search.x, search.z, settings.data, settings.isError]);
 
+    // 自分のマーカーを見分けるため、ログイン中のプレイヤーを渡す
+    const self = session?.user
+        ? { id: session.user.id, name: session.user.name }
+        : null;
+
     const changeWorld = (world: WorldId) => {
         // 別のワールドではその座標に意味がないので、座標は外してスポーン地点に戻す
         void navigate({ search: { world }, replace: true });
@@ -48,6 +54,7 @@ function MapPage() {
             world={search.world}
             center={center}
             overlays={overlays}
+            self={self}
             startControl={
                 <MarkerToggleMenu
                     value={overlays}

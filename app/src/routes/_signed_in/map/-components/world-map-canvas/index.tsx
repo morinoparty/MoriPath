@@ -6,6 +6,7 @@ import { MapContainer, Popup, TileLayer, useMap } from "react-leaflet";
 import { css } from "../../../../../../styled-system/css";
 import { layerOverlayKeys } from "../../-functions/default-overlays";
 import { useMapMarkers } from "../../-functions/use-map-markers";
+import { useMapPlayers } from "../../-functions/use-map-players";
 import {
     buildTileUrl,
     NATIVE_MAX_ZOOM,
@@ -15,6 +16,7 @@ import {
 import type {
     MarkerLayer,
     OverlayVisibility,
+    SelfPlayer,
     Vec2,
     WorldId,
 } from "../../-types/world-map";
@@ -24,6 +26,7 @@ import { createMinecraftCrs } from "./create-minecraft-crs";
 import {
     ClaimLayer,
     PinLayer,
+    PlayersLayer,
     RailwayLayer,
     type SelectedFeature,
     WorldBorderLayer,
@@ -81,6 +84,8 @@ export interface WorldMapCanvasProps {
     center: Vec2;
     /** 「マーカー表示」で選ばれている項目 */
     overlays: OverlayVisibility;
+    /** ログイン中のプレイヤー。分からなければ null */
+    self: SelfPlayer | null;
 }
 
 /** 中心座標が変わったとき (ワールド切り替えなど) に地図を移動させる */
@@ -132,12 +137,17 @@ export const WorldMapCanvas = ({
     world,
     center,
     overlays,
+    self,
 }: WorldMapCanvasProps) => {
     // CRS と renderer は地図の生成時にしか渡せないので 1 度だけ作る
     const crs = useMemo(() => createMinecraftCrs(), []);
     // 指でも細い路線をタップできるよう、当たり判定を線の外側まで広げる
     const renderer = useMemo(() => L.canvas({ tolerance: 8 }), []);
     const markers = useMapMarkers(baseUrl, world);
+    const players = useMapPlayers(baseUrl, overlays.players);
+    // 表示中のワールドにいるプレイヤーだけを出す
+    const worldPlayers =
+        players.data?.players.filter((player) => player.world === world) ?? [];
     // タップされた路線・保護範囲と、そのワールド。ポップアップは 1 つだけ出す
     const [selection, setSelection] = useState<{
         world: WorldId;
@@ -189,6 +199,9 @@ export const WorldMapCanvas = ({
                     onSelect={select}
                 />
             ))}
+            {overlays.players && (
+                <PlayersLayer players={worldPlayers} self={self} />
+            )}
             {selected && (
                 <Popup
                     // 別の図形をタップしたら作り直して、その位置で開き直す

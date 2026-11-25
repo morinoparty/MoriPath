@@ -131,3 +131,9 @@ export interface ClaimInfo {
     containerTrust: string[];
     accessTrust: string[];
 }
+
+/** ログイン中のプレイヤー (地図上で自分のマーカーだけ見た目を変える) */
+export interface SelfPlayer {
+    id: string;
+    name: string;
+}

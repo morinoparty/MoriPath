@@ -10,14 +10,21 @@ import {
     parseStationName,
 } from "../../-functions/parse-railway-popup";
 import { stripMarkerHtml } from "../../-functions/strip-marker-html";
-import { fromLatLng, toLatLng } from "../../-functions/world-map-coords";
+import {
+    fromLatLng,
+    normalizeUuid,
+    toLatLng,
+} from "../../-functions/world-map-coords";
 import type {
     ClaimInfo,
+    MapPlayer,
     MarkerLayer,
     RailwayRoute,
+    SelfPlayer,
     Vec2,
 } from "../../-types/world-map";
 import { MapPin } from "../map-pin";
+import { PlayerMarker } from "../player-marker";
 import { StationLabel } from "../station-label";
 import { PortalMarker } from "./portal-marker";
 
@@ -206,3 +213,39 @@ export const PinLayer = ({
         )}
     </>
 );
+
+/** オンラインのプレイヤー。同じワールドにいる人だけを出す */
+export const PlayersLayer = ({
+    players,
+    self,
+}: {
+    players: MapPlayer[];
+    self: SelfPlayer | null;
+}) => {
+    // UUID の表記ゆれ (ハイフンの有無) をそろえて自分を探す
+    const selfUuid = self ? normalizeUuid(self.id) : null;
+    const selfName = self?.name.toLowerCase();
+    return (
+        <>
+            {players.map((player) => {
+                const isSelf =
+                    normalizeUuid(player.uuid) === selfUuid ||
+                    player.name.toLowerCase() === selfName;
+                return (
+                    <PortalMarker
+                        key={player.uuid}
+                        position={{ x: player.x, z: player.z }}
+                        // プレイヤーは駅名やピンより上、自分はさらにその上に出す
+                        zIndexOffset={isSelf ? 2000 : 1000}
+                    >
+                        <PlayerMarker
+                            playerId={player.uuid}
+                            playerName={player.name}
+                            isSelf={isSelf}
+                        />
+                    </PortalMarker>
+                );
+            })}
+        </>
+    );
+};
