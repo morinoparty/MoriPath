@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Flag } from "lucide-react";
 import { MapPin } from "@/routes/_signed_in/map/-components/map-pin";
-import { StationLabel } from "@/routes/_signed_in/map/-components/station-label";
 import { css } from "../../../styled-system/css";
 
 const meta: Meta<typeof MapPin> = {
@@ -43,9 +42,4 @@ export const Banner: Story = {
 
 export const Spawn: Story = {
     args: { label: "スポーン", icon: Flag },
-};
-
-// 駅名は文字だけを駅の中心に置く
-export const Station: StoryObj<typeof StationLabel> = {
-    render: () => <StationLabel name="白英門(はくえいもん)" />,
 };

@@ -7,6 +7,7 @@ import { css } from "../../../../../../styled-system/css";
 import { layerOverlayKeys } from "../../-functions/default-overlays";
 import { useMapMarkers } from "../../-functions/use-map-markers";
 import { useMapPlayers } from "../../-functions/use-map-players";
+import { useStationLines } from "../../-functions/use-station-lines";
 import {
     buildTileUrl,
     NATIVE_MAX_ZOOM,
@@ -22,6 +23,7 @@ import type {
 } from "../../-types/world-map";
 import { ClaimPopup } from "../claim-popup";
 import { RailwayPopup } from "../railway-popup";
+import { StationPopup } from "../station-popup";
 import { createMinecraftCrs } from "./create-minecraft-crs";
 import {
     ClaimLayer,
@@ -106,6 +108,28 @@ const CenterUpdater = ({ center }: { center: Vec2 }) => {
         map.setView(toLatLng(center), DEFAULT_ZOOM);
     }, [map, center]);
     return null;
+};
+
+/** 駅のポップアップ。乗り入れている路線は開いたときに API から取る */
+const StationPopupContent = ({
+    feature,
+}: {
+    feature: Extract<SelectedFeature, { kind: "station" }>;
+}) => {
+    const { station, fallbackLines } = feature;
+    const lines = useStationLines(station.id);
+    // API の結果があればそれを、使えない (null・失敗・ID なし) なら squaremap から求めた一覧を出す
+    const resolvedLines =
+        station.id !== null && lines.isPending
+            ? null
+            : (lines.data ?? fallbackLines);
+    return (
+        <StationPopup
+            name={station.name}
+            numberings={station.numberings}
+            lines={resolvedLines}
+        />
+    );
 };
 
 /** ポップアップを区別する key (タップした位置と種類) */
@@ -213,6 +237,8 @@ export const WorldMapCanvas = ({
                     key={popupKey(selected)}
                     position={toLatLng(selected.position)}
                     closeButton={false}
+                    // 駅は中心に置いた札の上に出し、札を隠さない
+                    offset={selected.kind === "station" ? [0, -14] : [0, 7]}
                     // 上の操作ボタンと下の TabBar に隠れないよう、余白を取って地図を動かす
                     autoPanPaddingTopLeft={[16, 96]}
                     autoPanPaddingBottomRight={[16, 140]}
@@ -230,13 +256,17 @@ export const WorldMapCanvas = ({
                         },
                     }}
                 >
-                    {selected.kind === "railway" ? (
+                    {selected.kind === "railway" && (
                         <RailwayPopup
                             route={selected.route}
                             lineColor={selected.color}
                         />
-                    ) : (
+                    )}
+                    {selected.kind === "claim" && (
                         <ClaimPopup claim={selected.claim} />
+                    )}
+                    {selected.kind === "station" && (
+                        <StationPopupContent feature={selected} />
                     )}
                 </Popup>
             )}

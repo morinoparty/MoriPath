@@ -50,3 +50,15 @@ export const parseStationName = (html: string): string | null => {
     const match = stripMarkerHtml(html).match(/名前\s*:\s*(.+)$/);
     return match ? match[1].trim() : null;
 };
+
+/**
+ * 駅 (円) のポップアップの「名前」より前にある駅ナンバリングを取り出す。
+ * 乗換駅は「FM06 / HAN01」のように「 / 」で区切られている
+ */
+export const parseStationNumberings = (html: string): string[] => {
+    const [beforeName] = stripMarkerHtml(html).split(/名前\s*:/);
+    return (beforeName ?? "")
+        .split("/")
+        .map((code) => code.trim())
+        .filter(Boolean);
+};

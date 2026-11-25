@@ -17,6 +17,8 @@ const claimPopupStyle = sva({
     ],
     base: {
         header: {
+            // Leaflet の CSS がポップアップ内の <p> に付ける余白を消す
+            m: "0",
             display: "flex",
             alignItems: "center",
             gap: "1",

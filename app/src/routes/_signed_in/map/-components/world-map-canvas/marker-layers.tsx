@@ -1,20 +1,25 @@
 import L from "leaflet";
 import { Flag } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Polyline, useMap, useMapEvents } from "react-leaflet";
 import { token } from "../../../../../../styled-system/tokens";
+import {
+    buildMapStations,
+    findLinesAtStation,
+    splitRailwayLayer,
+} from "../../-functions/build-map-stations";
 import { markerKey } from "../../-functions/marker-key";
 import { parseClaimPopup } from "../../-functions/parse-claim-popup";
-import {
-    parseRailwayPopup,
-    parseStationName,
-} from "../../-functions/parse-railway-popup";
+import { parseRailwayPopup } from "../../-functions/parse-railway-popup";
 import { stripMarkerHtml } from "../../-functions/strip-marker-html";
+import { useRailwayNetwork } from "../../-functions/use-railway-network";
 import {
     fromLatLng,
+    NATIVE_MAX_ZOOM,
     normalizeUuid,
     toLatLng,
 } from "../../-functions/world-map-coords";
+import type { MapStation, StationLine } from "../../-types/station";
 import type {
     ClaimInfo,
     MapPlayer,
@@ -25,18 +30,30 @@ import type {
 } from "../../-types/world-map";
 import { MapPin } from "../map-pin";
 import { PlayerMarker } from "../player-marker";
-import { StationLabel } from "../station-label";
+import { StationMarker, type StationMarkerDetail } from "../station-marker";
 import { PortalMarker } from "./portal-marker";
 
 /** タップされた図形と、ポップアップを出す位置 */
 export type SelectedFeature =
     | { kind: "railway"; position: Vec2; route: RailwayRoute; color: string }
-    | { kind: "claim"; position: Vec2; claim: ClaimInfo };
+    | { kind: "claim"; position: Vec2; claim: ClaimInfo }
+    | {
+          kind: "station";
+          position: Vec2;
+          station: MapStation;
+          /** API で路線を取れないときに使う、squaremap の路線から求めた一覧 */
+          fallbackLines: StationLine[];
+      };
 
 type SelectHandler = (feature: SelectedFeature) => void;
 
-// 駅名は縮小すると重なって読めないため、このズーム以上でだけ出す
-const STATION_LABEL_MIN_ZOOM = 2;
+/** 縮尺ごとの駅の見せ方。縮小すると札や駅名が重なって読めないため点にする */
+const stationDetailAt = (zoom: number): StationMarkerDetail => {
+    if (zoom <= 0) {
+        return "dot";
+    }
+    return zoom === 1 ? "badges" : "full";
+};
 
 /** 現在のズームを React の state として持つ */
 const useZoom = () => {
@@ -62,7 +79,43 @@ const useResolvedColor = (cssValue: string) => {
     }, [map, cssValue]);
 };
 
-/** 鉄道: 路線 (タップで乗換案内) と駅名 */
+/**
+ * 駅 1 つ分の当たり判定。駅のボタンを押したとき、地図 (と下の路線) にクリックを渡さない。
+ * こうすると駅の周りでは路線の乗換案内ではなく駅が選ばれる
+ */
+const StationHitTarget = ({
+    station,
+    zoom,
+    onSelect,
+}: {
+    station: MapStation;
+    zoom: number;
+    onSelect: (station: MapStation) => void;
+}) => {
+    // Leaflet は地図の要素でクリックやドラッグを拾うので、ボタンの外へ伝えない
+    const stopPropagation = useCallback((element: HTMLButtonElement | null) => {
+        if (element) {
+            L.DomEvent.disableClickPropagation(element);
+            L.DomEvent.disableScrollPropagation(element);
+        }
+    }, []);
+    // 駅の円 (半径はブロック単位) を今の縮尺の px に直した大きさ
+    const hitSize = station.radius * 2 * 2 ** (zoom - NATIVE_MAX_ZOOM);
+    return (
+        <PortalMarker position={station.point} zIndexOffset={500}>
+            <StationMarker
+                ref={stopPropagation}
+                name={station.name}
+                numberings={station.numberings}
+                detail={stationDetailAt(zoom)}
+                hitSize={hitSize}
+                onSelect={() => onSelect(station)}
+            />
+        </PortalMarker>
+    );
+};
+
+/** 鉄道: 路線 (タップで乗換案内) と駅 (タップで駅の案内) */
 export const RailwayLayer = ({
     layer,
     onSelect,
@@ -71,49 +124,58 @@ export const RailwayLayer = ({
     onSelect: SelectHandler;
 }) => {
     const zoom = useZoom();
+    // 駅の色やナンバリングは AdvanceRailway の API から取る。使えなければ squaremap の駅で描く
+    const network = useRailwayNetwork(true);
+    const { circles, polylines } = useMemo(
+        () => splitRailwayLayer(layer),
+        [layer],
+    );
+    const stations = useMemo(
+        () => buildMapStations(circles, network.data?.stations ?? null),
+        [circles, network.data],
+    );
+    // 駅を選んだら、駅の中心にポップアップを出す
+    const selectStation = (station: MapStation) =>
+        onSelect({
+            kind: "station",
+            position: station.point,
+            station,
+            fallbackLines: findLinesAtStation(station, stations, polylines),
+        });
     return (
         <>
-            {layer.markers.map((marker) => {
-                if (marker.type === "polyline") {
-                    const color = marker.color ?? marker.fillColor ?? "";
-                    return (
-                        <Polyline
-                            key={markerKey(marker)}
-                            positions={marker.points.map(toLatLng)}
-                            pathOptions={{ color, weight: 5, opacity: 0.9 }}
-                            eventHandlers={{
-                                click: (event) =>
-                                    onSelect({
-                                        kind: "railway",
-                                        position: fromLatLng(
-                                            event.latlng.lat,
-                                            event.latlng.lng,
-                                        ),
-                                        route: parseRailwayPopup(
-                                            marker.popup ?? "",
-                                        ),
-                                        color,
-                                    }),
-                            }}
-                        />
-                    );
-                }
-                if (
-                    marker.type === "circle" &&
-                    zoom >= STATION_LABEL_MIN_ZOOM
-                ) {
-                    const name = parseStationName(marker.popup ?? "");
-                    return name ? (
-                        <PortalMarker
-                            key={markerKey(marker)}
-                            position={marker.center}
-                        >
-                            <StationLabel name={name} />
-                        </PortalMarker>
-                    ) : null;
-                }
-                return null;
+            {polylines.map((marker) => {
+                const color = marker.color ?? marker.fillColor ?? "";
+                return (
+                    <Polyline
+                        key={markerKey(marker)}
+                        positions={marker.points.map(toLatLng)}
+                        pathOptions={{ color, weight: 5, opacity: 0.9 }}
+                        eventHandlers={{
+                            click: (event) =>
+                                onSelect({
+                                    kind: "railway",
+                                    position: fromLatLng(
+                                        event.latlng.lat,
+                                        event.latlng.lng,
+                                    ),
+                                    route: parseRailwayPopup(
+                                        marker.popup ?? "",
+                                    ),
+                                    color,
+                                }),
+                        }}
+                    />
+                );
             })}
+            {stations.map((station) => (
+                <StationHitTarget
+                    key={station.id ?? `${station.point.x},${station.point.z}`}
+                    station={station}
+                    zoom={zoom}
+                    onSelect={selectStation}
+                />
+            ))}
         </>
     );
 };

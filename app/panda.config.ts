@@ -104,6 +104,7 @@ const config: Config = defineConfig({
             playerAvatar: ["*"],
             playerAvatarGroup: ["*"],
             playerMap: ["*"],
+            skeleton: ["*"],
             skinViewer: ["*"],
             spinner: ["*"],
             stat: ["*"],
