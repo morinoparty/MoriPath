@@ -1,5 +1,6 @@
 import { Stat } from "@morinoparty/chlorophyll-react/components";
 import { css, cx } from "../../../../../../styled-system/css";
+import { InlineSkeleton } from "../../../../../components/skeleton";
 import type { MyPageStats as MyPageStatsData } from "../../-types/my-page";
 
 interface StatItem {
@@ -73,3 +74,22 @@ export const MyPageStats = ({ stats, className }: MyPageStatsProps) => {
         </div>
     );
 };
+
+// 届くまでに並べるラベル。届いたあとと同じ順にする
+const SKELETON_LABELS = ["どんぐり", "保護ブロック", "連続投票"];
+
+/** 数値が届くまでのカード。ラベルを先に出し、数字の場所にスケルトンを置く */
+export const MyPageStatsSkeleton = ({ className }: { className?: string }) => (
+    <div className={cx(cardStyle, className)} aria-busy="true">
+        <Stat.Group size="sm" align="center">
+            {SKELETON_LABELS.map((label) => (
+                <Stat.Root key={label} className={statRootStyle}>
+                    <Stat.Label>{label}</Stat.Label>
+                    <Stat.Value>
+                        <InlineSkeleton width="3em" />
+                    </Stat.Value>
+                </Stat.Root>
+            ))}
+        </Stat.Group>
+    </div>
+);

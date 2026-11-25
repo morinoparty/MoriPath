@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { MyPageStats } from "@/routes/_signed_in/my-page/-components/my-page-stats";
+import {
+    MyPageStats,
+    MyPageStatsSkeleton,
+} from "@/routes/_signed_in/my-page/-components/my-page-stats";
 import { css } from "../../styled-system/css";
 
 const meta: Meta<typeof MyPageStats> = {
@@ -43,4 +46,10 @@ export const LargeValues: Story = {
     args: {
         stats: { balance: 1234567, claimBlocks: 98765, voteStreak: 365 },
     },
+};
+
+// 数値が届くまで。ラベルは先に出し、数字の場所だけスケルトンにする
+export const Loading: Story = {
+    args: { stats: { balance: null, claimBlocks: null, voteStreak: null } },
+    render: () => <MyPageStatsSkeleton />,
 };

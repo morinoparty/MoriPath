@@ -51,3 +51,13 @@ export const Empty: Story = {
         </DiarySection.Root>
     ),
 };
+
+// 記録が届くまで。見出しは先に出し、ホームに出す 3 件ぶんの場所を取る
+export const Loading: Story = {
+    render: () => (
+        <DiarySection.Root>
+            <DiarySection.Header />
+            <DiarySection.EntriesSkeleton count={3} />
+        </DiarySection.Root>
+    ),
+};

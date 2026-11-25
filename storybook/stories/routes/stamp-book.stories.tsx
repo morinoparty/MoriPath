@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { StampBook } from "@/routes/_signed_in/my-page/-components/stamp-book";
+import {
+    StampBook,
+    StampBookSkeleton,
+} from "@/routes/_signed_in/my-page/-components/stamp-book";
 import { css } from "../../styled-system/css";
 import { sampleStamps } from "../sample-stamps";
 
@@ -57,4 +60,10 @@ export const Placeholders: Story = {
 
 export const Empty: Story = {
     args: { stamps: { owned: [], total: 3405 } },
+};
+
+// スタンプが届くまで。見出しは先に出し、枚数と 7 枠のタイルの場所を取る
+export const Loading: Story = {
+    args: { stamps: { owned: [], total: 0 } },
+    render: () => <StampBookSkeleton />,
 };

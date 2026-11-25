@@ -4,6 +4,7 @@ import { TabBar } from "@/components/tab-bar";
 import { HomeView } from "@/routes/_signed_in/-components/home-view";
 import { css } from "../../styled-system/css";
 import { sampleDiaryEntries } from "../sample-diary";
+import { pending } from "../sample-pending";
 import {
     craftheadAvatarUrl,
     sampleOnlinePlayers,
@@ -79,4 +80,27 @@ export const Unavailable: Story = {
         diaryEntries: null,
         onlinePlayers: null,
     },
+};
+
+// 描くたびに作り直すと React が別の Promise として待ち直すため、1 つだけ作って使い回す
+const pendingNumber = pending<number | null>();
+const pendingDiary = pending<null>();
+
+// 残高・ダイアリー・オンライン一覧が届くまで。見出しとスキンは先に出し、ほかはスケルトンにする。
+// Promise は args に入れると Storybook が複製してしまうため、render で直接渡す
+export const Loading: Story = {
+    args: {
+        session: sampleSession,
+        player: samplePlayers.nikomaru,
+        onlinePlayers: undefined,
+    },
+    render: (args) => (
+        <HomeView
+            {...args}
+            balance={pendingNumber}
+            claimBlocks={pendingNumber}
+            voteStreak={pendingNumber}
+            diaryEntries={pendingDiary}
+        />
+    ),
 };

@@ -57,16 +57,19 @@ export async function fetchMyClaims(headers: Headers): Promise<ClaimsResponse> {
         throw new Error("No access token available");
     }
 
+    return fetchMyClaimsWithToken(tokenResult.accessToken);
+}
+
+/** 取得済みのアクセストークンで、保護範囲と保護ブロックを MineAuth から取る */
+export async function fetchMyClaimsWithToken(
+    accessToken: string,
+): Promise<ClaimsResponse> {
     // GriefPrevention / Vault は main サーバーにのみ存在する
     const mainServerUrl = getServerUrl("main");
 
     const response = await fetch(
         `${mainServerUrl}/api/v1/plugins/griefprevention/claims/me`,
-        {
-            headers: {
-                Authorization: `Bearer ${tokenResult.accessToken}`,
-            },
-        },
+        { headers: { Authorization: `Bearer ${accessToken}` } },
     );
 
     if (!response.ok) {

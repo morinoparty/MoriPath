@@ -1,11 +1,12 @@
 import { css } from "../../../../../../styled-system/css";
+import { Deferred } from "../../../-components/deferred";
 import type { MyPageData } from "../../-types/my-page";
 import type { MyPageMenuSection } from "../../-types/my-page-menu";
 import type { PortraitPoseId } from "../../-types/portrait-pose";
 import { MyPageMenu } from "../my-page-menu";
-import { MyPageStats } from "../my-page-stats";
+import { MyPageStats, MyPageStatsSkeleton } from "../my-page-stats";
 import { PlayerPortrait, PORTRAIT_COLLAPSE_DISTANCE } from "../player-portrait";
-import { StampBook } from "../stamp-book";
+import { StampBook, StampBookSkeleton } from "../stamp-book";
 
 const rootStyle = css({
     // 本文が短くても、ポートレートが縮みきるまでスクロールできる高さを確保する
@@ -27,7 +28,10 @@ export interface MyPageViewProps extends MyPageData {
     portraitPose?: PortraitPoseId;
 }
 
-/** マイページの見た目。データは props で受け取り、取得はルートの loader が行う */
+/**
+ * マイページの見た目。データは props で受け取り、取得はルートの loader が行う。
+ * 数値とスタンプ帳は届くまでスケルトンを出す
+ */
 export const MyPageView = ({
     player,
     presence,
@@ -43,8 +47,12 @@ export const MyPageView = ({
             pose={portraitPose}
         />
         <div className={bodyStyle}>
-            <MyPageStats stats={stats} />
-            {stamps && <StampBook stamps={stamps} />}
+            <Deferred value={stats} fallback={<MyPageStatsSkeleton />}>
+                {(resolved) => <MyPageStats stats={resolved} />}
+            </Deferred>
+            <Deferred value={stamps} fallback={<StampBookSkeleton />}>
+                {(resolved) => resolved && <StampBook stamps={resolved} />}
+            </Deferred>
             <MyPageMenu sections={menuSections} />
         </div>
     </div>

@@ -1,6 +1,9 @@
 import { MinecraftProvider } from "@morinoparty/chlorophyll-react/components";
 import type { Meta, StoryObj } from "@storybook/react";
-import { OnlineStrip } from "@/routes/_signed_in/-components/online-strip";
+import {
+    OnlineStrip,
+    OnlineStripSkeleton,
+} from "@/routes/_signed_in/-components/online-strip";
 import { css } from "../../styled-system/css";
 import { craftheadAvatarUrl, sampleOnlinePlayers } from "../sample-players";
 
@@ -50,4 +53,10 @@ export const One: Story = {
 // 誰もいないときは押せない控えめな帯になる
 export const Empty: Story = {
     args: { players: [] },
+};
+
+// オンライン一覧が届くまで。届いたあとの帯と同じ高さで場所を取る
+export const Loading: Story = {
+    args: { players: [] },
+    render: () => <OnlineStripSkeleton />,
 };

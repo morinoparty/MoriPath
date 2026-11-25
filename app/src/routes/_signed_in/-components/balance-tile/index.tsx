@@ -1,5 +1,6 @@
 import { Stat } from "@morinoparty/chlorophyll-react/components";
 import { sva } from "../../../../../styled-system/css";
+import { InlineSkeleton } from "../../../../components/skeleton";
 
 const balanceTileStyle = sva({
     slots: ["root", "label", "value"],
@@ -30,17 +31,27 @@ interface BalanceTileProps {
     value: number | null;
     /** 数値の後ろに付ける単位 (例: 日) */
     unit?: string;
+    /** 値が届くまでの場所取りを出すか。ラベルとタイルの大きさはそのままにする */
+    loading?: boolean;
 }
 
 /** ホームのヒーロー右列に縦に並べる残高のタイル */
-export const BalanceTile = ({ label, value, unit }: BalanceTileProps) => {
+export const BalanceTile = ({
+    label,
+    value,
+    unit,
+    loading = false,
+}: BalanceTileProps) => {
     const style = balanceTileStyle();
 
     return (
         <Stat.Root className={style.root}>
             <Stat.Label className={style.label}>{label}</Stat.Label>
             <Stat.Value className={style.value}>
-                {value === null ? (
+                {loading ? (
+                    // 数字の行と同じ高さの帯にして、届いたときにタイルが伸び縮みしないようにする
+                    <InlineSkeleton width="4em" />
+                ) : value === null ? (
                     // 取得できないときは単位を付けずに「—」だけ出す
                     "—"
                 ) : (

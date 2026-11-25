@@ -1,79 +1,44 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { HomeView } from "./-components/home-view";
-import {
-    getDiaryEntries,
-    getMyClaims,
-    getOnlinePlayers,
-    getVaultBalance,
-    getVoteStats,
-} from "./-functions";
-import { getUserInfo } from "./-functions/get-userinfo";
-import { useOnlinePlayers } from "./-functions/use-online-players";
+import { getHomeData } from "./-functions/get-home-data";
+import { onlinePlayersQueryOptions } from "./-functions/online-players-query";
 
 export const Route = createFileRoute("/_signed_in/")({
-    loader: async () => {
-        // どれか 1 つが失敗してもホームは出せるよう、それぞれ取得できない時の値に落とす
-        const [
-            balance,
-            claims,
-            voteStats,
-            diaryEntries,
-            userInfo,
-            onlinePlayers,
-        ] = await Promise.all([
-            getVaultBalance().catch(() => null),
-            getMyClaims().catch(() => null),
-            // getVoteStats は失敗時に null を返すため catch 不要
-            getVoteStats(),
-            getDiaryEntries().catch(() => null),
-            getUserInfo().catch(() => null),
-            getOnlinePlayers().catch(() => null),
-        ]);
-        return {
-            balance,
-            claims,
-            voteStats,
-            diaryEntries,
-            userInfo,
-            onlinePlayers,
-        };
+    // getHomeData はトークンの用意だけを待って返り、残高やダイアリーは Promise のまま届く。
+    // 画面は見出しとスキンから先に出し、各セクションは届いた順にスケルトンから置き換える
+    loader: ({ context }) => {
+        // オンライン一覧はブラウザで取り直し続けるため Query に任せる。
+        // サーバーで描いたスケルトンとハイドレーションで食い違わないよう、ブラウザでだけ先に取り始める
+        if (typeof document !== "undefined") {
+            void context.queryClient.prefetchQuery(onlinePlayersQueryOptions);
+        }
+        return getHomeData();
     },
     component: Home,
 });
 
 function Home() {
-    const {
-        balance,
-        claims,
-        voteStats,
-        diaryEntries,
-        userInfo,
-        onlinePlayers,
-    } = Route.useLoaderData();
+    const { playerId, balance, claimBlocks, voteStreak, diaryEntries } =
+        Route.useLoaderData();
     const { session } = Route.useRouteContext();
-    // loader の値を初期値に、ホームを開いているあいだはオンライン一覧を取り直し続ける
-    const { data: latestOnlinePlayers } = useOnlinePlayers(onlinePlayers);
+    // 取得中は undefined (帯のスケルトン)、取れなかったときは null
+    const { data: onlinePlayers } = useQuery(onlinePlayersQueryOptions);
 
     return (
         <HomeView
             session={session}
             player={{
-                // Better Auth のユーザー ID は UUID ではないため、MineAuth の userinfo の sub を使う
-                id: userInfo?.sub ?? null,
-                name: userInfo?.preferred_username ?? session?.user?.name ?? "",
+                // Better Auth のユーザー ID は UUID ではないため、MineAuth のトークンの sub を使う
+                id: playerId,
+                // MineAuth の name / preferred_username はどちらも MCID で、サインイン時にセッションへ入る
+                name: session?.user?.name ?? "",
             }}
             balance={balance}
-            claimBlocks={claims?.remainingClaimBlocks ?? null}
-            voteStreak={voteStats?.dayVoteStreak ?? null}
+            claimBlocks={claimBlocks}
+            voteStreak={voteStreak}
             diaryEntries={diaryEntries}
-            onlinePlayers={
-                // サーバーの username を一覧の表示名 (name) にそろえる
-                latestOnlinePlayers?.map((player) => ({
-                    id: player.id,
-                    name: player.username,
-                    server: player.server,
-                })) ?? null
-            }
+            onlinePlayers={onlinePlayers}
         />
     );
 }

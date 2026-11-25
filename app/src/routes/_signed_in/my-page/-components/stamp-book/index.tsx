@@ -2,6 +2,11 @@ import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 import { useId } from "react";
 import { cx, sva } from "../../../../../../styled-system/css";
+import {
+    InlineSkeleton,
+    Skeleton,
+    skeletonKeys,
+} from "../../../../../components/skeleton";
 import { toStampLabel } from "../../-functions/stamp-display";
 import type { MyStamps } from "../../-types/stamp";
 import { StampTile } from "../stamp-tile";
@@ -21,6 +26,7 @@ const stampBookStyle = sva({
         "rest",
         "label",
         "empty",
+        "tileSkeleton",
     ],
     base: {
         root: {
@@ -96,6 +102,13 @@ const stampBookStyle = sva({
             textStyle: "sm",
             color: "colorPalette.fg.muted",
         },
+        // 届くまでのタイル。スタンプのタイルと同じ正方形と角丸にする
+        tileSkeleton: {
+            // Skeleton 既定の 1 行ぶんの高さを外し、幅から正方形にする
+            height: "auto",
+            aspectRatio: "1",
+            borderRadius: "control",
+        },
     },
 });
 
@@ -157,6 +170,27 @@ export const StampBook = ({ stamps, className }: StampBookProps) => {
                     )}
                 </ul>
             )}
+        </section>
+    );
+};
+
+/** スタンプが届くまでのスタンプ帳。見出しはそのまま出し、枚数とタイルの場所を取る */
+export const StampBookSkeleton = ({ className }: { className?: string }) => {
+    const classes = stampBookStyle();
+    return (
+        <section className={cx(classes.root, className)} aria-busy="true">
+            <div className={classes.header}>
+                <h2 className={classes.title}>スタンプ帳</h2>
+                <span className={classes.count}>
+                    <InlineSkeleton width="4em" />
+                </span>
+            </div>
+            {/* 6 枚 +「+N」の 7 枠ぶん並べる */}
+            <div className={classes.row}>
+                {skeletonKeys(VISIBLE_STAMP_COUNT + 1).map((key) => (
+                    <Skeleton key={key} className={classes.tileSkeleton} />
+                ))}
+            </div>
         </section>
     );
 };

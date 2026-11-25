@@ -1,10 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getAuth } from "../../../lib/auth";
-import { getServerUrl } from "../../../lib/server-list";
-
-interface VaultBalanceResponse {
-    balance: number;
-}
+import { fetchVaultBalance } from "./fetch-vault-balance";
 
 export const getVaultBalance = createServerFn().handler(
     // oxlint-disable-next-line typescript/no-explicit-any -- request is not typed
@@ -19,25 +15,7 @@ export const getVaultBalance = createServerFn().handler(
             throw new Error("No access token available");
         }
 
-        // GriefPrevention / Vault は main サーバーにのみ存在する
-        const mainServerUrl = getServerUrl("main");
-
-        const response = await fetch(
-            `${mainServerUrl}/api/v1/plugins/vault/balance/me`,
-            {
-                headers: {
-                    Authorization: `Bearer ${tokenResult.accessToken}`,
-                },
-            },
-        );
-
-        if (!response.ok) {
-            throw new Error("Failed to fetch vault balance");
-        }
-
-        const data = (await response.json()) as VaultBalanceResponse;
-        // 小数の残高を四捨五入すると持っている以上の額を見せてしまうため、切り捨てる
-        return Math.floor(data.balance);
+        return fetchVaultBalance(tokenResult.accessToken);
     },
 );
 

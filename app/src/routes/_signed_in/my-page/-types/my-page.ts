@@ -1,3 +1,4 @@
+import type { MaybePromise } from "../../-types/maybe-promise";
 import type { MyStamps } from "./stamp";
 
 /** マイページに表示するプレイヤー。id はスキンとアバターの取得に使う */
@@ -25,11 +26,14 @@ export interface MyPageStats {
     voteStreak: number | null;
 }
 
-/** マイページの表示に必要なデータ一式 (ルートの loader が組み立てる) */
+/**
+ * マイページの表示に必要なデータ一式 (ルートの loader が組み立てる)。
+ * 数値とスタンプ帳は届くまで Promise のまま渡し、スケルトンから置き換える
+ */
 export interface MyPageData {
     player: MyPagePlayer;
     presence: PlayerPresence | null;
-    stats: MyPageStats;
+    stats: MaybePromise<MyPageStats>;
     /** スタンプ帳。取得できなければ null にしてセクションごと隠す */
-    stamps: MyStamps | null;
+    stamps: MaybePromise<MyStamps | null>;
 }

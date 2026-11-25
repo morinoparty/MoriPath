@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 import type { PropsWithChildren } from "react";
 import { sva } from "../../../../../styled-system/css";
+import { InlineSkeleton, skeletonKeys } from "../../../../components/skeleton";
 import { formatDiaryTime } from "../../-functions/format-diary-time";
 import type { DiaryEntry } from "../../-types/diary";
 import { DiaryPlayers } from "../diary-players";
@@ -142,9 +143,42 @@ const Entries = ({ entries }: EntriesProps) => {
     );
 };
 
+interface EntriesSkeletonProps {
+    /** 場所を取る件数。ホームに出す件数にそろえる */
+    count: number;
+}
+
+/** 記録が届くまでのタイムライン。時刻と本文の行を、届いた記録と同じ並びで場所取りする */
+const EntriesSkeleton = ({ count }: EntriesSkeletonProps) => {
+    const style = diarySectionStyle();
+    return (
+        <Timeline.Root variant="subtle" aria-busy="true">
+            {skeletonKeys(count).map((key) => (
+                <Timeline.Item key={key}>
+                    <Timeline.Indicator />
+                    <Timeline.Connector />
+                    <Timeline.Content>
+                        {/* 時刻はまだ無いため、time 要素ではなく span に同じ見た目を付ける */}
+                        <Timeline.Time asChild className={style.time}>
+                            <span>
+                                <InlineSkeleton width="3em" />
+                            </span>
+                        </Timeline.Time>
+                        {/* 本文はたいてい 1 行に収まるため、1 行分の帯を置く */}
+                        <Timeline.Description className={style.description}>
+                            <InlineSkeleton width="85%" />
+                        </Timeline.Description>
+                    </Timeline.Content>
+                </Timeline.Item>
+            ))}
+        </Timeline.Root>
+    );
+};
+
 /** ホームの「きょうのもりぱダイアリー」。見出し + タイムライン */
 export const DiarySection = {
     Root,
     Header,
     Entries,
+    EntriesSkeleton,
 };

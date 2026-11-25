@@ -44,3 +44,8 @@ export const VoteStreak: Story = {
 export const Unavailable: Story = {
     args: { label: "連続投票", value: null, unit: "日" },
 };
+
+// 残高が届くまで。ラベルは先に出し、数字の場所だけスケルトンにする
+export const Loading: Story = {
+    args: { label: "どんぐり", value: null, loading: true },
+};

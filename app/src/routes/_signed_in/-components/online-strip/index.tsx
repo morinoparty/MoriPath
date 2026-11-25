@@ -1,7 +1,12 @@
 import { PlayerAvatarGroup } from "@morinoparty/chlorophyll-react/components";
 import { ChevronRightIcon } from "lucide-react";
 import type { ComponentProps } from "react";
-import { cx, sva } from "../../../../../styled-system/css";
+import { css, cx, sva } from "../../../../../styled-system/css";
+import {
+    InlineSkeleton,
+    Skeleton,
+    skeletonKeys,
+} from "../../../../components/skeleton";
 import type { OnlinePlayer } from "../../-types/online-player";
 
 // 帯に顔を並べる最大人数。超えた分は「+N」にまとめる
@@ -124,5 +129,44 @@ export const OnlineStrip = ({
             </span>
             <ChevronRightIcon className={style.chevron} aria-hidden />
         </button>
+    );
+};
+
+// 顔の並び (sm は 32px) と同じ大きさの丸を、PlayerAvatarGroup のように少し重ねる
+const skeletonAvatarsStyle = css({
+    display: "flex",
+    flexShrink: "0",
+    "& > * + *": { marginLeft: "-2" },
+});
+
+const skeletonAvatarStyle = css({
+    width: "8",
+    height: "8",
+    // 重なりの境目を出すため、本物の顔と同じく画面の地の色で縁取る
+    outline: "2px solid",
+    outlineColor: "colorPalette.bg",
+});
+
+/** オンライン一覧が届くまでの帯。顔の並びと人数の文字の場所を取り、届いても高さを変えない */
+export const OnlineStripSkeleton = ({ className }: { className?: string }) => {
+    // variant を付けず基本の形だけにする (押せる帯と同じ余白で、ホバーの色は付けない)
+    const style = onlineStripStyle();
+    return (
+        <div className={cx(style.root, className)}>
+            <span className={skeletonAvatarsStyle}>
+                {skeletonKeys(MAX_VISIBLE_AVATARS).map((key) => (
+                    <Skeleton
+                        key={key}
+                        variant="circle"
+                        className={skeletonAvatarStyle}
+                    />
+                ))}
+            </span>
+            <span className={style.count}>
+                <span className={style.label}>
+                    <InlineSkeleton width="6em" />
+                </span>
+            </span>
+        </div>
     );
 };

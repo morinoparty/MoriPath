@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { TabBar } from "@/components/tab-bar";
 import { MyPageView } from "@/routes/_signed_in/my-page/-components/my-page-view";
 import { css } from "../../styled-system/css";
+import { pending } from "../sample-pending";
 import { craftheadAvatarUrl, samplePlayers } from "../sample-players";
 import { sampleStamps } from "../sample-stamps";
 
@@ -71,4 +72,20 @@ export const LongestName: Story = {
         stats: { balance: 12480, claimBlocks: 1240, voteStreak: 7 },
         stamps: sampleStamps,
     },
+};
+
+// 描くたびに作り直すと React が別の Promise として待ち直すため、1 つだけ作って使い回す
+const pendingStats = pending<never>();
+const pendingStamps = pending<null>();
+
+// 数値とスタンプ帳が届くまで。ポートレートは先に出し、届く場所はスケルトンにする。
+// Promise は args に入れると Storybook が複製してしまうため、render で直接渡す
+export const Loading: Story = {
+    args: {
+        player: samplePlayers.nikomaru,
+        presence: { online: true, serverName: "資源サーバー" },
+    },
+    render: (args) => (
+        <MyPageView {...args} stats={pendingStats} stamps={pendingStamps} />
+    ),
 };
