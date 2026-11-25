@@ -14,6 +14,8 @@ const diaryResponseEntrySchema = z.object({
     content: z.string(),
     /** 画面にそのまま出せる短い一言 (Markdown なし)。古い diary-api は返さない */
     text: z.string().optional(),
+    /** content から Markdown を外した全文。古い diary-api は返さない */
+    fullText: z.string().optional(),
     messageCount: z.int().min(0),
     players: z.array(diaryResponsePlayerSchema),
 });

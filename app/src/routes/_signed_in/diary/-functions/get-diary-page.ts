@@ -29,7 +29,7 @@ const toDayResult = (document: DiaryDocument | null): DiaryDayResult =>
                   summary:
                       (document.summaryText ?? document.summary)?.trim() ||
                       null,
-                  entries: toDiaryEntries(document),
+                  entries: toDiaryEntries(document, "full"),
               },
           }
         : { kind: "empty" };

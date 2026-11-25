@@ -15,7 +15,7 @@ export async function fetchLatestDiaryEntries(): Promise<DiaryEntry[] | null> {
 
     try {
         const document = await fetchDiaryDocument(config, "latest");
-        return document ? toDiaryEntries(document) : null;
+        return document ? toDiaryEntries(document, "short") : null;
     } catch (error) {
         console.warn("ダイアリーを取得できません:", error);
         return null;

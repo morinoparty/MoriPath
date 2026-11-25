@@ -31,13 +31,29 @@ const toDiaryPlayers = (
     return [...byId.values()];
 };
 
+/**
+ * 本文の長さ。short はホームで使う一言、full は詳しく見るページで使う全文。
+ * どちらも Markdown を外したものを優先し、まだ返さない diary-api では元の本文で代用する
+ */
+export type DiaryTextLength = "short" | "full";
+
+const pickDescription = (
+    entry: DiaryDocument["entries"][number],
+    length: DiaryTextLength,
+): string =>
+    (
+        (length === "short" ? entry.text : entry.fullText) ?? entry.content
+    ).trim();
+
 /** ダイアリー API のドキュメントを、本文のある時間だけのタイムライン (タームの順) にする */
-export const toDiaryEntries = (document: DiaryDocument): DiaryEntry[] =>
+export const toDiaryEntries = (
+    document: DiaryDocument,
+    length: DiaryTextLength,
+): DiaryEntry[] =>
     document.entries
-        // 短い一言を優先し、まだ返さない diary-api では本文で代用する
         .map((entry) => ({
             entry,
-            description: (entry.text ?? entry.content).trim(),
+            description: pickDescription(entry, length),
         }))
         // 誰もいなかった時間などは本文が空なので出さない
         .filter(({ description }) => description !== "")
