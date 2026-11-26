@@ -1,0 +1,4197 @@
+{
+    "stations": [
+        {
+            "id": "01a03527-1478-7d34-8cc2-7cf338c101b2",
+            "slug": "MRK",
+            "name": "もりんくる競馬場",
+            "world": "world",
+            "point": {
+                "x": -5209.548458684249,
+                "y": 84.0,
+                "z": 372.69999998807907
+            },
+            "overrideSize": null,
+            "color": "#5AAF58",
+            "numberings": [
+                {
+                    "group": "01a03527-13fc-77f9-a85c-8be2ac048f4c",
+                    "groupSlug": "pakapaka",
+                    "groupName": "ぱかぱか高速鉄道ぱかぱか高速ライン(緑草線)",
+                    "position": 0,
+                    "numbering": "PAK01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1484-71ac-9fe1-5ecf0c6b89fd",
+            "slug": "afcv",
+            "name": "AFC村",
+            "world": "world",
+            "point": {
+                "x": 1891.5405319077531,
+                "y": 74.0,
+                "z": -498.62753718543695
+            },
+            "overrideSize": null,
+            "color": "#72DE60",
+            "numberings": [
+                {
+                    "group": "01a03527-1455-7ba6-9292-d4bc39ca1b10",
+                    "groupSlug": "tono",
+                    "groupName": "旧遠野森林鉄道",
+                    "position": 0,
+                    "numbering": "TON01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-148e-725e-9450-18abf95daa8d",
+            "slug": "ahr",
+            "name": "青原",
+            "world": "world",
+            "point": {
+                "x": 3189.864560927941,
+                "y": 82.0,
+                "z": -82.95199861804116
+            },
+            "overrideSize": null,
+            "color": "#F72E76",
+            "numberings": [
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 8,
+                    "numbering": "SF09"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1497-7b5c-879a-9f545fde631d",
+            "slug": "akmt",
+            "name": "赤松",
+            "world": "world",
+            "point": {
+                "x": -6740.0,
+                "y": 78.0,
+                "z": 2190.0
+            },
+            "overrideSize": null,
+            "color": "#748824",
+            "numberings": [
+                {
+                    "group": "01a03527-13c4-7b75-9677-751c541aaabe",
+                    "groupSlug": "mmsr",
+                    "groupName": "森元森林鉄道",
+                    "position": 13,
+                    "numbering": "MMS14"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-14a0-7466-9358-1f3b722b61ad",
+            "slug": "alne",
+            "name": "アルザーヌ",
+            "world": "world",
+            "point": {
+                "x": 2071.478052455926,
+                "y": 75.5,
+                "z": 3604.7456963275044
+            },
+            "overrideSize": null,
+            "color": "#12A8C5",
+            "numberings": [
+                {
+                    "group": "01a03527-137b-718d-9a91-c5bde6eced66",
+                    "groupSlug": "mcEC",
+                    "groupName": "町湯東海岸線",
+                    "position": 0,
+                    "numbering": "MEC01"
+                },
+                {
+                    "group": "01a03527-1396-76e4-90a5-39afe9f03cde",
+                    "groupSlug": "mcSE",
+                    "groupName": "町湯東南線",
+                    "position": 4,
+                    "numbering": "MSE05"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-14a9-72c1-9a5d-065031ffbf3c",
+            "slug": "amir",
+            "name": "天色城城下町（あまいろじょうじょうかまち）",
+            "world": "world",
+            "point": {
+                "x": 632.4330549834185,
+                "y": 107.0,
+                "z": 120.58531461193189
+            },
+            "overrideSize": null,
+            "color": "#3ED9D5",
+            "numberings": [
+                {
+                    "group": "01a03527-1372-7c84-838f-b653d1deb168",
+                    "groupSlug": "matsuSub",
+                    "groupName": "松島支線",
+                    "position": 0,
+                    "numbering": "MAT01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-14b2-7c0a-a983-5557cb92a6ec",
+            "slug": "anml",
+            "name": "アニマルの森",
+            "world": "world",
+            "point": {
+                "x": 1334.0286056341927,
+                "y": 79.0625,
+                "z": 598.3138186166275
+            },
+            "overrideSize": null,
+            "color": "#F346E3",
+            "numberings": [
+                {
+                    "group": "01a03527-1344-7569-ae77-6eb52d8202f8",
+                    "groupSlug": "fm",
+                    "groupName": "FM鉄道",
+                    "position": 2,
+                    "numbering": "FM03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-14bc-704a-a7b6-b55453208501",
+            "slug": "atme",
+            "name": "E1",
+            "world": "world",
+            "point": {
+                "x": -1586.4751117764456,
+                "y": 74.0,
+                "z": 546.4562122970248
+            },
+            "overrideSize": null,
+            "color": "#E2C90C",
+            "numberings": [
+                {
+                    "group": "01a03527-1320-7208-ab82-d0051864ac3b",
+                    "groupSlug": "atumoriLoop",
+                    "groupName": "あつもり環状線",
+                    "position": 2,
+                    "numbering": "MA03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-14c8-71f9-98bf-2926c4fd208e",
+            "slug": "atmk",
+            "name": "あつもり街道",
+            "world": "world",
+            "point": {
+                "x": -962.4921784741045,
+                "y": 67.0,
+                "z": 278.3569667569854
+            },
+            "overrideSize": null,
+            "color": "#AF7850",
+            "numberings": [
+                {
+                    "group": "01a03527-13e0-7198-a973-cb00be0f2a2e",
+                    "groupSlug": "morimotoWest",
+                    "groupName": "もりもと西部線",
+                    "position": 2,
+                    "numbering": "MW03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-14d1-7574-8972-b33d53713d22",
+            "slug": "atmm",
+            "name": "あつもり南",
+            "world": "world",
+            "point": {
+                "x": -1424.7020195197017,
+                "y": 72.0,
+                "z": 1041.4844260521547
+            },
+            "overrideSize": null,
+            "color": "#F71E34",
+            "numberings": [
+                {
+                    "group": "01a03527-1344-7569-ae77-6eb52d8202f8",
+                    "groupSlug": "fm",
+                    "groupName": "FM鉄道",
+                    "position": 5,
+                    "numbering": "FM06"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-14da-7c3a-b220-6f0519009e8c",
+            "slug": "atmn",
+            "name": "N1",
+            "world": "world",
+            "point": {
+                "x": -1606.5684777358588,
+                "y": 73.0,
+                "z": 408.30000001192093
+            },
+            "overrideSize": null,
+            "color": "#143F7D",
+            "numberings": [
+                {
+                    "group": "01a03527-1320-7208-ab82-d0051864ac3b",
+                    "groupSlug": "atumoriLoop",
+                    "groupName": "あつもり環状線",
+                    "position": 1,
+                    "numbering": "MA02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-14e4-75bc-a411-993584fc1480",
+            "slug": "atms",
+            "name": "S1",
+            "world": "world",
+            "point": {
+                "x": -1761.547519180829,
+                "y": 77.0,
+                "z": 619.3743656896626
+            },
+            "overrideSize": null,
+            "color": "#677A49",
+            "numberings": [
+                {
+                    "group": "01a03527-1320-7208-ab82-d0051864ac3b",
+                    "groupSlug": "atumoriLoop",
+                    "groupName": "あつもり環状線",
+                    "position": 3,
+                    "numbering": "MA04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-14ee-7871-9abb-c27fbd2a51ea",
+            "slug": "atmw",
+            "name": "W1",
+            "world": "world",
+            "point": {
+                "x": -1771.3177105987495,
+                "y": 76.0,
+                "z": 488.4845106430027
+            },
+            "overrideSize": null,
+            "color": "#7AEF37",
+            "numberings": [
+                {
+                    "group": "01a03527-1320-7208-ab82-d0051864ac3b",
+                    "groupSlug": "atumoriLoop",
+                    "groupName": "あつもり環状線",
+                    "position": 0,
+                    "numbering": "MA01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-14f7-7ed1-833a-477cc67354b1",
+            "slug": "awamori",
+            "name": "あわもり",
+            "world": "world",
+            "point": {
+                "x": 1698.3624981291146,
+                "y": 61.0,
+                "z": -5129.1121194518955
+            },
+            "overrideSize": null,
+            "color": "#CAA46C",
+            "numberings": [
+                {
+                    "group": "01a03527-13fc-77f9-a85c-8be2ac048f4c",
+                    "groupSlug": "pakapaka",
+                    "groupName": "ぱかぱか高速鉄道ぱかぱか高速ライン(緑草線)",
+                    "position": 7,
+                    "numbering": "PAK08"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1502-7661-9ddb-74eee5c8cc90",
+            "slug": "awbn",
+            "name": "淡紅（あわべに）",
+            "world": "world",
+            "point": {
+                "x": -846.0,
+                "y": 67.0,
+                "z": 206.0
+            },
+            "overrideSize": null,
+            "color": "#A92B88",
+            "numberings": [
+                {
+                    "group": "01a03527-13e0-7198-a973-cb00be0f2a2e",
+                    "groupSlug": "morimotoWest",
+                    "groupName": "もりもと西部線",
+                    "position": 1,
+                    "numbering": "MW02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-150b-7983-b7a6-56e17b4a12ef",
+            "slug": "bchp",
+            "name": "ビークロハピ",
+            "world": "world",
+            "point": {
+                "x": -4965.524313323414,
+                "y": 78.0,
+                "z": -8997.970947501552
+            },
+            "overrideSize": null,
+            "color": "#7EA1FF",
+            "numberings": [
+                {
+                    "group": "01a03527-145f-7ab0-8929-a08b6321337f",
+                    "groupSlug": "yukihara",
+                    "groupName": "雪原Line",
+                    "position": 2,
+                    "numbering": "YUK03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1515-7e11-acce-11ff5b7a9145",
+            "slug": "beef",
+            "name": "betaエリア前",
+            "world": "world",
+            "point": {
+                "x": -490.94363037512454,
+                "y": 78.0,
+                "z": -933.5666255401133
+            },
+            "overrideSize": null,
+            "color": "#B99006",
+            "numberings": [
+                {
+                    "group": "01a03527-13e9-723c-a42a-9ab959f3311f",
+                    "groupSlug": "mu",
+                    "groupName": "うみもと線",
+                    "position": 6,
+                    "numbering": "MU07"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-151f-73ba-9ce6-05488e7e616c",
+            "slug": "bnii",
+            "name": "紅島（べにじま）",
+            "world": "world",
+            "point": {
+                "x": 1281.3661387125019,
+                "y": 151.0,
+                "z": 2581.552370101698
+            },
+            "overrideSize": null,
+            "color": "#02F594",
+            "numberings": [
+                {
+                    "group": "01a03527-1344-7569-ae77-6eb52d8202f8",
+                    "groupSlug": "fm",
+                    "groupName": "FM鉄道",
+                    "position": 0,
+                    "numbering": "FM01"
+                },
+                {
+                    "group": "01a03527-1384-73f7-8591-d1d236d47c78",
+                    "groupSlug": "mcKH",
+                    "groupName": "町湯紅白線",
+                    "position": 3,
+                    "numbering": "MCK04"
+                },
+                {
+                    "group": "01a03527-1424-7071-83da-efbb56b0c241",
+                    "groupSlug": "rinkai",
+                    "groupName": "リンカイ鉄道",
+                    "position": 3,
+                    "numbering": "RIN04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1528-745f-99df-696f88f77201",
+            "slug": "bnmr",
+            "name": "紅森（べにもり）",
+            "world": "world",
+            "point": {
+                "x": 777.3772514374236,
+                "y": 80.0,
+                "z": 1476.5159926901304
+            },
+            "overrideSize": null,
+            "color": "#22D72B",
+            "numberings": [
+                {
+                    "group": "01a03527-1424-7071-83da-efbb56b0c241",
+                    "groupSlug": "rinkai",
+                    "groupName": "リンカイ鉄道",
+                    "position": 0,
+                    "numbering": "RIN01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1532-7445-bb67-1a9778c2bd2b",
+            "slug": "byak",
+            "name": "白狐",
+            "world": "world",
+            "point": {
+                "x": 593.3655133109256,
+                "y": 70.0,
+                "z": 5050.385455462907
+            },
+            "overrideSize": null,
+            "color": "#E3B250",
+            "numberings": [
+                {
+                    "group": "01a03527-1372-7c84-838f-b653d1deb168",
+                    "groupSlug": "matsuSub",
+                    "groupName": "松島支線",
+                    "position": 8,
+                    "numbering": "MAT09"
+                },
+                {
+                    "group": "01a03527-1468-7e96-a685-110226bdabe9",
+                    "groupSlug": "yukuripa",
+                    "groupName": "ユクリパ高速鉄道ユクリ本線",
+                    "position": 2,
+                    "numbering": "YKP03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-153b-704b-8f3f-a1249757c765",
+            "slug": "cfp",
+            "name": "中央フォレストピア",
+            "world": "world",
+            "point": {
+                "x": -534.4966141876687,
+                "y": 62.0,
+                "z": 83.92500001192093
+            },
+            "overrideSize": null,
+            "color": "#3ABC8D",
+            "numberings": [
+                {
+                    "group": "01a03527-13cd-7b3a-a1d9-2e3f52a675b5",
+                    "groupSlug": "morimotoCent",
+                    "groupName": "もりもと中央線",
+                    "position": 0,
+                    "numbering": "MC01"
+                },
+                {
+                    "group": "01a03527-13fc-77f9-a85c-8be2ac048f4c",
+                    "groupSlug": "pakapaka",
+                    "groupName": "ぱかぱか高速鉄道ぱかぱか高速ライン(緑草線)",
+                    "position": 1,
+                    "numbering": "PAK02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1543-7c0d-922e-7716bddef999",
+            "slug": "chig",
+            "name": "千頭",
+            "world": "world",
+            "point": {
+                "x": 450.36267297675084,
+                "y": 96.0,
+                "z": 3259.5373839914996
+            },
+            "overrideSize": null,
+            "color": "#532D28",
+            "numberings": [
+                {
+                    "group": "01a03527-1372-7c84-838f-b653d1deb168",
+                    "groupSlug": "matsuSub",
+                    "groupName": "松島支線",
+                    "position": 6,
+                    "numbering": "MAT07"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-154d-7351-863a-26be011f5496",
+            "slug": "crys",
+            "name": "クリスタルビーチ",
+            "world": "world",
+            "point": {
+                "x": -4255.606363158634,
+                "y": 73.0,
+                "z": -8132.665040000332
+            },
+            "overrideSize": null,
+            "color": "#1C2A9D",
+            "numberings": [
+                {
+                    "group": "01a03527-139f-755f-87c6-9b643aae1daa",
+                    "groupSlug": "meidai",
+                    "groupName": "迷大鉄道",
+                    "position": 1,
+                    "numbering": "MEI02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1556-7fef-8acd-01f503cce773",
+            "slug": "ebl",
+            "name": "東ボーダーライン",
+            "world": "world",
+            "point": {
+                "x": 9468.252970897707,
+                "y": 108.0,
+                "z": 706.4247226118688
+            },
+            "overrideSize": null,
+            "color": "#FBD16B",
+            "numberings": [
+                {
+                    "group": "01a03527-133b-76c5-8863-c1777c3e95c5",
+                    "groupSlug": "border",
+                    "groupName": "ボーダーライン鉄道",
+                    "position": 1,
+                    "numbering": "BOR02"
+                },
+                {
+                    "group": "01a03527-13bb-7d7a-9776-b8b1ebb9d7ff",
+                    "groupSlug": "mizuna",
+                    "groupName": "水雫支線",
+                    "position": 5,
+                    "numbering": "MIZ06"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-155f-776c-a4bd-85e4402f6ef1",
+            "slug": "efop",
+            "name": "東フォレストピア",
+            "world": "world",
+            "point": {
+                "x": -370.315484292172,
+                "y": 56.0,
+                "z": 88.46894357754269
+            },
+            "overrideSize": null,
+            "color": "#5E95E6",
+            "numberings": [
+                {
+                    "group": "01a03527-13cd-7b3a-a1d9-2e3f52a675b5",
+                    "groupSlug": "morimotoCent",
+                    "groupName": "もりもと中央線",
+                    "position": 1,
+                    "numbering": "MC02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1568-7c4d-94a9-115f3ecf9fb4",
+            "slug": "fbrb",
+            "name": "吹規別（ふぶりべつ）",
+            "world": "world",
+            "point": {
+                "x": 2978.078172116314,
+                "y": 81.7370533485451,
+                "z": 1145.9250196453106
+            },
+            "overrideSize": null,
+            "color": "#5DB8E6",
+            "numberings": [
+                {
+                    "group": "01a03527-137b-718d-9a91-c5bde6eced66",
+                    "groupSlug": "mcEC",
+                    "groupName": "町湯東海岸線",
+                    "position": 4,
+                    "numbering": "MEC05"
+                },
+                {
+                    "group": "01a03527-13b2-753e-b4a6-984789262ad6",
+                    "groupSlug": "miyugawa",
+                    "groupName": "海結川鉄道",
+                    "position": 7,
+                    "numbering": "MIY08"
+                },
+                {
+                    "group": "01a03527-13bb-7d7a-9776-b8b1ebb9d7ff",
+                    "groupSlug": "mizuna",
+                    "groupName": "水雫支線",
+                    "position": 0,
+                    "numbering": "MIZ01"
+                },
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 21,
+                    "numbering": "SF22"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1571-7c17-83c9-ab51fe16a997",
+            "slug": "fopn",
+            "name": "フォレストピア西",
+            "world": "world",
+            "point": {
+                "x": -690.7133952569081,
+                "y": 68.26242976281655,
+                "z": -45.47510140978123
+            },
+            "overrideSize": null,
+            "color": "#AC8336",
+            "numberings": [
+                {
+                    "group": "01a03527-139f-755f-87c6-9b643aae1daa",
+                    "groupSlug": "meidai",
+                    "groupName": "迷大鉄道",
+                    "position": 14,
+                    "numbering": "MEI15"
+                },
+                {
+                    "group": "01a03527-13cd-7b3a-a1d9-2e3f52a675b5",
+                    "groupSlug": "morimotoCent",
+                    "groupName": "もりもと中央線",
+                    "position": 7,
+                    "numbering": "MC08"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-157a-7c2e-b127-0f17a80920ca",
+            "slug": "ftaw",
+            "name": "桜雲（おううん）",
+            "world": "world",
+            "point": {
+                "x": 4523.0,
+                "y": 67.0,
+                "z": -2067.0
+            },
+            "overrideSize": null,
+            "color": "#07F656",
+            "numberings": [
+                {
+                    "group": "01a03527-134d-7c90-81f8-f2e1d41e4973",
+                    "groupSlug": "french",
+                    "groupName": "ふれんちとーす島線",
+                    "position": 1,
+                    "numbering": "FRE02"
+                },
+                {
+                    "group": "01a03527-1406-75ee-8792-b23ac3abf663",
+                    "groupSlug": "ppl",
+                    "groupName": "ポピーライン",
+                    "position": 2,
+                    "numbering": "PPL03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1583-7f16-ace0-f3c025a0c52b",
+            "slug": "fti",
+            "name": "ふれんちとーす島",
+            "world": "world",
+            "point": {
+                "x": 4510.54473934427,
+                "y": 66.0,
+                "z": -3586.4686706175744
+            },
+            "overrideSize": null,
+            "color": "#8221ED",
+            "numberings": [
+                {
+                    "group": "01a03527-134d-7c90-81f8-f2e1d41e4973",
+                    "groupSlug": "french",
+                    "groupName": "ふれんちとーす島線",
+                    "position": 0,
+                    "numbering": "FRE01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-158e-77ce-a349-c01c112385b2",
+            "slug": "haar",
+            "name": "はなもりアーチェリー場",
+            "world": "world",
+            "point": {
+                "x": -3799.30830234107,
+                "y": 72.0,
+                "z": -719.3629968522199
+            },
+            "overrideSize": null,
+            "color": "#A7CC6A",
+            "numberings": [
+                {
+                    "group": "01a03527-1357-7093-8b6d-b48972fe0bd0",
+                    "groupSlug": "hana",
+                    "groupName": "はなもり鉄道",
+                    "position": 2,
+                    "numbering": "HAN03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1597-7f64-96d6-82ca6a196b18",
+            "slug": "hace",
+            "name": "はなもり中央",
+            "world": "world",
+            "point": {
+                "x": -3967.8204182568848,
+                "y": 67.0,
+                "z": -878.5131494844999
+            },
+            "overrideSize": null,
+            "color": "#0B1590",
+            "numberings": [
+                {
+                    "group": "01a03527-1357-7093-8b6d-b48972fe0bd0",
+                    "groupSlug": "hana",
+                    "groupName": "はなもり鉄道",
+                    "position": 0,
+                    "numbering": "HAN01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-15a1-7aa0-a9b0-834aa619d7c1",
+            "slug": "hal",
+            "name": "ハルフォール",
+            "world": "world",
+            "point": {
+                "x": 4027.297047741447,
+                "y": 74.5,
+                "z": 6813.47663596594
+            },
+            "overrideSize": null,
+            "color": "#215AF1",
+            "numberings": [
+                {
+                    "group": "01a03527-1396-76e4-90a5-39afe9f03cde",
+                    "groupSlug": "mcSE",
+                    "groupName": "町湯東南線",
+                    "position": 6,
+                    "numbering": "MSE07"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-15ab-7cc4-9bab-aed0e4c6b5b4",
+            "slug": "hant",
+            "name": "はなもりニュータウン",
+            "world": "world",
+            "point": {
+                "x": -3812.430253943086,
+                "y": 69.0,
+                "z": -886.5059264378947
+            },
+            "overrideSize": null,
+            "color": "#38D0C9",
+            "numberings": [
+                {
+                    "group": "01a03527-1357-7093-8b6d-b48972fe0bd0",
+                    "groupSlug": "hana",
+                    "groupName": "はなもり鉄道",
+                    "position": 1,
+                    "numbering": "HAN02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-15b4-7d11-a3e0-22076d714e82",
+            "slug": "hbk",
+            "name": "葉吹",
+            "world": "world",
+            "point": {
+                "x": 2257.4187213475834,
+                "y": 70.0,
+                "z": -84.8507706492974
+            },
+            "overrideSize": null,
+            "color": "#753738",
+            "numberings": [
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 10,
+                    "numbering": "SF11"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-15bd-79bf-b559-26f9b709140f",
+            "slug": "hbnv",
+            "name": "火花村",
+            "world": "world",
+            "point": {
+                "x": -2470.8431776702846,
+                "y": 64.0,
+                "z": -2060.3083970795255
+            },
+            "overrideSize": null,
+            "color": "#7051FC",
+            "numberings": [
+                {
+                    "group": "01a03527-13c4-7b75-9677-751c541aaabe",
+                    "groupSlug": "mmsr",
+                    "groupName": "森元森林鉄道",
+                    "position": 10,
+                    "numbering": "MMS11"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-15c6-7765-8071-a642b99e2688",
+            "slug": "hemo",
+            "name": "白英門（はくえいもん）",
+            "world": "world",
+            "point": {
+                "x": 147.7017460937427,
+                "y": 78.0,
+                "z": -5110.50248832278
+            },
+            "overrideSize": null,
+            "color": "#520F4A",
+            "numberings": [
+                {
+                    "group": "01a03527-13fc-77f9-a85c-8be2ac048f4c",
+                    "groupSlug": "pakapaka",
+                    "groupName": "ぱかぱか高速鉄道ぱかぱか高速ライン(緑草線)",
+                    "position": 6,
+                    "numbering": "PAK07"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-15cf-7495-93a0-290736972135",
+            "slug": "hgok",
+            "name": "花が丘",
+            "world": "world",
+            "point": {
+                "x": -3829.385762656809,
+                "y": 70.0,
+                "z": -295.509198778928
+            },
+            "overrideSize": null,
+            "color": "#5EE014",
+            "numberings": [
+                {
+                    "group": "01a03527-1357-7093-8b6d-b48972fe0bd0",
+                    "groupSlug": "hana",
+                    "groupName": "はなもり鉄道",
+                    "position": 3,
+                    "numbering": "HAN04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-15d7-7758-9458-36425a650dc1",
+            "slug": "hmr",
+            "name": "花めいろ",
+            "world": "world",
+            "point": {
+                "x": 4896.328884623803,
+                "y": 80.0,
+                "z": 3373.2720864179378
+            },
+            "overrideSize": null,
+            "color": "#0BFA2C",
+            "numberings": [
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 1,
+                    "numbering": "SF02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-15e0-7fe5-ada4-d8a965a23677",
+            "slug": "hmt",
+            "name": "東もりもと",
+            "world": "world",
+            "point": {
+                "x": -128.32277419335983,
+                "y": 59.5,
+                "z": -84.7284226383532
+            },
+            "overrideSize": null,
+            "color": "#6DA143",
+            "numberings": [
+                {
+                    "group": "01a03527-13cd-7b3a-a1d9-2e3f52a675b5",
+                    "groupSlug": "morimotoCent",
+                    "groupName": "もりもと中央線",
+                    "position": 4,
+                    "numbering": "MC05"
+                },
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 14,
+                    "numbering": "SF15"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-15eb-74bf-859c-9628e5118a70",
+            "slug": "hnml",
+            "name": "hinomal",
+            "world": "world",
+            "point": {
+                "x": 2945.3896253629846,
+                "y": 70.0,
+                "z": 178.72487670736137
+            },
+            "overrideSize": null,
+            "color": "#5E08C6",
+            "numberings": [
+                {
+                    "group": "01a03527-13bb-7d7a-9776-b8b1ebb9d7ff",
+                    "groupSlug": "mizuna",
+                    "groupName": "水雫支線",
+                    "position": 2,
+                    "numbering": "MIZ03"
+                },
+                {
+                    "group": "01a03527-1441-74e7-8962-b9776687badd",
+                    "groupSlug": "srhn",
+                    "groupName": "白華村鉄道",
+                    "position": 0,
+                    "numbering": "SRH01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-15f4-7a2e-a13a-0900a8c565df",
+            "slug": "hpzr",
+            "name": "八葉尻（はっぱじり）",
+            "world": "world",
+            "point": {
+                "x": 2812.4722832649113,
+                "y": 76.0,
+                "z": 2670.4265016530435
+            },
+            "overrideSize": null,
+            "color": "#ED6DAF",
+            "numberings": [
+                {
+                    "group": "01a03527-137b-718d-9a91-c5bde6eced66",
+                    "groupSlug": "mcEC",
+                    "groupName": "町湯東海岸線",
+                    "position": 1,
+                    "numbering": "MEC02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-15fe-7599-933f-ec662f4c12ca",
+            "slug": "hrht",
+            "name": "掘端（ほりはた）",
+            "world": "world",
+            "point": {
+                "x": 1750.562100314083,
+                "y": 75.5625,
+                "z": 1310.3219664172423
+            },
+            "overrideSize": null,
+            "color": "#E304DA",
+            "numberings": [
+                {
+                    "group": "01a03527-13b2-753e-b4a6-984789262ad6",
+                    "groupSlug": "miyugawa",
+                    "groupName": "海結川鉄道",
+                    "position": 2,
+                    "numbering": "MIY03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1607-77d8-8bfc-308e3e8f9280",
+            "slug": "hrn",
+            "name": "比良野",
+            "world": "world",
+            "point": {
+                "x": 710.3541146742433,
+                "y": 57.0,
+                "z": -74.47366495732474
+            },
+            "overrideSize": null,
+            "color": "#5A5207",
+            "numberings": [
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 13,
+                    "numbering": "SF14"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1611-7561-8712-52ffe883eb49",
+            "slug": "hsb",
+            "name": "平林",
+            "world": "world",
+            "point": {
+                "x": 4382.511502549038,
+                "y": 76.0,
+                "z": 1818.586333460289
+            },
+            "overrideSize": null,
+            "color": "#91103C",
+            "numberings": [
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 4,
+                    "numbering": "SF05"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-161a-7ee8-976e-11150a94c729",
+            "slug": "htat",
+            "name": "端あつもり（はたあつもり）",
+            "world": "world",
+            "point": {
+                "x": -1414.5458381325227,
+                "y": 68.0,
+                "z": 424.1900623728728
+            },
+            "overrideSize": null,
+            "color": "#9A6AF6",
+            "numberings": [
+                {
+                    "group": "01a03527-13e0-7198-a973-cb00be0f2a2e",
+                    "groupSlug": "morimotoWest",
+                    "groupName": "もりもと西部線",
+                    "position": 3,
+                    "numbering": "MW04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1623-7ea5-bd4e-cbada56d8629",
+            "slug": "hyok",
+            "name": "氷海平原",
+            "world": "world",
+            "point": {
+                "x": 594.7007843982253,
+                "y": 71.0,
+                "z": 5697.546761838312
+            },
+            "overrideSize": null,
+            "color": "#658608",
+            "numberings": [
+                {
+                    "group": "01a03527-1468-7e96-a685-110226bdabe9",
+                    "groupSlug": "yukuripa",
+                    "groupName": "ユクリパ高速鉄道ユクリ本線",
+                    "position": 3,
+                    "numbering": "YKP04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-162f-73fe-8e71-abb3563d2f36",
+            "slug": "igo",
+            "name": "囲碁村",
+            "world": "world",
+            "point": {
+                "x": 1313.3335945125662,
+                "y": 76.0,
+                "z": -320.4226955330134
+            },
+            "overrideSize": null,
+            "color": "#D9FC3C",
+            "numberings": [
+                {
+                    "group": "01a03527-1441-74e7-8962-b9776687badd",
+                    "groupSlug": "srhn",
+                    "groupName": "白華村鉄道",
+                    "position": 2,
+                    "numbering": "SRH03"
+                },
+                {
+                    "group": "01a03527-1455-7ba6-9292-d4bc39ca1b10",
+                    "groupSlug": "tono",
+                    "groupName": "旧遠野森林鉄道",
+                    "position": 2,
+                    "numbering": "TON03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1639-70f7-9af8-7b4157ed050b",
+            "slug": "igov",
+            "name": "囲碁村",
+            "world": "world",
+            "point": {
+                "x": 1173.5445199482308,
+                "y": 71.0,
+                "z": -292.6716108487843
+            },
+            "overrideSize": null,
+            "color": "#D5626F",
+            "numberings": [
+                {
+                    "group": "01a03527-1369-7ffa-aa40-c98cc4e87a09",
+                    "groupSlug": "karaLine",
+                    "groupName": "kara鉄道",
+                    "position": 0,
+                    "numbering": "KAR01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1644-7b32-a2da-da85007cdb49",
+            "slug": "iwm",
+            "name": "岩間",
+            "world": "world",
+            "point": {
+                "x": 3504.464600525482,
+                "y": 81.0,
+                "z": -176.62880234476535
+            },
+            "overrideSize": null,
+            "color": "#D99F0C",
+            "numberings": [
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 7,
+                    "numbering": "SF08"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-164e-7392-8e19-227ede9ed04f",
+            "slug": "iwsi",
+            "name": "岩城信号所",
+            "world": "world",
+            "point": {
+                "x": -5910.414729954922,
+                "y": 77.0,
+                "z": -1144.486367824562
+            },
+            "overrideSize": null,
+            "color": "#4AE22F",
+            "numberings": [
+                {
+                    "group": "01a03527-13c4-7b75-9677-751c541aaabe",
+                    "groupSlug": "mmsr",
+                    "groupName": "森元森林鉄道",
+                    "position": 12,
+                    "numbering": "MMS13"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1660-728c-8074-8a1f28398179",
+            "slug": "kchv",
+            "name": "花鳥村停留所",
+            "world": "world",
+            "point": {
+                "x": 2978.431559090202,
+                "y": 74.0,
+                "z": 696.2995241375811
+            },
+            "overrideSize": null,
+            "color": "#5090FD",
+            "numberings": [
+                {
+                    "group": "01a03527-13bb-7d7a-9776-b8b1ebb9d7ff",
+                    "groupSlug": "mizuna",
+                    "groupName": "水雫支線",
+                    "position": 1,
+                    "numbering": "MIZ02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1669-7f25-ac47-ec744e87aa04",
+            "slug": "kgr",
+            "name": "花木郡",
+            "world": "world",
+            "point": {
+                "x": 4475.2883402526895,
+                "y": 88.0,
+                "z": 2309.0214223482385
+            },
+            "overrideSize": null,
+            "color": "#FFB08F",
+            "numberings": [
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 3,
+                    "numbering": "SF04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1673-7a74-9ec6-f9e9088344fa",
+            "slug": "kgz",
+            "name": "蝸牛沢（かぎゅうざわ）",
+            "world": "world",
+            "point": {
+                "x": -1.621032760106774,
+                "y": 78.0,
+                "z": -3354.401955135636
+            },
+            "overrideSize": null,
+            "color": "#D3199F",
+            "numberings": [
+                {
+                    "group": "01a03527-13a8-7e1e-abe7-47b66d2b570d",
+                    "groupSlug": "miharu",
+                    "groupName": "瑞時縦横線",
+                    "position": 4,
+                    "numbering": "MIH05"
+                },
+                {
+                    "group": "01a03527-13fc-77f9-a85c-8be2ac048f4c",
+                    "groupSlug": "pakapaka",
+                    "groupName": "ぱかぱか高速鉄道ぱかぱか高速ライン(緑草線)",
+                    "position": 5,
+                    "numbering": "PAK06"
+                },
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 19,
+                    "numbering": "SF20"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-167c-7f9a-97ac-caa7b5bf1d5e",
+            "slug": "kmgs",
+            "name": "亀ヶ島",
+            "world": "world",
+            "point": {
+                "x": 1293.4975717383638,
+                "y": 76.0,
+                "z": 3403.7913844856057
+            },
+            "overrideSize": null,
+            "color": "#D017F6",
+            "numberings": [
+                {
+                    "group": "01a03527-1396-76e4-90a5-39afe9f03cde",
+                    "groupSlug": "mcSE",
+                    "groupName": "町湯東南線",
+                    "position": 2,
+                    "numbering": "MSE03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1686-7efa-bd24-bdb3f79b144c",
+            "slug": "kmmj",
+            "name": "神森神社入口",
+            "world": "world",
+            "point": {
+                "x": 255.83725012605646,
+                "y": 72.0,
+                "z": 888.4651146494191
+            },
+            "overrideSize": null,
+            "color": "#3844EB",
+            "numberings": [
+                {
+                    "group": "01a03527-135f-7f14-8ab3-3ad3a1bd4578",
+                    "groupSlug": "kamimoriNewLine",
+                    "groupName": "神森新線",
+                    "position": 4,
+                    "numbering": "MK05"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1691-74c0-aba2-7dbbdf5d2cbb",
+            "slug": "kmmr",
+            "name": "神森",
+            "world": "world",
+            "point": {
+                "x": 55.36407989124065,
+                "y": 63.0,
+                "z": 1078.6207478315741
+            },
+            "overrideSize": null,
+            "color": "#CEDBF7",
+            "numberings": [
+                {
+                    "group": "01a03527-135f-7f14-8ab3-3ad3a1bd4578",
+                    "groupSlug": "kamimoriNewLine",
+                    "groupName": "神森新線",
+                    "position": 3,
+                    "numbering": "MK04"
+                },
+                {
+                    "group": "01a03527-1372-7c84-838f-b653d1deb168",
+                    "groupSlug": "matsuSub",
+                    "groupName": "松島支線",
+                    "position": 4,
+                    "numbering": "MAT05"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-169b-7a38-a4b5-7f35d573a72c",
+            "slug": "koon",
+            "name": "古落内（こおない）",
+            "world": "world",
+            "point": {
+                "x": 2812.5543238245414,
+                "y": 75.0,
+                "z": 1759.3676360247387
+            },
+            "overrideSize": null,
+            "color": "#9BBE02",
+            "numberings": [
+                {
+                    "group": "01a03527-137b-718d-9a91-c5bde6eced66",
+                    "groupSlug": "mcEC",
+                    "groupName": "町湯東海岸線",
+                    "position": 3,
+                    "numbering": "MEC04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-16a4-7aff-9475-042a058eec1d",
+            "slug": "kotr",
+            "name": "KOTRI（ことり）",
+            "world": "world",
+            "point": {
+                "x": -10228.532391746572,
+                "y": 71.0,
+                "z": -8991.176089407609
+            },
+            "overrideSize": null,
+            "color": "#2FB625",
+            "numberings": [
+                {
+                    "group": "01a03527-144b-7c7d-9720-c0aa2c22a72b",
+                    "groupSlug": "sunflower",
+                    "groupName": "サンフラワーLine",
+                    "position": 0,
+                    "numbering": "SUN01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-16ae-7b72-be11-e99dd785d157",
+            "slug": "krbt",
+            "name": "来流別（くるべつ）",
+            "world": "world",
+            "point": {
+                "x": 2812.586741797987,
+                "y": 76.0,
+                "z": 2234.652005439661
+            },
+            "overrideSize": null,
+            "color": "#DEBA54",
+            "numberings": [
+                {
+                    "group": "01a03527-137b-718d-9a91-c5bde6eced66",
+                    "groupSlug": "mcEC",
+                    "groupName": "町湯東海岸線",
+                    "position": 2,
+                    "numbering": "MEC03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-16ba-76bf-be34-70d39b1e1fd0",
+            "slug": "ktnm",
+            "name": "狐目（きつねめ）",
+            "world": "world",
+            "point": {
+                "x": 56.551813994045474,
+                "y": 78.0,
+                "z": 570.4836641525208
+            },
+            "overrideSize": null,
+            "color": "#F5CD0C",
+            "numberings": [
+                {
+                    "group": "01a03527-135f-7f14-8ab3-3ad3a1bd4578",
+                    "groupSlug": "kamimoriNewLine",
+                    "groupName": "神森新線",
+                    "position": 1,
+                    "numbering": "MK02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-16c4-7db1-81d9-50b3866f79e2",
+            "slug": "kwbt",
+            "name": "川端団地",
+            "world": "world",
+            "point": {
+                "x": -860.8328420521908,
+                "y": 72.60816652515133,
+                "z": -285.65506633318824
+            },
+            "overrideSize": null,
+            "color": "#4386D9",
+            "numberings": [
+                {
+                    "group": "01a03527-13cd-7b3a-a1d9-2e3f52a675b5",
+                    "groupSlug": "morimotoCent",
+                    "groupName": "もりもと中央線",
+                    "position": 8,
+                    "numbering": "MC09"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-16ce-7d79-a17d-fa469b81fc6f",
+            "slug": "kzrf",
+            "name": "高山麓",
+            "world": "world",
+            "point": {
+                "x": 592.4494382647736,
+                "y": 77.0,
+                "z": 9397.718893687783
+            },
+            "overrideSize": null,
+            "color": "#9C176D",
+            "numberings": [
+                {
+                    "group": "01a03527-1468-7e96-a685-110226bdabe9",
+                    "groupSlug": "yukuripa",
+                    "groupName": "ユクリパ高速鉄道ユクリ本線",
+                    "position": 9,
+                    "numbering": "YKP10"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-16d8-7350-8315-d55567fea3b7",
+            "slug": "magk",
+            "name": "マグ王国",
+            "world": "world",
+            "point": {
+                "x": 1359.6878536605425,
+                "y": 68.0,
+                "z": -1263.4466495818915
+            },
+            "overrideSize": null,
+            "color": "#28207A",
+            "numberings": [
+                {
+                    "group": "01a03527-142e-71eb-b709-1de6792bc115",
+                    "groupSlug": "sakouchi",
+                    "groupName": "逆内川作業支線",
+                    "position": 1,
+                    "numbering": "SAK02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-16e2-74b7-8bd1-f243028b04cd",
+            "slug": "mchy",
+            "name": "町湯",
+            "world": "world",
+            "point": {
+                "x": 600.0,
+                "y": 79.0,
+                "z": 2757.0
+            },
+            "overrideSize": null,
+            "color": "#A30883",
+            "numberings": [
+                {
+                    "group": "01a03527-1384-73f7-8591-d1d236d47c78",
+                    "groupSlug": "mcKH",
+                    "groupName": "町湯紅白線",
+                    "position": 2,
+                    "numbering": "MCK03"
+                },
+                {
+                    "group": "01a03527-138d-74d5-9707-6119fc04165c",
+                    "groupSlug": "mcPo",
+                    "groupName": "町湯港線",
+                    "position": 0,
+                    "numbering": "MCP01"
+                },
+                {
+                    "group": "01a03527-1396-76e4-90a5-39afe9f03cde",
+                    "groupSlug": "mcSE",
+                    "groupName": "町湯東南線",
+                    "position": 1,
+                    "numbering": "MSE02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-16ec-72c6-83eb-da1a9ccf9165",
+            "slug": "mcyc",
+            "name": "町湯中央",
+            "world": "world",
+            "point": {
+                "x": 592.0,
+                "y": 75.0,
+                "z": 2795.0
+            },
+            "overrideSize": null,
+            "color": "#2F0D77",
+            "numberings": [
+                {
+                    "group": "01a03527-1468-7e96-a685-110226bdabe9",
+                    "groupSlug": "yukuripa",
+                    "groupName": "ユクリパ高速鉄道ユクリ本線",
+                    "position": 1,
+                    "numbering": "YKP02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-16f5-79fc-911f-c321fffb6d81",
+            "slug": "mcyp",
+            "name": "町湯港",
+            "world": "world",
+            "point": {
+                "x": 837.3123353021422,
+                "y": 63.0,
+                "z": 2862.526664888773
+            },
+            "overrideSize": null,
+            "color": "#100F07",
+            "numberings": [
+                {
+                    "group": "01a03527-138d-74d5-9707-6119fc04165c",
+                    "groupSlug": "mcPo",
+                    "groupName": "町湯港線",
+                    "position": 1,
+                    "numbering": "MCP02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-16fe-7b0a-8bed-b73af519f754",
+            "slug": "mesa",
+            "name": "メサ",
+            "world": "world",
+            "point": {
+                "x": 4747.625895860481,
+                "y": 75.0,
+                "z": 8131.571521085848
+            },
+            "overrideSize": null,
+            "color": "#C1AA40",
+            "numberings": [
+                {
+                    "group": "01a03527-1396-76e4-90a5-39afe9f03cde",
+                    "groupSlug": "mcSE",
+                    "groupName": "町湯東南線",
+                    "position": 7,
+                    "numbering": "MSE08"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1708-705c-beb5-8d17e786a329",
+            "slug": "mizn",
+            "name": "水雫（みずな）",
+            "world": "world",
+            "point": {
+                "x": 3731.3667989213536,
+                "y": 85.0,
+                "z": -116.58817626324283
+            },
+            "overrideSize": null,
+            "color": "#6FE933",
+            "numberings": [
+                {
+                    "group": "01a03527-13bb-7d7a-9776-b8b1ebb9d7ff",
+                    "groupSlug": "mizuna",
+                    "groupName": "水雫支線",
+                    "position": 3,
+                    "numbering": "MIZ04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1712-7abf-b7a0-e3641db73bc5",
+            "slug": "mknm",
+            "name": "森神奈又トルメンシア前（もりかんなまた）",
+            "world": "world",
+            "point": {
+                "x": -5140.482550018224,
+                "y": 80.0,
+                "z": -7038.492591030706
+            },
+            "overrideSize": null,
+            "color": "#EA05FD",
+            "numberings": [
+                {
+                    "group": "01a03527-13a8-7e1e-abe7-47b66d2b570d",
+                    "groupSlug": "miharu",
+                    "groupName": "瑞時縦横線",
+                    "position": 2,
+                    "numbering": "MIH03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-171b-7501-93cc-94d41b664316",
+            "slug": "mnm",
+            "name": "moriの村",
+            "world": "world",
+            "point": {
+                "x": 1807.389748343182,
+                "y": 63.0,
+                "z": -83.47759158771424
+            },
+            "overrideSize": null,
+            "color": "#906B48",
+            "numberings": [
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 11,
+                    "numbering": "SF12"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1724-7249-9348-ec28b3d3b83f",
+            "slug": "motp",
+            "name": "モーントピア",
+            "world": "world",
+            "point": {
+                "x": 592.5154480782797,
+                "y": 70.0,
+                "z": 8750.156943304693
+            },
+            "overrideSize": null,
+            "color": "#8C904C",
+            "numberings": [
+                {
+                    "group": "01a03527-1468-7e96-a685-110226bdabe9",
+                    "groupSlug": "yukuripa",
+                    "groupName": "ユクリパ高速鉄道ユクリ本線",
+                    "position": 7,
+                    "numbering": "YKP08"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-172d-7ca3-a22e-20e3dab4e129",
+            "slug": "mrgt",
+            "name": "森が丘ターミナル",
+            "world": "world",
+            "point": {
+                "x": -256.4447077951186,
+                "y": 78.0,
+                "z": 367.4782017596036
+            },
+            "overrideSize": null,
+            "color": "#C66DAA",
+            "numberings": [
+                {
+                    "group": "01a03527-1344-7569-ae77-6eb52d8202f8",
+                    "groupSlug": "fm",
+                    "groupName": "FM鉄道",
+                    "position": 3,
+                    "numbering": "FM04"
+                },
+                {
+                    "group": "01a03527-135f-7f14-8ab3-3ad3a1bd4578",
+                    "groupSlug": "kamimoriNewLine",
+                    "groupName": "神森新線",
+                    "position": 0,
+                    "numbering": "MK01"
+                },
+                {
+                    "group": "01a03527-13cd-7b3a-a1d9-2e3f52a675b5",
+                    "groupSlug": "morimotoCent",
+                    "groupName": "もりもと中央線",
+                    "position": 2,
+                    "numbering": "MC03"
+                },
+                {
+                    "group": "01a03527-13d6-7d7a-b41e-9050484f36bd",
+                    "groupSlug": "morimotoSuburb",
+                    "groupName": "もりもと郊外線",
+                    "position": 0,
+                    "numbering": "MS01"
+                },
+                {
+                    "group": "01a03527-1468-7e96-a685-110226bdabe9",
+                    "groupSlug": "yukuripa",
+                    "groupName": "ユクリパ高速鉄道ユクリ本線",
+                    "position": 0,
+                    "numbering": "YKP01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1736-7cef-8639-b2d7ebb6f90d",
+            "slug": "mrht",
+            "name": "森端（もりはた）",
+            "world": "world",
+            "point": {
+                "x": -708.5116553887012,
+                "y": 73.0,
+                "z": 101.62285228083698
+            },
+            "overrideSize": null,
+            "color": "#D13038",
+            "numberings": [
+                {
+                    "group": "01a03527-13e0-7198-a973-cb00be0f2a2e",
+                    "groupSlug": "morimotoWest",
+                    "groupName": "もりもと西部線",
+                    "position": 0,
+                    "numbering": "MW01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-173f-7aa7-b76c-b6f238b32d45",
+            "slug": "mrmt",
+            "name": "もりもと",
+            "world": "world",
+            "point": {
+                "x": -530.3952061185765,
+                "y": 66.0,
+                "z": -79.57929375343335
+            },
+            "overrideSize": null,
+            "color": "#5B7128",
+            "numberings": [
+                {
+                    "group": "01a03527-13cd-7b3a-a1d9-2e3f52a675b5",
+                    "groupSlug": "morimotoCent",
+                    "groupName": "もりもと中央線",
+                    "position": 6,
+                    "numbering": "MC07"
+                },
+                {
+                    "group": "01a03527-13e9-723c-a42a-9ab959f3311f",
+                    "groupSlug": "mu",
+                    "groupName": "うみもと線",
+                    "position": 10,
+                    "numbering": "MU11"
+                },
+                {
+                    "group": "01a03527-13fc-77f9-a85c-8be2ac048f4c",
+                    "groupSlug": "pakapaka",
+                    "groupName": "ぱかぱか高速鉄道ぱかぱか高速ライン(緑草線)",
+                    "position": 2,
+                    "numbering": "PAK03"
+                },
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 16,
+                    "numbering": "SF17"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1749-7a3f-9414-f99ba7995b97",
+            "slug": "mtg",
+            "name": "酩酊街",
+            "world": "world",
+            "point": {
+                "x": -5156.441092326524,
+                "y": 67.0,
+                "z": -9576.53928270207
+            },
+            "overrideSize": null,
+            "color": "#4C8869",
+            "numberings": [
+                {
+                    "group": "01a03527-145f-7ab0-8929-a08b6321337f",
+                    "groupSlug": "yukihara",
+                    "groupName": "雪原Line",
+                    "position": 0,
+                    "numbering": "YUK01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1753-7464-b6e8-f9395bd4c2c6",
+            "slug": "mth",
+            "name": "もりもと東",
+            "world": "world",
+            "point": {
+                "x": -274.61906519884303,
+                "y": 68.0,
+                "z": -82.54043103508072
+            },
+            "overrideSize": null,
+            "color": "#4B2E94",
+            "numberings": [
+                {
+                    "group": "01a03527-13cd-7b3a-a1d9-2e3f52a675b5",
+                    "groupSlug": "morimotoCent",
+                    "groupName": "もりもと中央線",
+                    "position": 5,
+                    "numbering": "MC06"
+                },
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 15,
+                    "numbering": "SF16"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-175b-7a63-bb07-c6e2662eeec5",
+            "slug": "mthm",
+            "name": "松浜（まつはま）",
+            "world": "world",
+            "point": {
+                "x": -3316.6144302394237,
+                "y": 78.0,
+                "z": -8132.482500301705
+            },
+            "overrideSize": null,
+            "color": "#E3FFE9",
+            "numberings": [
+                {
+                    "group": "01a03527-139f-755f-87c6-9b643aae1daa",
+                    "groupSlug": "meidai",
+                    "groupName": "迷大鉄道",
+                    "position": 3,
+                    "numbering": "MEI04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1765-7fbe-8e05-c80c66a238f9",
+            "slug": "mtnk",
+            "name": "松中",
+            "world": "world",
+            "point": {
+                "x": 251.68504657179008,
+                "y": 65.0,
+                "z": 423.9279316639405
+            },
+            "overrideSize": null,
+            "color": "#19912D",
+            "numberings": [
+                {
+                    "group": "01a03527-1372-7c84-838f-b653d1deb168",
+                    "groupSlug": "matsuSub",
+                    "groupName": "松島支線",
+                    "position": 2,
+                    "numbering": "MAT03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1770-731a-8b3a-a2d0ff1ab111",
+            "slug": "mtry",
+            "name": "ミテルヨ",
+            "world": "world",
+            "point": {
+                "x": 593.3000000119209,
+                "y": 60.0,
+                "z": 8502.423819139678
+            },
+            "overrideSize": null,
+            "color": "#751277",
+            "numberings": [
+                {
+                    "group": "01a03527-1468-7e96-a685-110226bdabe9",
+                    "groupSlug": "yukuripa",
+                    "groupName": "ユクリパ高速鉄道ユクリ本線",
+                    "position": 6,
+                    "numbering": "YKP07"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-177a-7040-b263-497c8c2a5548",
+            "slug": "myg",
+            "name": "海結川（みゆがわ）",
+            "world": "world",
+            "point": {
+                "x": 1978.1021719790754,
+                "y": 74.0,
+                "z": 1268.422075643688
+            },
+            "overrideSize": null,
+            "color": "#EF69CA",
+            "numberings": [
+                {
+                    "group": "01a03527-13b2-753e-b4a6-984789262ad6",
+                    "groupSlug": "miyugawa",
+                    "groupName": "海結川鉄道",
+                    "position": 4,
+                    "numbering": "MIY05"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1783-7413-a61b-f6e64b48b229",
+            "slug": "mygk",
+            "name": "海結川厩舎",
+            "world": "world",
+            "point": {
+                "x": 2167.4792829724292,
+                "y": 72.0,
+                "z": 1286.5509944686773
+            },
+            "overrideSize": null,
+            "color": "#02C852",
+            "numberings": [
+                {
+                    "group": "01a03527-13b2-753e-b4a6-984789262ad6",
+                    "groupSlug": "miyugawa",
+                    "groupName": "海結川鉄道",
+                    "position": 5,
+                    "numbering": "MIY06"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-178c-7d12-94cd-d25c8278e086",
+            "slug": "mynw",
+            "name": "??",
+            "world": "world",
+            "point": {
+                "x": 227.482435030424,
+                "y": 78.0,
+                "z": 2444.4967428799073
+            },
+            "overrideSize": null,
+            "color": "#406A41",
+            "numberings": [
+                {
+                    "group": "01a03527-1396-76e4-90a5-39afe9f03cde",
+                    "groupSlug": "mcSE",
+                    "groupName": "町湯東南線",
+                    "position": 0,
+                    "numbering": "MSE01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1796-7dba-8484-a4fae481b61d",
+            "slug": "mzkz",
+            "name": "瑞風（みずかぜ）",
+            "world": "world",
+            "point": {
+                "x": -5041.453571634112,
+                "y": 66.0,
+                "z": -8000.566766361696
+            },
+            "overrideSize": null,
+            "color": "#BE6CE1",
+            "numberings": [
+                {
+                    "group": "01a03527-13a8-7e1e-abe7-47b66d2b570d",
+                    "groupSlug": "miharu",
+                    "groupName": "瑞時縦横線",
+                    "position": 0,
+                    "numbering": "MIH01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-17a0-7261-b58e-0a103bd9e839",
+            "slug": "mzyk",
+            "name": "瑞雪（みずゆき）",
+            "world": "world",
+            "point": {
+                "x": -888.516086792742,
+                "y": 79.0,
+                "z": -4939.423417275347
+            },
+            "overrideSize": null,
+            "color": "#FEE0AB",
+            "numberings": [
+                {
+                    "group": "01a03527-139f-755f-87c6-9b643aae1daa",
+                    "groupSlug": "meidai",
+                    "groupName": "迷大鉄道",
+                    "position": 5,
+                    "numbering": "MEI06"
+                },
+                {
+                    "group": "01a03527-13fc-77f9-a85c-8be2ac048f4c",
+                    "groupSlug": "pakapaka",
+                    "groupName": "ぱかぱか高速鉄道ぱかぱか高速ライン(緑草線)",
+                    "position": 8,
+                    "numbering": "PAK09"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-17a9-7f09-8a0e-4e06dc47595b",
+            "slug": "natu",
+            "name": "ネイチャウド村",
+            "world": "world",
+            "point": {
+                "x": 7943.490116901698,
+                "y": 80.0,
+                "z": 288.30000001192093
+            },
+            "overrideSize": null,
+            "color": "#6A757C",
+            "numberings": [
+                {
+                    "group": "01a03527-13bb-7d7a-9776-b8b1ebb9d7ff",
+                    "groupSlug": "mizuna",
+                    "groupName": "水雫支線",
+                    "position": 4,
+                    "numbering": "MIZ05"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-17b3-7795-b1cd-e9b45b065483",
+            "slug": "nfpc",
+            "name": "新フォレストピア新町",
+            "world": "world",
+            "point": {
+                "x": -2.0,
+                "y": 84.0,
+                "z": 97.0
+            },
+            "overrideSize": null,
+            "color": "#52D29C",
+            "numberings": [
+                {
+                    "group": "01a03527-13c4-7b75-9677-751c541aaabe",
+                    "groupSlug": "mmsr",
+                    "groupName": "森元森林鉄道",
+                    "position": 1,
+                    "numbering": "MMS02"
+                },
+                {
+                    "group": "01a03527-13cd-7b3a-a1d9-2e3f52a675b5",
+                    "groupSlug": "morimotoCent",
+                    "groupName": "もりもと中央線",
+                    "position": 3,
+                    "numbering": "MC04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-17bd-73c8-89b6-77760b4e3a62",
+            "slug": "nghm",
+            "name": "凪浜橋（なぎはまばし）",
+            "world": "world",
+            "point": {
+                "x": -886.4190651459796,
+                "y": 79.0,
+                "z": -4333.986387729442
+            },
+            "overrideSize": null,
+            "color": "#6D77B6",
+            "numberings": [
+                {
+                    "group": "01a03527-139f-755f-87c6-9b643aae1daa",
+                    "groupSlug": "meidai",
+                    "groupName": "迷大鉄道",
+                    "position": 6,
+                    "numbering": "MEI07"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-17cc-7ed0-9d08-41a166c39578",
+            "slug": "nkmm",
+            "name": "北神森",
+            "world": "world",
+            "point": {
+                "x": 55.53298910996768,
+                "y": 63.0,
+                "z": 767.1374999880791
+            },
+            "overrideSize": null,
+            "color": "#AD9632",
+            "numberings": [
+                {
+                    "group": "01a03527-135f-7f14-8ab3-3ad3a1bd4578",
+                    "groupSlug": "kamimoriNewLine",
+                    "groupName": "神森新線",
+                    "position": 2,
+                    "numbering": "MK03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-17d6-73ec-8afc-28d8c3cbf15c",
+            "slug": "nku",
+            "name": "南向海（なこう）",
+            "world": "world",
+            "point": {
+                "x": 1283.0,
+                "y": 75.0,
+                "z": 1626.0
+            },
+            "overrideSize": null,
+            "color": "#3FD9E9",
+            "numberings": [
+                {
+                    "group": "01a03527-1344-7569-ae77-6eb52d8202f8",
+                    "groupSlug": "fm",
+                    "groupName": "FM鉄道",
+                    "position": 1,
+                    "numbering": "FM02"
+                },
+                {
+                    "group": "01a03527-13b2-753e-b4a6-984789262ad6",
+                    "groupSlug": "miyugawa",
+                    "groupName": "海結川鉄道",
+                    "position": 0,
+                    "numbering": "MIY01"
+                },
+                {
+                    "group": "01a03527-1424-7071-83da-efbb56b0c241",
+                    "groupSlug": "rinkai",
+                    "groupName": "リンカイ鉄道",
+                    "position": 4,
+                    "numbering": "RIN05"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-17df-7551-a85d-f1c87b957378",
+            "slug": "nmrm",
+            "name": "西もりもと",
+            "world": "world",
+            "point": {
+                "x": -752.3176936019507,
+                "y": 67.49753391450427,
+                "z": -137.44120131986153
+            },
+            "overrideSize": null,
+            "color": "#91E989",
+            "numberings": [
+                {
+                    "group": "01a03527-139f-755f-87c6-9b643aae1daa",
+                    "groupSlug": "meidai",
+                    "groupName": "迷大鉄道",
+                    "position": 13,
+                    "numbering": "MEI14"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-17e8-75be-9cc8-71b83c4968c1",
+            "slug": "nsgr",
+            "name": "北砂霧（きたすなぎり）",
+            "world": "world",
+            "point": {
+                "x": -1432.624503134602,
+                "y": 65.0,
+                "z": 1509.4828643371982
+            },
+            "overrideSize": null,
+            "color": "#59B45C",
+            "numberings": [
+                {
+                    "group": "01a03527-1344-7569-ae77-6eb52d8202f8",
+                    "groupSlug": "fm",
+                    "groupName": "FM鉄道",
+                    "position": 6,
+                    "numbering": "FM07"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-17f1-75b5-806e-8613b8ea2a67",
+            "slug": "nsib",
+            "name": "新しばむら",
+            "world": "world",
+            "point": {
+                "x": 61.353490758369816,
+                "y": 80.5,
+                "z": -1778.4262047315726
+            },
+            "overrideSize": null,
+            "color": "#E401F7",
+            "numberings": [
+                {
+                    "group": "01a03527-13c4-7b75-9677-751c541aaabe",
+                    "groupSlug": "mmsr",
+                    "groupName": "森元森林鉄道",
+                    "position": 6,
+                    "numbering": "MMS07"
+                },
+                {
+                    "group": "01a03527-13fc-77f9-a85c-8be2ac048f4c",
+                    "groupSlug": "pakapaka",
+                    "groupName": "ぱかぱか高速鉄道ぱかぱか高速ライン(緑草線)",
+                    "position": 4,
+                    "numbering": "PAK05"
+                },
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 18,
+                    "numbering": "SF19"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-17fa-7c1b-a2b8-951012df95c3",
+            "slug": "ntkd",
+            "name": "西時計台",
+            "world": "world",
+            "point": {
+                "x": 3145.513232358504,
+                "y": 78.0,
+                "z": -2174.128325050449
+            },
+            "overrideSize": null,
+            "color": "#3E1DE9",
+            "numberings": [
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 20,
+                    "numbering": "SF21"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1804-72d7-b0c3-796e1a3781c8",
+            "slug": "nung",
+            "name": "西雲丹ヶ丘（にしうにがおか）",
+            "world": "world",
+            "point": {
+                "x": -934.0,
+                "y": 74.0,
+                "z": -529.0
+            },
+            "overrideSize": null,
+            "color": "#F72253",
+            "numberings": [
+                {
+                    "group": "01a03527-139f-755f-87c6-9b643aae1daa",
+                    "groupSlug": "meidai",
+                    "groupName": "迷大鉄道",
+                    "position": 11,
+                    "numbering": "MEI12"
+                },
+                {
+                    "group": "01a03527-13cd-7b3a-a1d9-2e3f52a675b5",
+                    "groupSlug": "morimotoCent",
+                    "groupName": "もりもと中央線",
+                    "position": 9,
+                    "numbering": "MC10"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-180d-7932-a84f-f0650d9638eb",
+            "slug": "nutu",
+            "name": "Nutube邸宅前",
+            "world": "world",
+            "point": {
+                "x": -207.62462963181434,
+                "y": 77.0,
+                "z": 505.49772564247263
+            },
+            "overrideSize": null,
+            "color": "#4722E7",
+            "numberings": [
+                {
+                    "group": "01a03527-13d6-7d7a-b41e-9050484f36bd",
+                    "groupSlug": "morimotoSuburb",
+                    "groupName": "もりもと郊外線",
+                    "position": 1,
+                    "numbering": "MS02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1816-7a9b-959e-6833049478e4",
+            "slug": "ocot",
+            "name": "中央オアシスタウン",
+            "world": "world",
+            "point": {
+                "x": 4571.650185513382,
+                "y": 73.0,
+                "z": -1790.5564198995248
+            },
+            "overrideSize": null,
+            "color": "#5465E4",
+            "numberings": [
+                {
+                    "group": "01a03527-13f2-7742-a23c-5285acd9a3b6",
+                    "groupSlug": "oas",
+                    "groupName": "オアシス線",
+                    "position": 3,
+                    "numbering": "OAS04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-181f-7b48-bc3e-b6ceb07f47a3",
+            "slug": "omni",
+            "name": "みちのく島",
+            "world": "world",
+            "point": {
+                "x": 4872.4137850973075,
+                "y": 66.0,
+                "z": -19.44729480097743
+            },
+            "overrideSize": null,
+            "color": "#2C4503",
+            "numberings": [
+                {
+                    "group": "01a03527-13f2-7742-a23c-5285acd9a3b6",
+                    "groupSlug": "oas",
+                    "groupName": "オアシス線",
+                    "position": 0,
+                    "numbering": "OAS01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1827-7f77-ae4f-931d19d11f69",
+            "slug": "oows",
+            "name": "大鷲浜",
+            "world": "world",
+            "point": {
+                "x": -569.5700683618802,
+                "y": 77.0,
+                "z": 2087.5246354768356
+            },
+            "overrideSize": null,
+            "color": "#E8B4EF",
+            "numberings": [
+                {
+                    "group": "01a03527-1384-73f7-8591-d1d236d47c78",
+                    "groupSlug": "mcKH",
+                    "groupName": "町湯紅白線",
+                    "position": 0,
+                    "numbering": "MCK01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1830-785b-ae72-4ffee74cceb2",
+            "slug": "osot",
+            "name": "南オアシスタウン",
+            "world": "world",
+            "point": {
+                "x": 4570.454727293128,
+                "y": 70.0,
+                "z": -1882.6357746393942
+            },
+            "overrideSize": null,
+            "color": "#FA42B2",
+            "numberings": [
+                {
+                    "group": "01a03527-13f2-7742-a23c-5285acd9a3b6",
+                    "groupSlug": "oas",
+                    "groupName": "オアシス線",
+                    "position": 4,
+                    "numbering": "OAS05"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1839-7afa-bba1-3c77f0618d87",
+            "slug": "osui",
+            "name": "オアシス水路",
+            "world": "world",
+            "point": {
+                "x": 4672.104347288221,
+                "y": 70.0,
+                "z": -1811.7293464115285
+            },
+            "overrideSize": null,
+            "color": "#F76256",
+            "numberings": [
+                {
+                    "group": "01a03527-13f2-7742-a23c-5285acd9a3b6",
+                    "groupSlug": "oas",
+                    "groupName": "オアシス線",
+                    "position": 2,
+                    "numbering": "OAS03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1843-71a4-abaa-13f20bd2bfdd",
+            "slug": "ppbl",
+            "name": "ブロック",
+            "world": "world",
+            "point": {
+                "x": 4843.394424447277,
+                "y": 62.0,
+                "z": -1999.5142469833588
+            },
+            "overrideSize": null,
+            "color": "#6653E6",
+            "numberings": [
+                {
+                    "group": "01a03527-1406-75ee-8792-b23ac3abf663",
+                    "groupSlug": "ppl",
+                    "groupName": "ポピーライン",
+                    "position": 0,
+                    "numbering": "PPL01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-184b-7167-805e-e27e3f0c410a",
+            "slug": "ppca",
+            "name": "ポピー城",
+            "world": "world",
+            "point": {
+                "x": 4730.93822666832,
+                "y": 62.0,
+                "z": -1929.0174174197834
+            },
+            "overrideSize": null,
+            "color": "#7A1335",
+            "numberings": [
+                {
+                    "group": "01a03527-1406-75ee-8792-b23ac3abf663",
+                    "groupSlug": "ppl",
+                    "groupName": "ポピーライン",
+                    "position": 1,
+                    "numbering": "PPL02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1854-71f3-b6fb-e074f9c5c720",
+            "slug": "ppfl",
+            "name": "フラワー",
+            "world": "world",
+            "point": {
+                "x": 4973.298069605563,
+                "y": 65.0,
+                "z": -2017.4145373327756
+            },
+            "overrideSize": null,
+            "color": "#6DB226",
+            "numberings": [
+                {
+                    "group": "01a03527-1406-75ee-8792-b23ac3abf663",
+                    "groupSlug": "ppl",
+                    "groupName": "ポピーライン",
+                    "position": 8,
+                    "numbering": "PPL09"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-185d-7e07-b0d0-ee4cfef940d7",
+            "slug": "ppno",
+            "name": "北桜雲",
+            "world": "world",
+            "point": {
+                "x": 4548.46630400014,
+                "y": 69.0,
+                "z": -2011.58914180126
+            },
+            "overrideSize": null,
+            "color": "#677641",
+            "numberings": [
+                {
+                    "group": "01a03527-13f2-7742-a23c-5285acd9a3b6",
+                    "groupSlug": "oas",
+                    "groupName": "オアシス線",
+                    "position": 5,
+                    "numbering": "OAS06"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1866-77f8-838e-fd1ed76bdb34",
+            "slug": "pprx",
+            "name": "REXT前",
+            "world": "world",
+            "point": {
+                "x": 4868.228099982511,
+                "y": 58.0,
+                "z": -2175.529481939724
+            },
+            "overrideSize": null,
+            "color": "#0DF0CF",
+            "numberings": [
+                {
+                    "group": "01a03527-1406-75ee-8792-b23ac3abf663",
+                    "groupSlug": "ppl",
+                    "groupName": "ポピーライン",
+                    "position": 4,
+                    "numbering": "PPL05"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-186f-7197-b445-a4917a16e45b",
+            "slug": "ppsa",
+            "name": "さとう",
+            "world": "world",
+            "point": {
+                "x": 5001.471641424404,
+                "y": 58.0,
+                "z": -2209.4261216720993
+            },
+            "overrideSize": null,
+            "color": "#EDF703",
+            "numberings": [
+                {
+                    "group": "01a03527-1406-75ee-8792-b23ac3abf663",
+                    "groupSlug": "ppl",
+                    "groupName": "ポピーライン",
+                    "position": 5,
+                    "numbering": "PPL06"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1878-7341-be03-f3b3f135fe48",
+            "slug": "pptw",
+            "name": "ポピータウン",
+            "world": "world",
+            "point": {
+                "x": 4633.358076039155,
+                "y": 62.5,
+                "z": -2072.0431885858748
+            },
+            "overrideSize": null,
+            "color": "#565853",
+            "numberings": [
+                {
+                    "group": "01a03527-1406-75ee-8792-b23ac3abf663",
+                    "groupSlug": "ppl",
+                    "groupName": "ポピーライン",
+                    "position": 3,
+                    "numbering": "PPL04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1881-7a47-ac09-cd572b59179b",
+            "slug": "ppty",
+            "name": "たこ焼き城",
+            "world": "world",
+            "point": {
+                "x": 4743.4487144882305,
+                "y": 71.0,
+                "z": -1806.6237900904903
+            },
+            "overrideSize": null,
+            "color": "#27ACFE",
+            "numberings": [
+                {
+                    "group": "01a03527-13f2-7742-a23c-5285acd9a3b6",
+                    "groupSlug": "oas",
+                    "groupName": "オアシス線",
+                    "position": 1,
+                    "numbering": "OAS02"
+                },
+                {
+                    "group": "01a03527-1406-75ee-8792-b23ac3abf663",
+                    "groupSlug": "ppl",
+                    "groupName": "ポピーライン",
+                    "position": 7,
+                    "numbering": "PPL08"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-188a-79a1-bb13-9837ede6da9c",
+            "slug": "ppya",
+            "name": "ヤグルマギク",
+            "world": "world",
+            "point": {
+                "x": 5013.2582655971655,
+                "y": 61.0,
+                "z": -1956.7982077601791
+            },
+            "overrideSize": null,
+            "color": "#582DD7",
+            "numberings": [
+                {
+                    "group": "01a03527-1406-75ee-8792-b23ac3abf663",
+                    "groupSlug": "ppl",
+                    "groupName": "ポピーライン",
+                    "position": 6,
+                    "numbering": "PPL07"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1892-7eaf-9708-27f7a19bd90f",
+            "slug": "rjkd",
+            "name": "ルージュ王国",
+            "world": "world",
+            "point": {
+                "x": -1397.6948877111852,
+                "y": 57.0,
+                "z": -2621.547919102069
+            },
+            "overrideSize": null,
+            "color": "#4E4D3A",
+            "numberings": [
+                {
+                    "group": "01a03527-13c4-7b75-9677-751c541aaabe",
+                    "groupSlug": "mmsr",
+                    "groupName": "森元森林鉄道",
+                    "position": 9,
+                    "numbering": "MMS10"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-189b-79ad-9375-f26f7d40dbf9",
+            "slug": "rnkc",
+            "name": "臨海中央",
+            "world": "world",
+            "point": {
+                "x": 1056.4422640179644,
+                "y": 71.0,
+                "z": 1505.1595043610814
+            },
+            "overrideSize": null,
+            "color": "#0F9F61",
+            "numberings": [
+                {
+                    "group": "01a03527-1424-7071-83da-efbb56b0c241",
+                    "groupSlug": "rinkai",
+                    "groupName": "リンカイ鉄道",
+                    "position": 1,
+                    "numbering": "RIN02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-18a4-7605-a470-a0e75fc07d03",
+            "slug": "satm",
+            "name": "新あつもり",
+            "world": "world",
+            "point": {
+                "x": -1452.5997559303435,
+                "y": 75.0,
+                "z": 618.5984558668542
+            },
+            "overrideSize": null,
+            "color": "#992CFE",
+            "numberings": [
+                {
+                    "group": "01a03527-1344-7569-ae77-6eb52d8202f8",
+                    "groupSlug": "fm",
+                    "groupName": "FM鉄道",
+                    "position": 4,
+                    "numbering": "FM05"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-18ac-7f62-ba25-7792b6978b43",
+            "slug": "sato",
+            "name": "佐藤",
+            "world": "world",
+            "point": {
+                "x": 562.5283269443783,
+                "y": 28.0,
+                "z": -349.42056006821144
+            },
+            "overrideSize": null,
+            "color": "#7DC1DF",
+            "numberings": [
+                {
+                    "group": "01a03527-1369-7ffa-aa40-c98cc4e87a09",
+                    "groupSlug": "karaLine",
+                    "groupName": "kara鉄道",
+                    "position": 3,
+                    "numbering": "KAR04"
+                },
+                {
+                    "group": "01a03527-13c4-7b75-9677-751c541aaabe",
+                    "groupSlug": "mmsr",
+                    "groupName": "森元森林鉄道",
+                    "position": 3,
+                    "numbering": "MMS04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-18b5-75c4-82ed-8dfe6cf6fa89",
+            "slug": "savv",
+            "name": "サバンナ村",
+            "world": "world",
+            "point": {
+                "x": -1896.5771032194668,
+                "y": 78.0,
+                "z": -8132.297749420999
+            },
+            "overrideSize": null,
+            "color": "#3BF264",
+            "numberings": [
+                {
+                    "group": "01a03527-139f-755f-87c6-9b643aae1daa",
+                    "groupSlug": "meidai",
+                    "groupName": "迷大鉄道",
+                    "position": 4,
+                    "numbering": "MEI05"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-18be-725e-8e1e-351027606b8f",
+            "slug": "sbl",
+            "name": "南ボーダーライン",
+            "world": "world",
+            "point": {
+                "x": -152.64455295265356,
+                "y": 94.0,
+                "z": 9908.095372480515
+            },
+            "overrideSize": null,
+            "color": "#BF96D2",
+            "numberings": [
+                {
+                    "group": "01a03527-133b-76c5-8863-c1777c3e95c5",
+                    "groupSlug": "border",
+                    "groupName": "ボーダーライン鉄道",
+                    "position": 0,
+                    "numbering": "BOR01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-18c6-7dea-b745-91296be5e35e",
+            "slug": "sekh",
+            "name": "雪華郷広場",
+            "world": "world",
+            "point": {
+                "x": -4962.513184879207,
+                "y": 78.0,
+                "z": -8610.549650269108
+            },
+            "overrideSize": null,
+            "color": "#28891A",
+            "numberings": [
+                {
+                    "group": "01a03527-145f-7ab0-8929-a08b6321337f",
+                    "groupSlug": "yukihara",
+                    "groupName": "雪原Line",
+                    "position": 4,
+                    "numbering": "YUK05"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-18ce-7b74-a2ed-2ac17bcad9e5",
+            "slug": "sekk",
+            "name": "雪華郷",
+            "world": "world",
+            "point": {
+                "x": -4881.553230601956,
+                "y": 66.0,
+                "z": -8157.617125582191
+            },
+            "overrideSize": null,
+            "color": "#AA34F8",
+            "numberings": [
+                {
+                    "group": "01a03527-139f-755f-87c6-9b643aae1daa",
+                    "groupSlug": "meidai",
+                    "groupName": "迷大鉄道",
+                    "position": 0,
+                    "numbering": "MEI01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-18d7-790e-9a82-f713b5684ab0",
+            "slug": "sekn",
+            "name": "雪華郷北部",
+            "world": "world",
+            "point": {
+                "x": -4988.49793970153,
+                "y": 79.0,
+                "z": -8801.772986386959
+            },
+            "overrideSize": null,
+            "color": "#E9BCFF",
+            "numberings": [
+                {
+                    "group": "01a03527-145f-7ab0-8929-a08b6321337f",
+                    "groupSlug": "yukihara",
+                    "groupName": "雪原Line",
+                    "position": 3,
+                    "numbering": "YUK04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-18e0-71aa-a5a3-5e2a428dcd3c",
+            "slug": "sfc",
+            "name": "星樹の街",
+            "world": "world",
+            "point": {
+                "x": 5134.188323974613,
+                "y": 68.0,
+                "z": 3989.8974904284873
+            },
+            "overrideSize": null,
+            "color": "#C12E3F",
+            "numberings": [
+                {
+                    "group": "01a03527-140f-77a9-bd9b-153bc7205cd8",
+                    "groupSlug": "pukupuku",
+                    "groupName": "ぷくぷく低速鉄道ぷくぷく低速ライン(緑藻線)",
+                    "position": 0,
+                    "numbering": "PUK01"
+                },
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 0,
+                    "numbering": "SF01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-18e9-73d4-bf99-08d3e5e96748",
+            "slug": "sfwc",
+            "name": "星樹西海岸",
+            "world": "world",
+            "point": {
+                "x": 4925.550668583926,
+                "y": 65.0,
+                "z": 4087.5672727404567
+            },
+            "overrideSize": null,
+            "color": "#8B5958",
+            "numberings": [
+                {
+                    "group": "01a03527-140f-77a9-bd9b-153bc7205cd8",
+                    "groupSlug": "pukupuku",
+                    "groupName": "ぷくぷく低速鉄道ぷくぷく低速ライン(緑藻線)",
+                    "position": 1,
+                    "numbering": "PUK02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-18f3-70a7-bdc4-f491df5c8da7",
+            "slug": "sgc",
+            "name": "砂霧市（すなぎりし）",
+            "world": "world",
+            "point": {
+                "x": -1509.4568966092997,
+                "y": 71.0625,
+                "z": 2006.7070939410808
+            },
+            "overrideSize": null,
+            "color": "#8055F9",
+            "numberings": [
+                {
+                    "group": "01a03527-1344-7569-ae77-6eb52d8202f8",
+                    "groupSlug": "fm",
+                    "groupName": "FM鉄道",
+                    "position": 7,
+                    "numbering": "FM08"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-18fb-7729-b2f6-4254c3991ca7",
+            "slug": "shm",
+            "name": "白花街",
+            "world": "world",
+            "point": {
+                "x": 256.69999998807907,
+                "y": 74.0,
+                "z": 2023.5783953828263
+            },
+            "overrideSize": null,
+            "color": "#194CBA",
+            "numberings": [
+                {
+                    "group": "01a03527-1372-7c84-838f-b653d1deb168",
+                    "groupSlug": "matsuSub",
+                    "groupName": "松島支線",
+                    "position": 5,
+                    "numbering": "MAT06"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1904-719d-ab46-3e9f7d9aee38",
+            "slug": "sibs",
+            "name": "しばむら南区",
+            "world": "world",
+            "point": {
+                "x": 218.45902495509466,
+                "y": 89.5,
+                "z": -1768.3049937689948
+            },
+            "overrideSize": null,
+            "color": "#47C7A9",
+            "numberings": [
+                {
+                    "group": "01a03527-13c4-7b75-9677-751c541aaabe",
+                    "groupSlug": "mmsr",
+                    "groupName": "森元森林鉄道",
+                    "position": 5,
+                    "numbering": "MMS06"
+                },
+                {
+                    "group": "01a03527-142e-71eb-b709-1de6792bc115",
+                    "groupSlug": "sakouchi",
+                    "groupName": "逆内川作業支線",
+                    "position": 0,
+                    "numbering": "SAK01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-190c-7fbf-98dc-915b4dcda2a0",
+            "slug": "siro",
+            "name": "白華村",
+            "world": "world",
+            "point": {
+                "x": 1685.51541246266,
+                "y": 70.0,
+                "z": 199.30000001192093
+            },
+            "overrideSize": null,
+            "color": "#98E7CB",
+            "numberings": [
+                {
+                    "group": "01a03527-1441-74e7-8962-b9776687badd",
+                    "groupSlug": "srhn",
+                    "groupName": "白華村鉄道",
+                    "position": 1,
+                    "numbering": "SRH02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1915-7d3d-b76a-edcf9e0dcf4a",
+            "slug": "skmm",
+            "name": "南神森",
+            "world": "world",
+            "point": {
+                "x": -15.538488705207987,
+                "y": 71.0,
+                "z": 1430.420583015133
+            },
+            "overrideSize": null,
+            "color": "#3D17BB",
+            "numberings": [
+                {
+                    "group": "01a03527-135f-7f14-8ab3-3ad3a1bd4578",
+                    "groupSlug": "kamimoriNewLine",
+                    "groupName": "神森新線",
+                    "position": 5,
+                    "numbering": "MK06"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-191e-7a71-ae7f-d564f3486ed3",
+            "slug": "skuc",
+            "name": "逆内川",
+            "world": "world",
+            "point": {
+                "x": 782.4881802198479,
+                "y": 80.0,
+                "z": -735.3755655331004
+            },
+            "overrideSize": null,
+            "color": "#EBF54D",
+            "numberings": [
+                {
+                    "group": "01a03527-142e-71eb-b709-1de6792bc115",
+                    "groupSlug": "sakouchi",
+                    "groupName": "逆内川作業支線",
+                    "position": 2,
+                    "numbering": "SAK03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1926-7c2b-bca9-e58cb51f94d4",
+            "slug": "smts",
+            "name": "新松島",
+            "world": "world",
+            "point": {
+                "x": 252.53674199915727,
+                "y": 73.5,
+                "z": 114.84252318223109
+            },
+            "overrideSize": null,
+            "color": "#979A08",
+            "numberings": [
+                {
+                    "group": "01a03527-1372-7c84-838f-b653d1deb168",
+                    "groupSlug": "matsuSub",
+                    "groupName": "松島支線",
+                    "position": 1,
+                    "numbering": "MAT02"
+                },
+                {
+                    "group": "01a03527-13c4-7b75-9677-751c541aaabe",
+                    "groupSlug": "mmsr",
+                    "groupName": "森元森林鉄道",
+                    "position": 2,
+                    "numbering": "MMS03"
+                },
+                {
+                    "group": "01a03527-142e-71eb-b709-1de6792bc115",
+                    "groupSlug": "sakouchi",
+                    "groupName": "逆内川作業支線",
+                    "position": 4,
+                    "numbering": "SAK05"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-192f-7558-a76b-15b3fb503495",
+            "slug": "sngs",
+            "name": "サンゴ礁前",
+            "world": "world",
+            "point": {
+                "x": 40.0,
+                "y": 65.0,
+                "z": -1202.0
+            },
+            "overrideSize": null,
+            "color": "#DF8591",
+            "numberings": [
+                {
+                    "group": "01a03527-13e9-723c-a42a-9ab959f3311f",
+                    "groupSlug": "mu",
+                    "groupName": "うみもと線",
+                    "position": 8,
+                    "numbering": "MU09"
+                },
+                {
+                    "group": "01a03527-13fc-77f9-a85c-8be2ac048f4c",
+                    "groupSlug": "pakapaka",
+                    "groupName": "ぱかぱか高速鉄道ぱかぱか高速ライン(緑草線)",
+                    "position": 3,
+                    "numbering": "PAK04"
+                },
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 17,
+                    "numbering": "SF18"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1938-7763-bfb7-5893c57e5304",
+            "slug": "snrn",
+            "name": "真林（しんりん）",
+            "world": "world",
+            "point": {
+                "x": -3929.1814999814487,
+                "y": 82.0,
+                "z": -8132.437533425756
+            },
+            "overrideSize": null,
+            "color": "#1BA6E3",
+            "numberings": [
+                {
+                    "group": "01a03527-139f-755f-87c6-9b643aae1daa",
+                    "groupSlug": "meidai",
+                    "groupName": "迷大鉄道",
+                    "position": 2,
+                    "numbering": "MEI03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1941-7787-94c5-7186873e1ebf",
+            "slug": "soat",
+            "name": "倉庫跡地公園",
+            "world": "world",
+            "point": {
+                "x": -4970.83036201406,
+                "y": 78.0,
+                "z": -9295.290026524015
+            },
+            "overrideSize": null,
+            "color": "#24983A",
+            "numberings": [
+                {
+                    "group": "01a03527-145f-7ab0-8929-a08b6321337f",
+                    "groupSlug": "yukihara",
+                    "groupName": "雪原Line",
+                    "position": 1,
+                    "numbering": "YUK02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-194a-7104-8857-bea7eae06f12",
+            "slug": "srha",
+            "name": "森林はなもり",
+            "world": "world",
+            "point": {
+                "x": -3815.5626495736633,
+                "y": 65.0,
+                "z": -1171.4886490493147
+            },
+            "overrideSize": null,
+            "color": "#805A85",
+            "numberings": [
+                {
+                    "group": "01a03527-1357-7093-8b6d-b48972fe0bd0",
+                    "groupSlug": "hana",
+                    "groupName": "はなもり鉄道",
+                    "position": 4,
+                    "numbering": "HAN05"
+                },
+                {
+                    "group": "01a03527-13c4-7b75-9677-751c541aaabe",
+                    "groupSlug": "mmsr",
+                    "groupName": "森元森林鉄道",
+                    "position": 11,
+                    "numbering": "MMS12"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1952-7aef-adf5-b29165bd45e4",
+            "slug": "srj",
+            "name": "空島",
+            "world": "world",
+            "point": {
+                "x": -1001.3000000119209,
+                "y": 201.0,
+                "z": 2284.8029648848938
+            },
+            "overrideSize": null,
+            "color": "#693ED3",
+            "numberings": [
+                {
+                    "group": "01a03527-1344-7569-ae77-6eb52d8202f8",
+                    "groupSlug": "fm",
+                    "groupName": "FM鉄道",
+                    "position": 8,
+                    "numbering": "FM09"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-195b-76aa-91bd-75c971abc414",
+            "slug": "srkl",
+            "name": "白樺湖",
+            "world": "world",
+            "point": {
+                "x": 591.9215329436032,
+                "y": 71.0,
+                "z": 7876.509125888762
+            },
+            "overrideSize": null,
+            "color": "#6B9D7F",
+            "numberings": [
+                {
+                    "group": "01a03527-1468-7e96-a685-110226bdabe9",
+                    "groupSlug": "yukuripa",
+                    "groupName": "ユクリパ高速鉄道ユクリ本線",
+                    "position": 5,
+                    "numbering": "YKP06"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1963-7968-8c76-fc0a5de74bda",
+            "slug": "srkm",
+            "name": "森林狐目",
+            "world": "world",
+            "point": {
+                "x": 249.27717963303024,
+                "y": 102.0,
+                "z": 557.161960478861
+            },
+            "overrideSize": null,
+            "color": "#6E1EBD",
+            "numberings": [
+                {
+                    "group": "01a03527-1372-7c84-838f-b653d1deb168",
+                    "groupSlug": "matsuSub",
+                    "groupName": "松島支線",
+                    "position": 3,
+                    "numbering": "MAT04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-196c-7cae-ac67-90f9ab8fafe4",
+            "slug": "srkw",
+            "name": "白河（しらかわ）",
+            "world": "world",
+            "point": {
+                "x": 545.5753431416863,
+                "y": 76.0,
+                "z": -998.5925196088916
+            },
+            "overrideSize": null,
+            "color": "#68615D",
+            "numberings": [
+                {
+                    "group": "01a03527-1369-7ffa-aa40-c98cc4e87a09",
+                    "groupSlug": "karaLine",
+                    "groupName": "kara鉄道",
+                    "position": 2,
+                    "numbering": "KAR03"
+                },
+                {
+                    "group": "01a03527-13e9-723c-a42a-9ab959f3311f",
+                    "groupSlug": "mu",
+                    "groupName": "うみもと線",
+                    "position": 9,
+                    "numbering": "MU10"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1976-7108-bd52-89495d0152de",
+            "slug": "srmt",
+            "name": "森林森元",
+            "world": "world",
+            "point": {
+                "x": -337.2832713164486,
+                "y": 78.0,
+                "z": -95.50233682402227
+            },
+            "overrideSize": null,
+            "color": "#362FA7",
+            "numberings": [
+                {
+                    "group": "01a03527-13c4-7b75-9677-751c541aaabe",
+                    "groupSlug": "mmsr",
+                    "groupName": "森元森林鉄道",
+                    "position": 0,
+                    "numbering": "MMS01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-197f-7523-aa37-d5016fbd293b",
+            "slug": "srs",
+            "name": "沙流縞",
+            "world": "world",
+            "point": {
+                "x": 1170.0539685027725,
+                "y": 79.0,
+                "z": -75.32249641753415
+            },
+            "overrideSize": null,
+            "color": "#E44C48",
+            "numberings": [
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 12,
+                    "numbering": "SF13"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1987-7a5f-9169-1acba71f410f",
+            "slug": "sryk",
+            "name": "白雪",
+            "world": "world",
+            "point": {
+                "x": 2614.300000011921,
+                "y": 71.0,
+                "z": 4912.555270010015
+            },
+            "overrideSize": null,
+            "color": "#9D308E",
+            "numberings": [
+                {
+                    "group": "01a03527-1396-76e4-90a5-39afe9f03cde",
+                    "groupSlug": "mcSE",
+                    "groupName": "町湯東南線",
+                    "position": 5,
+                    "numbering": "MSE06"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1991-7538-84d9-b106a28ca779",
+            "slug": "sshm",
+            "name": "新白花街",
+            "world": "world",
+            "point": {
+                "x": 287.5986406386906,
+                "y": 79.0,
+                "z": 2034.5555101146413
+            },
+            "overrideSize": null,
+            "color": "#79B38F",
+            "numberings": [
+                {
+                    "group": "01a03527-1384-73f7-8591-d1d236d47c78",
+                    "groupSlug": "mcKH",
+                    "groupName": "町湯紅白線",
+                    "position": 1,
+                    "numbering": "MCK02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-199b-71a7-be7c-1a47b24ba401",
+            "slug": "sska",
+            "name": "桜秋華（さくらしゅうか）",
+            "world": "world",
+            "point": {
+                "x": -5046.4596650483545,
+                "y": 81.0,
+                "z": -7773.4731955016405
+            },
+            "overrideSize": null,
+            "color": "#13988B",
+            "numberings": [
+                {
+                    "group": "01a03527-13a8-7e1e-abe7-47b66d2b570d",
+                    "groupSlug": "miharu",
+                    "groupName": "瑞時縦横線",
+                    "position": 1,
+                    "numbering": "MIH02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-19a3-7979-88d7-375bc761d051",
+            "slug": "stnk",
+            "name": "雪菜高原（せつなこうげん）",
+            "world": "world",
+            "point": {
+                "x": 794.2598271298215,
+                "y": 75.0,
+                "z": -1075.4873191028064
+            },
+            "overrideSize": null,
+            "color": "#D4CDBA",
+            "numberings": [
+                {
+                    "group": "01a03527-1369-7ffa-aa40-c98cc4e87a09",
+                    "groupSlug": "karaLine",
+                    "groupName": "kara鉄道",
+                    "position": 1,
+                    "numbering": "KAR02"
+                },
+                {
+                    "group": "01a03527-13c4-7b75-9677-751c541aaabe",
+                    "groupSlug": "mmsr",
+                    "groupName": "森元森林鉄道",
+                    "position": 4,
+                    "numbering": "MMS05"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-19ab-7b4e-b0a6-28080812952b",
+            "slug": "sznm",
+            "name": "さざなみ",
+            "world": "world",
+            "point": {
+                "x": -373.8860177720627,
+                "y": 87.0,
+                "z": -1048.5841045038014
+            },
+            "overrideSize": null,
+            "color": "#832014",
+            "numberings": [
+                {
+                    "group": "01a03527-13e9-723c-a42a-9ab959f3311f",
+                    "groupSlug": "mu",
+                    "groupName": "うみもと線",
+                    "position": 7,
+                    "numbering": "MU08"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-19b4-7853-bfa0-2a15f70ea91f",
+            "slug": "takv",
+            "name": "多久村",
+            "world": "world",
+            "point": {
+                "x": 1455.6789728030265,
+                "y": 79.0,
+                "z": -632.2572199261081
+            },
+            "overrideSize": null,
+            "color": "#E34E94",
+            "numberings": [
+                {
+                    "group": "01a03527-1455-7ba6-9292-d4bc39ca1b10",
+                    "groupSlug": "tono",
+                    "groupName": "旧遠野森林鉄道",
+                    "position": 1,
+                    "numbering": "TON02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-19bd-7878-8c82-813e6141cc6f",
+            "slug": "tanh",
+            "name": "豊蘆野原（とよあしのはら）",
+            "world": "world",
+            "point": {
+                "x": -5442.519415848873,
+                "y": 72.0,
+                "z": -6944.499649908649
+            },
+            "overrideSize": null,
+            "color": "#22339A",
+            "numberings": [
+                {
+                    "group": "01a03527-13a8-7e1e-abe7-47b66d2b570d",
+                    "groupSlug": "miharu",
+                    "groupName": "瑞時縦横線",
+                    "position": 3,
+                    "numbering": "MIH04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-19c6-7abd-b8e9-58a3d32be23a",
+            "slug": "them",
+            "name": "ザ街",
+            "world": "world",
+            "point": {
+                "x": 1541.5895618036602,
+                "y": 76.0,
+                "z": 3405.271141384399
+            },
+            "overrideSize": null,
+            "color": "#8DC963",
+            "numberings": [
+                {
+                    "group": "01a03527-1396-76e4-90a5-39afe9f03cde",
+                    "groupSlug": "mcSE",
+                    "groupName": "町湯東南線",
+                    "position": 3,
+                    "numbering": "MSE04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-19cf-7e26-9a1c-c24ebac87781",
+            "slug": "tje",
+            "name": "地上絵",
+            "world": "world",
+            "point": {
+                "x": 1056.5277767162506,
+                "y": 71.0,
+                "z": 1920.0733512307638
+            },
+            "overrideSize": null,
+            "color": "#553A65",
+            "numberings": [
+                {
+                    "group": "01a03527-1424-7071-83da-efbb56b0c241",
+                    "groupSlug": "rinkai",
+                    "groupName": "リンカイ鉄道",
+                    "position": 2,
+                    "numbering": "RIN03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-19d9-77bf-874a-06706fdc06ed",
+            "slug": "tkbt",
+            "name": "築別（ちくべつ）",
+            "world": "world",
+            "point": {
+                "x": -888.4574448682051,
+                "y": 79.0,
+                "z": -1901.3428184818272
+            },
+            "overrideSize": null,
+            "color": "#9C8B13",
+            "numberings": [
+                {
+                    "group": "01a03527-139f-755f-87c6-9b643aae1daa",
+                    "groupSlug": "meidai",
+                    "groupName": "迷大鉄道",
+                    "position": 7,
+                    "numbering": "MEI08"
+                },
+                {
+                    "group": "01a03527-13c4-7b75-9677-751c541aaabe",
+                    "groupSlug": "mmsr",
+                    "groupName": "森元森林鉄道",
+                    "position": 8,
+                    "numbering": "MMS09"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-19e2-7648-b973-22eaaf48f469",
+            "slug": "tlib",
+            "name": "天空図書館前",
+            "world": "world",
+            "point": {
+                "x": -957.4178419846295,
+                "y": 79.0,
+                "z": -726.4864745405042
+            },
+            "overrideSize": null,
+            "color": "#08931F",
+            "numberings": [
+                {
+                    "group": "01a03527-139f-755f-87c6-9b643aae1daa",
+                    "groupSlug": "meidai",
+                    "groupName": "迷大鉄道",
+                    "position": 10,
+                    "numbering": "MEI11"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-19eb-7a91-9328-f057fea7d716",
+            "slug": "tmtj",
+            "name": "とまとジェラート",
+            "world": "world",
+            "point": {
+                "x": -217.04070245036593,
+                "y": 70.0,
+                "z": 1333.4800596300881
+            },
+            "overrideSize": null,
+            "color": "#3A52E3",
+            "numberings": [
+                {
+                    "group": "01a03527-13d6-7d7a-b41e-9050484f36bd",
+                    "groupSlug": "morimotoSuburb",
+                    "groupName": "もりもと郊外線",
+                    "position": 3,
+                    "numbering": "MS04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-19f4-7d79-9ac7-6b4d252d4ef2",
+            "slug": "tnhr",
+            "name": "橙ノ原（とのはら）",
+            "world": "world",
+            "point": {
+                "x": -1131.5790263810184,
+                "y": 79.0,
+                "z": -1698.7537347588836
+            },
+            "overrideSize": null,
+            "color": "#18334B",
+            "numberings": [
+                {
+                    "group": "01a03527-139f-755f-87c6-9b643aae1daa",
+                    "groupSlug": "meidai",
+                    "groupName": "迷大鉄道",
+                    "position": 8,
+                    "numbering": "MEI09"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-19fe-75fc-b4e3-10be574037da",
+            "slug": "tug",
+            "name": "峠",
+            "world": "world",
+            "point": {
+                "x": 1495.5910148949797,
+                "y": 80.0,
+                "z": 1266.0992974865183
+            },
+            "overrideSize": null,
+            "color": "#6E46ED",
+            "numberings": [
+                {
+                    "group": "01a03527-13b2-753e-b4a6-984789262ad6",
+                    "groupSlug": "miyugawa",
+                    "groupName": "海結川鉄道",
+                    "position": 1,
+                    "numbering": "MIY02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1a07-7161-b218-ab34c6025f41",
+            "slug": "tyk",
+            "name": "竹屋敷",
+            "world": "world",
+            "point": {
+                "x": 4004.499608815651,
+                "y": 89.0,
+                "z": 146.97688751569112
+            },
+            "overrideSize": null,
+            "color": "#350010",
+            "numberings": [
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 6,
+                    "numbering": "SF07"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1a10-71c6-bc1a-2dd81e2e2170",
+            "slug": "ubk",
+            "name": "Unbekannt城下町",
+            "world": "world",
+            "point": {
+                "x": 2724.064755802164,
+                "y": 62.0,
+                "z": -84.54955470760142
+            },
+            "overrideSize": null,
+            "color": "#BD37D1",
+            "numberings": [
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 9,
+                    "numbering": "SF10"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1a19-7c5a-af6a-5350b9698ac8",
+            "slug": "ugaf",
+            "name": "雲丹ヶ丘水族館前",
+            "world": "world",
+            "point": {
+                "x": -506.30000001192093,
+                "y": 77.0,
+                "z": -697.6630717372991
+            },
+            "overrideSize": null,
+            "color": "#FD329E",
+            "numberings": [
+                {
+                    "group": "01a03527-13e9-723c-a42a-9ab959f3311f",
+                    "groupSlug": "mu",
+                    "groupName": "うみもと線",
+                    "position": 5,
+                    "numbering": "MU06"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1a22-7eb3-9b0f-0b5bf79d2106",
+            "slug": "ugoe",
+            "name": "雲丹ヶ丘入口",
+            "world": "world",
+            "point": {
+                "x": -540.5549108981319,
+                "y": 79.0,
+                "z": -407.8284463394682
+            },
+            "overrideSize": null,
+            "color": "#B9C385",
+            "numberings": [
+                {
+                    "group": "01a03527-13e9-723c-a42a-9ab959f3311f",
+                    "groupSlug": "mu",
+                    "groupName": "うみもと線",
+                    "position": 4,
+                    "numbering": "MU05"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1a2e-7c7f-ad1e-85fb4284d1d8",
+            "slug": "umby",
+            "name": "梅林",
+            "world": "world",
+            "point": {
+                "x": -957.4690125516046,
+                "y": 79.12658148580327,
+                "z": -159.3042896953822
+            },
+            "overrideSize": null,
+            "color": "#B79BFB",
+            "numberings": [
+                {
+                    "group": "01a03527-139f-755f-87c6-9b643aae1daa",
+                    "groupSlug": "meidai",
+                    "groupName": "迷大鉄道",
+                    "position": 12,
+                    "numbering": "MEI13"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1a37-7671-8279-9e15dc5b332e",
+            "slug": "ummt",
+            "name": "うみもと",
+            "world": "world",
+            "point": {
+                "x": -645.614081856111,
+                "y": 53.0,
+                "z": -1039.699999988079
+            },
+            "overrideSize": null,
+            "color": "#5CCF2B",
+            "numberings": [
+                {
+                    "group": "01a03527-13e9-723c-a42a-9ab959f3311f",
+                    "groupSlug": "mu",
+                    "groupName": "うみもと線",
+                    "position": 0,
+                    "numbering": "MU01"
+                },
+                {
+                    "group": "01a03527-1419-7750-8ad1-32a6b65ba3a4",
+                    "groupSlug": "resort",
+                    "groupName": "リゾートライン",
+                    "position": 0,
+                    "numbering": "RES01"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1a41-76a8-a5a6-4753c485ebc7",
+            "slug": "umsh",
+            "name": "うみもと貞治城",
+            "world": "world",
+            "point": {
+                "x": -447.4003625281664,
+                "y": 76.19628408634782,
+                "z": -1259.624071888685
+            },
+            "overrideSize": null,
+            "color": "#C62829",
+            "numberings": [
+                {
+                    "group": "01a03527-13e9-723c-a42a-9ab959f3311f",
+                    "groupSlug": "mu",
+                    "groupName": "うみもと線",
+                    "position": 2,
+                    "numbering": "MU03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1a4b-7a21-b35c-f23f8c206b92",
+            "slug": "umtd",
+            "name": "うみもとうだい",
+            "world": "world",
+            "point": {
+                "x": -571.4714605391962,
+                "y": 67.0,
+                "z": -1375.5514657710592
+            },
+            "overrideSize": null,
+            "color": "#E8A18E",
+            "numberings": [
+                {
+                    "group": "01a03527-13c4-7b75-9677-751c541aaabe",
+                    "groupSlug": "mmsr",
+                    "groupName": "森元森林鉄道",
+                    "position": 7,
+                    "numbering": "MMS08"
+                },
+                {
+                    "group": "01a03527-13e9-723c-a42a-9ab959f3311f",
+                    "groupSlug": "mu",
+                    "groupName": "うみもと線",
+                    "position": 1,
+                    "numbering": "MU02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1a54-70ee-bd72-153ba32b3f45",
+            "slug": "unk",
+            "name": "????",
+            "world": "world",
+            "point": {
+                "x": 282.3631238195716,
+                "y": 72.0,
+                "z": -474.38777884271855
+            },
+            "overrideSize": null,
+            "color": "#D9D04A",
+            "numberings": [
+                {
+                    "group": "01a03527-142e-71eb-b709-1de6792bc115",
+                    "groupSlug": "sakouchi",
+                    "groupName": "逆内川作業支線",
+                    "position": 3,
+                    "numbering": "SAK04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1a5c-7695-b52b-51a8190beb3d",
+            "slug": "unkn",
+            "name": "???",
+            "world": "world",
+            "point": {
+                "x": 580.5209620815892,
+                "y": 95.0,
+                "z": 4158.5962726615835
+            },
+            "overrideSize": null,
+            "color": "#A6051D",
+            "numberings": [
+                {
+                    "group": "01a03527-1372-7c84-838f-b653d1deb168",
+                    "groupSlug": "matsuSub",
+                    "groupName": "松島支線",
+                    "position": 7,
+                    "numbering": "MAT08"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1a65-7f04-b95b-b6e2d1fc8bde",
+            "slug": "unoo",
+            "name": "雲丹ヶ丘大橋",
+            "world": "world",
+            "point": {
+                "x": -630.8432124374464,
+                "y": 71.0,
+                "z": -475.6601292586229
+            },
+            "overrideSize": null,
+            "color": "#1AF827",
+            "numberings": [
+                {
+                    "group": "01a03527-13e9-723c-a42a-9ab959f3311f",
+                    "groupSlug": "mu",
+                    "groupName": "うみもと線",
+                    "position": 3,
+                    "numbering": "MU04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1a6f-70ae-adbf-1abba8da62a1",
+            "slug": "usj",
+            "name": "牛嶋",
+            "world": "world",
+            "point": {
+                "x": 4048.468255495095,
+                "y": 69.0,
+                "z": 1158.3984270065318
+            },
+            "overrideSize": null,
+            "color": "#DA2DD4",
+            "numberings": [
+                {
+                    "group": "01a03527-134d-7c90-81f8-f2e1d41e4973",
+                    "groupSlug": "french",
+                    "groupName": "ふれんちとーす島線",
+                    "position": 2,
+                    "numbering": "FRE03"
+                },
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 5,
+                    "numbering": "SF06"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1a77-7422-806d-1ce11c329edb",
+            "slug": "velf",
+            "name": "ヴェルフネレチェンスカヤ村",
+            "world": "world",
+            "point": {
+                "x": -1766.8223016439308,
+                "y": 68.0625,
+                "z": 2634.6831120562347
+            },
+            "overrideSize": null,
+            "color": "#26E206",
+            "numberings": [
+                {
+                    "group": "01a03527-1344-7569-ae77-6eb52d8202f8",
+                    "groupSlug": "fm",
+                    "groupName": "FM鉄道",
+                    "position": 9,
+                    "numbering": "FM10"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1a80-7354-a98e-c0d49cdb94dc",
+            "slug": "wbl",
+            "name": "西ボーダーライン",
+            "world": "world",
+            "point": {
+                "x": -10527.0,
+                "y": 77.0,
+                "z": 5855.0
+            },
+            "overrideSize": null,
+            "color": "#6CCC88",
+            "numberings": [
+                {
+                    "group": "01a03527-133b-76c5-8863-c1777c3e95c5",
+                    "groupSlug": "border",
+                    "groupName": "ボーダーライン鉄道",
+                    "position": 2,
+                    "numbering": "BOR03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1a88-7bed-b4ff-22732f6d311c",
+            "slug": "wcl",
+            "name": "水時計",
+            "world": "world",
+            "point": {
+                "x": 4510.511307101871,
+                "y": 103.0,
+                "z": 2727.753308593786
+            },
+            "overrideSize": null,
+            "color": "#EF5010",
+            "numberings": [
+                {
+                    "group": "01a03527-1437-7656-935e-5eefb0de73f8",
+                    "groupSlug": "sf",
+                    "groupName": "聖花線",
+                    "position": 2,
+                    "numbering": "SF03"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1a91-70ce-b760-3d03564a35bd",
+            "slug": "wmyg",
+            "name": "西海結川",
+            "world": "world",
+            "point": {
+                "x": 1868.2944236748815,
+                "y": 66.0,
+                "z": 1281.1295409152397
+            },
+            "overrideSize": null,
+            "color": "#381064",
+            "numberings": [
+                {
+                    "group": "01a03527-13b2-753e-b4a6-984789262ad6",
+                    "groupSlug": "miyugawa",
+                    "groupName": "海結川鉄道",
+                    "position": 3,
+                    "numbering": "MIY04"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1a99-7827-9bbf-8b1eee0d2f9d",
+            "slug": "wsek",
+            "name": "西雪華郷",
+            "world": "world",
+            "point": {
+                "x": -5361.9141404188895,
+                "y": 82.0,
+                "z": -8507.454239994768
+            },
+            "overrideSize": null,
+            "color": "#307BF7",
+            "numberings": [
+                {
+                    "group": "01a03527-144b-7c7d-9720-c0aa2c22a72b",
+                    "groupSlug": "sunflower",
+                    "groupName": "サンフラワーLine",
+                    "position": 1,
+                    "numbering": "SUN02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1aa2-737e-996f-038bfac6945f",
+            "slug": "ycgo",
+            "name": "湯栗ヶ丘（ゆくりがおか）",
+            "world": "world",
+            "point": {
+                "x": 592.092378438656,
+                "y": 71.0,
+                "z": 9190.315248341532
+            },
+            "overrideSize": null,
+            "color": "#7C6939",
+            "numberings": [
+                {
+                    "group": "01a03527-1468-7e96-a685-110226bdabe9",
+                    "groupSlug": "yukuripa",
+                    "groupName": "ユクリパ高速鉄道ユクリ本線",
+                    "position": 8,
+                    "numbering": "YKP09"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1aaa-7d6f-b440-79a85aced502",
+            "slug": "ychc",
+            "name": "ユクリ浜市",
+            "world": "world",
+            "point": {
+                "x": 589.4657393762935,
+                "y": 78.0,
+                "z": 9505.292966640816
+            },
+            "overrideSize": null,
+            "color": "#F248CA",
+            "numberings": [
+                {
+                    "group": "01a03527-1468-7e96-a685-110226bdabe9",
+                    "groupSlug": "yukuripa",
+                    "groupName": "ユクリパ高速鉄道ユクリ本線",
+                    "position": 10,
+                    "numbering": "YKP11"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1ab2-7f28-b503-2e6a4dc70a78",
+            "slug": "ycky",
+            "name": "ユクリ砂丘村",
+            "world": "world",
+            "point": {
+                "x": 593.005789585583,
+                "y": 70.0,
+                "z": 6452.343967118012
+            },
+            "overrideSize": null,
+            "color": "#5B5D55",
+            "numberings": [
+                {
+                    "group": "01a03527-1468-7e96-a685-110226bdabe9",
+                    "groupSlug": "yukuripa",
+                    "groupName": "ユクリパ高速鉄道ユクリ本線",
+                    "position": 4,
+                    "numbering": "YKP05"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1abb-73c2-8d2d-8c6ebdc165b8",
+            "slug": "ymk",
+            "name": "夢の国",
+            "world": "world",
+            "point": {
+                "x": -957.366362514591,
+                "y": 64.0,
+                "z": -1313.492107734804
+            },
+            "overrideSize": null,
+            "color": "#7D29B9",
+            "numberings": [
+                {
+                    "group": "01a03527-139f-755f-87c6-9b643aae1daa",
+                    "groupSlug": "meidai",
+                    "groupName": "迷大鉄道",
+                    "position": 9,
+                    "numbering": "MEI10"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1ac3-7d6f-979c-172182a34be6",
+            "slug": "ymkk",
+            "name": "夢の国",
+            "world": "world",
+            "point": {
+                "x": -896.1305577527843,
+                "y": 69.0,
+                "z": -1229.506619209085
+            },
+            "overrideSize": null,
+            "color": "#5B9976",
+            "numberings": [
+                {
+                    "group": "01a03527-1419-7750-8ad1-32a6b65ba3a4",
+                    "groupSlug": "resort",
+                    "groupName": "リゾートライン",
+                    "position": 1,
+                    "numbering": "RES02"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1acc-7125-9efb-de3e7c7344b8",
+            "slug": "ymon",
+            "name": "止音（やめおん）",
+            "world": "world",
+            "point": {
+                "x": 2500.6413277324277,
+                "y": 78.0625,
+                "z": 1218.2738658621256
+            },
+            "overrideSize": null,
+            "color": "#1DE282",
+            "numberings": [
+                {
+                    "group": "01a03527-13b2-753e-b4a6-984789262ad6",
+                    "groupSlug": "miyugawa",
+                    "groupName": "海結川鉄道",
+                    "position": 6,
+                    "numbering": "MIY07"
+                }
+            ]
+        },
+        {
+            "id": "01a03527-1ad5-793b-80e0-c46db7e8dbdf",
+            "slug": "ysmr",
+            "name": "野菜実里（やさいみのり）",
+            "world": "world",
+            "point": {
+                "x": -206.5573859501284,
+                "y": 77.0,
+                "z": 830.490004257557
+            },
+            "overrideSize": null,
+            "color": "#A3A91C",
+            "numberings": [
+                {
+                    "group": "01a03527-13d6-7d7a-b41e-9050484f36bd",
+                    "groupSlug": "morimotoSuburb",
+                    "groupName": "もりもと郊外線",
+                    "position": 2,
+                    "numbering": "MS03"
+                }
+            ]
+        }
+    ]
+}
