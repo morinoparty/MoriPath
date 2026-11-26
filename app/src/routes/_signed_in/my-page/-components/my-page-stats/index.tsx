@@ -64,6 +64,27 @@ const toggleButtonStyle = css({
     },
 });
 
+const valueStackStyle = css({
+    // 数値と伏せ字を 1 つのマスに重ねる。マスの幅は広い方に合わせて固定される
+    display: "inline-grid",
+    "& > *": { gridArea: "1 / 1" },
+});
+
+const valueTextStyle = css({
+    // Stat.Value と同じく、数値と単位をベースラインで揃えて並べる
+    display: "inline-flex",
+    alignItems: "baseline",
+    justifySelf: "center",
+    columnGap: "1",
+    "&[data-hidden]": { visibility: "hidden" },
+});
+
+const maskStyle = css({
+    // 数値より短くても、マスの中央に置いて位置をそろえる
+    justifySelf: "center",
+    "&[data-hidden]": { visibility: "hidden" },
+});
+
 // <dl> では dt (ラベル) を dd (値) より前に書く必要があるため、見た目だけ値を上に出す
 const statRootStyle = css({ flexDirection: "column-reverse" });
 
@@ -103,25 +124,33 @@ export const MyPageStats = ({
                     <Stat.Root key={item.key} className={statRootStyle}>
                         <Stat.Label>{item.label}</Stat.Label>
                         <Stat.Value>
-                            {hidden ? (
-                                <>
-                                    {/* 伏せ字は読み上げず、隠していることだけを伝える */}
-                                    <span aria-hidden="true">
-                                        {HIDDEN_MASK}
-                                    </span>
-                                    <span className={css({ srOnly: true })}>
-                                        非表示
-                                    </span>
-                                </>
-                            ) : (
-                                <>
+                            {/* 数値と伏せ字を同じマスに重ね、見えない方も幅を取らせる。切り替えても列の幅が変わらない */}
+                            <span className={valueStackStyle}>
+                                <span
+                                    className={valueTextStyle}
+                                    data-hidden={hidden || undefined}
+                                    aria-hidden={hidden || undefined}
+                                >
                                     {/* SSR とブラウザで桁区切りがずれないよう、ロケールを固定する */}
                                     {item.value.toLocaleString("ja-JP")}
                                     {item.unit && (
                                         <Stat.Unit>{item.unit}</Stat.Unit>
                                     )}
-                                </>
-                            )}
+                                </span>
+                                <span
+                                    className={maskStyle}
+                                    data-hidden={!hidden || undefined}
+                                    aria-hidden="true"
+                                >
+                                    {HIDDEN_MASK}
+                                </span>
+                                {/* 伏せ字は読み上げず、隠していることだけを伝える */}
+                                {hidden && (
+                                    <span className={css({ srOnly: true })}>
+                                        非表示
+                                    </span>
+                                )}
+                            </span>
                         </Stat.Value>
                     </Stat.Root>
                 ))}
