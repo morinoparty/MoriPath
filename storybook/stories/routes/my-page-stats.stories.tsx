@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
 import {
     MyPageStats,
     MyPageStatsSkeleton,
@@ -45,6 +46,27 @@ export const Partial: Story = {
 export const LargeValues: Story = {
     args: {
         stats: { balance: 1234567, claimBlocks: 98765, voteStreak: 365 },
+    },
+};
+
+// 値を隠した状態。ラベルは残し、数値と単位を伏せ字にする
+export const Hidden: Story = {
+    args: {
+        stats: { balance: 12480, claimBlocks: 1240, voteStreak: 7 },
+        hidden: true,
+    },
+};
+
+// タップで表示と非表示を切り替える。アプリでは切り替えた結果を cookie に残す
+export const Toggleable: Story = {
+    args: {
+        stats: { balance: 12480, claimBlocks: 1240, voteStreak: 7 },
+    },
+    render: function Render(args) {
+        const [hidden, setHidden] = useState(false);
+        return (
+            <MyPageStats {...args} hidden={hidden} onHiddenChange={setHidden} />
+        );
     },
 };
 

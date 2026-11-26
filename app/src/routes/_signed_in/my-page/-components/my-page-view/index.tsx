@@ -21,7 +21,11 @@ const bodyStyle = css({
     paddingTop: "3",
 });
 
-export interface MyPageViewProps extends MyPageData {
+export interface MyPageViewProps extends Omit<MyPageData, "statsHidden"> {
+    /** 数値カードの値を隠すか (省略時は表示) */
+    statsHidden?: boolean;
+    /** 数値カードをタップしたときに呼ぶ。省略するとタップで切り替えない */
+    onStatsHiddenChange?: (hidden: boolean) => void;
     /** メニューのセクション (省略時は既定のメニュー) */
     menuSections?: readonly MyPageMenuSection[];
     /** ポートレートのポーズ (URL の ?pose=)。省略すると表示のたびにランダムに選ぶ */
@@ -37,6 +41,8 @@ export const MyPageView = ({
     presence,
     stats,
     stamps,
+    statsHidden,
+    onStatsHiddenChange,
     menuSections,
     portraitPose,
 }: MyPageViewProps) => (
@@ -48,7 +54,13 @@ export const MyPageView = ({
         />
         <div className={bodyStyle}>
             <Deferred value={stats} fallback={<MyPageStatsSkeleton />}>
-                {(resolved) => <MyPageStats stats={resolved} />}
+                {(resolved) => (
+                    <MyPageStats
+                        stats={resolved}
+                        hidden={statsHidden}
+                        onHiddenChange={onStatsHiddenChange}
+                    />
+                )}
             </Deferred>
             <Deferred value={stamps} fallback={<StampBookSkeleton />}>
                 {(resolved) => resolved && <StampBook stamps={resolved} />}

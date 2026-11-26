@@ -53,6 +53,14 @@ export const Default: Story = {
     },
 };
 
+// 数値カードを隠した状態。SSR の時点からこの見た目で描く
+export const StatsHidden: Story = {
+    args: {
+        ...Default.args,
+        statsHidden: true,
+    },
+};
+
 // 投票状況やスタンプなど、取得できなかった値は表示しない
 export const PartialData: Story = {
     args: {

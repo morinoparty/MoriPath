@@ -35,6 +35,9 @@ const toStatItems = (stats: MyPageStatsData): StatItem[] => {
     return items.filter((item): item is StatItem => item !== null);
 };
 
+// 隠しているあいだ数値の代わりに出す。桁数から金額を推し量れないよう、長さは固定する
+const HIDDEN_MASK = "••••";
+
 const cardStyle = css({
     // 枠線と影を持たない面のカード
     bg: "colorPalette.surface.subtle",
@@ -43,34 +46,96 @@ const cardStyle = css({
     paddingY: "3",
 });
 
+const toggleCardStyle = css({
+    // カード全体に重ねる切り替えボタンの基準にする
+    position: "relative",
+});
+
+const toggleButtonStyle = css({
+    // <dl> を <button> で包むと不正な入れ子になるため、ボタンはカードの上に重ねて置く
+    position: "absolute",
+    inset: "0",
+    borderRadius: "inherit",
+    cursor: "pointer",
+    _focusVisible: {
+        outline: "2px solid",
+        outlineColor: "colorPalette.focusRing",
+        outlineOffset: "2px",
+    },
+});
+
 // <dl> では dt (ラベル) を dd (値) より前に書く必要があるため、見た目だけ値を上に出す
 const statRootStyle = css({ flexDirection: "column-reverse" });
 
 export interface MyPageStatsProps {
     stats: MyPageStatsData;
+    /** 値を隠して HIDDEN_MASK を出すか (ラベルはそのまま出す) */
+    hidden?: boolean;
+    /** カードをタップしたときに、切り替え後の値で呼ぶ。省略するとタップで切り替えない */
+    onHiddenChange?: (hidden: boolean) => void;
     className?: string;
 }
 
-/** どんぐり・保護ブロック・連続投票を 1 枚のカードに並べる。値が 1 つも無ければ何も出さない */
-export const MyPageStats = ({ stats, className }: MyPageStatsProps) => {
+/**
+ * どんぐり・保護ブロック・連続投票を 1 枚のカードに並べる。値が 1 つも無ければ何も出さない。
+ * onHiddenChange を渡すと、カードのタップで値の表示と非表示を切り替える
+ */
+export const MyPageStats = ({
+    stats,
+    hidden = false,
+    onHiddenChange,
+    className,
+}: MyPageStatsProps) => {
     const items = toStatItems(stats);
     if (items.length === 0) {
         return null;
     }
     return (
-        <div className={cx(cardStyle, className)}>
+        <div
+            className={cx(
+                cardStyle,
+                onHiddenChange && toggleCardStyle,
+                className,
+            )}
+        >
             <Stat.Group size="sm" align="center">
                 {items.map((item) => (
                     <Stat.Root key={item.key} className={statRootStyle}>
                         <Stat.Label>{item.label}</Stat.Label>
                         <Stat.Value>
-                            {/* SSR とブラウザで桁区切りがずれないよう、ロケールを固定する */}
-                            {item.value.toLocaleString("ja-JP")}
-                            {item.unit && <Stat.Unit>{item.unit}</Stat.Unit>}
+                            {hidden ? (
+                                <>
+                                    {/* 伏せ字は読み上げず、隠していることだけを伝える */}
+                                    <span aria-hidden="true">
+                                        {HIDDEN_MASK}
+                                    </span>
+                                    <span className={css({ srOnly: true })}>
+                                        非表示
+                                    </span>
+                                </>
+                            ) : (
+                                <>
+                                    {/* SSR とブラウザで桁区切りがずれないよう、ロケールを固定する */}
+                                    {item.value.toLocaleString("ja-JP")}
+                                    {item.unit && (
+                                        <Stat.Unit>{item.unit}</Stat.Unit>
+                                    )}
+                                </>
+                            )}
                         </Stat.Value>
                     </Stat.Root>
                 ))}
             </Stat.Group>
+            {onHiddenChange && (
+                // 押した状態 = 隠している状態。aria-pressed と組むため、ラベルは状態で変えない
+                <button
+                    type="button"
+                    className={toggleButtonStyle}
+                    aria-label="数値を隠す"
+                    aria-pressed={hidden}
+                    onClick={() => onHiddenChange(!hidden)}
+                />
+            )}
         </div>
     );
 };
