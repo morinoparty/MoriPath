@@ -2,7 +2,13 @@
 import "./leaflet.css";
 import L from "leaflet";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { MapContainer, Popup, TileLayer, useMap } from "react-leaflet";
+import {
+    MapContainer,
+    Popup,
+    TileLayer,
+    useMap,
+    useMapEvents,
+} from "react-leaflet";
 import { css } from "../../../../../../styled-system/css";
 import { useBaseMarkers, useClaims } from "../../-functions/map-markers-query";
 import { useMapPlayers } from "../../-functions/use-map-players";
@@ -132,6 +138,28 @@ const CenterUpdater = ({
     return null;
 };
 
+/**
+ * 選んだ地点が画面の外に出たら onOffscreen を呼ぶ。
+ * 地図を動かし終えたとき (ドラッグ・ズーム後) にだけ調べ、開いた直後の autoPan では外れない
+ */
+const CloseWhenOffscreen = ({
+    position,
+    onOffscreen,
+}: {
+    position: [number, number];
+    onOffscreen: () => void;
+}) => {
+    const map = useMap();
+    useMapEvents({
+        moveend: () => {
+            if (!map.getBounds().contains(position)) {
+                onOffscreen();
+            }
+        },
+    });
+    return null;
+};
+
 /** 駅のポップアップ。乗り入れている路線は開いたときに API から取る */
 const StationPopupContent = ({
     feature,
@@ -207,6 +235,25 @@ export const WorldMapCanvas = ({
                 : toLatLng({ x: popupX, z: popupZ }),
         [popupX, popupZ],
     );
+    // react-leaflet の Popup は子要素が変わるたびに update() し、autoPan で地図を引き戻す。
+    // 中身を選んだ図形が変わったときだけ作り直し、プレイヤーの取り直しで地図が戻されないようにする
+    const popupContent = useMemo(() => {
+        if (!selected) return null;
+        switch (selected.kind) {
+            case "railway":
+                return (
+                    <RailwayPopup
+                        route={selected.route}
+                        lineColor={selected.color}
+                    />
+                );
+            case "claim":
+                return <ClaimPopup claim={selected.claim} />;
+            case "station":
+                return <StationPopupContent feature={selected} />;
+        }
+    }, [selected]);
+    const clearSelection = useCallback(() => setSelection(null), []);
 
     const base = markers.data;
 
@@ -320,19 +367,15 @@ export const WorldMapCanvas = ({
                         },
                     }}
                 >
-                    {selected.kind === "railway" && (
-                        <RailwayPopup
-                            route={selected.route}
-                            lineColor={selected.color}
-                        />
-                    )}
-                    {selected.kind === "claim" && (
-                        <ClaimPopup claim={selected.claim} />
-                    )}
-                    {selected.kind === "station" && (
-                        <StationPopupContent feature={selected} />
-                    )}
+                    {popupContent}
                 </Popup>
+            )}
+            {popupPosition && (
+                // 地図を動かして選んだ地点が画面の外に出たら、選択を外してポップアップを閉じる
+                <CloseWhenOffscreen
+                    position={popupPosition}
+                    onOffscreen={clearSelection}
+                />
             )}
         </MapContainer>
     );
