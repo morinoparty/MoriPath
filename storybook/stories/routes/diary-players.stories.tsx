@@ -4,7 +4,7 @@ import { DiaryPlayers } from "@/routes/_signed_in/-components/diary-players";
 import { css } from "../../styled-system/css";
 import { craftheadAvatarUrl, samplePlayers } from "../sample-players";
 
-// Storybook で使う 5 人。3 人までは顔だけ、それより多いと「+N」になる
+// Storybook で使う 5 人。3 人までは全員の顔、それより多いと「+N」になる
 const allPlayers = [
     samplePlayers.nikomaru,
     samplePlayers.chocolatt,
@@ -53,7 +53,12 @@ export const Open: Story = {
     args: { players: allPlayers, defaultOpen: true },
 };
 
-// 全員が並ぶときは押せない顔の列だけ
+// 全員が並ぶときも、押すと名前の一覧が開く
 export const AllVisible: Story = {
     args: { players: allPlayers.slice(0, 3) },
+};
+
+// 1 人だけでも、押すと名前が分かる
+export const SinglePlayer: Story = {
+    args: { players: allPlayers.slice(0, 1) },
 };

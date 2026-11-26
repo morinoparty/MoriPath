@@ -7,7 +7,7 @@ import {
 import { cx, sva } from "../../../../../styled-system/css";
 import type { DiaryPlayer } from "../../-types/diary";
 
-// 顔を並べる最大人数。超えた分は「+N」にまとめ、押すと全員を一覧で見られる
+// 顔を並べる最大人数。超えた分は「+N」にまとめる (押せば人数に関係なく全員を一覧で見られる)
 const MAX_VISIBLE_AVATARS = 3;
 
 const diaryPlayersStyle = sva({
@@ -61,7 +61,8 @@ export interface DiaryPlayersProps {
 
 /**
  * ダイアリーの 1 件に居合わせたプレイヤーの顔。
- * 並びきらないときは顔の列をボタンにして、押すと全員の顔と名前をポップオーバーで出す
+ * 顔だけでは誰か分からないため、全員が並んでいても顔の列をボタンにし、押すと全員の顔と名前をポップオーバーで出す。
+ * 並びきらないときは「+N」にまとめる
  */
 export const DiaryPlayers = ({
     players,
@@ -69,18 +70,6 @@ export const DiaryPlayers = ({
     className,
 }: DiaryPlayersProps) => {
     const style = diaryPlayersStyle();
-
-    // 全員が並んでいれば隠れた人はいないため、押せない顔の列だけを出す
-    if (players.length <= MAX_VISIBLE_AVATARS) {
-        return (
-            <PlayerAvatarGroup
-                players={players}
-                size="sm"
-                aria-label="あそんでいたプレイヤー"
-                className={cx(style.avatars, className)}
-            />
-        );
-    }
 
     return (
         // Esc や外側のタップで閉じてボタンにフォーカスを戻す動きは Ark UI の Popover に任せる。
