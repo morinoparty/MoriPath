@@ -196,6 +196,17 @@ export const WorldMapCanvas = ({
     );
     // ワールドを切り替えたら、前のワールドのポップアップは出さない
     const selected = selection?.world === world ? selection.feature : null;
+    // react-leaflet の Popup は position が変わると閉じて開き直すため、座標の値が同じなら同じ配列を渡す。
+    // 毎回 toLatLng で作ると、プレイヤーの取り直し (3 秒ごと) で再描画するたびにポップアップが点滅する
+    const popupX = selected?.position.x;
+    const popupZ = selected?.position.z;
+    const popupPosition = useMemo(
+        () =>
+            popupX === undefined || popupZ === undefined
+                ? null
+                : toLatLng({ x: popupX, z: popupZ }),
+        [popupX, popupZ],
+    );
 
     const base = markers.data;
 
@@ -284,11 +295,11 @@ export const WorldMapCanvas = ({
                     </ClickShield>
                 </PortalMarker>
             )}
-            {selected && (
+            {selected && popupPosition && (
                 <Popup
                     // 別の図形をタップしたら作り直して、その位置で開き直す
                     key={popupKey(selected)}
-                    position={toLatLng(selected.position)}
+                    position={popupPosition}
                     closeButton={false}
                     // 駅は中心に置いた札の上に出し、札を隠さない
                     offset={selected.kind === "station" ? [0, -14] : [0, 7]}

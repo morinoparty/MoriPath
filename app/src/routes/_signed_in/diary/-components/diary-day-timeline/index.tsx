@@ -1,5 +1,6 @@
 import { Timeline } from "@morinoparty/chlorophyll-react/components";
 import { sva } from "../../../../../../styled-system/css";
+import { PhraseText } from "../../../../../components/phrase-text";
 import {
     InlineSkeleton,
     Skeleton,
@@ -8,6 +9,7 @@ import {
 import { DiarySection } from "../../../-components/diary-section";
 import { groupDiaryEntries } from "../../-functions/group-diary-entries";
 import type { DiaryDayResult } from "../../-types/diary-day";
+import { DiarySectionHeader } from "../diary-section-header";
 
 const diaryDayTimelineStyle = sva({
     slots: [
@@ -46,7 +48,11 @@ const diaryDayTimelineStyle = sva({
             flexDirection: "column",
             gap: "3",
         },
+        // 読み込み中の見出し。DiarySectionHeader と同じ高さ (アイコンの 32px) で場所を取る
         groupTitle: {
+            display: "flex",
+            alignItems: "center",
+            minHeight: "8",
             textStyle: "sm",
             fontWeight: "bold",
             color: "colorPalette.fg.muted",
@@ -88,7 +94,9 @@ export const DiaryDayTimeline = ({ result }: DiaryDayTimelineProps) => {
     return (
         <div className={style.root}>
             {result.day.summary && (
-                <p className={style.summary}>{result.day.summary}</p>
+                <p className={style.summary}>
+                    <PhraseText>{result.day.summary}</PhraseText>
+                </p>
             )}
             {/* 出来事がまだ無い日は、ホームと同じ一言だけを出す */}
             {groups.length === 0 ? (
@@ -100,7 +108,7 @@ export const DiaryDayTimeline = ({ result }: DiaryDayTimelineProps) => {
                         className={style.group}
                         aria-label={group.label}
                     >
-                        <h2 className={style.groupTitle}>{group.label}</h2>
+                        <DiarySectionHeader group={group} />
                         <DiarySection.Entries entries={group.entries} />
                     </section>
                 ))
