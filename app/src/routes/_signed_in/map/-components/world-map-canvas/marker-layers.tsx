@@ -7,6 +7,7 @@ import {
     buildMapStations,
     findLinesAtStation,
 } from "../../-functions/build-map-stations";
+import { clusterMapPlayers } from "../../-functions/cluster-map-players";
 import { hitTestStation } from "../../-functions/station-hit-test";
 import { toClaimInfo } from "../../-functions/to-claim-info";
 import { useRailwayNetwork } from "../../-functions/use-railway-network";
@@ -14,6 +15,7 @@ import {
     fromLatLng,
     NATIVE_MAX_ZOOM,
     normalizeUuid,
+    toLatLng,
 } from "../../-functions/world-map-coords";
 import type {
     BorderLine,
@@ -32,6 +34,7 @@ import type {
     Vec2,
 } from "../../-types/world-map";
 import { MapPin } from "../map-pin";
+import { PlayerClusterMarker } from "../player-cluster-marker";
 import { PlayerMarker } from "../player-marker";
 import {
     stationFootprint,
@@ -324,6 +327,9 @@ export const PinLayer = ({
 );
 
 /** オンラインのプレイヤー。同じワールドにいる人だけを出す */
+// 名前チップ (高さ 52px・幅は名前しだい) どうしが重なるとみなす中心の距離 (px)
+const PLAYER_CLUSTER_THRESHOLD = { dx: 112, dy: 52 };
+
 export const PlayersLayer = ({
     players,
     self,
@@ -331,27 +337,64 @@ export const PlayersLayer = ({
     players: MapPlayer[];
     self: SelfPlayer | null;
 }) => {
+    const map = useMap();
+    // ズームが変わると画面上の距離が変わるため、まとめ直す
+    const zoom = useZoom();
     // UUID の表記ゆれ (ハイフンの有無) をそろえて自分を探す
     const selfUuid = self?.id ? normalizeUuid(self.id) : null;
     const selfName = self?.name.toLowerCase();
+    const isSelf = useCallback(
+        (player: MapPlayer) =>
+            normalizeUuid(player.uuid) === selfUuid ||
+            player.name.toLowerCase() === selfName,
+        [selfUuid, selfName],
+    );
+    const clusters = useMemo(() => {
+        // 自分を先頭にして、自分と重なる人は自分を基準にまとめる
+        const ordered = [
+            ...players.filter(isSelf),
+            ...players.filter((player) => !isSelf(player)),
+        ];
+        return clusterMapPlayers(
+            ordered.map((player) => {
+                // ズームごとの絶対的なピクセル座標。地図を動かしても変わらない
+                const point = map.project(
+                    toLatLng({ x: player.x, z: player.z }),
+                    zoom,
+                );
+                return { player, px: point.x, py: point.y };
+            }),
+            PLAYER_CLUSTER_THRESHOLD,
+        );
+    }, [map, zoom, players, isSelf]);
+
     return (
         <>
-            {players.map((player) => {
-                const isSelf =
-                    normalizeUuid(player.uuid) === selfUuid ||
-                    player.name.toLowerCase() === selfName;
+            {clusters.map((cluster) => {
+                const includesSelf = cluster.players.some(isSelf);
+                const [first] = cluster.players;
                 return (
                     <PortalMarker
-                        key={player.uuid}
-                        position={{ x: player.x, z: player.z }}
-                        // プレイヤーは駅名やピンより上、自分はさらにその上に出す
-                        zIndexOffset={isSelf ? 2000 : 1000}
+                        key={cluster.key}
+                        position={{ x: cluster.x, z: cluster.z }}
+                        // プレイヤーは駅名やピンより上、自分 (を含むまとまり) はさらにその上に出す
+                        zIndexOffset={includesSelf ? 2000 : 1000}
                     >
-                        <PlayerMarker
-                            playerId={player.uuid}
-                            playerName={player.name}
-                            isSelf={isSelf}
-                        />
+                        {cluster.players.length === 1 && first ? (
+                            <PlayerMarker
+                                playerId={first.uuid}
+                                playerName={first.name}
+                                isSelf={includesSelf}
+                            />
+                        ) : (
+                            // 重なる人たちは 1 つのチップにまとめ、押すと全員の名前を出す
+                            <PlayerClusterMarker
+                                players={cluster.players.map((player) => ({
+                                    id: player.uuid,
+                                    name: player.name,
+                                }))}
+                            />
+                        )}
                     </PortalMarker>
                 );
             })}

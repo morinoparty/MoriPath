@@ -44,6 +44,12 @@ export interface DiaryStripDay {
 export interface DiaryEntryGroup {
     id: "morning" | "daytime" | "evening" | "night";
     label: string;
+    /** 時間帯の始まりの時 (0〜3 時は 24〜27 時として扱う) */
+    from: number;
+    /** 時間帯の終わりの時 (この時の手前まで) */
+    until: number;
+    /** 見出しの下に添える、時間帯の雰囲気をあらわす一言 */
+    caption: string;
     entries: DiaryEntry[];
 }
 

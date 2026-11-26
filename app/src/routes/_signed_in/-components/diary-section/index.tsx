@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 import { type PropsWithChildren, useState } from "react";
 import { sva } from "../../../../../styled-system/css";
+import { PhraseText } from "../../../../components/phrase-text";
 import { InlineSkeleton, skeletonKeys } from "../../../../components/skeleton";
 import { formatDiaryTime } from "../../-functions/format-diary-time";
 import type { DiaryEntry } from "../../-types/diary";
@@ -133,7 +134,7 @@ const Entries = ({ entries }: EntriesProps) => {
                             {formatDiaryTime(entry.time)}
                         </Timeline.Time>
                         <Timeline.Description className={style.description}>
-                            {entry.description}
+                            <PhraseText>{entry.description}</PhraseText>
                         </Timeline.Description>
                         {/* 居合わせたプレイヤーがいるときだけ右端に顔を並べる。「+N」を押すと全員を見られる */}
                         {entry.players.length > 0 && (

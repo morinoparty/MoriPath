@@ -74,9 +74,8 @@ const onlineStripStyle = sva({
             // インラインのままだと行の高さぶん縦に伸び、縁が顔より大きくなって顔が上に寄るため、顔の大きさに合わせる
             display: "flex",
             flexShrink: "0",
-            borderRadius: "full",
-            // PlayerAvatar は角丸の四角なので、縁取りと同じ真円に切りそろえる
-            "& > *, & img": { borderRadius: "full" },
+            // ダイアリーの顔 (PlayerAvatar の既定) と同じ角丸の四角にそろえ、縁取りも同じ角丸で沿わせる
+            borderRadius: "lg",
             // 縁取りを画面の地の色にして、顔と帯の地の境目を出す
             outline: "2px solid",
             outlineColor: "colorPalette.bg",
@@ -193,6 +192,8 @@ const skeletonAvatarStyle = css({
     flexShrink: "0",
     width: "8",
     height: "8",
+    // 届いた顔と同じ角丸の四角で場所を取る
+    borderRadius: "lg",
 });
 
 /** オンライン一覧が届くまでの帯。人数の文字と顔の並びの場所を取り、届いても高さを変えない */
@@ -210,7 +211,7 @@ export const OnlineStripSkeleton = ({ className }: { className?: string }) => {
                 {skeletonKeys(SKELETON_AVATAR_COUNT).map((key) => (
                     <Skeleton
                         key={key}
-                        variant="circle"
+                        variant="rect"
                         className={skeletonAvatarStyle}
                     />
                 ))}

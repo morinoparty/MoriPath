@@ -5,16 +5,35 @@ import type { DiaryEntryGroup } from "../-types/diary-day";
 const TERM_START_HOUR = 4;
 
 // タームの順に並べた時間帯。from 時から until 時の手前まで (0〜3 時は 24〜27 時として扱う)
-const GROUPS: {
-    id: DiaryEntryGroup["id"];
-    label: string;
-    from: number;
-    until: number;
-}[] = [
-    { id: "morning", label: "朝", from: 4, until: 10 },
-    { id: "daytime", label: "昼", from: 10, until: 16 },
-    { id: "evening", label: "夕方", from: 16, until: 19 },
-    { id: "night", label: "夜", from: 19, until: 24 + TERM_START_HOUR },
+const GROUPS: Omit<DiaryEntryGroup, "entries">[] = [
+    {
+        id: "morning",
+        label: "朝",
+        from: 4,
+        until: 10,
+        caption: "しずかな森の目覚め",
+    },
+    {
+        id: "daytime",
+        label: "昼",
+        from: 10,
+        until: 16,
+        caption: "にぎやかな森のひととき",
+    },
+    {
+        id: "evening",
+        label: "夕方",
+        from: 16,
+        until: 19,
+        caption: "森が茜色に染まるころ",
+    },
+    {
+        id: "night",
+        label: "夜",
+        from: 19,
+        until: 24 + TERM_START_HOUR,
+        caption: "星あかりの森",
+    },
 ];
 
 /** タームの中での時。entry.time は +09:00 付きの ISO 8601 なので、そのまま日本時間の時を読む */
@@ -26,8 +45,7 @@ const termHourOf = (entry: DiaryEntry): number => {
 /** タイムラインを朝・昼・夕方・夜に分ける。出来事の無い時間帯は出さない */
 export const groupDiaryEntries = (entries: DiaryEntry[]): DiaryEntryGroup[] =>
     GROUPS.map((group) => ({
-        id: group.id,
-        label: group.label,
+        ...group,
         entries: entries.filter((entry) => {
             const hour = termHourOf(entry);
             return hour >= group.from && hour < group.until;
