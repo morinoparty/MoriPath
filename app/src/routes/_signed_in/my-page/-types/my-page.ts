@@ -36,4 +36,6 @@ export interface MyPageData {
     stats: MaybePromise<MyPageStats>;
     /** スタンプ帳。取得できなければ null にしてセクションごと隠す */
     stamps: MaybePromise<MyStamps | null>;
+    /** 数値カードを隠すか (サーバーが cookie から読んだ値。SSR の最初の描画に使う) */
+    statsHidden: boolean;
 }

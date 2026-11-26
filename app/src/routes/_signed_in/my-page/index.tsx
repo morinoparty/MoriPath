@@ -2,12 +2,14 @@ import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { MyPageError } from "./-components/my-page-error";
 import { MyPageView } from "./-components/my-page-view";
 import { getMyPageData } from "./-functions/get-my-page-data";
+import { useStatsHidden } from "./-functions/use-stats-hidden";
 import type { MyPageData } from "./-types/my-page";
 
 export const Route = createFileRoute("/_signed_in/my-page/")({
     // getMyPageData はトークンを 1 回だけ取り、数値・スタンプ帳・オンライン状況をそろえてから返す (最初から完成した形で出す)
     loader: async ({ context }): Promise<MyPageData> => {
-        const { playerId, presence, stats, stamps } = await getMyPageData();
+        const { playerId, presence, stats, stamps, statsHidden } =
+            await getMyPageData();
         // MineAuth の name / preferred_username はどちらも MCID で、サインイン時にセッションへ入る
         const name = context.session?.user.name ?? "";
         return {
@@ -16,6 +18,7 @@ export const Route = createFileRoute("/_signed_in/my-page/")({
             presence,
             stats,
             stamps,
+            statsHidden,
         };
     },
     component: MyPage,
@@ -25,7 +28,14 @@ export const Route = createFileRoute("/_signed_in/my-page/")({
 
 function MyPage() {
     const data = Route.useLoaderData();
-    return <MyPageView {...data} />;
+    const [statsHidden, setStatsHidden] = useStatsHidden(data.statsHidden);
+    return (
+        <MyPageView
+            {...data}
+            statsHidden={statsHidden}
+            onStatsHiddenChange={setStatsHidden}
+        />
+    );
 }
 
 function MyPageErrorBoundary() {

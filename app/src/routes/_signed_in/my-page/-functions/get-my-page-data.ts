@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getRequest } from "@tanstack/react-start/server";
+import { getCookie, getRequest } from "@tanstack/react-start/server";
 import { getMineAuthAccessToken } from "../../../../lib/auth";
 import { authMiddleware } from "../../../../lib/auth-middleware";
 import { createLoadTimer } from "../../../../lib/load-timer";
@@ -11,6 +11,7 @@ import { readTokenSubject } from "../../-functions/read-token-subject";
 import type { MyPageStats, PlayerPresence } from "../-types/my-page";
 import type { MyStamps } from "../-types/stamp";
 import { fetchMyStamps } from "./fetch-my-stamps";
+import { isStatsHiddenValue, STATS_HIDDEN_COOKIE } from "./stats-hidden-cookie";
 import { toPlayerPresence } from "./to-player-presence";
 
 /** 失敗をログに残して null に落とす。届く途中で例外にして画面を壊さないようにする */
@@ -27,6 +28,8 @@ export interface MyPageServerData {
     presence: PlayerPresence | null;
     stats: MyPageStats;
     stamps: MyStamps | null;
+    /** 数値カードを隠すか。SSR の時点から隠した状態で描くため、サーバーで cookie を読む */
+    statsHidden: boolean;
 }
 
 /**
@@ -97,5 +100,6 @@ export const getMyPageData = createServerFn()
             presence: presenceValue,
             stats: statsValue,
             stamps: stampsValue,
+            statsHidden: isStatsHiddenValue(getCookie(STATS_HIDDEN_COOKIE)),
         };
     });
