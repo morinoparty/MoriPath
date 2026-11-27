@@ -76,11 +76,11 @@ const stationSlotsStyle = sva({
             color: "colorPalette.fg",
             "[aria-current=true] &": { bg: "bg.panel" },
         },
+        // 駅名は省略せず全部見せる (入りきらないときだけ折り返す)
         name: {
             minWidth: "0",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
+            wordBreak: "keep-all",
+            overflowWrap: "anywhere",
             fontSize: "14px",
             fontWeight: "bold",
         },

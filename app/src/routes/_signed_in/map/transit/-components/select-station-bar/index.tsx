@@ -4,24 +4,14 @@ import { css } from "../../../../../../../styled-system/css";
 import { slotLabel } from "../../-functions/transit-search";
 import type { TransitSlot, TransitStation } from "../../-types/transit";
 
-// 画面の下端に置くボタン。スクロールする一覧の外 (下) に置き、上に地の色のぼかしを敷いて
-// 流れてくる一覧の最後の行とボタンがくっきり重ならないようにする
+// 画面の下端に置くボタン。スクロールする一覧の外 (下) に置くので、一覧とは重ならない。
+// ぼかしは敷かず、地の色の帯の上にボタンを載せる
 const barStyle = css({
     position: "relative",
     zIndex: 2,
     paddingTop: "2",
     paddingBottom: "max(16px, calc(env(safe-area-inset-bottom) + 8px))",
-    "&::before": {
-        content: '""',
-        position: "absolute",
-        insetX: "-6",
-        // ボタンの上 40px まで、一覧の上に重ねてぼかす
-        top: "-40px",
-        bottom: "0",
-        background:
-            "linear-gradient(to bottom, transparent, {colors.colorPalette.bg} 35%)",
-        pointerEvents: "none",
-    },
+    bg: "colorPalette.bg",
 });
 
 const buttonStyle = css({

@@ -109,7 +109,7 @@ const stationRowStyle = sva({
         "body",
         "line1",
         "name",
-        "more",
+        "transfers",
         "town",
         "radio",
         "check",
@@ -193,20 +193,26 @@ const stationRowStyle = sva({
             gap: "6px",
             minWidth: "0",
         },
+        // 駅名は省略せず全部見せる (縮めない)
         name: {
-            minWidth: "0",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
+            flexShrink: 0,
             whiteSpace: "nowrap",
             fontSize: "15px",
             fontWeight: "bold",
             lineHeight: "1.3",
         },
-        more: {
-            flexShrink: 0,
-            fontSize: "10px",
-            fontWeight: "bold",
-            color: "fg.muted",
+        // 乗換の番号の札。駅名の右に並べ、入りきらない分は横にスクロールして見せる
+        transfers: {
+            flex: "1",
+            minWidth: "0",
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            overflowX: "auto",
+            overscrollBehaviorX: "contain",
+            scrollbarWidth: "none",
+            "&::-webkit-scrollbar": { display: "none" },
+            "& > *": { flexShrink: 0 },
         },
         town: {
             fontSize: "11px",
@@ -248,9 +254,6 @@ const stationRowStyle = sva({
         },
     },
 });
-
-/** 乗換の番号は 3 つまで出し、残りは数だけにする */
-const MAX_TRANSFERS = 3;
 
 export interface LineStationPickerProps {
     line: TransitLine;
@@ -344,24 +347,25 @@ export const LineStationPicker = ({
                                         <span className={rowStyle.name}>
                                             {station.name}
                                         </span>
-                                        {transfers
-                                            .slice(0, MAX_TRANSFERS)
-                                            .map((transfer) =>
-                                                transfer.code ? (
-                                                    <NumberingBadge
-                                                        key={transfer.lineId}
-                                                        code={transfer.code}
-                                                        color={transfer.color}
-                                                        layout="inline"
-                                                        size="sm"
-                                                    />
-                                                ) : null,
-                                            )}
-                                        {transfers.length > MAX_TRANSFERS && (
-                                            <span className={rowStyle.more}>
-                                                +
-                                                {transfers.length -
-                                                    MAX_TRANSFERS}
+                                        {transfers.length > 0 && (
+                                            <span
+                                                className={rowStyle.transfers}
+                                            >
+                                                {transfers.map((transfer) =>
+                                                    transfer.code ? (
+                                                        <NumberingBadge
+                                                            key={
+                                                                transfer.lineId
+                                                            }
+                                                            code={transfer.code}
+                                                            color={
+                                                                transfer.color
+                                                            }
+                                                            layout="inline"
+                                                            size="sm"
+                                                        />
+                                                    ) : null,
+                                                )}
                                             </span>
                                         )}
                                     </span>

@@ -88,26 +88,12 @@ const scrollStyle = css({
     display: "flex",
     flexDirection: "column",
     paddingX: "6",
-    // 下端の溶かし (114px) の濃いところに最後の行が沈まないよう、下を広めに空ける
     paddingBottom:
-        "max({spacing.16}, calc(env(safe-area-inset-bottom) + {spacing.10}))",
+        "max({spacing.6}, calc(env(safe-area-inset-bottom) + {spacing.2}))",
     // 中身を縮めず、収まらない分はスクロールで見せる
     "& > *": { flexShrink: 0 },
-    // 下に固定のボタンが出ているあいだは、ボタンの上のぼかしに最後の行が隠れないよう余白を空ける
-    "&[data-reserve=true]": { paddingBottom: "10" },
-});
-
-// 一覧の下端を地の色へ溶かし、行が画面の下端でぷつりと切れないようにする (Figma の Bottom fade)。
-// 押せない飾りなので、下の行のタップは通す
-const bottomFadeStyle = css({
-    position: "absolute",
-    bottom: "0",
-    insetX: "0",
-    height: "114px",
-    zIndex: 1,
-    pointerEvents: "none",
-    background:
-        "linear-gradient(180deg, transparent 0%, color-mix(in srgb, {colors.colorPalette.bg} 85%, transparent) 70%, {colors.colorPalette.bg} 100%)",
+    // 下に固定のボタンが出ているあいだは、ボタンとの間を少し空ける
+    "&[data-reserve=true]": { paddingBottom: "4" },
 });
 
 // 選びかけの駅を入れるボタン。スクロールの外の下端に置き、一覧が動いても隠れないようにする
@@ -373,10 +359,7 @@ const TransitBody = ({
                         }
                     />
                 </div>
-            ) : (
-                // 下のボタンが出ているときはボタン側のぼかしがあるので、溶かしは出さない
-                <span className={bottomFadeStyle} aria-hidden />
-            )}
+            ) : null}
         </div>
     );
 };
