@@ -236,6 +236,15 @@ const TransitBody = ({
 
     const select = (station: TransitStation) => {
         if (activeSlot === null) return;
+        // もう一方の枠が決まっていれば、押した駅をすぐ入れて経路を出す (確定ボタンを挟まない)
+        if (otherStation) {
+            onConfirmStation(
+                chooseStation(search, index, activeSlot, station.slug),
+                station.slug,
+            );
+            return;
+        }
+        // 最初の 1 駅は選び間違えに気づけるよう、選びかけにして確定ボタンを出す
         setPending({
             slot: activeSlot,
             slug: station.slug,
