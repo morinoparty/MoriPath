@@ -1,11 +1,13 @@
 // Leaflet は import 時に window を参照するため、このモジュールはクライアントでだけ lazy import する
 import "../../../-components/world-map-canvas/leaflet.css";
+import { useQuery } from "@tanstack/react-query";
 import L from "leaflet";
 import { Suspense, use, useEffect, useMemo } from "react";
 import { MapContainer, Polyline, TileLayer, useMap } from "react-leaflet";
 import { css, sva } from "../../../../../../../styled-system/css";
 import { createMinecraftCrs } from "../../../-components/world-map-canvas/create-minecraft-crs";
 import { PortalMarker } from "../../../-components/world-map-canvas/portal-marker";
+import { baseMarkersQueryOptions } from "../../../-functions/map-markers-query";
 import {
     buildTileUrl,
     NATIVE_MAX_ZOOM,
@@ -13,12 +15,19 @@ import {
     toLatLng,
 } from "../../../-functions/world-map-coords";
 import type { Vec2, WorldId } from "../../../-types/world-map";
+import {
+    indexRailwayLines,
+    traceRoutePath,
+} from "../../-functions/trace-route-path";
 import type { TransitStation } from "../../-types/transit";
 import type { RoutePathPart } from "../../-types/transit-hero";
 
-// 経路が収まるよう寄せるときの余白 (px)。上は戻るボタン、下は背景に重なる出発・到着の枠のぶんを空ける
-const FIT_PADDING_TOP_LEFT: [number, number] = [40, 96];
-const FIT_PADDING_BOTTOM_RIGHT: [number, number] = [40, 156];
+// 経路が収まるよう寄せるときの余白 (px)。上は戻るボタンと駅の札、
+// 下は背景に重なる出発・到着の枠 (94px) とその上の駅の札のぶんを空ける
+const FIT_PADDING_TOP_LEFT: [number, number] = [48, 120];
+const FIT_PADDING_BOTTOM_RIGHT: [number, number] = [48, 150];
+// 長い経路も収まるよう、タイルの最小の縮尺 (0) よりさらに引けるようにする (タイルは縮めて使う)
+const MIN_ZOOM = -4;
 
 const mapStyle = css({
     width: "full",
@@ -121,13 +130,22 @@ const FitRoute = ({ points }: { points: Vec2[] }) => {
     useEffect(() => {
         if (points.length === 0) return;
         const bounds = L.latLngBounds(points.map(toLatLng));
-        // 飾りの地図なので、動かす様子は見せずにすぐ切り替える
-        map.fitBounds(bounds, {
-            paddingTopLeft: FIT_PADDING_TOP_LEFT,
-            paddingBottomRight: FIT_PADDING_BOTTOM_RIGHT,
-            maxZoom: NATIVE_MAX_ZOOM,
-            animate: false,
-        });
+        const fit = () => {
+            // 背景の高さが変わっても Leaflet は気づかないので、大きさを測り直してから合わせる
+            map.invalidateSize({ animate: false });
+            // 飾りの地図なので、動かす様子は見せずにすぐ切り替える
+            map.fitBounds(bounds, {
+                paddingTopLeft: FIT_PADDING_TOP_LEFT,
+                paddingBottomRight: FIT_PADDING_BOTTOM_RIGHT,
+                maxZoom: NATIVE_MAX_ZOOM,
+                animate: false,
+            });
+        };
+        fit();
+        // 背景の高さは画面や入力中かどうかで変わるので、変わるたびに合わせ直す
+        const observer = new ResizeObserver(fit);
+        observer.observe(map.getContainer());
+        return () => observer.disconnect();
         // points は key と同じ内容なので、key だけで十分
         // oxlint-disable-next-line react-hooks/exhaustive-deps -- 配列の同一性ではなく中身 (key) で合わせ直す
     }, [map, key]);
@@ -138,11 +156,24 @@ const FitRoute = ({ points }: { points: Vec2[] }) => {
 const RouteLines = ({
     path,
     endpoints,
+    worldId,
 }: {
     path: Promise<RoutePathPart[] | null> | RoutePathPart[] | null;
     endpoints: Vec2[];
+    worldId: WorldId;
 }) => {
-    const parts = path instanceof Promise ? use(path) : path;
+    const resolved = path instanceof Promise ? use(path) : path;
+    // 線路の形は /map と同じ squaremap の路線から引く (/map を開いていればキャッシュがそのまま使える)。
+    // 届くまで・取れないときは、駅と駅をまっすぐ結ぶ
+    const { data: markers } = useQuery(baseMarkersQueryOptions(worldId));
+    const byPair = useMemo(
+        () => indexRailwayLines(markers?.railwayLines ?? []),
+        [markers],
+    );
+    const parts = useMemo(
+        () => (resolved ? traceRoutePath(resolved, byPair) : null),
+        [resolved, byPair],
+    );
     const style = lineStyle();
     const points = parts
         ? [...endpoints, ...parts.flatMap((part) => part.points)]
@@ -235,7 +266,7 @@ export const RouteHeroMap = ({
             crs={crs}
             center={toLatLng(from.point)}
             zoom={NATIVE_MAX_ZOOM}
-            minZoom={0}
+            minZoom={MIN_ZOOM}
             maxZoom={NATIVE_MAX_ZOOM}
             // 経路の長さに合わせてちょうどよく収まるよう、縮尺を細かく選べるようにする
             zoomSnap={0.25}
@@ -251,14 +282,20 @@ export const RouteHeroMap = ({
             <TileLayer
                 url={buildTileUrl(baseUrl, worldId)}
                 tileSize={TILE_SIZE}
-                minZoom={0}
+                minZoom={MIN_ZOOM}
                 maxZoom={NATIVE_MAX_ZOOM}
+                // 0 より引いたときは、いちばん粗いタイルを縮めて使う
+                minNativeZoom={0}
                 maxNativeZoom={NATIVE_MAX_ZOOM}
                 noWrap
             />
             {/* 経路が届くまでは出発と到着が収まるように合わせておく */}
             <Suspense fallback={<FitRoute points={endpoints} />}>
-                <RouteLines path={path} endpoints={endpoints} />
+                <RouteLines
+                    path={path}
+                    endpoints={endpoints}
+                    worldId={worldId}
+                />
             </Suspense>
             <PortalMarker position={from.point}>
                 <Endpoint label="出発" name={from.name} />

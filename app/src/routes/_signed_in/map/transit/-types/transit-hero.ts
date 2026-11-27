@@ -2,13 +2,20 @@ import type { Vec2, WorldId } from "../../-types/world-map";
 import type { Town } from "./town";
 import type { TransitStation } from "./transit";
 
+/** 経路の線が通る駅。地図の線路の形 (squaremap の路線) を駅名で引き当てるのに使う */
+export interface RouteStop {
+    point: Vec2;
+    /** 駅名の候補 (API の名前そのままと、読みがなを除いた名前) */
+    names: string[];
+}
+
 /** 経路の地図に引く 1 本の線 (乗る区間は路線の色、歩く区間は点線) */
 export interface RoutePathPart {
     kind: "rail" | "walk";
     /** 路線の色 #RRGGBB。無ければ null (ブランド色で引く) */
     color: string | null;
-    /** 通る駅の座標 (順番どおり) */
-    points: Vec2[];
+    /** 通る駅 (順番どおり)。乗る区間は駅と駅の間を線路の形でつなぐ */
+    stops: RouteStop[];
 }
 
 /**
