@@ -30,7 +30,7 @@ export const lineRowStyle = sva({
             gap: "12px",
             width: "full",
             padding: "12px",
-            borderRadius: "20px",
+            borderRadius: "panel",
             bg: "colorPalette.surface.subtle",
             textAlign: "left",
             color: "colorPalette.fg",

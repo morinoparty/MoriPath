@@ -39,7 +39,7 @@ const stationResultRowStyle = sva({
             width: "full",
             paddingX: "14px",
             paddingY: "12px",
-            borderRadius: "20px",
+            borderRadius: "panel",
             bg: "colorPalette.surface.subtle",
             textAlign: "left",
             color: "fg",

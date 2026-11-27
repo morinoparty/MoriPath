@@ -122,7 +122,7 @@ const playerListSheetStyle = sva({
             minHeight: "14",
             px: "2",
             py: "1.5",
-            borderRadius: "l3",
+            borderRadius: "panel",
             textAlign: "start",
             cursor: "pointer",
             transition: "background 0.15s",

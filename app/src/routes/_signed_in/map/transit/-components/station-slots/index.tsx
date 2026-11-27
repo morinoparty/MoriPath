@@ -24,7 +24,7 @@ const stationSlotsStyle = sva({
             alignItems: "center",
             gap: "10px",
             padding: "10px",
-            borderRadius: "28px",
+            borderRadius: "panel",
             bg: "colorPalette.surface.subtle",
         },
         slots: {

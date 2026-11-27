@@ -39,7 +39,7 @@ const routeResultStyle = sva({
             flexDirection: "column",
             gap: "8px",
             padding: "20px",
-            borderRadius: "28px",
+            borderRadius: "panel",
             bg: "colorPalette.surface.subtle",
             color: "colorPalette.fg",
         },
@@ -195,7 +195,7 @@ const RouteDetail = ({ route }: { route: TransitRoute }) => {
 // 区間の行の場所取り (区間の行と同じ大きさの柔らかい面)
 const segmentSkeletonStyle = css({
     height: "72px",
-    borderRadius: "24px",
+    borderRadius: "panel",
 });
 
 // 読み込み中に並べる区間の数 (実際の経路の数とは関係なく、場所取りの見た目だけ)

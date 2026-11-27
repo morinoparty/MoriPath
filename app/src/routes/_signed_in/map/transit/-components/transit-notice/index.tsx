@@ -18,7 +18,7 @@ const transitNoticeStyle = sva({
             alignItems: "center",
             gap: "3",
             padding: "6",
-            borderRadius: "28px",
+            borderRadius: "panel",
             bg: "colorPalette.surface.subtle",
             textAlign: "center",
         },

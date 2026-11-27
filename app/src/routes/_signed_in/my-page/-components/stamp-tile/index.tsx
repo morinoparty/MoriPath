@@ -16,7 +16,7 @@ const stampTileStyle = sva({
             justifyContent: "center",
             aspectRatio: "1",
             bg: "colorPalette.surface.subtle",
-            borderRadius: "control",
+            borderRadius: "panel",
             overflow: "hidden",
             lineHeight: "1",
             color: "colorPalette.fg.muted",

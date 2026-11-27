@@ -86,7 +86,7 @@ const stampBookStyle = sva({
             justifyContent: "center",
             aspectRatio: "1",
             bg: "colorPalette.surface.subtle",
-            borderRadius: "control",
+            borderRadius: "panel",
             // 残り枚数は字形より小さい文字で添える
             textStyle: "sm",
             fontWeight: "medium",
@@ -105,7 +105,7 @@ const stampBookStyle = sva({
             // Skeleton 既定の 1 行ぶんの高さを外し、幅から正方形にする
             height: "auto",
             aspectRatio: "1",
-            borderRadius: "control",
+            borderRadius: "panel",
         },
     },
 });

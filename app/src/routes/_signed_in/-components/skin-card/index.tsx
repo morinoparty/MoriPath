@@ -20,8 +20,8 @@ const skinCardStyle = sva({
             paddingBottom: "4",
             paddingX: "2",
             bg: "colorPalette.surface.subtle",
-            // panel (lg) より一段丸くして、やわらかいカードにする
-            borderRadius: "xl",
+            // カードの角丸は panel にそろえる (preset の radius: lg で 12px)
+            borderRadius: "panel",
         },
         viewer: {
             // カードの面をそのまま見せるため、SkinViewer 既定の背景を消す

@@ -13,7 +13,7 @@ const featuredLineCardStyle = sva({
             gap: "2px",
             paddingTop: "8px",
             paddingX: "8px",
-            borderRadius: "28px",
+            borderRadius: "panel",
             bg: "colorPalette.surface.subtle",
         },
         banner: {

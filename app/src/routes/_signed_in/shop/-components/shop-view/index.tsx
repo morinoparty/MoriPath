@@ -49,7 +49,8 @@ const shopViewStyle = sva({
             display: "flex",
             flexDirection: "column",
             gap: "4",
-            paddingX: "6",
+            // 左右はヘッダー・TabBar と同じ 16px にそろえる
+            paddingX: "4",
             paddingTop: "2",
         },
         title: {

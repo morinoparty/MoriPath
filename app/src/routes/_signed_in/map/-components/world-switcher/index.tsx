@@ -25,7 +25,7 @@ const worldSwitcherStyle = sva({
         content: {
             borderWidth: "0",
             boxShadow: "chrome",
-            borderRadius: "l3",
+            borderRadius: "panel",
         },
         item: {
             justifyContent: "space-between",

@@ -66,7 +66,7 @@ const markerToggleMenuStyle = sva({
             minWidth: "200px",
             p: "2",
             borderWidth: "0",
-            borderRadius: "l3",
+            borderRadius: "panel",
             boxShadow: "chrome",
         },
         // 指でも押しやすいよう、行の高さを少し広げる
