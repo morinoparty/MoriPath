@@ -10,6 +10,9 @@ import {
 } from "./sample-transit";
 import { transitPageParameters, withTransitFrame } from "./transit-decorator";
 
+// 実際の squaremap の URL はソースに書かないので、見本では届かない URL を使う (タイルは出ず、駅の札と空のグラデーションだけが見える)
+const SAMPLE_WORLD_MAP_URL = "https://squaremap.example.invalid";
+
 const meta: Meta<typeof TransitView> = {
     title: "Transit/TransitView",
     component: TransitView,
@@ -18,6 +21,7 @@ const meta: Meta<typeof TransitView> = {
     decorators: [withTransitFrame],
     args: {
         network: sampleNetwork,
+        worldMapUrl: SAMPLE_WORLD_MAP_URL,
         route: null,
         search: {},
         recentSlugs: [],
@@ -36,10 +40,20 @@ export default meta;
 
 type Story = StoryObj<typeof TransitView>;
 
-// 開いた直後。出発を選んでいる
+// C: 開いた直後。出発を選んでいる。駅が無いので、ブロックの風景に「どこへ行きますか？」 (Figma C4)
 export const PickFrom: Story = {};
 
-// 出発 (もりもと) が決まり、到着を選んでいる。もりもとを通る路線が上で、いちばん上は写真つき (Figma 路線-1)
+// B: 街の駅でない駅 (紅島) が出発のとき。写真ではなく駅を中心にした地図を見出しに敷く
+export const NonTownStation: Story = {
+    args: { search: { from: "bnii" } },
+};
+
+// 地図の取得元が分からないときは、街の駅でない駅の駅名をブロックの風景の上に出す
+export const NonTownStationWithoutMap: Story = {
+    args: { search: { from: "bnii" }, worldMapUrl: null },
+};
+
+// A: 出発 (もりもと) が決まり、到着を選んでいる。見出しは街の写真。もりもとを通る路線が上で、いちばん上は写真つき (Figma 路線-1)
 export const LineListFromSet: Story = {
     args: { search: { from: "mrmt" } },
 };
@@ -61,6 +75,16 @@ export const SearchIdle: Story = {
 // 「うみ」で検索中。写真は細くなる (Figma 検索-2)
 export const SearchTyping: Story = {
     args: { search: { from: "mrmt", mode: "search", q: "うみ" } },
+};
+
+// 街の駅でない駅の地図のときも、入力中は背景を細くして駅を戻るピルの高さまで上げる
+export const SearchTypingOnMap: Story = {
+    args: { search: { from: "bnii", mode: "search", q: "もり" } },
+};
+
+// 駅を選ぶ前に入力中。ブロックの風景も細くなり、あいさつは隠れる
+export const SearchTypingOnLandscape: Story = {
+    args: { search: { mode: "search", q: "もり" } },
 };
 
 // ナンバリングでも探せる

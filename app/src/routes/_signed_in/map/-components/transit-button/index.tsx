@@ -4,15 +4,18 @@ import { CornerUpRight } from "lucide-react";
 import { css } from "../../../../../../styled-system/css";
 
 const transitButtonStyle = css({
-    // 地図の右下に浮かぶ丸いボタン。ブランド色の面 + 影で、ほかのクロムより目立たせる
-    width: "56px",
-    height: "56px",
+    // 地図の右下に浮かぶ丸いボタン (Figma で決めた 44px・アイコン 20px)。
+    // ほかのクロムより一回り小さくして地図を隠しすぎず、ブランド色の面 + 影で見つけやすくする
+    width: "44px",
+    height: "44px",
+    minWidth: "44px",
     boxShadow: "chrome",
-    // 森や草原のタイルは緑が多く、ブランド色の面だけだと地図に溶けるため、白い縁で地図から切り離す
-    outline: "3px solid {colors.bg.panel}",
+    // 森や草原のタイルは緑が多く、ブランド色の面だけだと地図に溶けるため、白い縁で地図から切り離す。
+    // 縁の太さも 56px のときの 3px からボタンの大きさに合わせて縮める
+    outline: "2px solid {colors.bg.panel}",
     "& svg": {
-        width: "26px",
-        height: "26px",
+        width: "20px",
+        height: "20px",
     },
 });
 

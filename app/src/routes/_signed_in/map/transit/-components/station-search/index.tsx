@@ -17,6 +17,7 @@ import { TransitNotice } from "../transit-notice";
 const stationSearchStyle = sva({
     slots: [
         "root",
+        "fieldBar",
         "field",
         "fieldIcon",
         "input",
@@ -40,6 +41,15 @@ const stationSearchStyle = sva({
             display: "flex",
             flexDirection: "column",
             gap: "16px",
+        },
+        // 一覧をスクロールしても検索欄は上に残す。後ろを流れる一覧が透けないよう地の色を敷く
+        fieldBar: {
+            position: "sticky",
+            top: "0",
+            zIndex: 1,
+            bg: "colorPalette.bg",
+            paddingBottom: "2",
+            marginBottom: "-2",
         },
         // 白いピルの検索欄。影は付けず、入力中だけブランド色の輪郭を出す
         field: {
@@ -287,40 +297,42 @@ export const StationSearch = ({
 
     return (
         <div className={style.root}>
-            <label className={style.field}>
-                <Search className={style.fieldIcon} aria-hidden />
-                <input
-                    className={style.input}
-                    type="search"
-                    enterKeyHint="search"
-                    autoComplete="off"
-                    placeholder="駅名・ナンバリングでさがす"
-                    aria-label="駅名・ナンバリングでさがす"
-                    value={search.text}
-                    onChange={(e) => search.onChange(e.currentTarget.value)}
-                    onCompositionStart={search.onCompositionStart}
-                    onCompositionEnd={(e) =>
-                        search.onCompositionEnd(e.currentTarget.value)
-                    }
-                />
-                {search.text !== "" && (
-                    <>
-                        {hasQuery && (
-                            <span
-                                className={style.count}
-                            >{`${matches.length}件`}</span>
-                        )}
-                        <button
-                            type="button"
-                            className={style.clear}
-                            aria-label="検索語を消す"
-                            onClick={search.clear}
-                        >
-                            <X strokeWidth={3} />
-                        </button>
-                    </>
-                )}
-            </label>
+            <div className={style.fieldBar}>
+                <label className={style.field}>
+                    <Search className={style.fieldIcon} aria-hidden />
+                    <input
+                        className={style.input}
+                        type="search"
+                        enterKeyHint="search"
+                        autoComplete="off"
+                        placeholder="駅名・ナンバリングでさがす"
+                        aria-label="駅名・ナンバリングでさがす"
+                        value={search.text}
+                        onChange={(e) => search.onChange(e.currentTarget.value)}
+                        onCompositionStart={search.onCompositionStart}
+                        onCompositionEnd={(e) =>
+                            search.onCompositionEnd(e.currentTarget.value)
+                        }
+                    />
+                    {search.text !== "" && (
+                        <>
+                            {hasQuery && (
+                                <span
+                                    className={style.count}
+                                >{`${matches.length}件`}</span>
+                            )}
+                            <button
+                                type="button"
+                                className={style.clear}
+                                aria-label="検索語を消す"
+                                onClick={search.clear}
+                            >
+                                <X strokeWidth={3} />
+                            </button>
+                        </>
+                    )}
+                </label>
+            </div>
 
             {hasQuery ? (
                 matches.length > 0 ? (

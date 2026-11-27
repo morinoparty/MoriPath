@@ -4,18 +4,20 @@ import { css } from "../../../../../../../styled-system/css";
 import { slotLabel } from "../../-functions/transit-search";
 import type { TransitSlot, TransitStation } from "../../-types/transit";
 
-// 画面の下に貼り付くボタン。上に地の色のぼかしを敷き、流れてくる一覧と重ならないようにする
+// 画面の下端に置くボタン。スクロールする一覧の外 (下) に置き、上に地の色のぼかしを敷いて
+// 流れてくる一覧の最後の行とボタンがくっきり重ならないようにする
 const barStyle = css({
-    position: "sticky",
-    bottom: "max(16px, calc(env(safe-area-inset-bottom) + 8px))",
+    position: "relative",
     zIndex: 2,
-    marginTop: "auto",
+    paddingTop: "2",
+    paddingBottom: "max(16px, calc(env(safe-area-inset-bottom) + 8px))",
     "&::before": {
         content: '""',
         position: "absolute",
         insetX: "-6",
-        bottom: "-24px",
-        height: "104px",
+        // ボタンの上 40px まで、一覧の上に重ねてぼかす
+        top: "-40px",
+        bottom: "0",
         background:
             "linear-gradient(to bottom, transparent, {colors.colorPalette.bg} 35%)",
         pointerEvents: "none",
@@ -40,7 +42,7 @@ export interface SelectStationBarProps {
     onConfirm: () => void;
 }
 
-/** 選びかけの駅を枠に入れる、下に固定のボタン */
+/** 選びかけの駅を枠に入れる、画面の下端のボタン */
 export const SelectStationBar = ({
     station,
     slot,

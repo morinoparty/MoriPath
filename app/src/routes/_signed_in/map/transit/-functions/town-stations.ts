@@ -47,6 +47,3 @@ export const towns: Readonly<Record<TownSlug, Town>> = {
     sekkakyo: buildTown("sekkakyo"),
     atsumori: buildTown("atsumori"),
 };
-
-/** 街が分からないときに使う街 */
-export const DEFAULT_TOWN: TownSlug = "morimoto";

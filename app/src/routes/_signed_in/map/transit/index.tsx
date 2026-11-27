@@ -1,7 +1,6 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { css } from "../../../../../styled-system/css";
-import { SubPageBar } from "../../../../components/sub-page-bar";
 import { TransitNotice } from "./-components/transit-notice";
+import { TransitNoticePage } from "./-components/transit-notice-page";
 import { TransitView } from "./-components/transit-view";
 import { loadTransitRoute } from "./-functions/load-transit-route";
 import {
@@ -29,7 +28,7 @@ export const Route = createFileRoute("/_signed_in/map/transit/")({
         const [network, worldMapUrl] = await Promise.all([
             // 駅と路線はページのデータ。出発・到着が変わって loader が呼び直されても取り直さないよう、クエリのキャッシュに覚えておく
             context.queryClient.ensureQueryData(transitNetworkQueryOptions),
-            // 現在地から近い駅を出すためだけに使う。取れなくてもページは出す (失敗はキャッシュされず、次の loader で聞き直す)
+            // 現在地から近い駅と、街の駅でない駅の見出しの地図に使う。取れなくてもページは出す (失敗はキャッシュされず、次の loader で聞き直す)
             context.queryClient
                 .ensureQueryData(transitWorldMapUrlQueryOptions)
                 .catch(() => null),
@@ -51,29 +50,16 @@ export const Route = createFileRoute("/_signed_in/map/transit/")({
     component: TransitPage,
 });
 
-const errorPageStyle = css({
-    display: "flex",
-    flexDirection: "column",
-    gap: "5",
-    minHeight: "100dvh",
-    paddingX: "6",
-    paddingTop: "4",
-    paddingBottom:
-        "max({spacing.6}, calc(env(safe-area-inset-bottom) + {spacing.2}))",
-    bg: "colorPalette.bg",
-});
-
 /** 駅の一覧を読み込めなかったとき。見出しは残し、もう一度読み込めるようにする */
 function TransitErrorBoundary() {
     const router = useRouter();
     return (
-        <div className={errorPageStyle}>
-            <SubPageBar title="乗換案内" backTo="/map" />
+        <TransitNoticePage>
             <TransitNotice
                 kind="networkError"
                 onRetry={() => router.invalidate()}
             />
-        </div>
+        </TransitNoticePage>
     );
 }
 
@@ -98,6 +84,7 @@ function TransitPage() {
     return (
         <TransitView
             network={network}
+            worldMapUrl={worldMapUrl}
             route={route}
             search={search}
             recentSlugs={recentSlugs}

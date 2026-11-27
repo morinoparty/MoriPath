@@ -1,7 +1,6 @@
 import { Await } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { css } from "../../../../../../../styled-system/css";
-import { SubPageBar } from "../../../../../../components/sub-page-bar";
 import { indexTransitNetwork } from "../../-functions/index-transit-network";
 import {
     lineStationRows,
@@ -9,12 +8,9 @@ import {
     summarizeLines,
 } from "../../-functions/line-summaries";
 import { searchStations } from "../../-functions/match-stations";
-import {
-    findNearbyStations,
-    resolveHeroTown,
-    townOf,
-} from "../../-functions/nearby-stations";
-import { DEFAULT_TOWN, towns } from "../../-functions/town-stations";
+import { findNearbyStations, townOf } from "../../-functions/nearby-stations";
+import { resolveTransitHero } from "../../-functions/resolve-transit-hero";
+import { towns } from "../../-functions/town-stations";
 import {
     chooseStation,
     modeOf,
@@ -40,44 +36,87 @@ import { RouteResult, RouteResultLoading } from "../route-result";
 import { SelectStationBar } from "../select-station-bar";
 import { StationSearch } from "../station-search";
 import { StationSlots } from "../station-slots";
-import { TownHeroBackground, TownHeroLogo } from "../town-hero";
+import { TransitBackButton } from "../transit-back-button";
+import { TransitHeroBackground, TransitHeroHeadline } from "../transit-hero";
 import { TransitNotice } from "../transit-notice";
+import { TransitNoticePage } from "../transit-notice-page";
 
-// タブバーを出さない下層ページなので、画面の高さいっぱいに地の色を敷く。
-// 写真の層を root に重ねるため position を持たせ、横にはみ出る写真は切る (sticky を壊さない clip)
+// タブバーを出さない下層ページなので、画面いっぱいに地の色を敷く。
+// 上 (見出し・枠・タブ) は動かさず、下の一覧だけをスクロールさせるため、ページ (window) ではなく
+// 画面に固定した縦並びの中でスクロールさせる。Layout の minHeight: 100vh はモバイルで 100dvh より高く、
+// window がスクロールすると上がずれるので、画面に固定して Layout と同じ幅で中央に置く
 const rootStyle = css({
-    position: "relative",
+    position: "fixed",
+    inset: "0",
+    maxWidth: "md",
+    marginX: "auto",
     display: "flex",
     flexDirection: "column",
-    minHeight: "100dvh",
-    paddingX: "6",
-    paddingTop: "4",
-    paddingBottom:
-        "max({spacing.6}, calc(env(safe-area-inset-bottom) + {spacing.2}))",
     bg: "colorPalette.bg",
-    overflowX: "clip",
+    overflow: "hidden",
+    // 背景の層と中身の重なりをこの中に閉じる
+    isolation: "isolate",
 });
 
-// 中身は写真の層より上に重ねる
-const contentStyle = css({
+// 動かさない上の部分。背景の層より上に重ねる
+const headStyle = css({
     position: "relative",
     zIndex: 1,
-    flex: "1",
+    flexShrink: 0,
     display: "flex",
     flexDirection: "column",
     gap: "3.5",
+    paddingX: "6",
+    paddingTop: "calc(env(safe-area-inset-top) + {spacing.4})",
+    paddingBottom: "3.5",
 });
 
-// 下に固定のボタンが出ているあいだは、ボタンの上のぼかしに最後の行が隠れないよう余白を空ける
-const paneStyle = css({
+// スクロールするのはここだけ。端まで行ってもページ全体を引っぱらない
+const scrollStyle = css({
+    position: "relative",
+    zIndex: 1,
+    flex: "1",
+    minHeight: "0",
+    overflowY: "auto",
+    overscrollBehavior: "contain",
     display: "flex",
     flexDirection: "column",
-    "&[data-reserve=true]": { paddingBottom: "72px" },
+    paddingX: "6",
+    // 下端の溶かし (114px) の濃いところに最後の行が沈まないよう、下を広めに空ける
+    paddingBottom:
+        "max({spacing.16}, calc(env(safe-area-inset-bottom) + {spacing.10}))",
+    // 中身を縮めず、収まらない分はスクロールで見せる
+    "& > *": { flexShrink: 0 },
+    // 下に固定のボタンが出ているあいだは、ボタンの上のぼかしに最後の行が隠れないよう余白を空ける
+    "&[data-reserve=true]": { paddingBottom: "10" },
+});
+
+// 一覧の下端を地の色へ溶かし、行が画面の下端でぷつりと切れないようにする (Figma の Bottom fade)。
+// 押せない飾りなので、下の行のタップは通す
+const bottomFadeStyle = css({
+    position: "absolute",
+    bottom: "0",
+    insetX: "0",
+    height: "114px",
+    zIndex: 1,
+    pointerEvents: "none",
+    background:
+        "linear-gradient(180deg, transparent 0%, color-mix(in srgb, {colors.colorPalette.bg} 85%, transparent) 70%, {colors.colorPalette.bg} 100%)",
+});
+
+// 選びかけの駅を入れるボタン。スクロールの外の下端に置き、一覧が動いても隠れないようにする
+const footerStyle = css({
+    position: "relative",
+    zIndex: 2,
+    flexShrink: 0,
+    paddingX: "6",
 });
 
 export interface TransitViewProps {
     /** 駅と路線。API を使えなければ null */
     network: TransitNetwork | null;
+    /** squaremap の公開 URL。街の駅でない駅の地図を見出しに出すのに使う。取れなければ null */
+    worldMapUrl: string | null;
     /** 出発と到着が決まっているときの経路。loader は待たずに Promise で渡すので、届くまで場所取りを出す */
     route: Promise<TransitRouteState | null> | TransitRouteState | null;
     search: TransitSearch;
@@ -110,18 +149,12 @@ export const TransitView = (props: TransitViewProps) => {
         [network],
     );
 
-    // 駅の情報が無いときは写真と見出しだけを出し、使えない旨を伝える
+    // 駅の情報が無いときは見出しだけを出し、使えない旨を伝える
     if (!index) {
-        const town = towns[DEFAULT_TOWN];
         return (
-            <div className={rootStyle}>
-                <TownHeroBackground town={town} compact={false} />
-                <div className={contentStyle}>
-                    <SubPageBar title="乗換案内" backTo="/map" />
-                    <TownHeroLogo town={town} compact={false} />
-                    <TransitNotice kind="unavailable" />
-                </div>
-            </div>
+            <TransitNoticePage>
+                <TransitNotice kind="unavailable" />
+            </TransitNoticePage>
         );
     }
     return <TransitBody {...props} index={index} />;
@@ -129,6 +162,7 @@ export const TransitView = (props: TransitViewProps) => {
 
 const TransitBody = ({
     index,
+    worldMapUrl,
     route,
     search,
     recentSlugs,
@@ -178,14 +212,12 @@ const TransitBody = ({
         [stations, selfPosition],
     );
 
-    // 写真の街は、選びかけ → 到着 → 出発の駅の街 (街の駅でなければいちばん近い街)
-    const heroTown =
-        towns[
-            resolveHeroTown(
-                pendingStation ?? toStation ?? fromStation,
-                stations,
-            )
-        ];
+    // 見出しの背景は、選びかけ → 到着 → 出発の駅で決める。
+    // 写真はその駅が街の駅のときだけ。それ以外の駅は地図、駅が無ければブロックの風景
+    const hero = resolveTransitHero(
+        pendingStation ?? toStation ?? fromStation,
+        worldMapUrl,
+    );
     // 検索の入力中は一覧を広く見せるため、写真を細くする
     const compact = mode === "search" && query !== "" && activeSlot !== null;
 
@@ -221,10 +253,10 @@ const TransitBody = ({
 
     return (
         <div className={rootStyle}>
-            <TownHeroBackground town={heroTown} compact={compact} />
-            <div className={contentStyle}>
-                <SubPageBar title="乗換案内" backTo="/map" />
-                <TownHeroLogo town={heroTown} compact={compact} />
+            <TransitHeroBackground hero={hero} compact={compact} />
+            <TransitBackButton />
+            <div className={headStyle}>
+                <TransitHeroHeadline hero={hero} compact={compact} />
                 <StationSlots
                     // 選んでいる枠には選びかけの駅をすぐに出す
                     from={
@@ -241,6 +273,22 @@ const TransitBody = ({
                     onEditSlot={onEditSlot}
                     onSwap={onSwap}
                 />
+                {activeSlot !== null && (
+                    <ModeTabs value={mode} onValueChange={onModeChange} />
+                )}
+            </div>
+            <div
+                // 枠・モード・路線 (経路なら出発・到着) が変わったら一覧の頭から見せる (window のスクロールのようには戻らないため)。
+                // 検索語は入れない (1 文字ごとに作り直すと入力欄のフォーカスが外れる)
+                key={
+                    activeSlot === null
+                        ? `route|${search.from}|${search.to}`
+                        : `${activeSlot}|${mode}|${search.line ?? ""}`
+                }
+                className={scrollStyle}
+                // 下のボタンを出す条件とそろえる
+                data-reserve={activeSlot !== null && pendingStation !== null}
+            >
                 {activeSlot === null ? (
                     // 両方決まったら経路を出す
                     route instanceof Promise ? (
@@ -264,71 +312,62 @@ const TransitBody = ({
                             <RouteResult state={route} onRetry={onRetryRoute} />
                         )
                     )
+                ) : mode === "line" ? (
+                    <LinePane
+                        index={index}
+                        lineSlug={search.line}
+                        fromStation={fromStation}
+                        selectedId={selectedId}
+                        disabled={disabled}
+                        onLineChange={onLineChange}
+                        onSelect={select}
+                    />
                 ) : (
-                    <>
-                        <ModeTabs value={mode} onValueChange={onModeChange} />
-                        <div
-                            className={paneStyle}
-                            data-reserve={pendingStation !== null}
-                        >
-                            {mode === "line" ? (
-                                <LinePane
-                                    index={index}
-                                    lineSlug={search.line}
-                                    fromStation={fromStation}
-                                    selectedId={selectedId}
-                                    disabled={disabled}
-                                    onLineChange={onLineChange}
-                                    onSelect={select}
-                                />
-                            ) : (
-                                <StationSearch
-                                    // 枠が変わったら (駅を決めたら) 入力欄を作り直し、前の検索語を残さない
-                                    key={activeSlot}
-                                    query={query}
-                                    matches={matches}
-                                    recent={recentSlugs
-                                        .map((slug) => stationOf(slug))
-                                        .filter(
-                                            (s): s is TransitStation =>
-                                                s !== null,
-                                        )}
-                                    nearby={nearby}
-                                    selfTownLabel={
-                                        nearby?.[0]
-                                            ? (townOf(nearby[0].station)
-                                                  ?.label ?? null)
-                                            : null
-                                    }
-                                    lines={index.lineById}
-                                    activeSlot={activeSlot}
-                                    selectedId={selectedId}
-                                    disabled={disabled}
-                                    onQueryChange={onQueryChange}
-                                    onSelect={select}
-                                />
-                            )}
-                        </div>
-                        {pendingStation && (
-                            <SelectStationBar
-                                station={pendingStation}
-                                slot={activeSlot}
-                                onConfirm={() =>
-                                    onConfirmStation(
-                                        chooseStation(
-                                            search,
-                                            index,
-                                            activeSlot,
-                                            pendingStation.slug,
-                                        ),
-                                        pendingStation.slug,
-                                    )
-                                }
-                            />
-                        )}
-                    </>
+                    <StationSearch
+                        // 枠が変わったら (駅を決めたら) 入力欄を作り直し、前の検索語を残さない
+                        key={activeSlot}
+                        query={query}
+                        matches={matches}
+                        recent={recentSlugs
+                            .map((slug) => stationOf(slug))
+                            .filter((s): s is TransitStation => s !== null)}
+                        nearby={nearby}
+                        selfTownLabel={
+                            nearby?.[0]
+                                ? (townOf(nearby[0].station)?.label ?? null)
+                                : null
+                        }
+                        lines={index.lineById}
+                        activeSlot={activeSlot}
+                        selectedId={selectedId}
+                        disabled={disabled}
+                        onQueryChange={onQueryChange}
+                        onSelect={select}
+                    />
                 )}
             </div>
+            {activeSlot !== null && pendingStation ? (
+                <div className={footerStyle}>
+                    <SelectStationBar
+                        station={pendingStation}
+                        slot={activeSlot}
+                        onConfirm={() =>
+                            onConfirmStation(
+                                chooseStation(
+                                    search,
+                                    index,
+                                    activeSlot,
+                                    pendingStation.slug,
+                                ),
+                                pendingStation.slug,
+                            )
+                        }
+                    />
+                </div>
+            ) : (
+                // 下のボタンが出ているときはボタン側のぼかしがあるので、溶かしは出さない
+                <span className={bottomFadeStyle} aria-hidden />
+            )}
         </div>
     );
 };
