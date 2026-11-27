@@ -1,5 +1,5 @@
 import { Await } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { css } from "../../../../../../../styled-system/css";
 import { indexTransitNetwork } from "../../-functions/index-transit-network";
 import {
@@ -33,7 +33,6 @@ import { LineList } from "../line-list";
 import { LineStationPicker } from "../line-station-picker";
 import { ModeTabs } from "../mode-tabs";
 import { RouteResult, RouteResultLoading } from "../route-result";
-import { SelectStationBar } from "../select-station-bar";
 import { StationSearch } from "../station-search";
 import { StationSlots } from "../station-slots";
 import { TransitBackButton } from "../transit-back-button";
@@ -92,16 +91,6 @@ const scrollStyle = css({
         "max({spacing.6}, calc(env(safe-area-inset-bottom) + {spacing.2}))",
     // 中身を縮めず、収まらない分はスクロールで見せる
     "& > *": { flexShrink: 0 },
-    // 下に固定のボタンが出ているあいだは、ボタンとの間を少し空ける
-    "&[data-reserve=true]": { paddingBottom: "4" },
-});
-
-// 選びかけの駅を入れるボタン。スクロールの外の下端に置き、一覧が動いても隠れないようにする
-const footerStyle = css({
-    position: "relative",
-    zIndex: 2,
-    flexShrink: 0,
-    paddingX: "6",
 });
 
 export interface TransitViewProps {
@@ -121,16 +110,9 @@ export interface TransitViewProps {
     onModeChange: (mode: TransitMode) => void;
     onLineChange: (lineSlug: string | undefined) => void;
     onQueryChange: (q: string) => void;
-    /** 選びかけの駅を枠に入れたときの次の URL の状態と、その駅の slug (さいきん選んだ駅に足す) */
+    /** 駅を枠に入れたときの次の URL の状態と、その駅の slug (さいきん選んだ駅に足す) */
     onConfirmStation: (next: TransitSearch, slug: string) => void;
     onRetryRoute: () => void;
-}
-
-/** 選びかけの駅。どの枠・モード・路線で選んだかを覚え、どれかが変わったら捨てる */
-interface PendingPick {
-    slot: TransitSlot;
-    slug: string;
-    context: string;
 }
 
 /** 乗換案内の画面。駅の選び方 (路線・駅名) と経路を、URL の状態に合わせて出し分ける */
@@ -176,23 +158,6 @@ const TransitBody = ({
     const fromStation = stationOf(search.from);
     const toStation = stationOf(search.to);
 
-    // 選びかけの駅は、選んだときの枠・モード・路線のままのときだけ有効にする (effect を使わずに捨てる)
-    const pickContext = `${activeSlot}|${mode}|${search.line ?? ""}`;
-    const [pending, setPending] = useState<PendingPick | null>(null);
-    // 枠・モード・路線が変わったら選びかけの駅を捨てる。残すと、同じ枠を選び直したときに古い駅が戻ってくる
-    if (
-        pending &&
-        (pending.slot !== activeSlot || pending.context !== pickContext)
-    ) {
-        setPending(null);
-    }
-    const pendingStation =
-        pending &&
-        pending.slot === activeSlot &&
-        pending.context === pickContext
-            ? stationOf(pending.slug)
-            : null;
-
     // 検索の当たりは URL の検索語から作る (入力欄の文字は 1 フレーム以内に URL へ追いつく)
     const matches = useMemo(
         () => searchStations(stations, query),
@@ -204,12 +169,9 @@ const TransitBody = ({
         [stations, selfPosition],
     );
 
-    // 見出しの背景は、選びかけ → 到着 → 出発の駅で決める。
+    // 見出しの背景は、到着 → 出発の駅で決める。
     // 写真はその駅が街の駅のときだけ。それ以外の駅は地図、駅が無ければブロックの風景
-    const hero = resolveTransitHero(
-        pendingStation ?? toStation ?? fromStation,
-        worldMapUrl,
-    );
+    const hero = resolveTransitHero(toStation ?? fromStation, worldMapUrl);
     // 検索の入力中は一覧を広く見せるため、写真を細くする
     const compact = mode === "search" && query !== "" && activeSlot !== null;
 
@@ -219,7 +181,7 @@ const TransitBody = ({
             : activeSlot === "to"
               ? toStation
               : null;
-    const selectedId = pendingStation?.id ?? currentOfActive?.id ?? null;
+    const selectedId = currentOfActive?.id ?? null;
     // もう一方の枠に入っている駅は選べないようにする (同じ駅どうしの経路を作らない)
     const otherSlot: TransitSlot | null =
         activeSlot === "from" ? "to" : activeSlot === "to" ? "from" : null;
@@ -236,20 +198,12 @@ const TransitBody = ({
 
     const select = (station: TransitStation) => {
         if (activeSlot === null) return;
-        // もう一方の枠が決まっていれば、押した駅をすぐ入れて経路を出す (確定ボタンを挟まない)
-        if (otherStation) {
-            onConfirmStation(
-                chooseStation(search, index, activeSlot, station.slug),
-                station.slug,
-            );
-            return;
-        }
-        // 最初の 1 駅は選び間違えに気づけるよう、選びかけにして確定ボタンを出す
-        setPending({
-            slot: activeSlot,
-            slug: station.slug,
-            context: pickContext,
-        });
+        // 押した駅をすぐ枠に入れる (確定ボタンを挟まない)。
+        // もう一方が決まっていれば経路へ、決まっていなければもう一方の枠を選ぶ画面へ進む
+        onConfirmStation(
+            chooseStation(search, index, activeSlot, station.slug),
+            station.slug,
+        );
     };
 
     return (
@@ -259,17 +213,8 @@ const TransitBody = ({
             <div className={headStyle}>
                 <TransitHeroHeadline hero={hero} compact={compact} />
                 <StationSlots
-                    // 選んでいる枠には選びかけの駅をすぐに出す
-                    from={
-                        activeSlot === "from" && pendingStation
-                            ? pendingStation
-                            : fromStation
-                    }
-                    to={
-                        activeSlot === "to" && pendingStation
-                            ? pendingStation
-                            : toStation
-                    }
+                    from={fromStation}
+                    to={toStation}
                     activeSlot={activeSlot}
                     onEditSlot={onEditSlot}
                     onSwap={onSwap}
@@ -284,8 +229,6 @@ const TransitBody = ({
                         : `${activeSlot}|${mode}|${search.line ?? ""}`
                 }
                 className={scrollStyle}
-                // 下のボタンを出す条件とそろえる
-                data-reserve={activeSlot !== null && pendingStation !== null}
             >
                 {/* 動かさないのは出発・到着の枠まで。タブは一覧といっしょにスクロールさせ、写真と一覧の場所を広く取る */}
                 {activeSlot !== null && (
@@ -350,25 +293,6 @@ const TransitBody = ({
                     />
                 )}
             </div>
-            {activeSlot !== null && pendingStation ? (
-                <div className={footerStyle}>
-                    <SelectStationBar
-                        station={pendingStation}
-                        slot={activeSlot}
-                        onConfirm={() =>
-                            onConfirmStation(
-                                chooseStation(
-                                    search,
-                                    index,
-                                    activeSlot,
-                                    pendingStation.slug,
-                                ),
-                                pendingStation.slug,
-                            )
-                        }
-                    />
-                </div>
-            ) : null}
         </div>
     );
 };
