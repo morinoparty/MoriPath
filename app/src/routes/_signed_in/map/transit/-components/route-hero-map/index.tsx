@@ -22,12 +22,14 @@ import {
 import type { TransitStation } from "../../-types/transit";
 import type { RoutePathPart } from "../../-types/transit-hero";
 
-// 経路が収まるよう寄せるときの余白 (px)。上は戻るボタンと駅の札、
-// 下は背景に重なる出発・到着の枠 (94px) とその上の駅の札のぶんを空ける
-const FIT_PADDING_TOP_LEFT: [number, number] = [48, 120];
-const FIT_PADDING_BOTTOM_RIGHT: [number, number] = [48, 150];
+// 経路が収まるよう寄せるときの余白 (px)。背景のうち実際に見えている所に経路を収める。
+// 上は戻るボタン (上から 48px) と、点の上に出す駅の札 (約 28px) のぶん。
+// 下は背景に重なる出発・到着の枠 (94px) のぶん。札は点の上に出るので下には要らない
+const FIT_PADDING_X = 32;
+const FIT_PADDING_TOP = 84;
+const FIT_PADDING_BOTTOM = 104;
 // 長い経路も収まるよう、タイルの最小の縮尺 (0) よりさらに引けるようにする (タイルは縮めて使う)
-const MIN_ZOOM = -4;
+const MIN_ZOOM = -6;
 
 const mapStyle = css({
     width: "full",
@@ -134,9 +136,14 @@ const FitRoute = ({ points }: { points: Vec2[] }) => {
             // 背景の高さが変わっても Leaflet は気づかないので、大きさを測り直してから合わせる
             map.invalidateSize({ animate: false });
             // 飾りの地図なので、動かす様子は見せずにすぐ切り替える
+            // 背景がとても低いときに余白が背景より大きくならないよう、高さの 3 割までに抑える
+            // (余白の方が大きいと Leaflet が縮尺を決められず、経路の一部しか映らない)
+            const { y: height } = map.getSize();
+            const top = Math.min(FIT_PADDING_TOP, height * 0.3);
+            const bottom = Math.min(FIT_PADDING_BOTTOM, height * 0.3);
             map.fitBounds(bounds, {
-                paddingTopLeft: FIT_PADDING_TOP_LEFT,
-                paddingBottomRight: FIT_PADDING_BOTTOM_RIGHT,
+                paddingTopLeft: [FIT_PADDING_X, top],
+                paddingBottomRight: [FIT_PADDING_X, bottom],
                 maxZoom: NATIVE_MAX_ZOOM,
                 animate: false,
             });
