@@ -13,7 +13,8 @@ const balanceTileStyle = sva({
             paddingX: "4",
             paddingY: "3",
             bg: "colorPalette.surface.subtle",
-            borderRadius: "panel",
+            // panel (lg) より一段丸くして、やわらかいカードにする
+            borderRadius: "xl",
         },
         label: {
             textStyle: "xs",

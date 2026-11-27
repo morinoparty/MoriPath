@@ -9,16 +9,17 @@ const worldSwitcherStyle = sva({
     base: {
         trigger: {
             // 地図の上に浮かぶクロムなので、枠線ではなく白い面 + 影で持ち上げる
-            width: "48px",
-            height: "48px",
+            // ホームのパーティ切り替えと同じ 40px にそろえる
+            width: "40px",
+            height: "40px",
             bg: "bg.panel",
             borderWidth: "0",
             borderRadius: "l3",
             boxShadow: "chrome",
             color: "colorPalette.fg",
             "& svg": {
-                width: "22px",
-                height: "22px",
+                width: "20px",
+                height: "20px",
             },
         },
         content: {

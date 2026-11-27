@@ -20,7 +20,8 @@ const homeViewStyle = sva({
             display: "flex",
             flexDirection: "column",
             // ノッチ付き端末ではステータスバーの下から始める
-            paddingTop: "max(token(spacing.2), env(safe-area-inset-top))",
+            // ヘッダーの上下の余白 (8px) と合わせて、地図の操作ボタンと同じ safe area + 16px の高さにそろえる
+            paddingTop: "calc(env(safe-area-inset-top) + {spacing.2})",
         },
         body: {
             display: "flex",
