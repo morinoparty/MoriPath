@@ -42,7 +42,7 @@ import { TransitNotice } from "../transit-notice";
 import { TransitNoticePage } from "../transit-notice-page";
 
 // タブバーを出さない下層ページなので、画面いっぱいに地の色を敷く。
-// 上 (見出し・枠・タブ) は動かさず、下の一覧だけをスクロールさせるため、ページ (window) ではなく
+// 上 (見出しと出発・到着の枠) は動かさず、その下 (タブと一覧) だけをスクロールさせるため、ページ (window) ではなく
 // 画面に固定した縦並びの中でスクロールさせる。Layout の minHeight: 100vh はモバイルで 100dvh より高く、
 // window がスクロールすると上がずれるので、画面に固定して Layout と同じ幅で中央に置く
 const rootStyle = css({
@@ -58,7 +58,13 @@ const rootStyle = css({
     isolation: "isolate",
 });
 
-// 動かさない上の部分。背景の層より上に重ねる
+// 一覧の頭に置くタブ。一覧との間を空ける
+const tabsStyle = css({
+    paddingTop: "0.5",
+    paddingBottom: "3.5",
+});
+
+// 動かさない上の部分 (見出しと出発・到着の枠)。背景の層より上に重ねる
 const headStyle = css({
     position: "relative",
     zIndex: 1,
@@ -273,9 +279,6 @@ const TransitBody = ({
                     onEditSlot={onEditSlot}
                     onSwap={onSwap}
                 />
-                {activeSlot !== null && (
-                    <ModeTabs value={mode} onValueChange={onModeChange} />
-                )}
             </div>
             <div
                 // 枠・モード・路線 (経路なら出発・到着) が変わったら一覧の頭から見せる (window のスクロールのようには戻らないため)。
@@ -289,6 +292,12 @@ const TransitBody = ({
                 // 下のボタンを出す条件とそろえる
                 data-reserve={activeSlot !== null && pendingStation !== null}
             >
+                {/* 動かさないのは出発・到着の枠まで。タブは一覧といっしょにスクロールさせ、写真と一覧の場所を広く取る */}
+                {activeSlot !== null && (
+                    <div className={tabsStyle}>
+                        <ModeTabs value={mode} onValueChange={onModeChange} />
+                    </div>
+                )}
                 {activeSlot === null ? (
                     // 両方決まったら経路を出す
                     route instanceof Promise ? (

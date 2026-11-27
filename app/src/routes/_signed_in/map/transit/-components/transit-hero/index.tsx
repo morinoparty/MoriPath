@@ -8,11 +8,11 @@ import { BlockLandscape } from "../block-landscape";
 const StationHeroMap = lazy(() => import("../station-hero-map"));
 
 // 見出し (ロゴ・駅名・あいさつ) の場所の高さ。背景の高さもここから決める。
-// 画面の高さの 54% ほどを背景に使い (874px の画面で 470px)、低い画面ほど縮める。
+// 写真を主役にするため、画面の高さの 6 割ほどを背景に使い (874px の画面で約 540px)、低い画面ほど縮める。
 // Panda は静的に読み取るので、値は関数ではなく定数の文字列で組み立てる
-const HEADLINE_HEIGHT = "clamp(176px, calc(54dvh - 180px), 292px)";
+const HEADLINE_HEIGHT = "clamp(200px, calc(64dvh - 160px), 420px)";
 // 背の低い画面 (501〜700px) では上の動かない部分が一覧を圧迫しないよう、さらに低くする
-const SHORT_HEADLINE_HEIGHT = "clamp(136px, calc(54dvh - 180px), 176px)";
+const SHORT_HEADLINE_HEIGHT = "clamp(150px, calc(60dvh - 160px), 260px)";
 // 入力中は戻るボタンの下にすぐ枠が来る高さにし、一覧を広く見せる
 const COMPACT_HEADLINE_HEIGHT = "52px";
 
@@ -28,13 +28,13 @@ const SHORT_SCREEN = "@media (max-height: 700px) and (min-height: 501px)";
 // 横向きのスマホなどとても低い画面 (500px 以下) は、入力中と同じ細い見出しにして一覧の場所を残す
 const TINY_SCREEN = "@media (max-height: 500px)";
 
-// 地図の枠は高さ 520px で、駅 (地図の中心) は枠の上から 260px の位置に来る。
+// 地図の枠は高さ 720px で、駅 (地図の中心) は枠の上から 360px の位置に来る (いちばん高い背景も覆える高さ)。
 // 駅が戻るボタンと見出しの下端の間 (見出しの場所の真ん中) に来るよう、枠を上へずらす
-const MAP_FRAME_HEIGHT = "520px";
-const MAP_TOP = `calc(env(safe-area-inset-top) + 16px + (${HEADLINE_HEIGHT}) / 2 - 260px)`;
-const SHORT_MAP_TOP = `calc(env(safe-area-inset-top) + 16px + (${SHORT_HEADLINE_HEIGHT}) / 2 - 260px)`;
+const MAP_FRAME_HEIGHT = "720px";
+const MAP_TOP = `calc(env(safe-area-inset-top) + 16px + (${HEADLINE_HEIGHT}) / 2 - 360px)`;
+const SHORT_MAP_TOP = `calc(env(safe-area-inset-top) + 16px + (${SHORT_HEADLINE_HEIGHT}) / 2 - 360px)`;
 // 入力中は下に枠が来るので、駅を戻るボタンと同じ高さ (上から 36px) まで上げる
-const COMPACT_MAP_TOP = "calc(env(safe-area-inset-top) + 36px - 260px)";
+const COMPACT_MAP_TOP = "calc(env(safe-area-inset-top) + 36px - 360px)";
 
 // 細い背景での風景の置きかた。絵を幅に合わせた縦横比で置き、線路 (絵の y=248) を
 // 枠の 16px 上 (上の余白 16 + 見出し 52 + 間 14 - 16 = 66px) にそろえる。
