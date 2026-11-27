@@ -6,6 +6,7 @@ import { BlockLandscape } from "../block-landscape";
 
 // Leaflet は SSR で読み込めないため、地図はクライアントでだけ遅延読み込みする (読み込むまでは空のグラデーションを見せる)
 const StationHeroMap = lazy(() => import("../station-hero-map"));
+const RouteHeroMap = lazy(() => import("../route-hero-map"));
 
 // 見出し (ロゴ・駅名・あいさつ) の場所の高さ。背景の高さもここから決める。
 // 写真を主役にするため、画面の高さの半分ほどを背景に使い (874px の画面で約 420px)、低い画面ほど縮める。
@@ -60,6 +61,7 @@ const transitHeroStyle = sva({
         "landscape",
         "photo",
         "mapFrame",
+        "routeFrame",
         "fade",
         "headline",
         "logo",
@@ -121,6 +123,11 @@ const transitHeroStyle = sva({
             [SHORT_SCREEN]: { top: SHORT_MAP_TOP },
             [TINY_SCREEN]: { top: COMPACT_MAP_TOP },
             "[data-size=compact] > &": { top: COMPACT_MAP_TOP },
+        },
+        // 経路の地図は背景いっぱいに敷き、経路が収まる位置と縮尺は地図の側で合わせる
+        routeFrame: {
+            position: "absolute",
+            inset: "0",
         },
         // 写真や地図は覆わず、下端まで (枠の後ろまで) そのまま見せる。
         // 上端だけ少し暗くして、ステータスバーと戻るボタンを読みやすくする
@@ -246,6 +253,21 @@ export const TransitHeroBackground = ({ hero, compact }: TransitHeroProps) => {
                     </ClientOnly>
                 </div>
             )}
+            {hero.kind === "route" && (
+                <div className={style.routeFrame}>
+                    <ClientOnly fallback={null}>
+                        <Suspense fallback={null}>
+                            <RouteHeroMap
+                                baseUrl={hero.baseUrl}
+                                worldId={hero.worldId}
+                                from={hero.from}
+                                to={hero.to}
+                                path={hero.path}
+                            />
+                        </Suspense>
+                    </ClientOnly>
+                </div>
+            )}
             <span className={style.fade} />
         </div>
     );
@@ -283,7 +305,8 @@ export const TransitHeroHeadline = ({
             );
         }
         // 地図のときは地図の上の駅の札が駅名を示すので (Figma B)、見出しは出さずに地図を広く見せる
-        if (hero.kind === "map") return null;
+        // 経路の地図も、出発・到着の札が地図の上にあるので見出しは出さない
+        if (hero.kind === "map" || hero.kind === "route") return null;
         // 地図も出せない駅は、ブロックの風景の上に駅名を大きく出す
         if (hero.station) {
             return (

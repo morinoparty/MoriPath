@@ -4,10 +4,11 @@ import {
     TransitHeroBackground,
     TransitHeroHeadline,
 } from "@/routes/_signed_in/map/transit/-components/transit-hero";
+import { buildRoutePath } from "@/routes/_signed_in/map/transit/-functions/build-route-path";
 import { resolveTransitHero } from "@/routes/_signed_in/map/transit/-functions/resolve-transit-hero";
 import type { TransitHero } from "@/routes/_signed_in/map/transit/-types/transit-hero";
 import { css } from "../../../styled-system/css";
-import { sampleStation } from "./sample-transit";
+import { sampleIndex, sampleRoute, sampleStation } from "./sample-transit";
 import { transitPageParameters, withTransitFrame } from "./transit-decorator";
 
 // 実際の squaremap の URL はソースに書かないので、見本では届かない URL を使う (タイルは出ず、駅の札と空のグラデーションだけが見える)
@@ -90,6 +91,26 @@ export const Atsumori: Story = {
 // B: 街の駅でない駅は、駅を中心にした地図と、駅名つきの駅の札 (近くの街の写真では代用しない)
 export const StationMap: Story = {
     args: { hero: heroOf("bnii", SAMPLE_WORLD_MAP_URL) },
+};
+
+// 出発と到着が決まったら、経路全体が収まる地図に経路の線と出発・到着の札を出す
+const routeFrom = sampleStation("mrmt");
+const routeTo = sampleStation("sekk");
+export const Route: Story = {
+    args: {
+        hero: {
+            kind: "route",
+            from: routeFrom,
+            to: routeTo,
+            // 見本のワールドは出発駅のもの (見本の URL は届かないので、タイルは出ず線と札だけが見える)
+            worldId: routeFrom.worldId ?? "minecraft_overworld",
+            baseUrl: SAMPLE_WORLD_MAP_URL,
+            path: buildRoutePath(
+                { status: "ok", route: sampleRoute },
+                sampleIndex,
+            ),
+        },
+    },
 };
 
 // 地図の取得元が分からないときは、駅名をブロックの風景の上に出す

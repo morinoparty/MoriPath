@@ -1,6 +1,7 @@
 import { Await } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { css } from "../../../../../../../styled-system/css";
+import { buildRoutePath } from "../../-functions/build-route-path";
 import { indexTransitNetwork } from "../../-functions/index-transit-network";
 import {
     lineStationRows,
@@ -29,6 +30,7 @@ import type {
     TransitSlot,
     TransitStation,
 } from "../../-types/transit";
+import type { TransitHero } from "../../-types/transit-hero";
 import { LineList } from "../line-list";
 import { LineStationPicker } from "../line-station-picker";
 import { ModeTabs } from "../mode-tabs";
@@ -169,9 +171,33 @@ const TransitBody = ({
         [stations, selfPosition],
     );
 
-    // 見出しの背景は、到着 → 出発の駅で決める。
-    // 写真はその駅が街の駅のときだけ。それ以外の駅は地図、駅が無ければブロックの風景
-    const hero = resolveTransitHero(toStation ?? fromStation, worldMapUrl);
+    // 経路の線は、経路が届いてから地図に引く (Promise は経路と索引が変わったときだけ作り直す)
+    const routePath = useMemo(
+        () =>
+            route instanceof Promise
+                ? route.then((state) => buildRoutePath(state, index))
+                : buildRoutePath(route, index),
+        [route, index],
+    );
+    // 出発と到着が決まって経路を見ているときは、経路全体が収まる地図を出す (同じワールドのときだけ)。
+    // それ以外は出発の駅 (無ければ到着の駅) で決め、写真はその駅が街の駅のときだけ、
+    // それ以外の駅は地図、駅が無ければブロックの風景にする
+    const hero: TransitHero =
+        activeSlot === null &&
+        fromStation &&
+        toStation &&
+        worldMapUrl &&
+        fromStation.worldId &&
+        fromStation.worldId === toStation.worldId
+            ? {
+                  kind: "route",
+                  from: fromStation,
+                  to: toStation,
+                  worldId: fromStation.worldId,
+                  baseUrl: worldMapUrl,
+                  path: routePath,
+              }
+            : resolveTransitHero(fromStation ?? toStation, worldMapUrl);
     // 検索の入力中は一覧を広く見せるため、写真を細くする
     const compact = mode === "search" && query !== "" && activeSlot !== null;
 
