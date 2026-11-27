@@ -8,12 +8,12 @@ import { BlockLandscape } from "../block-landscape";
 const StationHeroMap = lazy(() => import("../station-hero-map"));
 
 // 見出し (ロゴ・駅名・あいさつ) の場所の高さ。背景の高さもここから決める。
-// 写真を主役にするため、画面の高さの半分ほどを背景に使い (874px の画面で約 470px)、低い画面ほど縮める。
+// 写真を主役にするため、画面の高さの半分ほどを背景に使い (874px の画面で約 420px)、低い画面ほど縮める。
 // アドレスバーの出入りで写真が伸び縮みしないよう、いちばん小さい画面の高さ (svh) を基準にする。
 // Panda は静的に読み取るので、値は関数ではなく定数の文字列で組み立てる
-const HEADLINE_HEIGHT = "clamp(180px, calc(58svh - 160px), 360px)";
+const HEADLINE_HEIGHT = "clamp(170px, calc(52svh - 160px), 300px)";
 // 背の低い画面 (501〜700px) では上の動かない部分が一覧を圧迫しないよう、さらに低くする
-const SHORT_HEADLINE_HEIGHT = "clamp(140px, calc(54svh - 160px), 220px)";
+const SHORT_HEADLINE_HEIGHT = "clamp(130px, calc(48svh - 160px), 200px)";
 // 入力中は戻るボタンの下にすぐ枠が来る高さにし、一覧を広く見せる
 const COMPACT_HEADLINE_HEIGHT = "52px";
 
