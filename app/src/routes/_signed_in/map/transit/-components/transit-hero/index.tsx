@@ -28,13 +28,14 @@ const SHORT_SCREEN = "@media (max-height: 700px) and (min-height: 501px)";
 // 横向きのスマホなどとても低い画面 (500px 以下) は、入力中と同じ細い見出しにして一覧の場所を残す
 const TINY_SCREEN = "@media (max-height: 500px)";
 
-// 地図の枠は高さ 720px で、駅 (地図の中心) は枠の上から 360px の位置に来る (いちばん高い背景も覆える高さ)。
+// 地図の枠は画面の高さ (100dvh) にし、駅 (地図の中心) は枠の上から 50dvh の位置に来る。
+// 背景は画面の高さから決まるので、枠も画面の高さに合わせればどの画面でも背景を覆える。
 // 駅が戻るボタンと見出しの下端の間 (見出しの場所の真ん中) に来るよう、枠を上へずらす
-const MAP_FRAME_HEIGHT = "720px";
-const MAP_TOP = `calc(env(safe-area-inset-top) + 16px + (${HEADLINE_HEIGHT}) / 2 - 360px)`;
-const SHORT_MAP_TOP = `calc(env(safe-area-inset-top) + 16px + (${SHORT_HEADLINE_HEIGHT}) / 2 - 360px)`;
+const MAP_FRAME_HEIGHT = "100dvh";
+const MAP_TOP = `calc(env(safe-area-inset-top) + 16px + (${HEADLINE_HEIGHT}) / 2 - 50dvh)`;
+const SHORT_MAP_TOP = `calc(env(safe-area-inset-top) + 16px + (${SHORT_HEADLINE_HEIGHT}) / 2 - 50dvh)`;
 // 入力中は下に枠が来るので、駅を戻るボタンと同じ高さ (上から 36px) まで上げる
-const COMPACT_MAP_TOP = "calc(env(safe-area-inset-top) + 36px - 360px)";
+const COMPACT_MAP_TOP = "calc(env(safe-area-inset-top) + 36px - 50dvh)";
 
 // 細い背景での風景の置きかた。絵を幅に合わせた縦横比で置き、線路 (絵の y=248) を
 // 枠の 16px 上 (上の余白 16 + 見出し 52 + 間 14 - 16 = 66px) にそろえる。
@@ -120,18 +121,15 @@ const transitHeroStyle = sva({
             [TINY_SCREEN]: { top: COMPACT_MAP_TOP },
             "[data-size=compact] > &": { top: COMPACT_MAP_TOP },
         },
-        // 写真や地図は白く覆わず、そのまま見せる。上端だけ少し暗くして、ステータスバーと戻るボタンを読みやすくし、
-        // 下だけをページの地の色へ溶かす (62% までは透明、84% で 75%、下端で地の色)
+        // 写真や地図は覆わず、下端まで (枠の後ろまで) そのまま見せる。
+        // 上端だけ少し暗くして、ステータスバーと戻るボタンを読みやすくする
         fade: {
             position: "absolute",
             inset: "0",
             background:
-                "linear-gradient(180deg, color-mix(in srgb, {colors.black} 28%, transparent) 0%, transparent 18%, transparent 62%, color-mix(in srgb, {colors.colorPalette.bg} 75%, transparent) 84%, {colors.colorPalette.bg} 100%)",
-            // 明るい空の絵は暗くする必要が無いので、下を溶かすだけにする
-            "[data-kind=landscape] > &": {
-                background:
-                    "linear-gradient(180deg, transparent 0%, transparent 62%, color-mix(in srgb, {colors.colorPalette.bg} 75%, transparent) 84%, {colors.colorPalette.bg} 100%)",
-            },
+                "linear-gradient(180deg, color-mix(in srgb, {colors.black} 28%, transparent) 0%, transparent 18%)",
+            // 明るい空の絵は暗くする必要が無いので、何も重ねない
+            "[data-kind=landscape] > &": { display: "none" },
         },
         // 背景の上に置く見出し (街の文字ロゴ・駅名・あいさつ)。下端を枠のすぐ上にそろえる。
         // 入力中は背景を細くし、見出しは出さない
