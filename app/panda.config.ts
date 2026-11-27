@@ -66,7 +66,7 @@ const config: Config = defineConfig({
 
     presets: [
         "@pandacss/preset-panda",
-        createPreset({ brandColor: "mori", grayColor: stone, radius: "md" }),
+        createPreset({ brandColor: "mori", grayColor: stone, radius: "lg" }),
     ],
 
     include: ["./src/**/*.{ts,tsx,js,jsx}"],

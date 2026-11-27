@@ -1,20 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
 import type { ApiStation } from "../-types/station";
 import {
     AdvanceRailwayUnavailableError,
-    fetchAdvanceRailway,
-    groupDtoSchema,
-    stationDtoSchema,
+    fetchRailwayDtos,
 } from "./advance-railway-api";
-
-// API の 1 ページの上限
-const PAGE_SIZE = 500;
-
-const stationsResponseSchema = z.object({
-    stations: z.array(stationDtoSchema),
-});
-const groupsResponseSchema = z.object({ groups: z.array(groupDtoSchema) });
 
 /** 駅と路線 (グループ) の色。ポップアップの路線一覧でもグループの色を引く */
 export interface RailwayNetwork {
@@ -22,20 +11,6 @@ export interface RailwayNetwork {
     /** グループ ID → 名前と色 */
     groups: Record<string, { name: string; color: string }>;
 }
-
-/** ページングをたどって全件を取る */
-const fetchAllPages = async <T>(
-    fetchPage: (offset: number) => Promise<T[]>,
-): Promise<T[]> => {
-    const items: T[] = [];
-    for (let offset = 0; ; offset += PAGE_SIZE) {
-        const page = await fetchPage(offset);
-        items.push(...page);
-        if (page.length < PAGE_SIZE) {
-            return items;
-        }
-    }
-};
 
 /**
  * AdvanceRailway の駅とグループを取得する。
@@ -46,24 +21,7 @@ export const getRailwayNetwork = createServerFn().handler(
     async ({ request }: any): Promise<RailwayNetwork | null> => {
         const headers: Headers = request.headers;
         try {
-            const [stations, groups] = await Promise.all([
-                fetchAllPages(async (offset) => {
-                    const page = await fetchAdvanceRailway(
-                        headers,
-                        `/stations?limit=${PAGE_SIZE}&offset=${offset}`,
-                        stationsResponseSchema,
-                    );
-                    return page.stations;
-                }),
-                fetchAllPages(async (offset) => {
-                    const page = await fetchAdvanceRailway(
-                        headers,
-                        `/groups?limit=${PAGE_SIZE}&offset=${offset}`,
-                        groupsResponseSchema,
-                    );
-                    return page.groups;
-                }),
-            ]);
+            const { stations, groups } = await fetchRailwayDtos(headers);
             const groupById = Object.fromEntries(
                 groups.map((group) => [
                     group.id,

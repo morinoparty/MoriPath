@@ -20,6 +20,7 @@ const skinCardStyle = sva({
             paddingBottom: "4",
             paddingX: "2",
             bg: "colorPalette.surface.subtle",
+            // カードの角丸は panel にそろえる (preset の radius: lg で 12px)
             borderRadius: "panel",
         },
         viewer: {

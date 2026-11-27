@@ -12,7 +12,7 @@ const cardSquareStyle = sva({
     base: {
         root: {
             bg: "white",
-            borderRadius: "24px",
+            borderRadius: "panel",
             padding: "16px",
             display: "flex",
             flexDirection: "column",

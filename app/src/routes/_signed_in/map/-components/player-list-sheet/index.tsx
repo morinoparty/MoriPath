@@ -37,16 +37,17 @@ const playerListSheetStyle = sva({
     base: {
         // 地図の上に浮かぶクロムなので、ワールド切り替えと同じ白い面 + 影のボタンにする
         trigger: {
-            width: "48px",
-            height: "48px",
+            // ホームのパーティ切り替えと同じ 40px にそろえる
+            width: "40px",
+            height: "40px",
             bg: "bg.panel",
             borderWidth: "0",
             borderRadius: "l3",
             boxShadow: "chrome",
             color: "colorPalette.fg",
             "& svg": {
-                width: "22px",
-                height: "22px",
+                width: "20px",
+                height: "20px",
             },
         },
         // パレットの文字色を薄く敷いて、後ろの地図を沈める
@@ -121,7 +122,7 @@ const playerListSheetStyle = sva({
             minHeight: "14",
             px: "2",
             py: "1.5",
-            borderRadius: "l3",
+            borderRadius: "panel",
             textAlign: "start",
             cursor: "pointer",
             transition: "background 0.15s",

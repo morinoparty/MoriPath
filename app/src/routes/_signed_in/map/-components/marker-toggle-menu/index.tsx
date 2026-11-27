@@ -24,8 +24,9 @@ const markerToggleMenuStyle = sva({
             display: "inline-flex",
             alignItems: "center",
             gap: "2",
-            height: "48px",
-            pl: "2",
+            // ホームのパーティ切り替えと同じ 40px にそろえる
+            height: "40px",
+            pl: "1.5",
             pr: "3",
             bg: "bg.panel",
             borderRadius: "l3",
@@ -39,13 +40,13 @@ const markerToggleMenuStyle = sva({
         triggerIcon: {
             display: "grid",
             placeItems: "center",
-            width: "32px",
-            height: "32px",
+            width: "28px",
+            height: "28px",
             borderRadius: "l2",
             bg: "colorPalette.surface",
             "& svg": {
-                width: "18px",
-                height: "18px",
+                width: "16px",
+                height: "16px",
             },
         },
         triggerLabel: {
@@ -65,7 +66,7 @@ const markerToggleMenuStyle = sva({
             minWidth: "200px",
             p: "2",
             borderWidth: "0",
-            borderRadius: "l3",
+            borderRadius: "panel",
             boxShadow: "chrome",
         },
         // 指でも押しやすいよう、行の高さを少し広げる

@@ -1,0 +1,276 @@
+{
+    "groups": [
+        {
+            "id": "01a03527-1320-7208-ab82-d0051864ac3b",
+            "slug": "atumoriLoop",
+            "name": "あつもり環状線",
+            "color": "#3400FF",
+            "numberingPrefix": "MA",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-133b-76c5-8863-c1777c3e95c5",
+            "slug": "border",
+            "name": "ボーダーライン鉄道",
+            "color": "#C80000",
+            "numberingPrefix": "BOR",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-1344-7569-ae77-6eb52d8202f8",
+            "slug": "fm",
+            "name": "FM鉄道",
+            "color": "#F5A0DC",
+            "numberingPrefix": "FM",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-134d-7c90-81f8-f2e1d41e4973",
+            "slug": "french",
+            "name": "ふれんちとーす島線",
+            "color": "#FF0012",
+            "numberingPrefix": "FRE",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-1357-7093-8b6d-b48972fe0bd0",
+            "slug": "hana",
+            "name": "はなもり鉄道",
+            "color": "#FFF000",
+            "numberingPrefix": "HAN",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-135f-7f14-8ab3-3ad3a1bd4578",
+            "slug": "kamimoriNewLine",
+            "name": "神森新線",
+            "color": "#B446FF",
+            "numberingPrefix": "MK",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-1369-7ffa-aa40-c98cc4e87a09",
+            "slug": "karaLine",
+            "name": "kara鉄道",
+            "color": "#FF82D7",
+            "numberingPrefix": "KAR",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-1372-7c84-838f-b653d1deb168",
+            "slug": "matsuSub",
+            "name": "松島支線",
+            "color": "#FF7300",
+            "numberingPrefix": "MAT",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-137b-718d-9a91-c5bde6eced66",
+            "slug": "mcEC",
+            "name": "町湯東海岸線",
+            "color": "#EB466E",
+            "numberingPrefix": "MEC",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-1384-73f7-8591-d1d236d47c78",
+            "slug": "mcKH",
+            "name": "町湯紅白線",
+            "color": "#E3FF00",
+            "numberingPrefix": "MCK",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-138d-74d5-9707-6119fc04165c",
+            "slug": "mcPo",
+            "name": "町湯港線",
+            "color": "#00E1FF",
+            "numberingPrefix": "MCP",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-1396-76e4-90a5-39afe9f03cde",
+            "slug": "mcSE",
+            "name": "町湯東南線",
+            "color": "#B93CB9",
+            "numberingPrefix": "MSE",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-139f-755f-87c6-9b643aae1daa",
+            "slug": "meidai",
+            "name": "迷大鉄道",
+            "color": "#6EBDCD",
+            "numberingPrefix": "MEI",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-13a8-7e1e-abe7-47b66d2b570d",
+            "slug": "miharu",
+            "name": "瑞時縦横線",
+            "color": "#0096FF",
+            "numberingPrefix": "MIH",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-13b2-753e-b4a6-984789262ad6",
+            "slug": "miyugawa",
+            "name": "海結川鉄道",
+            "color": "#50F000",
+            "numberingPrefix": "MIY",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-13bb-7d7a-9776-b8b1ebb9d7ff",
+            "slug": "mizuna",
+            "name": "水雫支線",
+            "color": "#00D7FF",
+            "numberingPrefix": "MIZ",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-13c4-7b75-9677-751c541aaabe",
+            "slug": "mmsr",
+            "name": "森元森林鉄道",
+            "color": "#FF0050",
+            "numberingPrefix": "MMS",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-13cd-7b3a-a1d9-2e3f52a675b5",
+            "slug": "morimotoCent",
+            "name": "もりもと中央線",
+            "color": "#FFF000",
+            "numberingPrefix": "MC",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-13d6-7d7a-b41e-9050484f36bd",
+            "slug": "morimotoSuburb",
+            "name": "もりもと郊外線",
+            "color": "#C8FF0F",
+            "numberingPrefix": "MS",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-13e0-7198-a973-cb00be0f2a2e",
+            "slug": "morimotoWest",
+            "name": "もりもと西部線",
+            "color": "#00FF1B",
+            "numberingPrefix": "MW",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-13e9-723c-a42a-9ab959f3311f",
+            "slug": "mu",
+            "name": "うみもと線",
+            "color": "#16FCC0",
+            "numberingPrefix": "MU",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-13f2-7742-a23c-5285acd9a3b6",
+            "slug": "oas",
+            "name": "オアシス線",
+            "color": "#FF00E9",
+            "numberingPrefix": "OAS",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-13fc-77f9-a85c-8be2ac048f4c",
+            "slug": "pakapaka",
+            "name": "ぱかぱか高速鉄道ぱかぱか高速ライン(緑草線)",
+            "color": "#FF00AF",
+            "numberingPrefix": "PAK",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-1406-75ee-8792-b23ac3abf663",
+            "slug": "ppl",
+            "name": "ポピーライン",
+            "color": "#00FF91",
+            "numberingPrefix": "PPL",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-140f-77a9-bd9b-153bc7205cd8",
+            "slug": "pukupuku",
+            "name": "ぷくぷく低速鉄道ぷくぷく低速ライン(緑藻線)",
+            "color": "#00EAFF",
+            "numberingPrefix": "PUK",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-1419-7750-8ad1-32a6b65ba3a4",
+            "slug": "resort",
+            "name": "リゾートライン",
+            "color": "#7A00FF",
+            "numberingPrefix": "RES",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-1424-7071-83da-efbb56b0c241",
+            "slug": "rinkai",
+            "name": "リンカイ鉄道",
+            "color": "#F04137",
+            "numberingPrefix": "RIN",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-142e-71eb-b709-1de6792bc115",
+            "slug": "sakouchi",
+            "name": "逆内川作業支線",
+            "color": "#B100FF",
+            "numberingPrefix": "SAK",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-1437-7656-935e-5eefb0de73f8",
+            "slug": "sf",
+            "name": "聖花線",
+            "color": "#FA8200",
+            "numberingPrefix": "SF",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-1441-74e7-8962-b9776687badd",
+            "slug": "srhn",
+            "name": "白華村鉄道",
+            "color": "#FFE000",
+            "numberingPrefix": "SRH",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-144b-7c7d-9720-c0aa2c22a72b",
+            "slug": "sunflower",
+            "name": "サンフラワーLine",
+            "color": "#FFAA00",
+            "numberingPrefix": "SUN",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-1455-7ba6-9292-d4bc39ca1b10",
+            "slug": "tono",
+            "name": "旧遠野森林鉄道",
+            "color": "#00F4FF",
+            "numberingPrefix": "TON",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-145f-7ab0-8929-a08b6321337f",
+            "slug": "yukihara",
+            "name": "雪原Line",
+            "color": "#FF0013",
+            "numberingPrefix": "YUK",
+            "numberingStart": 1
+        },
+        {
+            "id": "01a03527-1468-7e96-a685-110226bdabe9",
+            "slug": "yukuripa",
+            "name": "ユクリパ高速鉄道ユクリ本線",
+            "color": "#2DFA19",
+            "numberingPrefix": "YKP",
+            "numberingStart": 1
+        }
+    ]
+}

@@ -2,10 +2,13 @@ import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { MyPageError } from "./-components/my-page-error";
 import { MyPageView } from "./-components/my-page-view";
 import { getMyPageData } from "./-functions/get-my-page-data";
+import { myPageSearchSchema } from "./-functions/my-page-search";
 import { useStatsHidden } from "./-functions/use-stats-hidden";
 import type { MyPageData } from "./-types/my-page";
 
 export const Route = createFileRoute("/_signed_in/my-page/")({
+    // ?pose= でポートレートのポーズを固定する (ポーズは表示だけなので loader の依存にはしない)
+    validateSearch: myPageSearchSchema,
     // getMyPageData はトークンを 1 回だけ取り、数値・スタンプ帳・オンライン状況をそろえてから返す (最初から完成した形で出す)
     loader: async ({ context }): Promise<MyPageData> => {
         const { playerId, presence, stats, stamps, statsHidden } =
@@ -28,10 +31,12 @@ export const Route = createFileRoute("/_signed_in/my-page/")({
 
 function MyPage() {
     const data = Route.useLoaderData();
+    const { pose } = Route.useSearch();
     const [statsHidden, setStatsHidden] = useStatsHidden(data.statsHidden);
     return (
         <MyPageView
             {...data}
+            portraitPose={pose}
             statsHidden={statsHidden}
             onStatsHiddenChange={setStatsHidden}
         />

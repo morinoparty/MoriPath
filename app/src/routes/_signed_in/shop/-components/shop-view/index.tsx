@@ -42,13 +42,15 @@ const shopViewStyle = sva({
             display: "flex",
             flexDirection: "column",
             // ノッチ付き端末ではステータスバーの下から始める
-            paddingTop: "max(token(spacing.2), env(safe-area-inset-top))",
+            // ヘッダーの上下の余白 (8px) と合わせて、地図の操作ボタンと同じ safe area + 16px の高さにそろえる
+            paddingTop: "calc(env(safe-area-inset-top) + {spacing.2})",
         },
         body: {
             display: "flex",
             flexDirection: "column",
             gap: "4",
-            paddingX: "6",
+            // 左右はヘッダー・TabBar と同じ 16px にそろえる
+            paddingX: "4",
             paddingTop: "2",
         },
         title: {

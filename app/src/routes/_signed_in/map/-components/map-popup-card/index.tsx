@@ -9,7 +9,7 @@ const mapPopupCardStyle = css({
     p: "4",
     bg: "bg.panel",
     color: "fg",
-    borderRadius: "l3",
+    borderRadius: "panel",
     boxShadow: "chrome",
     textStyle: "body",
     fontSize: "sm",

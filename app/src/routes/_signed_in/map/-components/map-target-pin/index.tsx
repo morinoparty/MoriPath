@@ -50,7 +50,7 @@ const mapTargetPinStyle = sva({
             pe: "1",
             bg: "bg.panel",
             color: "fg",
-            borderRadius: "l3",
+            borderRadius: "panel",
             boxShadow: "chrome",
             textStyle: "body",
             pointerEvents: "auto",

@@ -10,7 +10,8 @@ export const Route = createFileRoute("/_signed_in/fishing/")({
 const pageStyle = css({
     display: "flex",
     flexDirection: "column",
-    paddingTop: "max(token(spacing.2), env(safe-area-inset-top))",
+    // ヘッダーの上下の余白 (8px) と合わせて、地図の操作ボタンと同じ safe area + 16px の高さにそろえる
+    paddingTop: "calc(env(safe-area-inset-top) + {spacing.2})",
 });
 
 /**

@@ -23,7 +23,8 @@ const homeHeaderStyle = sva({
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            paddingX: "6",
+            // 左右は下の TabBar と地図の操作ボタンと同じ 16px にそろえる
+            paddingX: "4",
             paddingY: "2",
         },
         // いまのパーティ (アイコン + 名前 + 下向き矢印) のピル。ページの地より一段明るい面に載せる
