@@ -12,7 +12,7 @@ const meta: Meta<typeof TabBar> = {
     argTypes: {
         active: {
             control: "select",
-            options: ["home", "map", "shop", "me"],
+            options: ["home", "map", "quest", "me"],
         },
     },
     decorators: [
@@ -36,8 +36,8 @@ export const Map: Story = {
     args: { active: "map" },
 };
 
-export const Shop: Story = {
-    args: { active: "shop" },
+export const Quest: Story = {
+    args: { active: "quest" },
 };
 
 export const Me: Story = {

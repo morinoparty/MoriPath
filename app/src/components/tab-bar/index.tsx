@@ -1,13 +1,13 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { House, type LucideIcon, MapPin, Store, User } from "lucide-react";
+import { House, type LucideIcon, MapPin, ScrollText, User } from "lucide-react";
 import { sva } from "../../../styled-system/css";
 
 /** TabBar のタブを識別するキー */
-export type TabKey = "home" | "map" | "shop" | "me";
+export type TabKey = "home" | "map" | "quest" | "me";
 
 interface TabDefinition {
     key: TabKey;
-    // /map と /shop はまだルートが無いため、型付きの to ではなく文字列で持つ
+    // 型付きの to にすると定義の配列を作りにくいため、文字列で持つ
     to: string;
     label: string;
     icon: LucideIcon;
@@ -17,7 +17,7 @@ interface TabDefinition {
 const tabs: readonly TabDefinition[] = [
     { key: "home", to: "/", label: "ホーム", icon: House },
     { key: "map", to: "/map", label: "マップ", icon: MapPin },
-    { key: "shop", to: "/shop", label: "おみせ", icon: Store },
+    { key: "quest", to: "/quest", label: "クエスト", icon: ScrollText },
     { key: "me", to: "/my-page", label: "あなた", icon: User },
 ];
 

@@ -45,7 +45,8 @@ const meta: Meta<typeof ShopView> = {
                 })}
             >
                 <Story />
-                <TabBar active="shop" />
+                {/* おみせはタブから外れたため、どのタブも選ばない */}
+                <TabBar active={null} />
             </div>
         ),
         withShopProviders,

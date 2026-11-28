@@ -20,6 +20,7 @@ import { Route as Signed_inDiaryDateRouteImport } from './routes/_signed_in/diar
 import { Route as Signed_inFishingIndexRouteImport } from './routes/_signed_in/fishing/index'
 import { Route as Signed_inMapIndexRouteImport } from './routes/_signed_in/map/index'
 import { Route as Signed_inMyPageIndexRouteImport } from './routes/_signed_in/my-page/index'
+import { Route as Signed_inQuestIndexRouteImport } from './routes/_signed_in/quest/index'
 import { Route as Signed_inShopIndexRouteImport } from './routes/_signed_in/shop/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as NofooterAuthSignInIndexRouteImport } from './routes/_nofooter/auth/sign-in/index'
@@ -85,6 +86,11 @@ const Signed_inMapIndexRoute = Signed_inMapIndexRouteImport.update({
 const Signed_inMyPageIndexRoute = Signed_inMyPageIndexRouteImport.update({
   id: '/my-page/',
   path: '/my-page/',
+  getParentRoute: () => Signed_inRoute,
+} as any)
+const Signed_inQuestIndexRoute = Signed_inQuestIndexRouteImport.update({
+  id: '/quest/',
+  path: '/quest/',
   getParentRoute: () => Signed_inRoute,
 } as any)
 const Signed_inShopIndexRoute = Signed_inShopIndexRouteImport.update({
@@ -157,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/fishing/': typeof Signed_inFishingIndexRoute
   '/map/': typeof Signed_inMapIndexRoute
   '/my-page/': typeof Signed_inMyPageIndexRoute
+  '/quest/': typeof Signed_inQuestIndexRoute
   '/shop/': typeof Signed_inShopIndexRoute
   '/my-page/tickets/$id': typeof Signed_inMyPageTicketsIdRoute
   '/auth/sign-in/': typeof NofooterAuthSignInIndexRoute
@@ -179,6 +186,7 @@ export interface FileRoutesByTo {
   '/fishing': typeof Signed_inFishingIndexRoute
   '/map': typeof Signed_inMapIndexRoute
   '/my-page': typeof Signed_inMyPageIndexRoute
+  '/quest': typeof Signed_inQuestIndexRoute
   '/shop': typeof Signed_inShopIndexRoute
   '/my-page/tickets/$id': typeof Signed_inMyPageTicketsIdRoute
   '/auth/sign-in': typeof NofooterAuthSignInIndexRoute
@@ -203,6 +211,7 @@ export interface FileRoutesById {
   '/_signed_in/fishing/': typeof Signed_inFishingIndexRoute
   '/_signed_in/map/': typeof Signed_inMapIndexRoute
   '/_signed_in/my-page/': typeof Signed_inMyPageIndexRoute
+  '/_signed_in/quest/': typeof Signed_inQuestIndexRoute
   '/_signed_in/shop/': typeof Signed_inShopIndexRoute
   '/_signed_in/my-page/tickets/$id': typeof Signed_inMyPageTicketsIdRoute
   '/_nofooter/auth/sign-in/': typeof NofooterAuthSignInIndexRoute
@@ -227,6 +236,7 @@ export interface FileRouteTypes {
     | '/fishing/'
     | '/map/'
     | '/my-page/'
+    | '/quest/'
     | '/shop/'
     | '/my-page/tickets/$id'
     | '/auth/sign-in/'
@@ -249,6 +259,7 @@ export interface FileRouteTypes {
     | '/fishing'
     | '/map'
     | '/my-page'
+    | '/quest'
     | '/shop'
     | '/my-page/tickets/$id'
     | '/auth/sign-in'
@@ -272,6 +283,7 @@ export interface FileRouteTypes {
     | '/_signed_in/fishing/'
     | '/_signed_in/map/'
     | '/_signed_in/my-page/'
+    | '/_signed_in/quest/'
     | '/_signed_in/shop/'
     | '/_signed_in/my-page/tickets/$id'
     | '/_nofooter/auth/sign-in/'
@@ -370,6 +382,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Signed_inMyPageIndexRouteImport
       parentRoute: typeof Signed_inRoute
     }
+    '/_signed_in/quest/': {
+      id: '/_signed_in/quest/'
+      path: '/quest'
+      fullPath: '/quest/'
+      preLoaderRoute: typeof Signed_inQuestIndexRouteImport
+      parentRoute: typeof Signed_inRoute
+    }
     '/_signed_in/shop/': {
       id: '/_signed_in/shop/'
       path: '/shop'
@@ -452,6 +471,7 @@ interface Signed_inRouteChildren {
   Signed_inFishingIndexRoute: typeof Signed_inFishingIndexRoute
   Signed_inMapIndexRoute: typeof Signed_inMapIndexRoute
   Signed_inMyPageIndexRoute: typeof Signed_inMyPageIndexRoute
+  Signed_inQuestIndexRoute: typeof Signed_inQuestIndexRoute
   Signed_inShopIndexRoute: typeof Signed_inShopIndexRoute
   Signed_inMyPageTicketsIdRoute: typeof Signed_inMyPageTicketsIdRoute
   Signed_inMapTransitIndexRoute: typeof Signed_inMapTransitIndexRoute
@@ -471,6 +491,7 @@ const Signed_inRouteChildren: Signed_inRouteChildren = {
   Signed_inFishingIndexRoute: Signed_inFishingIndexRoute,
   Signed_inMapIndexRoute: Signed_inMapIndexRoute,
   Signed_inMyPageIndexRoute: Signed_inMyPageIndexRoute,
+  Signed_inQuestIndexRoute: Signed_inQuestIndexRoute,
   Signed_inShopIndexRoute: Signed_inShopIndexRoute,
   Signed_inMyPageTicketsIdRoute: Signed_inMyPageTicketsIdRoute,
   Signed_inMapTransitIndexRoute: Signed_inMapTransitIndexRoute,
